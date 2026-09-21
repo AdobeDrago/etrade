@@ -4,6 +4,8 @@
   border-radius: 12px;
   padding: 32px 24px;
   box-sizing: border-box;
+  background-color: var(--brand-dark-bg);
+  color: #fff;
 }
 
 .banner-offer-content {
@@ -41,6 +43,11 @@
 }
 
 /* --- E*TRADE brand styling --- */
-.banner-offer { background-color: var(--brand-dark-bg); color: #fff; }
-.banner-offer-content :is(h1,h2,h3,h4,h5,h6), .banner-offer-content p { color: #fff; font-family: var(--brand-font-family); }
-.banner-offer-content strong { color: #fff; }
+.banner-offer-content :is(h1,h2,h3,h4,h5,h6), .banner-offer-content p {
+  color: #fff;
+  font-family: var(--brand-font-family);
+}
+
+.banner-offer-content strong {
+  color: #fff;
+}

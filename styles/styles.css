@@ -188,18 +188,18 @@ button.button:disabled {
 
 a.button.primary,
 button.button.primary {
-  border-color: var(--text-color);
-  background-color: var(--text-color);
-  color: var(--background-color);
+  border-color: var(--brand-accent);
+  background-color: var(--brand-accent);
+  color: #fff;
 }
 
 a.button.primary:hover,
 a.button.primary:focus-visible,
 button.button.primary:hover,
 button.button.primary:focus-visible {
-  border-color: var(--dark-color);
-  background-color: var(--dark-color);
-  color: var(--light-color);
+  border-color: var(--brand-accent-hover);
+  background-color: var(--brand-accent-hover);
+  color: #fff;
 }
 
 a.button.primary[aria-disabled="true"],
@@ -242,9 +242,7 @@ button.button.secondary:disabled:focus-visible {
 
 /* high-impact call-to-action — E*TRADE purple accent */
 a.button.accent,
-button.button.accent,
-a.button.primary,
-button.button.primary {
+button.button.accent {
   border-color: var(--brand-accent);
   background-color: var(--brand-accent);
   color: #fff;
@@ -253,11 +251,7 @@ button.button.primary {
 a.button.accent:hover,
 a.button.accent:focus-visible,
 button.button.accent:hover,
-button.button.accent:focus-visible,
-a.button.primary:hover,
-a.button.primary:focus-visible,
-button.button.primary:hover,
-button.button.primary:focus-visible {
+button.button.accent:focus-visible {
   border-color: var(--brand-accent-hover);
   background-color: var(--brand-accent-hover);
   color: #fff;

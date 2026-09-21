@@ -15,15 +15,23 @@
   gap: 8px;
   padding: 24px;
   box-sizing: border-box;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #fff;
 }
 
 .cards-pricing-body :is(h1, h2, h3, h4, h5, h6) {
   font-size: 2.5em;
   margin: 0;
+  font-family: var(--brand-font-family);
+  color: var(--brand-text);
+  font-weight: 600;
 }
 
 .cards-pricing-body p {
   margin: 0;
+  color: #666;
+  font-size: var(--body-font-size-s);
 }
 
 @media (width >= 600px) {
@@ -39,23 +47,6 @@
 }
 
 /* --- E*TRADE brand styling --- */
-.cards-pricing li {
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  background-color: #fff;
-}
-
-.cards-pricing-body :is(h1, h2, h3, h4, h5, h6) {
-  font-family: var(--brand-font-family);
-  color: var(--brand-text);
-  font-weight: 600;
-}
-
-.cards-pricing-body p {
-  color: #666;
-  font-size: var(--body-font-size-s);
-}
-
 .cards-pricing-body a:any-link {
   color: var(--brand-link);
   font-weight: 500;

@@ -6,6 +6,9 @@
   gap: 24px;
   padding: 24px;
   box-sizing: border-box;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
 }
 
 .widget-calculator-intro {
@@ -30,16 +33,20 @@
 
 .widget-calculator-label {
   font-size: 0.85em;
+  color: #666;
 }
 
 .widget-calculator-funding,
 .widget-calculator-bonus {
   font-size: 1.5em;
   font-weight: 700;
+  color: var(--brand-accent);
+  font-family: var(--brand-font-family);
 }
 
 .widget-calculator-slider {
   width: 100%;
+  accent-color: var(--brand-accent);
 }
 
 @media (width >= 900px) {
@@ -51,9 +58,3 @@
     grid-column: 2;
   }
 }
-
-/* --- E*TRADE brand styling --- */
-.widget-calculator { background-color: #fff; border: 1px solid #e0e0e0; border-radius: 8px; }
-.widget-calculator-funding, .widget-calculator-bonus { color: var(--brand-accent); font-family: var(--brand-font-family); }
-.widget-calculator-slider { accent-color: var(--brand-accent); }
-.widget-calculator-label { color: #666; }

@@ -13,6 +13,11 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #fff;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
 }
 
 .cards-platform li[data-href] {
@@ -29,14 +34,25 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding: 20px;
 }
 
 .cards-platform-body :is(h1, h2, h3, h4, h5, h6) {
   margin: 0;
+  font-family: var(--brand-font-family);
+  color: var(--brand-text);
+  font-weight: 600;
 }
 
 .cards-platform-body p {
   margin: 0;
+  color: #666;
+  font-size: var(--body-font-size-s);
+}
+
+.cards-platform-body a:any-link {
+  color: var(--brand-link);
+  font-weight: 500;
 }
 
 @media (width >= 600px) {
@@ -52,15 +68,6 @@
 }
 
 /* --- E*TRADE brand styling --- */
-.cards-platform li {
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  background-color: #fff;
-  overflow: hidden;
-  transition: box-shadow 0.2s;
+.cards-platform li:hover {
+  box-shadow: 0 4px 16px rgb(0 0 0 / 10%);
 }
-.cards-platform li:hover { box-shadow: 0 4px 16px rgb(0 0 0 / 10%); }
-.cards-platform-body { padding: 20px; }
-.cards-platform-body :is(h1,h2,h3,h4,h5,h6){ font-family:var(--brand-font-family); color:var(--brand-text); font-weight:600; }
-.cards-platform-body p{ color:#666; font-size:var(--body-font-size-s); }
-.cards-platform-body a:any-link{ color:var(--brand-link); font-weight:500; }

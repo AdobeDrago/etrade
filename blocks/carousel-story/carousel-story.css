@@ -36,6 +36,7 @@
 .carousel-story-slide :is(h1, h2, h3, h4, h5, h6),
 .carousel-story-slide p {
   margin: 0;
+  color: #666;
 }
 
 .carousel-story-nav {
@@ -53,6 +54,8 @@
   background: none;
   cursor: pointer;
   position: relative;
+  border-color: var(--brand-accent);
+  color: var(--brand-accent);
 }
 
 .carousel-story-nav button::after {
@@ -85,7 +88,13 @@
 }
 
 /* --- E*TRADE brand styling --- */
-.carousel-story-slide :is(h1,h2,h3,h4,h5,h6) { font-family: var(--brand-font-family); color: var(--brand-text); font-weight: 600; }
-.carousel-story-slide p { color: #666; }
-.carousel-story-nav button { border-color: var(--brand-accent); color: var(--brand-accent); }
-.carousel-story-nav button:hover { background-color: var(--brand-accent); color: #fff; }
+.carousel-story-slide :is(h1,h2,h3,h4,h5,h6) {
+  font-family: var(--brand-font-family);
+  color: var(--brand-text);
+  font-weight: 600;
+}
+
+.carousel-story-nav button:hover {
+  background-color: var(--brand-accent);
+  color: #fff;
+}

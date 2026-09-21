@@ -2,6 +2,7 @@
 
 .accordion-faq details {
   border: 1px solid #dadada;
+  border-color: #e0e0e0;
 }
 
 /* stylelint-disable-next-line no-descending-specificity */
@@ -20,6 +21,9 @@
   cursor: pointer;
   list-style: none;
   overflow: auto;
+  font-family: var(--brand-font-family);
+  font-weight: 500;
+  color: var(--brand-text);
 }
 
 .accordion-faq details summary::-webkit-details-marker {
@@ -37,6 +41,7 @@
   border: 2px solid;
   border-width: 2px 2px 0 0;
   transition: transform 0.2s;
+  border-color: var(--brand-accent);
 }
 
 .accordion-faq details[open] summary::after {
@@ -55,11 +60,11 @@
   background: none;
   border: none;
   padding: 8px;
+  color: var(--brand-link);
+  font-weight: 500;
 }
 
 /* --- E*TRADE brand styling --- */
-.accordion-faq details { border-color: #e0e0e0; }
-.accordion-faq details summary { font-family: var(--brand-font-family); font-weight: 500; color: var(--brand-text); }
-.accordion-faq details summary::after { border-color: var(--brand-accent); }
-.accordion-faq details .accordion-faq-item-body a:any-link { color: var(--brand-link); }
-.accordion-faq-expand-all { color: var(--brand-link); font-weight: 500; }
+.accordion-faq details .accordion-faq-item-body a:any-link {
+  color: var(--brand-link);
+}

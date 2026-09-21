@@ -11,6 +11,7 @@
   align-items: center;
   text-align: center;
   gap: 16px;
+  background-color: var(--brand-dark-bg);
 }
 
 .hero-product h1,
@@ -19,6 +20,8 @@
 .hero-product p {
   margin: 0;
   max-width: 720px;
+  color: #fff;
+  font-family: var(--brand-font-family);
 }
 
 .hero-product-actions {
@@ -50,6 +53,7 @@
 }
 
 /* --- E*TRADE brand styling --- */
-.hero-product { background-color: var(--brand-dark-bg); }
-.hero-product h1, .hero-product h2, .hero-product h3, .hero-product p { color: #fff; font-family: var(--brand-font-family); }
-.hero-product h1, .hero-product h2 { font-weight: 600; }
+.hero-product h1,
+.hero-product h2 {
+  font-weight: 600;
+}
