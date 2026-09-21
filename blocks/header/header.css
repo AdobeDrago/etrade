@@ -213,6 +213,7 @@ header nav[aria-expanded='false'] .nav-utility {
 @media (width >= 900px) {
   header nav,
   header nav[aria-expanded='true'] {
+    position: relative;
     grid-template:
       'utility utility utility' auto
       'brand sections tools' auto
@@ -262,7 +263,17 @@ header nav[aria-expanded='false'] .nav-utility {
     z-index: 3;
   }
 
-  /* main nav: horizontal row */
+  /* main nav: horizontal row; dropdown panels span the full header width
+     by anchoring to the positioned nav */
+  /* stylelint-disable-next-line no-descending-specificity */
+  header nav .nav-sections {
+    position: static;
+  }
+
+  header nav .nav-sections > .default-content-wrapper {
+    position: static;
+  }
+
   header nav .nav-sections > .default-content-wrapper > ul {
     display: flex;
     align-items: center;
@@ -270,7 +281,7 @@ header nav[aria-expanded='false'] .nav-utility {
   }
 
   header nav .nav-sections > .default-content-wrapper > ul > li {
-    position: relative;
+    position: static;
     padding: 20px 0;
     white-space: nowrap;
   }
@@ -292,37 +303,50 @@ header nav[aria-expanded='false'] .nav-utility {
     transform: translateY(1px) rotate(-135deg);
   }
 
-  /* floating dropdown panel */
+  /* wide floating dropdown panel — full-width row spanning the header */
   header nav .nav-sections > .default-content-wrapper > ul > li > ul {
     position: absolute;
     left: 0;
+    right: 0;
     top: 100%;
-    min-width: 300px;
-    padding: 16px 20px;
+    display: flex;
+    gap: 48px;
+    padding: 32px 40px;
     background-color: var(--brand-dark-bg, #002451);
-    box-shadow: 0 8px 24px rgb(0 0 0 / 30%);
+    box-shadow: 0 12px 32px rgb(0 0 0 / 35%);
     z-index: 3;
-  }
-
-  header nav .nav-sections > .default-content-wrapper > ul > li > ul > li {
-    padding: 6px 0;
-    font-weight: 400;
   }
 
   header nav .nav-brand img {
     height: 38px;
   }
 
-  /* promo card at the foot of a dropdown panel */
-  header nav .nav-sections .nav-promo {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid rgb(255 255 255 / 15%);
+  /* left side: multi-column grid of links */
+  header nav .nav-sections .nav-panel-links {
+    flex: 1 1 auto;
+  }
+
+  /* stylelint-disable-next-line no-descending-specificity */
+  header nav .nav-sections .nav-panel-links > ul {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(160px, 1fr));
+    gap: 4px 40px;
+  }
+
+  header nav .nav-sections .nav-panel-links > ul > li {
+    padding: 6px 0;
+    font-weight: 400;
+  }
+
+  /* right rail: promo card */
+  header nav .nav-sections .nav-panel-promo {
+    flex: 0 0 260px;
+    padding-left: 40px;
+    border-left: 1px solid rgb(255 255 255 / 15%);
   }
 
   header nav .nav-sections .nav-promo > a {
     display: block;
-    max-width: 260px;
     font-size: var(--body-font-size-xs, 14px);
     color: rgb(255 255 255 / 85%);
   }
@@ -333,7 +357,8 @@ header nav[aria-expanded='false'] .nav-utility {
 
   header nav .nav-sections .nav-promo img {
     width: 100%;
-    height: auto;
+    height: 140px;
+    object-fit: cover;
     border-radius: 6px;
     display: block;
     margin-bottom: 8px;

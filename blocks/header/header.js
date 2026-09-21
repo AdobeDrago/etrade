@@ -163,13 +163,37 @@ export default async function decorate(block) {
 
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
-    // Tag promo cards — dropdown items whose link contains an image.
-    navSections.querySelectorAll(':scope .default-content-wrapper > ul > li ul > li').forEach((item) => {
-      const link = item.querySelector(':scope > a');
-      if (link && link.querySelector('img')) {
-        item.classList.add('nav-promo');
-        const heading = link.querySelector('strong');
-        if (heading) heading.classList.add('nav-promo-title');
+    // Build wide multi-column panels: split each dropdown into a links grid and
+    // (when present) a promo rail with an image card.
+    navSections.querySelectorAll(':scope .default-content-wrapper > ul > li > ul').forEach((panel) => {
+      const items = [...panel.children];
+      const promoItems = items.filter((li) => {
+        const link = li.querySelector(':scope > a');
+        return link && link.querySelector('img');
+      });
+      const linkItems = items.filter((li) => !promoItems.includes(li));
+
+      // Group the plain links into a grid container.
+      const linksGrid = document.createElement('li');
+      linksGrid.className = 'nav-panel-links';
+      const linksUl = document.createElement('ul');
+      linkItems.forEach((li) => linksUl.append(li));
+      linksGrid.append(linksUl);
+      panel.textContent = '';
+      panel.append(linksGrid);
+
+      // Tag promo cards and move them into a right rail.
+      if (promoItems.length) {
+        panel.classList.add('has-promo');
+        const rail = document.createElement('li');
+        rail.className = 'nav-panel-promo';
+        promoItems.forEach((li) => {
+          li.classList.add('nav-promo');
+          const heading = li.querySelector('strong');
+          if (heading) heading.classList.add('nav-promo-title');
+          rail.append(li);
+        });
+        panel.append(rail);
       }
     });
 
