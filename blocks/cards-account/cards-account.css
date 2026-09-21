@@ -1,0 +1,59 @@
+/* cards-account — structural layout only; brand styling applied in design pass. */
+
+.cards-account ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.cards-account li {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  box-sizing: border-box;
+
+  /* top accent bar */
+  border-top: 4px solid;
+}
+
+.cards-account-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cards-account-body :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+}
+
+.cards-account-body p {
+  margin: 0;
+}
+
+.cards-account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: auto;
+}
+
+.cards-account-actions p {
+  margin: 0;
+}
+
+@media (width >= 600px) {
+  .cards-account ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 900px) {
+  .cards-account ul {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

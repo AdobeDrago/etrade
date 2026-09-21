@@ -1,0 +1,41 @@
+/* banner-offer — structural layout only; brand styling applied in design pass. */
+
+.banner-offer {
+  border-radius: 12px;
+  padding: 32px 24px;
+  box-sizing: border-box;
+}
+
+.banner-offer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  max-width: 800px;
+}
+
+.banner-offer-content :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+}
+
+.banner-offer-content p {
+  margin: 0;
+}
+
+.banner-offer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.banner-offer-actions p {
+  margin: 0;
+}
+
+@media (width >= 900px) {
+  .banner-offer {
+    padding: 40px 48px;
+  }
+}

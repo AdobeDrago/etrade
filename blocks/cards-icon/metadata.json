@@ -1,0 +1,10 @@
+{
+  "variantName": "cards-icon",
+  "baseBlock": "cards",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Grid of centered cards, each with an icon (image or icon-font), a heading, and a short description.",
+  "contentPattern": "One row per card, two columns: an icon and a body (heading, description paragraph(s)).",
+  "usage": "Present a set of features/audiences/benefits as icon-led cards.",
+  "options": [],
+  "memberVariantIds": ["cards-icon"]
+}

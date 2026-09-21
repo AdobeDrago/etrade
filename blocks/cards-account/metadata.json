@@ -1,0 +1,10 @@
+{
+  "variantName": "cards-account",
+  "baseBlock": "cards",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Grid of account cards on a light background, each with a top accent bar, an account name heading, a short description, and one or two CTA links. No images.",
+  "contentPattern": "One row per card, single column: heading (account name), label/description paragraph(s), CTA link(s).",
+  "usage": "Present a set of account types as cards with a name, description, and open/learn CTAs. Typically rendered inside tabbed panels.",
+  "options": [],
+  "memberVariantIds": ["cards-account"]
+}

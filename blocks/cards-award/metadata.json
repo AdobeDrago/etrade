@@ -1,0 +1,10 @@
+{
+  "variantName": "cards-award",
+  "baseBlock": "cards",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Row of three centered award items on a light background, each with a badge/icon image, a title and a short description.",
+  "contentPattern": "One row per award, two columns: an image (badge/icon) and a body (heading, paragraph(s)).",
+  "usage": "Showcase awards or recognitions with a badge, title and brief description.",
+  "options": [],
+  "memberVariantIds": ["cards-award"]
+}

@@ -1,0 +1,19 @@
+{
+  "variantName": "cards-pricing",
+  "baseBlock": "cards",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Grid of pricing stat tiles on a light background: a large figure, a short label, and a 'Learn more' link. No images.",
+  "contentPattern": "One row per card, single column: figure/heading, label paragraph(s), and a link.",
+  "usage": {
+    "pagesUsing": [
+      "/what-we-offer/our-accounts/brokerage-account"
+    ],
+    "reuseCount": 1,
+    "lastUsed": "2026-09-20T13:20:00.000Z"
+  },
+  "options": [],
+  "memberVariantIds": [
+    "cards-pricing"
+  ],
+  "usageDescription": "Present a set of headline pricing figures (commissions, contract fees, rates) as scannable stat tiles."
+}

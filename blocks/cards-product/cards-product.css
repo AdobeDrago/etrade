@@ -1,0 +1,32 @@
+/* cards-product — structural layout only; brand styling applied in design pass. */
+
+.cards-product ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.cards-product li {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.cards-product-body :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+}
+
+.cards-product-body p {
+  margin: 0;
+}
+
+@media (width >= 900px) {
+  .cards-product ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

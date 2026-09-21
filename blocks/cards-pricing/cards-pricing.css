@@ -1,0 +1,39 @@
+/* cards-pricing — structural layout only; brand styling applied in design pass. */
+
+.cards-pricing ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.cards-pricing li {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.cards-pricing-body :is(h1, h2, h3, h4, h5, h6) {
+  font-size: 2.5em;
+  margin: 0;
+}
+
+.cards-pricing-body p {
+  margin: 0;
+}
+
+@media (width >= 600px) {
+  .cards-pricing ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 900px) {
+  .cards-pricing ul {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

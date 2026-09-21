@@ -1,0 +1,42 @@
+/* cards-numbered — structural layout only; brand styling applied in design pass. */
+
+.cards-numbered ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.cards-numbered li {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cards-numbered-ordinal {
+  font-size: 2.5em;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.cards-numbered-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cards-numbered-body :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+}
+
+.cards-numbered-body p {
+  margin: 0;
+}
+
+@media (width >= 900px) {
+  .cards-numbered ul {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

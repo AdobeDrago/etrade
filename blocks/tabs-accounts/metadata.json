@@ -1,0 +1,10 @@
+{
+  "variantName": "tabs-accounts",
+  "baseBlock": "tabs",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Horizontal tab selector on a light background with an underline on the active tab; each panel holds a heading, intro paragraph, and a grid of account cards.",
+  "contentPattern": "One row per tab, two columns: the tab label and the panel content (heading, intro, and an account-card grid).",
+  "usage": "Let visitors switch between categories (e.g. account types) with each panel showing its own content and card grid.",
+  "options": [],
+  "memberVariantIds": ["tabs-accounts"]
+}

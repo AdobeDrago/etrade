@@ -1,0 +1,10 @@
+{
+  "variantName": "cards-platform",
+  "baseBlock": "cards",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Grid of platform cards on a light background: a product screenshot image on top, a heading, a short description, and a 'Learn more' CTA. The whole card is clickable.",
+  "contentPattern": "One row per card, two columns: an image and a body (heading, description paragraph(s), CTA link).",
+  "usage": "Present a set of platforms/products as image-topped cards, each linking to a detail page.",
+  "options": [],
+  "memberVariantIds": ["cards-platform"]
+}

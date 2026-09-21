@@ -1,0 +1,43 @@
+/* tabs-accounts — structural layout only; brand styling applied in design pass. */
+
+.tabs-accounts .tabs-accounts-list {
+  display: flex;
+  gap: 0.5ch;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.tabs-accounts .tabs-accounts-list button {
+  flex: 0 0 max-content;
+  margin: 0;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: 12px 16px;
+  background-color: transparent;
+  color: initial;
+  font-weight: bold;
+  line-height: unset;
+  text-align: initial;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.tabs-accounts .tabs-accounts-list button p {
+  margin: 0;
+}
+
+/* active tab gets an underline */
+.tabs-accounts .tabs-accounts-list button[aria-selected='true'] {
+  border-bottom-color: currentcolor;
+  cursor: initial;
+}
+
+.tabs-accounts .tabs-accounts-panel {
+  padding: 24px 0;
+}
+
+.tabs-accounts .tabs-accounts-panel[aria-hidden='true'] {
+  display: none;
+}

@@ -1,0 +1,48 @@
+/* cards-icon — structural layout only; brand styling applied in design pass. */
+
+.cards-icon ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+.cards-icon li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.cards-icon-icon img {
+  width: auto;
+  max-height: 64px;
+  display: block;
+}
+
+.cards-icon-icon :is(i, svg) {
+  font-size: 48px;
+}
+
+.cards-icon-body :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+}
+
+.cards-icon-body p {
+  margin: 0;
+}
+
+@media (width >= 600px) {
+  .cards-icon ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 900px) {
+  .cards-icon ul {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

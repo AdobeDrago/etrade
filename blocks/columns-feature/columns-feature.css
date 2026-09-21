@@ -1,0 +1,38 @@
+/* columns-feature — structural layout only; brand styling applied in design pass. */
+
+.columns-feature > div {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.columns-feature-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.columns-feature-actions p {
+  margin: 0;
+}
+
+.columns-feature img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@media (width >= 900px) {
+  .columns-feature > div {
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+
+  /* image-right option: place the image column second. */
+  .columns-feature.image-right .columns-feature-img-col {
+    order: 2;
+  }
+}

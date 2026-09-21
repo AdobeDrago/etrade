@@ -1,0 +1,20 @@
+{
+  "variantName": "accordion-faq",
+  "baseBlock": "accordion",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "FAQ accordion on a light background: expandable/collapsible question rows with rich-text answers, a chevron indicator, and an 'Expand all' control.",
+  "contentPattern": "One row per FAQ item, two columns: the question title and the rich-text answer (which may include links).",
+  "usage": {
+    "pagesUsing": [
+      "/what-we-offer/our-accounts",
+      "/what-we-offer/our-accounts/brokerage-account"
+    ],
+    "reuseCount": 2,
+    "lastUsed": "2026-09-20T13:20:00.000Z"
+  },
+  "options": [],
+  "memberVariantIds": [
+    "accordion-faq"
+  ],
+  "usageDescription": "Present a list of frequently asked questions as expandable items with an expand/collapse-all toggle."
+}

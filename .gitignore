@@ -11,3 +11,7 @@ helix-importer-ui
 # Ensure these files are tracked
 !CLAUDE.md
 !AGENTS.md
+
+# excat migration scratch
+migration-work*/
+.migration/

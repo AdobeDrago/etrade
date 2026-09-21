@@ -1,0 +1,39 @@
+/* hero-light — structural layout only; brand styling applied in design pass. */
+
+.hero-light-container .hero-light-wrapper {
+  max-width: unset;
+}
+
+.hero-light {
+  padding: 32px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.hero-light h1,
+.hero-light h2,
+.hero-light p {
+  margin: 0;
+  max-width: 800px;
+}
+
+.hero-light-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.hero-light-actions p {
+  margin: 0;
+}
+
+@media (width >= 900px) {
+  .hero-light {
+    padding: 48px 0;
+  }
+}

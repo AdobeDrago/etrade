@@ -1,0 +1,11 @@
+{
+  "status": "success",
+  "url": "https://us.etrade.com/platforms",
+  "path": "platforms",
+  "timestamp": "2026-09-20T12:57:40.424Z",
+  "title": "Agreement Library | E*TRADE",
+  "template": "what-we-offer",
+  "blocks": [
+    "hero-dark"
+  ]
+}

@@ -1,0 +1,61 @@
+/* hero-dark — structural layout only; brand color/typography applied in design pass. */
+
+.hero-dark-container .hero-dark-wrapper {
+  max-width: unset;
+  padding: 0;
+}
+
+.hero-dark {
+  position: relative;
+  padding: 48px 24px;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Full-bleed background image behind the content. */
+.hero-dark picture {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+}
+
+.hero-dark img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-dark h1,
+.hero-dark h2,
+.hero-dark h3,
+.hero-dark p {
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Actions row groups the CTA links side by side. */
+.hero-dark-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.hero-dark-actions p {
+  margin: 0;
+}
+
+@media (width >= 900px) {
+  .hero-dark {
+    padding: 72px 32px;
+    min-height: 380px;
+  }
+}

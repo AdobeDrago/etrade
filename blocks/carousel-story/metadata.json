@@ -1,0 +1,10 @@
+{
+  "variantName": "carousel-story",
+  "baseBlock": "carousel",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Horizontally scrolling carousel of story cards (image + heading + description + optional link), with prev/next controls. Multiple cards visible at once.",
+  "contentPattern": "One row per card: optional image, heading, description paragraph(s), and optional link(s).",
+  "usage": "Showcase a scrollable series of story/timeline cards.",
+  "options": [],
+  "memberVariantIds": ["carousel-story"]
+}

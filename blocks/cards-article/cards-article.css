@@ -1,0 +1,50 @@
+/* cards-article — structural layout only; brand styling applied in design pass. */
+
+.cards-article ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.cards-article li {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cards-article-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.cards-article-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cards-article-body :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+}
+
+.cards-article-body p {
+  margin: 0;
+}
+
+@media (width >= 600px) {
+  .cards-article ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 1200px) {
+  .cards-article ul {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

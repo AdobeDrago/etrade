@@ -1,0 +1,10 @@
+{
+  "variantName": "hero-light",
+  "baseBlock": "hero",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Light, left-aligned intro hero: a heading, an intro paragraph, and an optional text CTA. No background image.",
+  "contentPattern": "Single column: H1 heading, paragraph(s), and optional CTA link(s).",
+  "usage": "Introduce a page with a heading and intro copy on a light background, without a banner image.",
+  "options": [],
+  "memberVariantIds": ["hero-light"]
+}
