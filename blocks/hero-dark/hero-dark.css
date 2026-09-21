@@ -18,10 +18,10 @@
   background-color: var(--brand-dark-bg);
 }
 
-/* Full-bleed background image behind the content. */
+/* Full-bleed background image — sits above the section fill, below the text. */
 .hero-dark picture {
   position: absolute;
-  z-index: -1;
+  z-index: 0;
   inset: 0;
 }
 
@@ -31,10 +31,23 @@
   height: 100%;
 }
 
+/* dark scrim so white text stays legible over the image */
+.hero-dark::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgb(0 36 81 / 80%) 0%, rgb(0 36 81 / 30%) 65%, rgb(0 36 81 / 10%) 100%);
+}
+
 .hero-dark h1,
 .hero-dark h2,
 .hero-dark h3,
-.hero-dark p {
+.hero-dark p,
+.hero-dark-actions {
+  position: relative;
+  z-index: 1;
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
