@@ -303,18 +303,24 @@ header nav[aria-expanded='false'] .nav-utility {
     transform: translateY(1px) rotate(-135deg);
   }
 
-  /* wide floating dropdown panel — full-width row spanning the header */
+  /* wide floating dropdown panel — full-width row spanning the header.
+     Hidden until its trigger is expanded (hover/click). */
   header nav .nav-sections > .default-content-wrapper > ul > li > ul {
     position: absolute;
     left: 0;
     right: 0;
     top: 100%;
-    display: flex;
+    display: none;
     gap: 48px;
     padding: 32px 40px;
     background-color: var(--brand-dark-bg, #002451);
     box-shadow: 0 12px 32px rgb(0 0 0 / 35%);
     z-index: 3;
+  }
+
+  header nav .nav-sections > .default-content-wrapper > ul > li[aria-expanded='true'] > ul,
+  header nav .nav-sections > .default-content-wrapper > ul > li.nav-drop:hover > ul {
+    display: flex;
   }
 
   header nav .nav-brand img {
