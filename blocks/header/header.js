@@ -163,6 +163,16 @@ export default async function decorate(block) {
 
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
+    // Tag promo cards — dropdown items whose link contains an image.
+    navSections.querySelectorAll(':scope .default-content-wrapper > ul > li ul > li').forEach((item) => {
+      const link = item.querySelector(':scope > a');
+      if (link && link.querySelector('img')) {
+        item.classList.add('nav-promo');
+        const heading = link.querySelector('strong');
+        if (heading) heading.classList.add('nav-promo-title');
+      }
+    });
+
     navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
       if (navSection.querySelector('ul')) navSection.classList.add('nav-drop');
       navSection.addEventListener('click', () => {
