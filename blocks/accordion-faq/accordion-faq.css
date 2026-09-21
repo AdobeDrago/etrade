@@ -56,3 +56,10 @@
   border: none;
   padding: 8px;
 }
+
+/* --- E*TRADE brand styling --- */
+.accordion-faq details { border-color: #e0e0e0; }
+.accordion-faq details summary { font-family: var(--brand-font-family); font-weight: 500; color: var(--brand-text); }
+.accordion-faq details summary::after { border-color: var(--brand-accent); }
+.accordion-faq details .accordion-faq-item-body a:any-link { color: var(--brand-link); }
+.accordion-faq-expand-all { color: var(--brand-link); font-weight: 500; }

@@ -41,3 +41,10 @@
 .tabs-accounts .tabs-accounts-panel[aria-hidden='true'] {
   display: none;
 }
+
+/* --- E*TRADE brand styling --- */
+.tabs-accounts .tabs-accounts-list { border-bottom: 1px solid #e0e0e0; }
+.tabs-accounts .tabs-accounts-list button { color: #666; font-family: var(--brand-font-family); }
+.tabs-accounts .tabs-accounts-list button[aria-selected='true'] { color: var(--brand-accent); border-bottom-color: var(--brand-accent); }
+.tabs-accounts .tabs-accounts-panel :is(h1,h2,h3,h4,h5,h6) { font-family: var(--brand-font-family); color: var(--brand-text); }
+.tabs-accounts .tabs-accounts-panel a:any-link { color: var(--brand-link); font-weight: 500; }

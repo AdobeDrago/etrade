@@ -1,0 +1,51 @@
+/*
+ * E*TRADE brand tokens — extracted from us.etrade.com (clientlib-site/site.css).
+ * Font: GraphikETRADE. Accent: #5627d8. Dark surfaces: #002451 / near-black navy.
+ */
+
+@font-face {
+  font-family: GraphikETRADE;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://cdn2.etrade.net/1/26091021070.0/aempros/etc.clientlibs/prospect/clientlibs/clientlib-site/resources/fonts/GraphikETRADE-Regular-Web.woff') format('woff');
+}
+
+@font-face {
+  font-family: GraphikETRADE;
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://cdn2.etrade.net/1/26091021070.0/aempros/etc.clientlibs/prospect/clientlibs/clientlib-site/resources/fonts/GraphikETRADE-Medium-Web.woff') format('woff');
+}
+
+@font-face {
+  font-family: GraphikETRADE;
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('https://cdn2.etrade.net/1/26091021070.0/aempros/etc.clientlibs/prospect/clientlibs/clientlib-site/resources/fonts/GraphikETRADE-Semibold-Web.woff') format('woff');
+}
+
+:root {
+  /* fonts */
+  --brand-font-family: GraphikETRADE, 'Helvetica Neue', helvetica, arial, sans-serif;
+
+  /* brand colors */
+  --brand-text: #242424;
+  --brand-background: #fff;
+  --brand-link: #6e3df5;
+  --brand-link-hover: #5627d8;
+  --brand-accent: #5627d8;
+  --brand-accent-hover: #7852e0;
+  --brand-accent-active: #451fad;
+
+  /* dark surfaces */
+  --brand-dark-bg: #002451;
+  --brand-dark-bg-alt: #131a2c;
+  --brand-text-on-dark: #fff;
+
+  /* light surface */
+  --brand-light-bg: #f5f5f5;
+  --brand-highlight-bg: #e9f2f9;
+}

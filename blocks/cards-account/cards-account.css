@@ -57,3 +57,14 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* --- E*TRADE brand styling --- */
+.cards-account li {
+  border: 1px solid #e0e0e0;
+  border-top-color: var(--brand-accent);
+  border-radius: 4px;
+  background-color: #fff;
+}
+.cards-account-body :is(h1,h2,h3,h4,h5,h6){ font-family:var(--brand-font-family); color:var(--brand-text); font-weight:600; }
+.cards-account-body p{ color:#666; font-size:var(--body-font-size-s); }
+.cards-account-actions a:any-link{ color:var(--brand-link); font-weight:500; }

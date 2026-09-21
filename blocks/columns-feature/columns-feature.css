@@ -36,3 +36,9 @@
     order: 2;
   }
 }
+
+/* --- E*TRADE brand styling --- */
+.columns-feature { background-color: var(--brand-dark-bg); color: #fff; border-radius: 8px; padding: 40px 24px; }
+.columns-feature :is(h1,h2,h3,h4,h5,h6), .columns-feature p { color: #fff; font-family: var(--brand-font-family); }
+.columns-feature img { border-radius: 8px; }
+@media (width >= 900px) { .columns-feature { padding: 56px 48px; } }

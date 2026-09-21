@@ -59,3 +59,8 @@
     min-height: 380px;
   }
 }
+
+/* --- E*TRADE brand styling --- */
+.hero-dark { background-color: var(--brand-dark-bg); }
+.hero-dark h1, .hero-dark h2, .hero-dark p { color: #fff; font-family: var(--brand-font-family); }
+.hero-dark h1 { font-weight: 600; }
