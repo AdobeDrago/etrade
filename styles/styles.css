@@ -25,8 +25,8 @@
   --body-font-family: var(--brand-font-family);
   --heading-font-family: var(--brand-font-family);
 
-  /* body sizes */
-  --body-font-size-m: 18px;
+  /* body sizes — extracted from us.etrade.com hero body copy: font-size 16px, line-height 20px */
+  --body-font-size-m: 16px;
   --body-font-size-s: 16px;
   --body-font-size-xs: 14px;
 
@@ -44,8 +44,8 @@
 
 @media (width >= 900px) {
   :root {
-    /* body sizes */
-    --body-font-size-m: 18px;
+    /* body sizes — extracted from us.etrade.com hero body copy: font-size 16px, line-height 20px */
+    --body-font-size-m: 16px;
     --body-font-size-s: 16px;
     --body-font-size-xs: 14px;
 
@@ -99,6 +99,12 @@ h6 {
   font-weight: 600;
   line-height: 1.25;
   scroll-margin: 40px;
+}
+
+/* h1 — extracted from us.etrade.com hero heading (48px): letter-spacing -1px, line-height ~1.0833 (51.9984px / 48px) */
+h1 {
+  letter-spacing: -1px;
+  line-height: 1.0833;
 }
 
 h1 { font-size: var(--heading-font-size-xxl); }

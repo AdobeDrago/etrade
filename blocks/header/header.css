@@ -5,7 +5,7 @@
  */
 
 header .nav-wrapper {
-  background-color: var(--brand-dark-bg-alt, #131a2c);
+  background-color: var(--brand-dark-bg-alt, #1c1a1e);
   width: 100%;
   z-index: 2;
   position: relative;
@@ -115,8 +115,9 @@ header nav .nav-brand {
   align-items: center;
 }
 
+/* Logo height extracted from us.etrade.com .site-logo img: 32.997px (~33px). */
 header nav .nav-brand img {
-  height: 34px;
+  height: 33px;
   width: auto;
   display: block;
 }
@@ -151,6 +152,17 @@ header nav .nav-tools a.button.primary:hover {
 header nav .nav-utility {
   grid-area: utility;
   font-size: 0.8125rem;
+}
+
+/* "Log on" link — extracted from us.etrade.com .btn.btn-sm.btn-link "Log on":
+   color rgb(171, 128, 255) (var(--brand-link-on-dark)), font-weight 500. */
+header nav .nav-utility ul > li:first-child a {
+  color: var(--brand-link-on-dark, #ab80ff);
+  font-weight: 500;
+}
+
+header nav .nav-utility ul > li:first-child a:hover {
+  color: var(--brand-link-on-dark, #ab80ff);
 }
 
 header nav .nav-utility ul {
@@ -258,7 +270,7 @@ header nav[aria-expanded='false'] .nav-utility {
     top: 100%;
     min-width: 200px;
     padding: 12px 16px;
-    background-color: var(--brand-dark-bg, #002451);
+    background-color: var(--brand-dark-bg, #121213);
     box-shadow: 0 8px 24px rgb(0 0 0 / 30%);
     z-index: 3;
   }
@@ -280,10 +292,14 @@ header nav[aria-expanded='false'] .nav-utility {
     gap: 28px;
   }
 
+  /* Main nav item font-size/weight extracted from us.etrade.com
+     .menu-button.level-one "Trading & Investing" etc.: font-size 14px, font-weight 500. */
   header nav .nav-sections > .default-content-wrapper > ul > li {
     position: static;
     padding: 20px 0;
     white-space: nowrap;
+    font-size: 14px;
+    font-weight: 500;
   }
 
   /* dropdown indicator */
@@ -313,7 +329,7 @@ header nav[aria-expanded='false'] .nav-utility {
     display: none;
     gap: 48px;
     padding: 32px 40px;
-    background-color: var(--brand-dark-bg, #002451);
+    background-color: var(--brand-dark-bg, #121213);
     box-shadow: 0 12px 32px rgb(0 0 0 / 35%);
     z-index: 3;
   }
@@ -323,8 +339,9 @@ header nav[aria-expanded='false'] .nav-utility {
     display: flex;
   }
 
+  /* Logo height extracted from us.etrade.com .site-logo img at desktop width: 32.997px (~33px). */
   header nav .nav-brand img {
-    height: 38px;
+    height: 33px;
   }
 
   /* left side: multi-column grid of links */

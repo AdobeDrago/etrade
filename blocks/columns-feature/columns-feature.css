@@ -32,15 +32,26 @@
     gap: 48px;
   }
 
-  /* image-right option: place the image column second. */
+  /* image-right option: place the image column second.
+     On us.etrade.com, the "Exclusive opportunity to stack up your cash" section
+     places its image on the RIGHT (image left edge 875.9px vs heading left edge
+     325.9px at 1731.8px section width) and background rgb(28, 26, 30). The
+     "image-right" modifier below already reproduces that placement; it is
+     applied by adding an "image-right" class to the columns-feature block in
+     the authored content — no CSS defect found here. */
   .columns-feature.image-right .columns-feature-img-col {
     order: 2;
   }
 }
 
-/* --- E*TRADE brand styling --- */
+/* --- E*TRADE brand styling ---
+   Background color extracted from us.etrade.com "Exclusive opportunity to stack
+   up your cash" section (the columns-feature equivalent): rgb(28, 26, 30),
+   mapped to var(--brand-dark-bg-alt) (corrected in brand.css). The site-wide
+   near-black rgb(18, 18, 19) is used for the hero/other full dark sections and
+   is mapped separately to var(--brand-dark-bg). */
 .columns-feature {
-  background-color: var(--brand-dark-bg);
+  background-color: var(--brand-dark-bg-alt, #1c1a1e);
   color: #fff;
   border-radius: 8px;
   padding: 40px 24px;

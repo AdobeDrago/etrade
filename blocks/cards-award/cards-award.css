@@ -9,11 +9,14 @@
   gap: 32px;
 }
 
+/* Alignment extracted from us.etrade.com award cards (heading/body under
+   "Awards and recognition"): text-align left (computed "start"), content not
+   centered within the card column. */
 .cards-award li {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
   gap: 12px;
 }
 
