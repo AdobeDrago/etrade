@@ -1,8 +1,13 @@
-/* hero-dark — structural layout only; brand color/typography applied in design pass. */
+/* hero-dark — E*TRADE hero banner layout.
+   Production layout (extracted from us.etrade.com/home):
+   - Dark section bg, full viewport width
+   - Content inside a centered max-width:1200px container with 10px padding
+   - H1 sits ABOVE the hero image
+   - Hero image: full container width (1180px), border-radius:16px, centered
+   - Overlay card at bottom-left of image: ~492px wide, contains paragraph + CTAs
+   - Section padding: 20px top, 40px bottom */
 
-/* Hide the "Home" breadcrumb that sits above the hero in the same section.
-   This default-content-wrapper only contains a <p>Home</p> and pushes
-   the hero content down, creating a gap that production does not have. */
+/* Hide the "Home" breadcrumb that sits above the hero in the same section. */
 .hero-dark-container > .default-content-wrapper {
   display: none;
 }
@@ -24,7 +29,7 @@
   min-height: 320px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
   text-align: left;
   gap: 16px;
@@ -32,8 +37,7 @@
   background-color: #0d0f12;
 }
 
-/* Product image. Mobile: below the content, full width.
-   Border-radius extracted from us.etrade.com hero image: 16px. */
+/* Hero image. Mobile: below the content, full width. */
 .hero-dark picture {
   display: block;
   width: 100%;
@@ -71,9 +75,7 @@
 }
 
 /* Fix the <em>arrow_forward</em> that renders as italic text.
-   The icon ligature text should not be italic — override <em> inside
-   the actions row to display inline (non-italic) and hide the literal text,
-   replacing it with an arrow character via ::after. */
+   Hide the literal text, replace with arrow character via ::after. */
 .hero-dark-actions em {
   font-style: normal;
   font-size: 0;
@@ -89,75 +91,67 @@
   margin-left: 6px;
 }
 
-/* Desktop: content on the left half, product image on the right half.
-   Production layout extracted from us.etrade.com:
-   - section padding: 20px 0 40px
-   - content container: max-width 1200px, margin auto, padding 0 10px
-   - h1 starts ~28px below nav bottom
-   - content left offset ~94px (from container centering + padding)
-   On EDS the hero is full-width, so we use padding-left to position text
-   and justify-content: flex-start (not center) to top-align content. */
+/* Desktop layout — centered container matching production.
+   Production uses a max-width:1200px container with margin:auto, padding:0 10px.
+   H1 sits above the image. Image is full container width with border-radius:16px.
+   Overlay card (paragraph + CTAs) overlaps bottom-left of the image. */
 @media (width >= 900px) {
   .hero-dark {
-    padding: 20px 0 40px max(48px, calc((100% - 1200px) / 2 + 10px));
-    min-height: 460px;
-    justify-content: flex-start;
-
-    /* On production the text overlaps the image — the overlay card sits on
-       top of the hero media with z-index. Do NOT constrain content to the
-       left half via padding-right; instead let text elements use z-index:1
-       (already set above) to float over the image. */
-    padding-right: max(48px, calc((100% - 1200px) / 2 + 10px));
-
-
+    /* Centered container padding: (viewport - 1200px) / 2, min 48px, plus 10px inner */
+    padding: 20px max(48px, calc((100% - 1200px) / 2 + 10px)) 40px;
+    min-height: auto;
+    gap: 0;
   }
 
-  /* image occupies the right portion, full height, flush to the edge */
-  .hero-dark picture {
-    position: absolute;
-    z-index: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 55%;
-  }
-
-  /* Border-radius extracted from us.etrade.com hero image: 16px (applied on all
-     breakpoints; production keeps the rounded corners at desktop width too). */
-  .hero-dark img {
-    width: 100%;
-    height: 100%;
-    border-radius: 16px;
-  }
-
-  /* On production, h1 spans full container width (text is short enough to
-     fit on the left). The paragraph and CTAs sit inside a ~492px overlay
-     card. Match that: h1 unconstrained, paragraph/actions ~500px. */
+  /* H1 sits ABOVE the image, not beside it.
+     Full container width, no max-width constraint. */
   .hero-dark h1,
   .hero-dark h2,
   .hero-dark h3 {
     max-width: none;
+    margin-bottom: 0;
   }
 
+  /* Image is full container width, NOT positioned absolute.
+     It sits below the h1 in normal flow. border-radius: 16px. */
+  .hero-dark picture {
+    position: relative;
+    width: 100%;
+    order: 2;
+    margin-top: 16px;
+  }
+
+  .hero-dark img {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    display: block;
+  }
+
+  /* Paragraph and CTAs sit OVER the image at the bottom-left,
+     matching production's overlay card (~492px wide).
+     Use negative margin-top to pull them up over the image. */
   .hero-dark p {
+    position: relative;
+    z-index: 2;
+    order: 3;
     max-width: 500px;
+    margin-top: -200px;
+    padding: 0;
+    background: transparent;
   }
 
   .hero-dark-actions {
+    position: relative;
+    z-index: 2;
+    order: 4;
     max-width: 500px;
   }
 
-  /* soften the image's left edge into the dark background */
+  /* Remove the gradient overlay — no longer needed since image is
+     in normal flow, not positioned absolute. */
   .hero-dark::after {
-    content: '';
-    position: absolute;
-    z-index: 0;
-    top: 0;
-    bottom: 0;
-    right: 45%;
-    width: 12%;
-    background: linear-gradient(90deg, #0d0f12 0%, rgb(13 15 18 / 0%) 100%);
-    pointer-events: none;
+    display: none;
   }
 }
 
@@ -171,12 +165,9 @@
   font-weight: 600;
 }
 
-/* Primary CTA — "Open an account" is the first link in the actions row.
-   Extracted from us.etrade.com .btn.btn-primary inside the hero body:
-   background rgb(86, 39, 216), border 1px solid rgb(86, 39, 216), border-radius 2px,
-   color #fff, font-size 15px, font-weight 500, padding 8px 15px.
-   Uses main > .section.dark specificity prefix to override the global
-   .section.dark a:any-link { color: #fff } rule in styles.css. */
+/* Primary CTA — "Open an account".
+   Extracted from us.etrade.com: bg #5627d8, border-radius 2px, padding 8px 15px.
+   Higher specificity to override .section.dark a:any-link { color: #fff }. */
 main .section.dark .hero-dark .hero-dark-actions p:first-child a {
   display: inline-flex;
   align-items: center;
@@ -196,9 +187,7 @@ main .section.dark .hero-dark .hero-dark-actions p:first-child a:hover {
   text-decoration: none;
 }
 
-/* "Learn more" link — extracted from us.etrade.com hero "Learn more" link:
-   color rgb(171, 128, 255) (var(--brand-link-on-dark)), font-size 15px,
-   font-weight 500, no underline.
+/* "Learn more" link — color #ab80ff on dark bg.
    Higher specificity to override .section.dark a:any-link { color: #fff }. */
 main .section.dark .hero-dark .hero-dark-actions p:last-child a {
   color: var(--brand-link-on-dark, #ab80ff);
