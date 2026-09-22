@@ -132,12 +132,13 @@ header nav .nav-tools {
 
 header nav .nav-tools a.button.primary {
   margin: 0;
-  padding: 0.5em 1em;
-  border-radius: 4px;
+  padding: 8px 15px;
+  border-radius: 2px;
   background-color: var(--brand-accent, #5627d8);
   border-color: var(--brand-accent, #5627d8);
   color: #fff;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 500;
   white-space: nowrap;
   text-decoration: none;
 }

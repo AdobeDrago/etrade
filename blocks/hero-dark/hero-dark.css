@@ -1,5 +1,18 @@
 /* hero-dark — structural layout only; brand color/typography applied in design pass. */
 
+/* Hide the "Home" breadcrumb that sits above the hero in the same section.
+   This default-content-wrapper only contains a <p>Home</p> and pushes
+   the hero content down, creating a gap that production does not have. */
+.hero-dark-container > .default-content-wrapper {
+  display: none;
+}
+
+/* Remove the section-level top padding on the hero container so the hero
+   block sits flush against the nav bar, matching production. */
+.hero-dark-container {
+  padding-top: 0 !important;
+}
+
 .hero-dark-container .hero-dark-wrapper {
   max-width: unset;
   padding: 0;
@@ -57,6 +70,25 @@
   margin: 0;
 }
 
+/* Fix the <em>arrow_forward</em> that renders as italic text.
+   The icon ligature text should not be italic — override <em> inside
+   the actions row to display inline (non-italic) and hide the literal text,
+   replacing it with an arrow character via ::after. */
+.hero-dark-actions em {
+  font-style: normal;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
+}
+
+.hero-dark-actions em::after {
+  content: '\2192';
+  font-size: 15px;
+  line-height: 1;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
 /* Desktop: content on the left half, product image on the right half. */
 @media (width >= 900px) {
   .hero-dark {
@@ -110,7 +142,7 @@
 }
 
 /* Primary CTA — "Open an account" is the first link in the actions row.
-   Extracted from us.etrade.com .btn.btn-lg.btn-primary inside the hero body:
+   Extracted from us.etrade.com .btn.btn-primary inside the hero body:
    background rgb(86, 39, 216), border 1px solid rgb(86, 39, 216), border-radius 2px,
    color #fff, font-size 15px, font-weight 500, padding 8px 15px.
    Uses main > .section.dark specificity prefix to override the global
