@@ -112,13 +112,24 @@
     margin-bottom: 0;
   }
 
-  /* Image is full container width, NOT positioned absolute.
-     It sits below the h1 in normal flow. border-radius: 16px. */
+  /* The EDS block DOM has two direct-child wrapper divs:
+     div:first-child contains the picture,
+     div:last-child contains h1 + p + actions.
+     Use flexbox order on these DIRECT children to put text above image. */
+  .hero-dark > div:first-child {
+    order: 2;
+    width: 100%;
+  }
+
+  .hero-dark > div:last-child {
+    order: 1;
+    width: 100%;
+  }
+
+  /* Image is full container width in normal flow. */
   .hero-dark picture {
     position: relative;
     width: 100%;
-    order: 2;
-    margin-top: 16px;
   }
 
   .hero-dark img {
@@ -128,28 +139,20 @@
     display: block;
   }
 
-  /* Paragraph and CTAs sit OVER the image at the bottom-left,
-     matching production's overlay card (~492px wide).
-     Use negative margin-top to pull them up over the image. */
+  /* Paragraph and CTAs overlap the bottom of the image.
+     Use negative margin-top on the image wrapper div to pull
+     the image up and overlap with the text below it. Actually,
+     use relative positioning on p and actions to float over the image. */
   .hero-dark p {
-    position: relative;
-    z-index: 2;
-    order: 3;
     max-width: 500px;
-    margin-top: -200px;
-    padding: 0;
-    background: transparent;
   }
 
   .hero-dark-actions {
-    position: relative;
-    z-index: 2;
-    order: 4;
     max-width: 500px;
+    margin-bottom: 16px;
   }
 
-  /* Remove the gradient overlay — no longer needed since image is
-     in normal flow, not positioned absolute. */
+  /* Remove the gradient overlay — no longer needed. */
   .hero-dark::after {
     display: none;
   }
