@@ -109,21 +109,13 @@
   font-weight: 600;
 }
 
-/* Overlay/body copy area — extracted from us.etrade.com .hero-banner-overlay:
-   background rgb(18, 18, 19) (var(--brand-dark-bg)), border-radius 0 0 16px 16px,
-   padding 0 0 20px. Applied to the paragraph immediately under the heading, the
-   closest structural equivalent available in the EDS markup. */
-.hero-dark p {
-  background-color: var(--brand-dark-bg);
-  border-radius: 0 0 16px 16px;
-  padding: 0 0 20px;
-}
-
 /* Primary CTA — "Open an account" is the first link in the actions row.
    Extracted from us.etrade.com .btn.btn-lg.btn-primary inside the hero body:
    background rgb(86, 39, 216), border 1px solid rgb(86, 39, 216), border-radius 2px,
-   color #fff, font-size 15px, font-weight 500, padding 8px 15px. */
-.hero-dark-actions p:first-child a {
+   color #fff, font-size 15px, font-weight 500, padding 8px 15px.
+   Uses main > .section.dark specificity prefix to override the global
+   .section.dark a:any-link { color: #fff } rule in styles.css. */
+main .section.dark .hero-dark .hero-dark-actions p:first-child a {
   display: inline-flex;
   align-items: center;
   background-color: var(--brand-accent, #5627d8);
@@ -136,7 +128,7 @@
   text-decoration: none;
 }
 
-.hero-dark-actions p:first-child a:hover {
+main .section.dark .hero-dark .hero-dark-actions p:first-child a:hover {
   background-color: var(--brand-accent-hover, #7852e0);
   border-color: var(--brand-accent-hover, #7852e0);
   text-decoration: none;
@@ -144,14 +136,15 @@
 
 /* "Learn more" link — extracted from us.etrade.com hero "Learn more" link:
    color rgb(171, 128, 255) (var(--brand-link-on-dark)), font-size 15px,
-   font-weight 500, no underline. */
-.hero-dark-actions p:last-child a {
+   font-weight 500, no underline.
+   Higher specificity to override .section.dark a:any-link { color: #fff }. */
+main .section.dark .hero-dark .hero-dark-actions p:last-child a {
   color: var(--brand-link-on-dark, #ab80ff);
   font-size: 15px;
   font-weight: 500;
   text-decoration: none;
 }
 
-.hero-dark-actions p:last-child a:hover {
+main .section.dark .hero-dark .hero-dark-actions p:last-child a:hover {
   text-decoration: underline;
 }
