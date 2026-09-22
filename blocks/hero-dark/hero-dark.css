@@ -103,8 +103,11 @@
     min-height: 460px;
     justify-content: flex-start;
 
-    /* reserve the right half for the image */
-    padding-right: 52%;
+    /* On production the text overlaps the image — the overlay card sits on
+       top of the hero media with z-index. Do NOT constrain content to the
+       left half via padding-right; instead let text elements use z-index:1
+       (already set above) to float over the image. */
+    padding-right: max(48px, calc((100% - 1200px) / 2 + 10px));
 
 
   }
@@ -127,15 +130,21 @@
     border-radius: 16px;
   }
 
-  /* On production, text elements span the full content column width (no 640px
-     cap). The image occupying the right 55% already constrains text to ~45%
-     of the viewport — the explicit max-width is only needed on mobile. */
+  /* On production, h1 spans full container width (text is short enough to
+     fit on the left). The paragraph and CTAs sit inside a ~492px overlay
+     card. Match that: h1 unconstrained, paragraph/actions ~500px. */
   .hero-dark h1,
   .hero-dark h2,
-  .hero-dark h3,
-  .hero-dark p,
-  .hero-dark-actions {
+  .hero-dark h3 {
     max-width: none;
+  }
+
+  .hero-dark p {
+    max-width: 500px;
+  }
+
+  .hero-dark-actions {
+    max-width: 500px;
   }
 
   /* soften the image's left edge into the dark background */
