@@ -89,11 +89,19 @@
   margin-left: 6px;
 }
 
-/* Desktop: content on the left half, product image on the right half. */
+/* Desktop: content on the left half, product image on the right half.
+   Production layout extracted from us.etrade.com:
+   - section padding: 20px 0 40px
+   - content container: max-width 1200px, margin auto, padding 0 10px
+   - h1 starts ~28px below nav bottom
+   - content left offset ~94px (from container centering + padding)
+   On EDS the hero is full-width, so we use padding-left to position text
+   and justify-content: flex-start (not center) to top-align content. */
 @media (width >= 900px) {
   .hero-dark {
-    padding: 72px 0 72px 48px;
+    padding: 20px 0 40px max(48px, calc((100% - 1200px) / 2 + 10px));
     min-height: 460px;
+    justify-content: flex-start;
 
     /* reserve the right half for the image */
     padding-right: 52%;
