@@ -105,6 +105,8 @@
 
     /* reserve the right half for the image */
     padding-right: 52%;
+
+
   }
 
   /* image occupies the right portion, full height, flush to the edge */
@@ -123,6 +125,17 @@
     width: 100%;
     height: 100%;
     border-radius: 16px;
+  }
+
+  /* On production, text elements span the full content column width (no 640px
+     cap). The image occupying the right 55% already constrains text to ~45%
+     of the viewport — the explicit max-width is only needed on mobile. */
+  .hero-dark h1,
+  .hero-dark h2,
+  .hero-dark h3,
+  .hero-dark p,
+  .hero-dark-actions {
+    max-width: none;
   }
 
   /* soften the image's left edge into the dark background */
