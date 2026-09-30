@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E*TRADE — AEM → EDS Migration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* E*TRADE brand (mirrors styles/brand.css) */
+    --et-purple: #5627d8;
+    --et-purple-hover: #451fad;
+    --et-purple-text: #5627d8; /* AA-compliant on light bg */
+    --et-purple-on-dark: #ab80ff;
+    --et-ink: #121213;
+    --et-ink-alt: #1c1a1e;
+    --et-pale-purple: #f1ecfd;
+    --accent: var(--et-purple);
+
+    --gray-50: #ffffff;
+    --gray-75: #fafafa;
+    --gray-100: #f5f5f5;
+    --gray-200: #eaeaea;
+    --gray-300: #e1e1e1;
+    --gray-400: #cacaca;
+    --gray-500: #b3b3b3;
+    --gray-600: #6b6b6b;
+    --gray-700: #6e6e6e;
+    --gray-800: #4b4b4b;
+    --gray-900: #242424;
+
+    --font: 'Source Sans 3', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --mono: 'Source Code Pro', 'Fira Mono', 'Courier New', monospace;
+    --sidebar-width: 248px;
+    --content-max: 860px;
+    --header-h: 56px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--gray-900);
+    background: var(--gray-50);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  a { color: var(--et-purple-text); }
+
+  /* ── TOP NAV ── */
+  .topnav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--header-h);
+    background: var(--et-ink-alt);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    z-index: 100;
+  }
+  .topnav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    color: #fff;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+  }
+  .topnav-logo .mark {
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    background: var(--et-purple);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+  }
+  .topnav-divider { width: 1px; height: 20px; background: #3a3740; }
+  .topnav-title {
+    color: #d8d6dc;
+    font-size: 14px;
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .topnav-badge {
+    margin-left: auto;
+    background: var(--et-purple);
+    color: #fff;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  /* ── LAYOUT ── */
+  .layout { display: flex; margin-top: var(--header-h); min-height: calc(100vh - var(--header-h)); }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    position: sticky;
+    top: var(--header-h);
+    height: calc(100vh - var(--header-h));
+    overflow-y: auto;
+    border-right: 1px solid var(--gray-200);
+    background: var(--gray-75);
+    padding: 24px 0 40px;
+  }
+  .sidebar-section { margin-bottom: 8px; }
+  .sidebar-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray-600);
+    padding: 8px 20px 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 20px;
+    font-size: 13px;
+    color: var(--gray-800);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: background 0.1s, color 0.1s, border-color 0.1s;
+  }
+  .sidebar-link:hover { background: var(--gray-200); color: var(--gray-900); }
+  .sidebar-link.active {
+    background: var(--et-pale-purple);
+    color: var(--et-purple-text);
+    border-left-color: var(--et-purple);
+    font-weight: 700;
+  }
+  .sidebar-link .icon { width: 16px; height: 16px; opacity: 0.6; flex-shrink: 0; }
+  .sidebar-link.active .icon { opacity: 1; }
+
+  /* ── MAIN ── */
+  .main { flex: 1; min-width: 0; padding: 48px 56px 80px; }
+  .main-inner { max-width: var(--content-max); }
+
+  /* ── PAGE HERO ── */
+  .page-hero {
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--gray-200);
+    margin-bottom: 48px;
+    scroll-margin-top: calc(var(--header-h) + 48px);
+  }
+  .page-hero-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--et-purple-text);
+    margin-bottom: 8px;
+  }
+  .page-hero h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--et-ink);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .page-hero-sub { font-size: 16px; color: var(--gray-700); max-width: 640px; line-height: 1.5; }
+
+  /* ── SECTIONS ── */
+  .doc-section { margin-bottom: 56px; scroll-margin-top: calc(var(--header-h) + 24px); }
+  .doc-section h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--et-ink);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+  .section-rule { height: 1px; background: var(--gray-200); margin: 12px 0 24px; }
+  .doc-section h3 { font-size: 14px; font-weight: 700; color: var(--gray-900); margin: 24px 0 8px; }
+  .doc-section p { font-size: 14px; color: var(--gray-800); margin-bottom: 12px; line-height: 1.65; }
+
+  /* ── SECTION ICON BADGE ── */
+  .section-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .icon-purple { background: var(--et-pale-purple); color: var(--et-purple); }
+  .icon-ink    { background: #ececee; color: var(--et-ink); }
+  .icon-green  { background: #eaf6f1; color: #268e6c; }
+  .icon-seafoam{ background: #e6f4f4; color: #16878c; }
+  .icon-orange { background: #fff4e5; color: #da7b11; }
+  .icon-blue   { background: #e9f1fc; color: #0d51b5; }
+
+  /* ── URL CARDS ── */
+  .url-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .url-card {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .url-card:hover { border-color: var(--et-purple); box-shadow: 0 0 0 1px var(--et-purple); }
+  .url-card-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .url-card-label .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .dot-purple { background: var(--et-purple); }
+  .dot-ink    { background: var(--et-ink); }
+  .dot-green  { background: #268e6c; }
+  .dot-orange { background: #da7b11; }
+  .url-card-title { font-size: 13px; font-weight: 700; color: var(--gray-900); }
+  .url-card-url { font-size: 12px; font-family: var(--mono); color: var(--et-purple-text); word-break: break-all; }
+  .url-card-desc { font-size: 12px; color: var(--gray-600); margin-top: 2px; }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    background: var(--et-ink);
+    color: #d4d4d4;
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.6;
+    overflow-x: auto;
+    margin: 8px 0 4px;
+    white-space: pre;
+  }
+  .code-block .cmt  { color: #6a9955; }
+  .code-block .str  { color: #ce9178; }
+  .code-block .kw   { color: #c7a6ff; }
+  .code-block .var  { color: #9cdcfe; }
+  .code-inline {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--gray-100);
+    border: 1px solid var(--gray-300);
+    color: var(--gray-900);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  /* ── NOTICES ── */
+  .notice {
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 16px 0;
+    font-size: 13px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .notice-icon { flex-shrink: 0; margin-top: 1px; }
+  .notice a { color: inherit; }
+  .notice.info     { background: var(--et-pale-purple); color: #3d1a9e; border-left: 3px solid var(--et-purple); }
+  .notice.tip      { background: #eaf6f1; color: #1a6b50; border-left: 3px solid #268e6c; }
+  .notice.warning  { background: #fff4e5; color: #8a4b08; border-left: 3px solid #da7b11; }
+
+  /* ── BLOCKS GRID ── */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+  .skill-card { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; padding: 14px 16px; }
+  .skill-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .skill-tag {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+  .tag-js  { background: #fff8d6; color: #8a5e00; }
+  .tag-core{ background: var(--gray-100); color: var(--gray-700); }
+  .tag-poli{ background: var(--et-pale-purple); color: var(--et-purple-text); }
+  .tag-idle{ background: #fff4e5; color: #8a4b08; }
+  .skill-card-name { font-size: 13px; font-weight: 700; color: var(--gray-900); font-family: var(--mono); }
+  .skill-card-desc { font-size: 12px; color: var(--gray-600); line-height: 1.5; }
+
+  /* ── PIPELINE DIAGRAM ── */
+  .arch-diagram { border: 1px solid var(--gray-200); border-radius: 8px; padding: 24px; background: var(--gray-75); margin: 16px 0; }
+  .arch-row { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+  .arch-node { padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; text-align: center; min-width: 110px; }
+  .arch-arrow { font-size: 18px; color: var(--gray-400); }
+
+  /* ── TABLE ── */
+  .spec-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+  .spec-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--gray-600);
+    padding: 8px 12px;
+    border-bottom: 2px solid var(--gray-200);
+    background: var(--gray-75);
+  }
+  .spec-table td { padding: 9px 12px; border-bottom: 1px solid var(--gray-200); color: var(--gray-800); vertical-align: top; }
+  .spec-table tr:last-child td { border-bottom: none; }
+  .spec-table td:first-child { font-weight: 700; color: var(--gray-900); }
+
+  /* ── STAT ROW ── */
+  .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 16px 0; }
+  .stat-card { border: 1px solid var(--gray-200); border-radius: 8px; padding: 16px; background: var(--gray-75); }
+  .stat-num { font-size: 26px; font-weight: 700; color: var(--et-purple); line-height: 1.1; }
+  .stat-label { font-size: 12px; color: var(--gray-600); margin-top: 4px; }
+
+  /* ── SWATCHES ── */
+  .swatch-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 12px 0; }
+  .swatch { border: 1px solid var(--gray-200); border-radius: 8px; overflow: hidden; font-size: 12px; }
+  .swatch-chip { height: 44px; }
+  .swatch-meta { padding: 8px 10px; }
+  .swatch-meta strong { display: block; color: var(--gray-900); }
+  .swatch-meta code { font-family: var(--mono); color: var(--gray-600); }
+
+  /* ── FOOTER ── */
+  .doc-footer {
+    border-top: 1px solid var(--gray-200);
+    margin-top: 40px;
+    padding-top: 20px;
+    font-size: 12px;
+    color: var(--gray-500);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .doc-footer a { text-decoration: none; }
+
+  /* ── STATUS PILLS ── */
+  .nav-status {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 1px 6px;
+    border-radius: 8px;
+    text-transform: uppercase;
+  }
+  .ns-progress { background: #fff4e5; color: #8a4b08; }
+  .ns-planned  { background: var(--gray-200); color: var(--gray-600); }
+  .ns-done     { background: #eaf6f1; color: #1a6b50; }
+
+  .status-badge {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 3px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+  }
+  .sb-progress { background: #fff4e5; color: #8a4b08; }
+  .sb-planned  { background: var(--gray-100); color: var(--gray-600); }
+  .sb-done     { background: #eaf6f1; color: #1a6b50; }
+
+  /* ── CHECKLIST ── */
+  .checklist { list-style: none; display: flex; flex-direction: column; gap: 10px; margin: 4px 0; }
+  .check-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 14px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    background: var(--gray-50);
+  }
+  .check-mark {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+  .check-mark svg { width: 12px; height: 12px; }
+  .cm-done    { background: #eaf6f1; color: #268e6c; }
+  .cm-partial { background: #fff4e5; color: #da7b11; }
+  .cm-todo    { background: var(--gray-100); color: var(--gray-500); }
+  .check-body { flex: 1; }
+  .check-title { font-weight: 700; font-size: 13px; color: var(--gray-900); }
+  .check-note  { font-size: 12px; color: var(--gray-600); line-height: 1.5; }
+
+  .req-list { margin: 8px 0 0 18px; font-size: 13px; color: var(--gray-700); }
+  .req-list li { margin-bottom: 4px; }
+
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { padding: 24px 20px 60px; }
+    .page-hero h1 { font-size: 24px; }
+    .url-grid { grid-template-columns: 1fr; }
+    .topnav-title { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a class="topnav-logo" href="#overview">
+    <span class="mark">E*</span>
+    E*TRADE
+  </a>
+  <div class="topnav-divider"></div>
+  <span class="topnav-title">us.etrade.com — AEM → EDS Migration · Handoff Playbook</span>
+  <span class="topnav-badge">Handoff</span>
+</nav>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" aria-label="Page navigation">
+    <div class="sidebar-section">
+      <div class="sidebar-label">E*TRADE</div>
+      <a class="sidebar-link active" href="#overview">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h5v5H2zm7 0h5v5H9zM2 9h5v5H2zm7 0h5v5H9z"/></svg>
+        Overview
+      </a>
+      <a class="sidebar-link" href="#use-case">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2.75A.75.75 0 012.75 2h7.5a.75.75 0 01.53.22l3 3a.75.75 0 01.22.53v7.5a.75.75 0 01-.75.75h-10.5a.75.75 0 01-.75-.75V2.75zM5 6.5a.5.5 0 000 1h6a.5.5 0 000-1H5zm0 2.5a.5.5 0 000 1h6a.5.5 0 000-1H5zm0 2.5a.5.5 0 000 1h4a.5.5 0 000-1H5z"/></svg>
+        Use case &amp; requirements
+      </a>
+      <a class="sidebar-link" href="#references">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"/></svg>
+        Key references
+      </a>
+      <a class="sidebar-link" href="#deliverables">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 2A2.5 2.5 0 002 4.5v7A2.5 2.5 0 004.5 14h7a2.5 2.5 0 002.5-2.5v-7A2.5 2.5 0 0011.5 2h-7zM5 5.5A.5.5 0 015.5 5h5a.5.5 0 010 1h-5A.5.5 0 015 5.5zm0 2.5a.5.5 0 01.5-.5h5a.5.5 0 010 1h-5A.5.5 0 015 8zm.5 2a.5.5 0 000 1h3a.5.5 0 000-1h-3z"/></svg>
+        Deliverables
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Site chrome <span class="nav-status ns-progress">In progress</span></div>
+      <a class="sidebar-link" href="#header">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M0 3.75C0 2.784.784 2 1.75 2h12.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0114.25 14H1.75A1.75 1.75 0 010 12.25v-8.5zm1.75-.25a.25.25 0 00-.25.25v.5h13v-.5a.25.25 0 00-.25-.25H1.75zM1.5 5.5v6.75c0 .138.112.25.25.25h12.5a.25.25 0 00.25-.25V5.5h-13z"/></svg>
+        Header &amp; mega-menu
+      </a>
+      <a class="sidebar-link" href="#footer">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M0 3.75C0 2.784.784 2 1.75 2h12.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0114.25 14H1.75A1.75 1.75 0 010 12.25v-8.5zM1.5 10.5v1.75c0 .138.112.25.25.25h12.5a.25.25 0 00.25-.25V10.5h-13z"/></svg>
+        Footer
+      </a>
+      <a class="sidebar-link" href="#brand">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M3 2.5A.5.5 0 013.5 2h9a.5.5 0 01.5.5V4a.5.5 0 01-1 0v-1H8.5v10H10a.5.5 0 010 1H6a.5.5 0 010-1h1.5V3H4v1a.5.5 0 01-1 0V2.5z"/></svg>
+        Brand design system
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Content <span class="nav-status ns-done">Complete</span></div>
+      <a class="sidebar-link" href="#import">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a.75.75 0 01.75.75v6.19l1.72-1.72a.75.75 0 111.06 1.06l-3 3a.75.75 0 01-1.06 0l-3-3a.75.75 0 011.06-1.06l1.72 1.72V1.75A.75.75 0 018 1zM2.75 12a.75.75 0 01.75.75v.75h9v-.75a.75.75 0 011.5 0v1.5a.75.75 0 01-.75.75h-11a.75.75 0 01-.75-.75v-1.5A.75.75 0 012.75 12z"/></svg>
+        Page import
+      </a>
+      <a class="sidebar-link" href="#templates">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0114.25 15H1.75A1.75 1.75 0 010 13.25V2.75C0 1.784.784 1 1.75 1zM1.5 4v9.25c0 .138.112.25.25.25h12.5a.25.25 0 00.25-.25V4h-13z"/></svg>
+        Page templates
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Design <span class="nav-status ns-progress">In progress</span></div>
+      <a class="sidebar-link" href="#fidelity">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M11.742 10.344a6.5 6.5 0 10-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 001.415-1.414l-3.85-3.85a1 1 0 00-.115-.099zM12 6.5a5.5 5.5 0 11-11 0 5.5 5.5 0 0111 0z"/></svg>
+        Visual fidelity
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Handoff</div>
+      <a class="sidebar-link" href="#decisions">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 4.5A2.5 2.5 0 014.5 2h7A2.5 2.5 0 0114 4.5v5a2.5 2.5 0 01-2.5 2.5H6.7l-3 2.4A.5.5 0 013 14v-2H4.5A2.5 2.5 0 012 9.5v-5z"/></svg>
+        Decisions &amp; assumptions
+      </a>
+      <a class="sidebar-link" href="#limitations">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0114.082 15H1.918a1.75 1.75 0 01-1.543-2.575L6.457 1.047zM8 5a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 008 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg>
+        Known limitations
+      </a>
+      <a class="sidebar-link" href="#next-steps">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8.22 2.97a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06l2.97-2.97H3.75a.75.75 0 010-1.5h7.44L8.22 4.03a.75.75 0 010-1.06z"/></svg>
+        Next steps
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Reference</div>
+      <a class="sidebar-link" href="#blocks">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3.5A1.5 1.5 0 012.5 2h2A1.5 1.5 0 016 3.5v2A1.5 1.5 0 014.5 7h-2A1.5 1.5 0 011 5.5v-2zm5.5 0A1.5 1.5 0 018 2h2a1.5 1.5 0 011.5 1.5v2A1.5 1.5 0 0110 7H8A1.5 1.5 0 016.5 5.5v-2zm-5.5 5A1.5 1.5 0 012.5 7h2A1.5 1.5 0 016 8.5v2A1.5 1.5 0 014.5 12h-2A1.5 1.5 0 011 10.5v-2zm5.5 0A1.5 1.5 0 018 7h2a1.5 1.5 0 011.5 1.5v2A1.5 1.5 0 0110 12H8A1.5 1.5 0 016.5 10.5v-2z"/></svg>
+        Block library
+      </a>
+      <a class="sidebar-link" href="#dev-notes">
+        <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
+        Developer notes
+      </a>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <div class="main-inner">
+
+      <!-- PAGE HERO -->
+      <div class="page-hero" id="overview">
+        <div class="page-hero-eyebrow">E*TRADE · Prospect Site Migration</div>
+        <h1>E*TRADE on Edge Delivery Services</h1>
+        <p class="page-hero-sub">Rebuilding the <strong>us.etrade.com</strong> prospect site on <strong>Adobe Edge Delivery Services</strong>. So far that means importing <strong>7 representative pages</strong> across <strong>5 page templates</strong> into Document Authoring, building <strong>17 custom block variants</strong>, applying the E*TRADE brand design system and matching the production header and mega-menu. This is the <strong>handoff playbook</strong>: what we gathered, what was built, the decisions and assumptions behind it, and what's left to finish.</p>
+      </div>
+
+      <!-- PROJECT OVERVIEW -->
+      <section class="doc-section">
+        <h2>
+          <span class="section-icon icon-ink">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3.5A1.5 1.5 0 012.5 2h2A1.5 1.5 0 016 3.5v2A1.5 1.5 0 014.5 7h-2A1.5 1.5 0 011 5.5v-2zm5.5 0A1.5 1.5 0 018 2h2a1.5 1.5 0 011.5 1.5v2A1.5 1.5 0 0110 7H8A1.5 1.5 0 016.5 5.5v-2zm-5.5 5A1.5 1.5 0 012.5 7h2A1.5 1.5 0 016 8.5v2A1.5 1.5 0 014.5 12h-2A1.5 1.5 0 011 10.5v-2zm5.5 0A1.5 1.5 0 018 7h2a1.5 1.5 0 011.5 1.5v2A1.5 1.5 0 0110 12H8A1.5 1.5 0 016.5 10.5v-2z"/></svg>
+          </span>
+          Project overview
+        </h2>
+        <div class="section-rule"></div>
+        <p>This effort recreates E*TRADE's public <strong>prospect site</strong> (homepage, "What we offer" product pages, account pages and the brand story) on <strong>Adobe Edge Delivery Services (EDS)</strong>, authored through <strong>Document Authoring (DA)</strong>. The source is an AEM site. The target follows the EDS block-based model: every production component maps to an authorable block variant, and each page type has a repeatable import script.</p>
+
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-num">7</div><div class="stat-label">pages imported to DA</div></div>
+          <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">page templates</div></div>
+          <div class="stat-card"><div class="stat-num">17</div><div class="stat-label">custom block variants</div></div>
+          <div class="stat-card"><div class="stat-num">16</div><div class="stat-label">import parsers</div></div>
+        </div>
+
+        <h3>Goals</h3>
+        <ul class="req-list">
+          <li>Recreate the E*TRADE prospect experience on <strong>Edge Delivery Services</strong>, authored in DA.</li>
+          <li>Identify the site's <strong>page templates</strong> and import a representative page for each.</li>
+          <li>Model every production component (heroes, pricing tiles, product cards, calculators, tabs, FAQ) as an <strong>authorable block</strong>.</li>
+          <li>Match E*TRADE's <strong>brand identity</strong>: GraphikETRADE typeface, purple accent, near-black dark surfaces, header and footer.</li>
+        </ul>
+
+        <h3>Approach</h3>
+        <ul class="req-list">
+          <li>EDS <strong>block-based development only</strong>, with one block variant per production pattern (<code class="code-inline">hero-dark</code>, <code class="code-inline">cards-pricing</code>, …).</li>
+          <li>Pages grouped into <strong>templates</strong> in <code class="code-inline">tools/importer/page-templates.json</code>. Each template carries DOM selectors for its sections and block instances.</li>
+          <li>Content imported by <strong>per-template import scripts</strong> (parsers + transformers) run against committed source snapshots, so imports are repeatable.</li>
+          <li>Design values <strong>extracted from the live site's computed styles</strong>, not eyeballed, then refined by side-by-side comparison.</li>
+        </ul>
+
+        <h3>Workstreams</h3>
+        <table class="spec-table">
+          <thead><tr><th>Workstream</th><th>What it delivers</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><a href="#header">Site chrome</a></td><td>E*TRADE header, mega-menu with promo rail, and footer</td><td><span class="nav-status ns-progress">In progress</span></td></tr>
+            <tr><td><a href="#brand">Brand design system</a></td><td>GraphikETRADE, color tokens, dark sections, buttons, type scale</td><td><span class="nav-status ns-done">Complete</span></td></tr>
+            <tr><td><a href="#import">Content import</a></td><td>7 pages across 5 templates imported to DA and previewed</td><td><span class="nav-status ns-done">Complete</span></td></tr>
+            <tr><td><a href="#blocks">Block build-out</a></td><td>17 custom block variants with brand styling</td><td><span class="nav-status ns-done">Complete</span></td></tr>
+            <tr><td><a href="#fidelity">Visual fidelity</a></td><td>Pixel-match against production. Homepage hero and header done, other pages still to do</td><td><span class="nav-status ns-progress">In progress</span></td></tr>
+            <tr><td><a href="#next-steps">Release</a></td><td>Merge <code class="code-inline">etrade-migration-buildout</code> to <code class="code-inline">main</code>, publish content</td><td><span class="nav-status ns-planned">Planned</span></td></tr>
+          </tbody>
+        </table>
+
+        <div class="notice info">
+          <svg class="notice-icon" width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"/></svg>
+          <span><strong>Progress to date.</strong> All <strong>7 pages</strong> are imported into DA and preview successfully. The <a href="#brand">brand design system</a> is applied site-wide. The <a href="#header">header</a> matches production, including utility bar, five primary menus, full-width mega-menu panels and the "Open an account" CTA. The <strong>homepage hero</strong> has been pixel-matched. The <a href="#footer">footer</a> is still the boilerplate one, and all code is on the <code class="code-inline">etrade-migration-buildout</code> branch, not yet merged to <code class="code-inline">main</code>.</span>
+        </div>
+
+        <table class="spec-table" style="margin-top:16px;">
+          <thead><tr><th>Attribute</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Effort</td><td>us.etrade.com (AEM) → Edge Delivery Services migration</td></tr>
+            <tr><td>GitHub repo</td><td><code class="code-inline">AdobeDrago/etrade</code> · working branch <code class="code-inline">etrade-migration-buildout</code></td></tr>
+            <tr><td>Authoring</td><td>Document Authoring: <code class="code-inline">adobedrago/etrade</code></td></tr>
+            <tr><td>Dev model</td><td>EDS block-based only</td></tr>
+            <tr><td>Brand typeface</td><td>GraphikETRADE 400 / 500 / 600 (served from E*TRADE's CDN)</td></tr>
+            <tr><td>Brand color</td><td><code class="code-inline">#5627d8</code> (E*TRADE purple) · dark surface <code class="code-inline">#121213</code></td></tr>
+            <tr><td>Content source</td><td>us.etrade.com, 7 representative prospect pages</td></tr>
+            <tr><td>Reference site</td><td>us.etrade.com/home</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- USE CASE & REQUIREMENTS -->
+      <section class="doc-section" id="use-case">
+        <h2>
+          <span class="section-icon icon-ink">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2.75A.75.75 0 012.75 2h7.5a.75.75 0 01.53.22l3 3a.75.75 0 01.22.53v7.5a.75.75 0 01-.75.75h-10.5a.75.75 0 01-.75-.75V2.75zM5 6.5a.5.5 0 000 1h6a.5.5 0 000-1H5zm0 2.5a.5.5 0 000 1h6a.5.5 0 000-1H5zm0 2.5a.5.5 0 000 1h4a.5.5 0 000-1H5z"/></svg>
+          </span>
+          Use case &amp; requirements
+        </h2>
+        <div class="section-rule"></div>
+        <p><strong>Use case.</strong> Recreate E*TRADE's marketing / prospect site, the pages that sell accounts, platforms and pricing to new investors, on Edge Delivery Services, authored in Document Authoring. The work so far covers one representative page per template, plus the chrome and design system every future page will inherit.</p>
+
+        <h3>Requirements gathered</h3>
+        <table class="spec-table">
+          <thead><tr><th>Area</th><th>What we found</th></tr></thead>
+          <tbody>
+            <tr><td>Source platform</td><td>AEM (<code class="code-inline">etc.clientlibs/prospect/…</code>). Page body lives under <code class="code-inline">div.root.maincontainer.responsivegrid</code>, with each band a <code class="code-inline">componentContainer</code>.</td></tr>
+            <tr><td>Pages in scope</td><td><code class="code-inline">/home</code>, <code class="code-inline">/platforms</code>, <code class="code-inline">/what-we-offer/investment-choices</code>, <code class="code-inline">/what-we-offer/pricing-and-rates</code>, <code class="code-inline">/what-we-offer/our-accounts</code>, <code class="code-inline">/what-we-offer/our-accounts/brokerage-account</code>, <code class="code-inline">/why-etrade</code>.</td></tr>
+            <tr><td>Templates</td><td>5 distinct layouts: <strong>home</strong>, <strong>what-we-offer</strong> (3 pages), <strong>what-we-offer-2</strong> (Our Accounts), <strong>our-accounts</strong> (account detail), <strong>why-etrade</strong>. See <a href="#templates">Page templates</a>.</td></tr>
+            <tr><td>Visual language</td><td>Alternating <strong>near-black dark bands</strong> (<code class="code-inline">#121213</code> / <code class="code-inline">#1c1a1e</code>) and light bands (<code class="code-inline">#fafafa</code>), purple accents, 16px rounded cards and imagery.</td></tr>
+            <tr><td>Interactive components</td><td>Funding / bonus <strong>calculator slider</strong>, tabbed <strong>account selector</strong>, "Our story" <strong>carousel</strong>, <strong>FAQ accordions</strong>, hover <strong>mega-menus</strong>.</td></tr>
+            <tr><td>Page noise</td><td>OneTrust consent overlays, device-fingerprint / tracking elements (<code class="code-inline">#RSADevicePrint</code>, <code class="code-inline">#DeviceTokenFSO</code>) and inline <code class="code-inline">onclick</code> / <code class="code-inline">data-track</code> attributes, all removed on import.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Supporting analysis</h3>
+        <p>Each page was analyzed for section boundaries and component patterns, then grouped by structural similarity. The three "What we offer" landing pages share one layout (dark hero, promo banners, platform/product card grids), so a <strong>single import script covers all three</strong>. The other templates each have one representative page. Source HTML for all 7 pages is committed under <code class="code-inline">tools/importer/bd-snapshots/</code> so imports can be re-run without going back to the live site.</p>
+      </section>
+
+      <!-- KEY REFERENCES -->
+      <section class="doc-section" id="references">
+        <h2>
+          <span class="section-icon icon-purple">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"/></svg>
+          </span>
+          Key references
+        </h2>
+        <div class="section-rule"></div>
+        <p>The four places the migration lives: the rendered preview, the authoring surface, the code, and the production site it's matched against.</p>
+        <div class="url-grid">
+          <a class="url-card" href="https://etrade-migration-buildout--etrade--adobedrago.aem.page/home" target="_blank" rel="noopener">
+            <span class="url-card-label"><span class="dot dot-purple"></span>EDS Preview</span>
+            <span class="url-card-title">Homepage (rendered)</span>
+            <span class="url-card-url">etrade-migration-buildout--etrade--adobedrago.aem.page/home</span>
+            <span class="url-card-desc">The working branch rendered against DA content.</span>
+          </a>
+          <a class="url-card" href="https://da.live/#/adobedrago/etrade" target="_blank" rel="noopener">
+            <span class="url-card-label"><span class="dot dot-ink"></span>Document Authoring</span>
+            <span class="url-card-title">adobedrago / etrade</span>
+            <span class="url-card-url">da.live/#/adobedrago/etrade</span>
+            <span class="url-card-desc">Where authors edit pages, blocks, nav and footer.</span>
+          </a>
+          <a class="url-card" href="https://github.com/AdobeDrago/etrade" target="_blank" rel="noopener">
+            <span class="url-card-label"><span class="dot dot-green"></span>GitHub</span>
+            <span class="url-card-title">AdobeDrago/etrade</span>
+            <span class="url-card-url">github.com/AdobeDrago/etrade</span>
+            <span class="url-card-desc">Blocks, styles, import scripts and the PR queue.</span>
+          </a>
+          <a class="url-card" href="https://us.etrade.com/home" target="_blank" rel="noopener">
+            <span class="url-card-label"><span class="dot dot-orange"></span>Production</span>
+            <span class="url-card-title">us.etrade.com</span>
+            <span class="url-card-url">us.etrade.com/home</span>
+            <span class="url-card-desc">The source of truth for content and design.</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- DELIVERABLES -->
+      <section class="doc-section" id="deliverables">
+        <h2>
+          <span class="section-icon icon-green">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg>
+          </span>
+          Deliverables
+        </h2>
+        <div class="section-rule"></div>
+        <p>What shipped, at a glance.</p>
+        <ul class="checklist">
+          <li class="check-item">
+            <span class="check-mark cm-done"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg></span>
+            <div class="check-body"><div class="check-title">Site analysis &amp; 5 page templates</div><div class="check-note">7 pages analyzed and grouped into 5 templates, with DOM selectors for every section and block instance recorded in <code class="code-inline">page-templates.json</code>.</div></div>
+          </li>
+          <li class="check-item">
+            <span class="check-mark cm-done"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg></span>
+            <div class="check-body"><div class="check-title">Import infrastructure</div><div class="check-note">16 block parsers, 2 site-wide transformers (<code class="code-inline">etrade-cleanup</code>, <code class="code-inline">etrade-sections</code>) and 5 per-template import scripts.</div></div>
+          </li>
+          <li class="check-item">
+            <span class="check-mark cm-done"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg></span>
+            <div class="check-body"><div class="check-title">7 pages imported to DA</div><div class="check-note">Home, Platforms, Investment Choices, Pricing &amp; Rates, Our Accounts, Brokerage Account and Why E*TRADE. All preview successfully.</div></div>
+          </li>
+          <li class="check-item">
+            <span class="check-mark cm-done"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg></span>
+            <div class="check-body"><div class="check-title">17 custom block variants</div><div class="check-note">Heroes (dark / light / product), 8 card variants, feature columns, tabs, story carousel, FAQ accordion, offer banner and funding calculator.</div></div>
+          </li>
+          <li class="check-item">
+            <span class="check-mark cm-done"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg></span>
+            <div class="check-body"><div class="check-title">E*TRADE brand design system</div><div class="check-note"><code class="code-inline">styles/brand.css</code>: GraphikETRADE, color tokens, dark section style and purple buttons, all extracted from production computed styles.</div></div>
+          </li>
+          <li class="check-item">
+            <span class="check-mark cm-done"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg></span>
+            <div class="check-body"><div class="check-title">Production header &amp; mega-menu</div><div class="check-note">Utility bar, 5 primary menus, full-width multi-column mega-menu panels with a promo rail, and the "Open an account" CTA. Responsive hamburger on mobile.</div></div>
+          </li>
+          <li class="check-item">
+            <span class="check-mark cm-partial"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 5a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 008 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg></span>
+            <div class="check-body"><div class="check-title">Homepage pixel-match</div><div class="check-note">Hero overlay, header and pricing / award / feature blocks tuned against production. Other pages are still at MVP fidelity.</div></div>
+          </li>
+          <li class="check-item">
+            <span class="check-mark cm-todo"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 8a.75.75 0 01.75-.75h6.5a.75.75 0 010 1.5h-6.5A.75.75 0 014 8z"/></svg></span>
+            <div class="check-body"><div class="check-title">Footer</div><div class="check-note">Not yet migrated. The site still renders the boilerplate footer.</div></div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- HEADER -->
+      <section class="doc-section" id="header">
+        <h2>
+          <span class="section-icon icon-seafoam">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M0 3.75C0 2.784.784 2 1.75 2h12.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0114.25 14H1.75A1.75 1.75 0 010 12.25v-8.5zm1.75-.25a.25.25 0 00-.25.25v.5h13v-.5a.25.25 0 00-.25-.25H1.75zM1.5 5.5v6.75c0 .138.112.25.25.25h12.5a.25.25 0 00.25-.25V5.5h-13z"/></svg>
+          </span>
+          Header &amp; mega-menu
+          <span class="status-badge sb-done">Complete</span>
+        </h2>
+        <div class="section-rule"></div>
+        <p>The boilerplate nav was replaced with E*TRADE's production header. It's authored as the <code class="code-inline">nav</code> document in DA and decorated by <code class="code-inline">blocks/header/</code>, so authors change menus and promos without touching code.</p>
+        <ul class="req-list">
+          <li><strong>Utility bar</strong>: Log on, View Stock Plans and a Customer Service &amp; Support dropdown (Contact Us, FAQs, Forms and Applications).</li>
+          <li><strong>Brand</strong>: the E*TRADE from Morgan Stanley logo (33px high, as on production).</li>
+          <li><strong>Primary nav</strong>: 5 menus that open <strong>full-width mega-menu panels</strong>. <code class="code-inline">header.js</code> splits each panel into a 3-column link grid plus a <strong>260px promo rail</strong> with a capped image.</li>
+          <li><strong>Tools</strong>: the "Open an account" CTA, styled to production (2px radius, 8px × 15px padding, 15px / 500).</li>
+          <li><strong>Mobile</strong>: hamburger toggle below desktop width. Panels stay hidden by default and open on hover or expand.</li>
+        </ul>
+        <div class="notice tip">
+          <svg class="notice-icon" width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 01-1.484.211c-.04-.282-.163-.547-.37-.847a8.695 8.695 0 00-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.75.75 0 01-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75zM6 15.25a.75.75 0 01.75-.75h2.5a.75.75 0 010 1.5h-2.5a.75.75 0 01-.75-.75zM5.75 12a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5h-4.5z"/></svg>
+          <span>The header loads the nav document with a <strong>metadata-independent fetch</strong>, so it renders on every page even when the page doesn't set a <code class="code-inline">nav</code> metadata value.</span>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <section class="doc-section" id="footer">
+        <h2>
+          <span class="section-icon icon-seafoam">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M0 3.75C0 2.784.784 2 1.75 2h12.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0114.25 14H1.75A1.75 1.75 0 010 12.25v-8.5zM1.5 10.5v1.75c0 .138.112.25.25.25h12.5a.25.25 0 00.25-.25V10.5h-13z"/></svg>
+          </span>
+          Footer
+          <span class="status-badge sb-planned">Planned</span>
+        </h2>
+        <div class="section-rule"></div>
+        <p>The footer has not been migrated yet. The <code class="code-inline">footer</code> document in DA still holds the boilerplate Adobe copyright and legal links, and <code class="code-inline">blocks/footer/</code> is unchanged from the template.</p>
+        <div class="notice warning">
+          <svg class="notice-icon" width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0114.082 15H1.918a1.75 1.75 0 01-1.543-2.575L6.457 1.047zM8 5a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 008 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg>
+          <span>E*TRADE's footer carries <strong>regulatory disclosures</strong> (FINRA / SIPC, Morgan Stanley affiliation). Treat it as a compliance deliverable: migrate its copy verbatim and have it reviewed before go-live.</span>
+        </div>
+      </section>
+
+      <!-- BRAND -->
+      <section class="doc-section" id="brand">
+        <h2>
+          <span class="section-icon icon-purple">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 2.5A.5.5 0 013.5 2h9a.5.5 0 01.5.5V4a.5.5 0 01-1 0v-1H8.5v10H10a.5.5 0 010 1H6a.5.5 0 010-1h1.5V3H4v1a.5.5 0 01-1 0V2.5z"/></svg>
+          </span>
+          Brand design system
+          <span class="status-badge sb-done">Complete</span>
+        </h2>
+        <div class="section-rule"></div>
+        <p>All brand tokens live in <code class="code-inline">styles/brand.css</code>, which <code class="code-inline">styles/styles.css</code> imports and maps onto the standard EDS variables (<code class="code-inline">--text-color</code>, <code class="code-inline">--link-color</code>, <code class="code-inline">--body-font-family</code>, …). Values were read from us.etrade.com with <code class="code-inline">getComputedStyle</code>.</p>
+        <div class="swatch-row">
+          <div class="swatch"><div class="swatch-chip" style="background:#5627d8"></div><div class="swatch-meta"><strong>Accent / link</strong><code>#5627d8</code></div></div>
+          <div class="swatch"><div class="swatch-chip" style="background:#451fad"></div><div class="swatch-meta"><strong>Hover / active</strong><code>#451fad</code></div></div>
+          <div class="swatch"><div class="swatch-chip" style="background:#ab80ff"></div><div class="swatch-meta"><strong>Link on dark</strong><code>#ab80ff</code></div></div>
+          <div class="swatch"><div class="swatch-chip" style="background:#121213"></div><div class="swatch-meta"><strong>Dark surface</strong><code>#121213</code></div></div>
+          <div class="swatch"><div class="swatch-chip" style="background:#1c1a1e"></div><div class="swatch-meta"><strong>Header / feature</strong><code>#1c1a1e</code></div></div>
+          <div class="swatch"><div class="swatch-chip" style="background:#fafafa"></div><div class="swatch-meta"><strong>Light surface</strong><code>#fafafa</code></div></div>
+        </div>
+        <ul class="req-list">
+          <li><strong>Typeface:</strong> GraphikETRADE Regular / Medium / Semibold for both body and headings, with a <code class="code-inline">'Helvetica Neue', helvetica, arial</code> fallback.</li>
+          <li><strong>Type scale:</strong> 16px body copy. Headings run 36 → 18px on mobile and 48 → 20px from 900px up, matching E*TRADE's header scale. h1 uses −1px letter-spacing.</li>
+          <li><strong>Dark sections:</strong> authors set <code class="code-inline">Style: dark</code> in Section Metadata. The import transformer does this automatically for the dark bands on production.</li>
+          <li><strong>Buttons:</strong> purple filled primary (2px radius, 8px × 15px padding). Text links on dark surfaces switch to <code class="code-inline">#ab80ff</code>.</li>
+        </ul>
+        <div class="code-block"><span class="cmt">/* styles/brand.css — E*TRADE brand tokens */</span>
+<span class="kw">:root</span> {
+  <span class="var">--brand-font-family</span>: graphiketrade, <span class="str">'Helvetica Neue'</span>, helvetica, arial, sans-serif;
+  <span class="var">--brand-accent</span>: #5627d8;
+  <span class="var">--brand-link-on-dark</span>: #ab80ff;
+  <span class="var">--brand-dark-bg</span>: #121213;
+  <span class="var">--brand-dark-bg-alt</span>: #1c1a1e;
+  <span class="var">--brand-light-bg</span>: #fafafa;
+}</div>
+      </section>
+
+      <!-- PAGE IMPORT -->
+      <section class="doc-section" id="import">
+        <h2>
+          <span class="section-icon icon-blue">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a.75.75 0 01.75.75v6.19l1.72-1.72a.75.75 0 111.06 1.06l-3 3a.75.75 0 01-1.06 0l-3-3a.75.75 0 011.06-1.06l1.72 1.72V1.75A.75.75 0 018 1zM2.75 12a.75.75 0 01.75.75v.75h9v-.75a.75.75 0 011.5 0v1.5a.75.75 0 01-.75.75h-11a.75.75 0 01-.75-.75v-1.5A.75.75 0 012.75 12z"/></svg>
+          </span>
+          Page import
+          <span class="status-badge sb-done">Complete</span>
+        </h2>
+        <div class="section-rule"></div>
+        <p>Each page is imported by its template's script in <code class="code-inline">tools/importer/</code>. The script cleans the source DOM, inserts section breaks and Section Metadata, then hands each matched component to its block parser. The resulting document goes to DA and is previewed.</p>
+        <div class="arch-diagram">
+          <div class="arch-row">
+            <span class="arch-node" style="background:#fff4e5;color:#8a4b08;">source snapshot</span>
+            <span class="arch-arrow">→</span>
+            <span class="arch-node" style="background:#ececee;color:#121213;">etrade-cleanup</span>
+            <span class="arch-arrow">→</span>
+            <span class="arch-node" style="background:#e6f4f4;color:#16878c;">etrade-sections</span>
+            <span class="arch-arrow">→</span>
+            <span class="arch-node" style="background:#f1ecfd;color:#5627d8;">block parsers</span>
+            <span class="arch-arrow">→</span>
+            <span class="arch-node" style="background:#eaf6f1;color:#1a6b50;">DA + preview</span>
+          </div>
+        </div>
+
+        <h3>What was imported</h3>
+        <table class="spec-table">
+          <thead><tr><th>Page</th><th>Template</th><th>Preview</th></tr></thead>
+          <tbody>
+            <tr><td>Home</td><td>home</td><td><a href="https://etrade-migration-buildout--etrade--adobedrago.aem.page/home" target="_blank" rel="noopener"><code class="code-inline">/home</code></a></td></tr>
+            <tr><td>Platforms</td><td>what-we-offer</td><td><a href="https://etrade-migration-buildout--etrade--adobedrago.aem.page/platforms" target="_blank" rel="noopener"><code class="code-inline">/platforms</code></a></td></tr>
+            <tr><td>Investment choices</td><td>what-we-offer</td><td><a href="https://etrade-migration-buildout--etrade--adobedrago.aem.page/what-we-offer/investment-choices" target="_blank" rel="noopener"><code class="code-inline">/what-we-offer/investment-choices</code></a></td></tr>
+            <tr><td>Pricing &amp; rates</td><td>what-we-offer</td><td><a href="https://etrade-migration-buildout--etrade--adobedrago.aem.page/what-we-offer/pricing-and-rates" target="_blank" rel="noopener"><code class="code-inline">/what-we-offer/pricing-and-rates</code></a></td></tr>
+            <tr><td>Our accounts</td><td>what-we-offer-2</td><td><a href="https://etrade-migration-buildout--etrade--adobedrago.aem.page/what-we-offer/our-accounts" target="_blank" rel="noopener"><code class="code-inline">/what-we-offer/our-accounts</code></a></td></tr>
+            <tr><td>Brokerage account</td><td>our-accounts</td><td><a href="https://etrade-migration-buildout--etrade--adobedrago.aem.page/what-we-offer/our-accounts/brokerage-account" target="_blank" rel="noopener"><code class="code-inline">/what-we-offer/our-accounts/brokerage-account</code></a></td></tr>
+            <tr><td>Why E*TRADE</td><td>why-etrade</td><td><a href="https://etrade-migration-buildout--etrade--adobedrago.aem.page/why-etrade" target="_blank" rel="noopener"><code class="code-inline">/why-etrade</code></a></td></tr>
+          </tbody>
+        </table>
+
+        <h3>Engineering notes</h3>
+        <ul class="req-list">
+          <li><strong>Cleanup before parsing:</strong> <code class="code-inline">etrade-cleanup</code> strips OneTrust overlays, site header / footer, skip links, device-fingerprint elements, iframes / scripts, and inline <code class="code-inline">onclick</code> / <code class="code-inline">data-track*</code> attributes before any parser runs.</li>
+          <li><strong>Section breaks in two passes:</strong> <code class="code-inline">etrade-sections</code> inserts <code class="code-inline">&lt;hr&gt;</code> markers in <code class="code-inline">beforeTransform</code>, while every section element still exists, and anchors Section Metadata in <code class="code-inline">afterTransform</code>, after parsers may have replaced those elements.</li>
+          <li><strong>Selector fallbacks:</strong> each section and block in <code class="code-inline">page-templates.json</code> lists several candidate selectors (e.g. <code class="code-inline">:has(.hero-banner-overlay)</code>, then <code class="code-inline">:nth-child(1)</code>). The first match wins, so small markup changes don't break the import.</li>
+          <li><strong>Bundles:</strong> the <code class="code-inline">home</code> and <code class="code-inline">what-we-offer</code> scripts are bundled (<code class="code-inline">*.bundle.js</code>) with import reports in <code class="code-inline">tools/importer/reports/</code>.</li>
+        </ul>
+      </section>
+
+      <!-- TEMPLATES -->
+      <section class="doc-section" id="templates">
+        <h2>
+          <span class="section-icon icon-blue">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M1.75 1h12.5c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0114.25 15H1.75A1.75 1.75 0 010 13.25V2.75C0 1.784.784 1 1.75 1zM1.5 4v9.25c0 .138.112.25.25.25h12.5a.25.25 0 00.25-.25V4h-13z"/></svg>
+          </span>
+          Page templates
+          <span class="status-badge sb-done">Complete</span>
+        </h2>
+        <div class="section-rule"></div>
+        <p>Five templates cover the pages in scope. New E*TRADE pages that match one of these layouts can be imported by adding their URL to the template and re-running its script.</p>
+        <table class="spec-table">
+          <thead><tr><th>Template</th><th>Layout</th><th>Blocks</th></tr></thead>
+          <tbody>
+            <tr><td>home</td><td>Dark IPO hero, bonus offer + funding calculator, dark product features, pricing stats + product cards, awards, FAQ (7 sections)</td><td><code class="code-inline">hero-dark</code> <code class="code-inline">widget-calculator</code> <code class="code-inline">columns-feature</code> <code class="code-inline">cards-pricing</code> <code class="code-inline">cards-product</code> <code class="code-inline">cards-award</code> <code class="code-inline">accordion-faq</code></td></tr>
+            <tr><td>what-we-offer</td><td>Dark hero, dark promo / bonus banners (default content), light platform and product card grids (5 sections, 3 pages)</td><td><code class="code-inline">hero-dark</code> <code class="code-inline">cards-platform</code></td></tr>
+            <tr><td>what-we-offer-2</td><td>Light intro hero, tabbed account selector with account-card grids, FAQ (3 sections)</td><td><code class="code-inline">hero-light</code> <code class="code-inline">tabs-accounts</code> <code class="code-inline">accordion-faq</code></td></tr>
+            <tr><td>our-accounts</td><td>Dark product hero, pricing tiles, promo banner, three numbered reasons, dark feature, awards, article cards, FAQ (8 sections)</td><td><code class="code-inline">hero-product</code> <code class="code-inline">cards-pricing</code> <code class="code-inline">banner-offer</code> <code class="code-inline">cards-numbered</code> <code class="code-inline">columns-feature</code> <code class="code-inline">cards-article</code> <code class="code-inline">accordion-faq</code></td></tr>
+            <tr><td>why-etrade</td><td>Dark intro feature, "Our story" carousel, "Who we serve" icon grid, promo article cards (4 sections)</td><td><code class="code-inline">columns-feature</code> <code class="code-inline">carousel-story</code> <code class="code-inline">cards-icon</code> <code class="code-inline">cards-article</code></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- VISUAL FIDELITY -->
+      <section class="doc-section" id="fidelity">
+        <h2>
+          <span class="section-icon icon-orange">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M11.742 10.344a6.5 6.5 0 10-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 001.415-1.414l-3.85-3.85a1 1 0 00-.115-.099zM12 6.5a5.5 5.5 0 11-11 0 5.5 5.5 0 0111 0z"/></svg>
+          </span>
+          Visual fidelity
+          <span class="status-badge sb-progress">In progress</span>
+        </h2>
+        <div class="section-rule"></div>
+        <p>After the brand layer went on, the homepage was compared side by side with production and adjusted in a series of small commits. Every value comes from production's computed styles.</p>
+        <h3>Homepage hero</h3>
+        <ul class="req-list">
+          <li>The overlay card (copy + CTAs) takes 42% of the container width with <code class="code-inline">0 0 16px 16px</code> radius. <code class="code-inline">margin-bottom: -180px</code> pulls the 16px-rounded image up <em>behind</em> it, exactly as production does.</li>
+          <li>The h1 sits above the image in a centered container, top-aligned to production's left offset, with no max-width, so it wraps like the original.</li>
+          <li>The authored "Home" breadcrumb above the hero is hidden (it pushed the hero ~90px low), and section top padding is removed so the hero sits flush with the nav.</li>
+          <li>The CTA is a purple filled button. "Learn more" uses <code class="code-inline">#ab80ff</code> with a CSS arrow in place of the <code class="code-inline">arrow_forward</code> icon text.</li>
+        </ul>
+        <h3>Other homepage blocks</h3>
+        <ul class="req-list">
+          <li><code class="code-inline">cards-pricing</code>: 16px radius, <code class="code-inline">#e2e2e2</code> border, 3-up grid from 900px. The grid is applied at section level via <code class="code-inline">:has()</code> because each tile is a separate block.</li>
+          <li><code class="code-inline">cards-award</code>: left-aligned, as on production.</li>
+          <li><code class="code-inline">columns-feature</code>: <code class="code-inline">#1c1a1e</code> background, matching production.</li>
+        </ul>
+        <div class="notice info">
+          <svg class="notice-icon" width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm6.5-.25A.75.75 0 017.25 7h1a.75.75 0 01.75.75v2.75h.25a.75.75 0 010 1.5h-2a.75.75 0 010-1.5h.25v-2h-.25a.75.75 0 01-.75-.75zM8 6a1 1 0 100-2 1 1 0 000 2z"/></svg>
+          <span>The other 6 pages use the same brand-styled blocks but haven't had a dedicated side-by-side pass. Expect spacing and layout differences, especially on Pricing &amp; Rates and Our Accounts (see <a href="#limitations">Known limitations</a>).</span>
+        </div>
+      </section>
+
+      <!-- DECISIONS & ASSUMPTIONS -->
+      <section class="doc-section" id="decisions">
+        <h2>
+          <span class="section-icon icon-purple">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M2 4.5A2.5 2.5 0 014.5 2h7A2.5 2.5 0 0114 4.5v5a2.5 2.5 0 01-2.5 2.5H6.7l-3 2.4A.5.5 0 013 14v-2H4.5A2.5 2.5 0 012 9.5v-5z"/></svg>
+          </span>
+          Decisions &amp; assumptions
+          <span class="status-badge sb-done">Handoff</span>
+        </h2>
+        <div class="section-rule"></div>
+        <p>The choices behind the build. Read these before extending the work.</p>
+        <table class="spec-table">
+          <thead><tr><th>Decision</th><th>Rationale / assumption</th></tr></thead>
+          <tbody>
+            <tr><td>One block variant per production pattern</td><td>Variants like <code class="code-inline">cards-pricing</code>, <code class="code-inline">cards-product</code> and <code class="code-inline">cards-award</code> each map 1:1 to an E*TRADE component. Parsers stay simple and each variant's CSS can match production without side effects. Naming follows <code class="code-inline">{base}-{variant}</code>.</td></tr>
+            <tr><td>Design values from computed styles</td><td>Colors, sizes and spacing were read from the live site with <code class="code-inline">getComputedStyle</code> rather than approximated. Early guesses (e.g. a navy dark surface) were corrected to the measured near-black <code class="code-inline">#121213</code>.</td></tr>
+            <tr><td>Dark bands via Section Metadata</td><td>Dark backgrounds are a section style (<code class="code-inline">Style: dark</code>), not baked into blocks. Authors can put any block on a dark band, and the importer sets it from the template.</td></tr>
+            <tr><td>GraphikETRADE served from E*TRADE's CDN</td><td>The font is referenced from <code class="code-inline">cdn2.etrade.net</code> instead of being self-hosted, pending confirmation that the font license allows redistribution.</td></tr>
+            <tr><td>Nav and footer as authored documents</td><td>The header is decorated from the DA <code class="code-inline">nav</code> document (4 sections: utility, brand, primary menus with promos, tools), so marketing can change menus and promos without a code release.</td></tr>
+            <tr><td>Imports run from committed snapshots</td><td>Source HTML for each page is committed in <code class="code-inline">tools/importer/bd-snapshots/</code>, so imports can be reproduced and diffed without depending on the live site.</td></tr>
+            <tr><td>Non-authorable chrome dropped on import</td><td>Consent overlays, device-fingerprinting elements and tracking attributes aren't carried into DA. Analytics and consent are expected to be re-added centrally (e.g. via <code class="code-inline">delayed.js</code>).</td></tr>
+            <tr><td>Delivery via branch + PR</td><td>All work is on <code class="code-inline">etrade-migration-buildout</code> and ships to <code class="code-inline">main</code> through a PR that includes a <code class="code-inline">{branch}--etrade--adobedrago.aem.page</code> preview link.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- KNOWN LIMITATIONS -->
+      <section class="doc-section" id="limitations">
+        <h2>
+          <span class="section-icon icon-orange">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0114.082 15H1.918a1.75 1.75 0 01-1.543-2.575L6.457 1.047zM8 5a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 008 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg>
+          </span>
+          Known limitations &amp; accepted quirks
+          <span class="status-badge sb-progress">Review</span>
+        </h2>
+        <div class="section-rule"></div>
+        <p>Accepted for this delivery. Each one is a candidate for follow-up before production.</p>
+        <ul class="checklist">
+          <li class="check-item">
+            <span class="check-mark cm-partial"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 5a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 008 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg></span>
+            <div class="check-body"><div class="check-title">Footer is still the boilerplate</div><div class="check-note">The footer document and block haven't been migrated. Every page currently shows the template's Adobe copyright footer. See <a href="#footer">Footer</a>.</div></div>
+          </li>
+          <li class="check-item">
+            <span class="check-mark cm-partial"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 5a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 008 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg></span>
+            <div class="check-body"><div class="check-title">Code not yet on main</div><div class="check-note">All blocks and styles are on <code class="code-inline">etrade-migration-buildout</code>. The <code class="code-inline">main--etrade--adobedrago.aem.page</code> preview renders the imported content with boilerplate code, so use the branch preview until the PR is merged.</div></div>
+          </li>
+          <li class="check-item">
+            <span class="check-mark cm-partial"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 5a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 008 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg></span>
+            <div class="check-body"><div class="check-title">Pricing &amp; Rates fee tables imported as ad-hoc blocks</div><div class="check-note">Fee tables on <a href="https://etrade-migration-buildout--etrade--adobedrago.aem.page/what-we-offer/pricing-and-rates" target="_blank" rel="noopener">Pricing &amp; Rates</a> came through as blocks named after their first header cell (e.g. <code class="code-inline">account-market-value</code>, <code class="code-inline">debit-balance</code>, <code class="code-inline">cryptocurrency-commissions</code>). There's no code for those names, so they render unstyled. They should become a single <code class="code-inline">table</code> block.</div></div>
+          </li>
+          <li class="check-item">
+            <span class="check-mark cm-partial"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 5a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 008 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg></span>
+            <div class="check-body"><div class="check-title">Our Accounts tab selector is flattened</div><div class="check-note">On <a href="https://etrade-migration-buildout--etrade--adobedrago.aem.page/what-we-offer/our-accounts" target="_blank" rel="noopener">Our Accounts</a> the tabbed account selector was imported as plain headings and lists. The <code class="code-inline">tabs-accounts</code> and <code class="code-inline">cards-account</code> blocks exist but aren't used in the content yet. Re-import after bundling <code class="code-inline">import-what-we-offer-2.js</code>.</div></div>
+          </li>
+          <li class="check-item">
+            <span class="check-mark cm-partial"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 5a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 008 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg></span>
+            <div class="check-body"><div class="check-title">Only the homepage is pixel-matched</div><div class="check-note">The other 6 pages are at MVP fidelity: correct blocks and brand styling, but no side-by-side refinement against production yet.</div></div>
+          </li>
+          <li class="check-item">
+            <span class="check-mark cm-partial"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 5a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 008 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg></span>
+            <div class="check-body"><div class="check-title">Three import scripts aren't bundled</div><div class="check-note"><code class="code-inline">import-our-accounts.js</code>, <code class="code-inline">import-what-we-offer-2.js</code> and <code class="code-inline">import-why-etrade.js</code> have no <code class="code-inline">.bundle.js</code> or import report committed, so re-running those imports needs a bundle step first.</div></div>
+          </li>
+          <li class="check-item">
+            <span class="check-mark cm-partial"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 5a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 008 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg></span>
+            <div class="check-body"><div class="check-title">Site root is still the boilerplate page</div><div class="check-note">The E*TRADE homepage lives at <code class="code-inline">/home</code>. The root <code class="code-inline">/</code> (<code class="code-inline">index</code>) still holds the template's sample content.</div></div>
+          </li>
+          <li class="check-item">
+            <span class="check-mark cm-partial"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 5a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 008 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg></span>
+            <div class="check-body"><div class="check-title">Nav links point at pages not migrated yet</div><div class="check-note">Menu items such as <code class="code-inline">/stock-plans</code> and <code class="code-inline">/contact-us</code> are relative paths to pages outside the 7 in scope, so they 404 on the preview.</div></div>
+          </li>
+          <li class="check-item">
+            <span class="check-mark cm-todo"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zM6.05 6.05a1.95 1.95 0 113.31 1.4c-.42.42-.86.86-.86 1.55a.5.5 0 01-1 0c0-1.1.66-1.76 1.15-2.25a.95.95 0 10-1.6-.7.5.5 0 01-1 0zM8 11.5A.75.75 0 108 13a.75.75 0 000-1.5z"/></svg></span>
+            <div class="check-body"><div class="check-title">Font hosting &amp; licensing</div><div class="check-note">GraphikETRADE loads from a versioned E*TRADE CDN path (<code class="code-inline">…/26091021070.0/…</code>) that can change with any E*TRADE release. Confirm the license and self-host the <code class="code-inline">.woff2</code> files in <code class="code-inline">/fonts</code>, which still holds the unused boilerplate Roboto files.</div></div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- NEXT STEPS -->
+      <section class="doc-section" id="next-steps">
+        <h2>
+          <span class="section-icon icon-green">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.22 2.97a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06l2.97-2.97H3.75a.75.75 0 010-1.5h7.44L8.22 4.03a.75.75 0 010-1.06z"/></svg>
+          </span>
+          Next steps
+        </h2>
+        <div class="section-rule"></div>
+        <p>Suggested order to finish the migration:</p>
+        <ul class="req-list">
+          <li><strong>Migrate the footer</strong>, including disclosures and legal links, and get compliance to review it.</li>
+          <li><strong>Fix the two import gaps</strong>: fee tables → <code class="code-inline">table</code> block on Pricing &amp; Rates, and the tabbed selector → <code class="code-inline">tabs-accounts</code> on Our Accounts. Then re-import both.</li>
+          <li><strong>Side-by-side fidelity pass</strong> on the remaining 6 pages, one template at a time.</li>
+          <li><strong>Replace the root page</strong> with the E*TRADE homepage (or redirect <code class="code-inline">/</code> → <code class="code-inline">/home</code>).</li>
+          <li><strong>Self-host GraphikETRADE</strong> once licensing is confirmed, and remove the Roboto files.</li>
+          <li><strong>Open the PR</strong> from <code class="code-inline">etrade-migration-buildout</code> with a branch preview link, merge to <code class="code-inline">main</code>, then publish content separately.</li>
+          <li><strong>Scale out</strong>: discover the rest of the prospect site's URLs, classify them against the 5 templates, and bulk-import the matches.</li>
+        </ul>
+      </section>
+
+      <!-- BLOCK LIBRARY -->
+      <section class="doc-section" id="blocks">
+        <h2>
+          <span class="section-icon icon-ink">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3.5A1.5 1.5 0 012.5 2h2A1.5 1.5 0 016 3.5v2A1.5 1.5 0 014.5 7h-2A1.5 1.5 0 011 5.5v-2zm5.5 0A1.5 1.5 0 018 2h2a1.5 1.5 0 011.5 1.5v2A1.5 1.5 0 0110 7H8A1.5 1.5 0 016.5 5.5v-2zm-5.5 5A1.5 1.5 0 012.5 7h2A1.5 1.5 0 016 8.5v2A1.5 1.5 0 014.5 12h-2A1.5 1.5 0 011 10.5v-2zm5.5 0A1.5 1.5 0 018 7h2a1.5 1.5 0 011.5 1.5v2A1.5 1.5 0 0110 12H8A1.5 1.5 0 016.5 10.5v-2z"/></svg>
+          </span>
+          Block library
+        </h2>
+        <div class="section-rule"></div>
+        <h3>Custom blocks built for E*TRADE</h3>
+        <p>17 net-new block variants, each with brand styling and (except <code class="code-inline">cards-account</code>) a matching import parser. <span class="skill-tag tag-idle" style="vertical-align:middle;">unused</span> marks blocks that exist but aren't in any imported page yet.</p>
+        <div class="skills-grid">
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-js">custom</span><span class="skill-card-name">hero-dark</span></div><div class="skill-card-desc">Dark hero: h1, overlay copy card with CTAs over a 16px-rounded image. Home, Platforms, Investment Choices, Pricing &amp; Rates.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-js">custom</span><span class="skill-card-name">hero-light</span></div><div class="skill-card-desc">Light intro hero for Our Accounts.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-js">custom</span><span class="skill-card-name">hero-product</span></div><div class="skill-card-desc">Dark product hero for account detail pages.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-js">custom</span><span class="skill-card-name">cards-pricing</span></div><div class="skill-card-desc">Pricing stat tiles ($0 commissions, …), 3-up grid at section level.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-js">custom</span><span class="skill-card-name">cards-product</span></div><div class="skill-card-desc">Product "super cards" beside the pricing stats.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-js">custom</span><span class="skill-card-name">cards-platform</span></div><div class="skill-card-desc">Platform / product card grids on "What we offer" pages.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-js">custom</span><span class="skill-card-name">cards-award</span></div><div class="skill-card-desc">Awards and rankings row.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-js">custom</span><span class="skill-card-name">cards-article</span></div><div class="skill-card-desc">Article / promo cards with image, title and link.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-js">custom</span><span class="skill-card-name">cards-icon</span></div><div class="skill-card-desc">"Who we serve" icon-card grid.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-js">custom</span><span class="skill-card-name">cards-numbered</span></div><div class="skill-card-desc">Three numbered reasons with purple markers.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-idle">unused</span><span class="skill-card-name">cards-account</span></div><div class="skill-card-desc">Account cards for the Our Accounts tab panels.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-js">custom</span><span class="skill-card-name">columns-feature</span></div><div class="skill-card-desc">Dark two-column product feature (image + copy) on <code class="code-inline">#1c1a1e</code>.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-idle">unused</span><span class="skill-card-name">tabs-accounts</span></div><div class="skill-card-desc">Tabbed account selector with purple active state.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-js">custom</span><span class="skill-card-name">carousel-story</span></div><div class="skill-card-desc">Scrolling "Our story" timeline carousel with purple nav.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-js">custom</span><span class="skill-card-name">accordion-faq</span></div><div class="skill-card-desc">FAQ accordion with purple expand markers.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-js">custom</span><span class="skill-card-name">banner-offer</span></div><div class="skill-card-desc">Dark promotional bonus banner.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-js">custom</span><span class="skill-card-name">widget-calculator</span></div><div class="skill-card-desc">Interactive funding / bonus calculator slider.</div></div>
+        </div>
+        <h3>Standard EDS blocks in the project</h3>
+        <p>Blocks from the AEM boilerplate. <span class="skill-tag tag-poli" style="vertical-align:middle;">polished</span> marks blocks rewritten for E*TRADE.</p>
+        <div class="skills-grid">
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-poli">polished</span><span class="skill-card-name">header</span></div><div class="skill-card-desc">Two-tier dark bar, mega-menu panels with promo rail, mobile hamburger.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-core">core</span><span class="skill-card-name">footer</span></div><div class="skill-card-desc">Boilerplate, to be migrated.</div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-core">core</span><span class="skill-card-name">hero</span></div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-core">core</span><span class="skill-card-name">cards</span></div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-core">core</span><span class="skill-card-name">columns</span></div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-core">core</span><span class="skill-card-name">fragment</span></div></div>
+          <div class="skill-card"><div class="skill-card-header"><span class="skill-tag tag-core">core</span><span class="skill-card-name">widget</span></div><div class="skill-card-desc">Loads HTML / CSS / JS widgets from <code class="code-inline">/widgets/</code>.</div></div>
+        </div>
+      </section>
+
+      <!-- DEVELOPER NOTES -->
+      <section class="doc-section" id="dev-notes">
+        <h2>
+          <span class="section-icon icon-orange">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
+          </span>
+          Developer notes
+        </h2>
+        <div class="section-rule"></div>
+        <h3>Run it locally</h3>
+        <div class="code-block"><span class="cmt"># local code, previewed content</span>
+npx -y @adobe/aem-cli up          <span class="cmt"># → http://localhost:3000/home</span>
+
+<span class="cmt"># inspect the markup a block receives</span>
+curl -s http://localhost:3000/home.plain.html</div>
+        <h3>Section-level grids with <code class="code-inline">:has()</code></h3>
+        <p>Some production rows (pricing tiles) are imported as several sibling blocks in one section. Their grid is applied to the section, <code class="code-inline">.section:has(&gt; .cards-pricing-wrapper + .cards-pricing-wrapper)</code>, not inside the block. Keep block CSS scoped to <code class="code-inline">.blockname</code>, and treat <code class="code-inline">-wrapper</code> / <code class="code-inline">-container</code> as section classes.</p>
+        <h3>Hero DOM ordering</h3>
+        <p><code class="code-inline">hero-dark</code> reorders its direct wrapper <code class="code-inline">div</code>s with flex <code class="code-inline">order</code> so the h1 sits above the image while the copy card overlaps it. Authors can omit or add cells, so target direct children defensively instead of nth-positions deep in the tree.</p>
+        <h3>Re-running an import</h3>
+        <p>Add URLs to the matching <code class="code-inline">tools/importer/urls-*.txt</code> (or the template in <code class="code-inline">page-templates.json</code>), rebuild the template's <code class="code-inline">.bundle.js</code>, and run the bulk importer against it. Check the generated report under <code class="code-inline">tools/importer/reports/</code> for missed blocks.</p>
+        <h3>This page</h3>
+        <p>This playbook is a single static file, <code class="code-inline">docs/index.html</code>. It's excluded from the EDS site via <code class="code-inline">.hlxignore</code> and published through GitHub Pages (source: <code class="code-inline">main</code> / <code class="code-inline">/docs</code>).</p>
+
+        <div class="doc-footer">
+          <span>E*TRADE · AEM → EDS Migration</span>
+          <span>·</span>
+          <span><a href="https://github.com/AdobeDrago/etrade">AdobeDrago/etrade</a></span>
+          <span>·</span>
+          <span>Built on Adobe Edge Delivery Services</span>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  // Highlight the sidebar link for the section currently in view.
+  const links = [...document.querySelectorAll('.sidebar-link')];
+  const byId = new Map(links.map((a) => [a.getAttribute('href').slice(1), a]));
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const link = byId.get(entry.target.id);
+        if (!link) return;
+        links.forEach((a) => a.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  document.querySelectorAll('.doc-section, .page-hero').forEach((s) => { if (s.id) observer.observe(s); });
+</script>
+
+</body>
+</html>
