@@ -1,0 +1,19 @@
+{
+  "variantName": "hero-dark",
+  "baseBlock": "hero",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Full-bleed dark hero banner with a background image (blue tech/circuit graphic), centered white heading, supporting paragraph, and one or more call-to-action buttons.",
+  "contentPattern": "Single row, single column: background image, H1 heading, paragraph(s), CTA link(s).",
+  "usage": {
+    "pagesUsing": [
+      "/platforms"
+    ],
+    "reuseCount": 1,
+    "lastUsed": "2026-09-20T12:33:20.244Z"
+  },
+  "options": [],
+  "memberVariantIds": [
+    "hero-dark"
+  ],
+  "usageDescription": "Prominent top-of-page banner introducing a primary message with CTAs over a dark background image."
+}

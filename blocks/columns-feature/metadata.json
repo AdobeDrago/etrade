@@ -1,0 +1,25 @@
+{
+  "variantName": "columns-feature",
+  "baseBlock": "columns",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Two-column product feature on a dark background: a product screenshot/image beside an eyebrow, heading, paragraph and CTA buttons.",
+  "contentPattern": "One row, two columns: an image column and a text column (heading, paragraph(s), CTA link(s)). Image can be on either side.",
+  "usage": {
+    "pagesUsing": [
+      "/what-we-offer/our-accounts/brokerage-account"
+    ],
+    "reuseCount": 1,
+    "lastUsed": "2026-09-20T13:20:00.000Z"
+  },
+  "options": [
+    {
+      "name": "image-right",
+      "class": "image-right",
+      "description": "Places the image column on the right (trailing) side instead of the left."
+    }
+  ],
+  "memberVariantIds": [
+    "columns-feature"
+  ],
+  "usageDescription": "Highlight a product or feature with a supporting image next to descriptive copy and CTAs."
+}

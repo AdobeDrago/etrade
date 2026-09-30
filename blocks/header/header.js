@@ -1,4 +1,3 @@
-import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 // media query match that indicates mobile/tablet width
@@ -113,10 +112,10 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
-  // load nav as fragment
-  const navMeta = getMetadata('nav');
-  const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
-  const fragment = await loadFragment(navPath);
+  // load nav as fragment — metadata-independent dual-fetch:
+  // /content first (localhost / aem up), then root (DA/EDS production).
+  let fragment = await loadFragment('/content/nav');
+  if (!fragment) fragment = await loadFragment('/nav');
 
   // decorate nav DOM
   block.textContent = '';
@@ -124,21 +123,80 @@ export default async function decorate(block) {
   nav.id = 'nav';
   while (fragment.firstElementChild) nav.append(fragment.firstElementChild);
 
-  const classes = ['brand', 'sections', 'tools'];
+  // E*TRADE header: 4 sections — utility bar, brand, main nav, tools (CTA)
+  const classes = ['utility', 'brand', 'sections', 'tools'];
   classes.forEach((c, i) => {
     const section = nav.children[i];
     if (section) section.classList.add(`nav-${c}`);
   });
 
   const navBrand = nav.querySelector('.nav-brand');
-  const brandLink = navBrand.querySelector('.button');
-  if (brandLink) {
-    brandLink.className = '';
-    brandLink.closest('.button-container').className = '';
+  if (navBrand) {
+    const brandLink = navBrand.querySelector('.button');
+    if (brandLink) {
+      brandLink.className = '';
+      const bc = brandLink.closest('.button-container');
+      if (bc) bc.className = '';
+    }
+  }
+
+  // Style the CTA in the tools section as the primary purple button.
+  const navTools = nav.querySelector('.nav-tools');
+  if (navTools) {
+    const cta = navTools.querySelector('a');
+    if (cta) cta.classList.add('button', 'primary');
+  }
+
+  // The utility bar's "Customer Service & Support" item is a dropdown.
+  const navUtility = nav.querySelector('.nav-utility');
+  if (navUtility) {
+    navUtility.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((item) => {
+      if (item.querySelector('ul')) item.classList.add('nav-drop');
+      item.addEventListener('click', () => {
+        if (isDesktop.matches) {
+          const expanded = item.getAttribute('aria-expanded') === 'true';
+          item.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        }
+      });
+    });
   }
 
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
+    // Build wide multi-column panels: split each dropdown into a links grid and
+    // (when present) a promo rail with an image card.
+    navSections.querySelectorAll(':scope .default-content-wrapper > ul > li > ul').forEach((panel) => {
+      const items = [...panel.children];
+      const promoItems = items.filter((li) => {
+        const link = li.querySelector(':scope > a');
+        return link && link.querySelector('img');
+      });
+      const linkItems = items.filter((li) => !promoItems.includes(li));
+
+      // Group the plain links into a grid container.
+      const linksGrid = document.createElement('li');
+      linksGrid.className = 'nav-panel-links';
+      const linksUl = document.createElement('ul');
+      linkItems.forEach((li) => linksUl.append(li));
+      linksGrid.append(linksUl);
+      panel.textContent = '';
+      panel.append(linksGrid);
+
+      // Tag promo cards and move them into a right rail.
+      if (promoItems.length) {
+        panel.classList.add('has-promo');
+        const rail = document.createElement('li');
+        rail.className = 'nav-panel-promo';
+        promoItems.forEach((li) => {
+          li.classList.add('nav-promo');
+          const heading = li.querySelector('strong');
+          if (heading) heading.classList.add('nav-promo-title');
+          rail.append(li);
+        });
+        panel.append(rail);
+      }
+    });
+
     navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
       if (navSection.querySelector('ul')) navSection.classList.add('nav-drop');
       navSection.addEventListener('click', () => {

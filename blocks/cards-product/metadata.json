@@ -1,0 +1,10 @@
+{
+  "variantName": "cards-product",
+  "baseBlock": "cards",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Highlighted savings/CD product tiles on a light background: heading, prominent rate/figure, short description, and a CTA link. No images.",
+  "contentPattern": "One row per card, single column: heading, rate, description paragraph(s), CTA link.",
+  "usage": "Feature named financial products with their headline rate and a call to action.",
+  "options": [],
+  "memberVariantIds": ["cards-product"]
+}

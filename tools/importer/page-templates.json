@@ -1,0 +1,358 @@
+{
+  "metadata": {
+    "projectType": "da"
+  },
+  "templates": [
+    {
+      "name": "home",
+      "urls": [
+        "https://us.etrade.com/home"
+      ],
+      "representativeUrl": "https://us.etrade.com/home",
+      "description": "E*TRADE homepage: dark IPO hero, bonus offer + funding calculator, dark product-feature columns, pricing stat and product cards, awards, and an FAQ accordion.",
+      "urlPattern": "/*",
+      "blocks": [
+        {
+          "name": "hero-dark",
+          "instances": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div.componentContainer:has(.hero-banner-overlay)",
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(1)"
+          ]
+        },
+        {
+          "name": "widget-calculator",
+          "instances": [
+            ".interactive-slider-container",
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(2) .interactive-slider-container"
+          ]
+        },
+        {
+          "name": "columns-feature",
+          "instances": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div.componentContainer:has(.rounded-corner-image)"
+          ]
+        },
+        {
+          "name": "cards-pricing",
+          "instances": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(5) .card-container.pricing-card",
+            ".card-container.pricing-card"
+          ]
+        },
+        {
+          "name": "cards-product",
+          "instances": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(5) .card-container.super-card-one",
+            ".card-container.super-card-one"
+          ]
+        },
+        {
+          "name": "cards-award",
+          "instances": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div.componentContainer:has(.et-top-five)",
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(8)"
+          ]
+        },
+        {
+          "name": "accordion-faq",
+          "instances": [
+            ".accordion.aem-GridColumn",
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(10) .accordion"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": 1,
+          "name": "hero",
+          "selector": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(1)"
+          ],
+          "style": "dark",
+          "blocks": [
+            "hero-dark"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": 2,
+          "name": "bonus-offer-calculator",
+          "selector": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(2)"
+          ],
+          "style": "dark",
+          "blocks": [
+            "widget-calculator"
+          ],
+          "defaultContent": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(2)"
+          ]
+        },
+        {
+          "id": 3,
+          "name": "product-feature-1",
+          "selector": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(4)"
+          ],
+          "style": "dark",
+          "blocks": [
+            "columns-feature"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": 4,
+          "name": "pricing",
+          "selector": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(5)"
+          ],
+          "style": null,
+          "blocks": [
+            "cards-pricing",
+            "cards-product"
+          ],
+          "defaultContent": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(5)"
+          ]
+        },
+        {
+          "id": 5,
+          "name": "product-feature-2",
+          "selector": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(6)"
+          ],
+          "style": "dark",
+          "blocks": [
+            "columns-feature"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": 6,
+          "name": "awards",
+          "selector": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(8)"
+          ],
+          "style": null,
+          "blocks": [
+            "cards-award"
+          ],
+          "defaultContent": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(8)"
+          ]
+        },
+        {
+          "id": 7,
+          "name": "faq",
+          "selector": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(10)"
+          ],
+          "style": null,
+          "blocks": [
+            "accordion-faq"
+          ],
+          "defaultContent": [
+            "div.root.maincontainer.responsivegrid > div > div > div > div:nth-child(10)"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "what-we-offer",
+      "urls": [
+        "https://us.etrade.com/platforms",
+        "https://us.etrade.com/what-we-offer/investment-choices",
+        "https://us.etrade.com/what-we-offer/pricing-and-rates"
+      ],
+      "representativeUrl": "https://us.etrade.com/platforms",
+      "description": "E*TRADE what-we-offer landing pages: dark hero, dark promo bonus banners (default content), and light sections of platform/product card grids.",
+      "urlPattern": "/*",
+      "blocks": [
+        {
+          "name": "hero-dark",
+          "instances": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn:has(.background-secondary)"
+          ]
+        },
+        {
+          "name": "cards-platform",
+          "instances": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn:has(.card-group)"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": 1,
+          "name": "hero",
+          "selector": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn:nth-of-type(1)"
+          ],
+          "style": "dark",
+          "blocks": ["hero-dark"],
+          "defaultContent": []
+        },
+        {
+          "id": 2,
+          "name": "promo-banner-1",
+          "selector": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn:nth-of-type(2)"
+          ],
+          "style": "dark",
+          "blocks": [],
+          "defaultContent": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn:nth-of-type(2)"
+          ]
+        },
+        {
+          "id": 3,
+          "name": "active-traders",
+          "selector": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn:nth-of-type(3)"
+          ],
+          "style": null,
+          "blocks": ["cards-platform"],
+          "defaultContent": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn:nth-of-type(3)"
+          ]
+        },
+        {
+          "id": 4,
+          "name": "aspiring-investors",
+          "selector": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn:nth-of-type(4)"
+          ],
+          "style": null,
+          "blocks": ["cards-platform"],
+          "defaultContent": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn:nth-of-type(4)"
+          ]
+        },
+        {
+          "id": 5,
+          "name": "promo-banner-2",
+          "selector": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.reference.parbase"
+          ],
+          "style": "dark",
+          "blocks": [],
+          "defaultContent": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.reference.parbase"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "what-we-offer-2",
+      "urls": [
+        "https://us.etrade.com/what-we-offer/our-accounts"
+      ],
+      "representativeUrl": "https://us.etrade.com/what-we-offer/our-accounts",
+      "description": "E*TRADE Our Accounts page: light intro hero, a tabbed account selector (with account-card grids per tab), and an FAQ accordion.",
+      "urlPattern": "/what-we-offer/*",
+      "blocks": [
+        {
+          "name": "hero-light",
+          "instances": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn:nth-of-type(2)"
+          ]
+        },
+        {
+          "name": "tabs-accounts",
+          "instances": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn.tabbedTabs"
+          ]
+        },
+        {
+          "name": "accordion-faq",
+          "instances": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn:has(.faqSection)"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": 1,
+          "name": "hero-intro",
+          "selector": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn:nth-of-type(2)"
+          ],
+          "style": null,
+          "blocks": ["hero-light"],
+          "defaultContent": []
+        },
+        {
+          "id": 2,
+          "name": "account-tabs",
+          "selector": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn.tabbedTabs"
+          ],
+          "style": null,
+          "blocks": ["tabs-accounts"],
+          "defaultContent": []
+        },
+        {
+          "id": 3,
+          "name": "account-faqs",
+          "selector": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn:has(.faqSection)"
+          ],
+          "style": null,
+          "blocks": ["accordion-faq"],
+          "defaultContent": [
+            "body > div.page-content > div.row-fluid.detail-page > div.span12 > div.aem-Grid > div.aem-GridColumn:has(.faqSection)"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "our-accounts",
+      "urls": [
+        "https://us.etrade.com/what-we-offer/our-accounts/brokerage-account"
+      ],
+      "representativeUrl": "https://us.etrade.com/what-we-offer/our-accounts/brokerage-account",
+      "description": "E*TRADE account detail page: dark product hero, pricing stat tiles, a dark promo banner, three numbered reasons, a dark product feature, an awards callout, article cards, and an FAQ accordion.",
+      "urlPattern": "/*",
+      "blocks": [
+        { "name": "hero-product", "instances": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(1)"] },
+        { "name": "cards-pricing", "instances": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(2)"] },
+        { "name": "banner-offer", "instances": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:has(.column-divider-xshide)", "div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(3)"] },
+        { "name": "cards-numbered", "instances": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(4)"] },
+        { "name": "columns-feature", "instances": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:has(.basicOneUp)", "div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(5)"] },
+        { "name": "cards-article", "instances": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:has(.card-img)", "div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(7)"] },
+        { "name": "accordion-faq", "instances": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:has(.accordion-section)", "div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(8)"] }
+      ],
+      "sections": [
+        { "id": 1, "name": "hero-offer", "selector": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(1)"], "style": "dark", "blocks": ["hero-product"], "defaultContent": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(1)"] },
+        { "id": 2, "name": "low-fees-pricing", "selector": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(2)"], "style": null, "blocks": ["cards-pricing"], "defaultContent": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(2)"] },
+        { "id": 3, "name": "offer-banner", "selector": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(3)"], "style": null, "blocks": ["banner-offer"], "defaultContent": [] },
+        { "id": 4, "name": "three-reasons", "selector": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(4)"], "style": null, "blocks": ["cards-numbered"], "defaultContent": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(4)"] },
+        { "id": 5, "name": "advanced-trading", "selector": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(5)"], "style": null, "blocks": ["columns-feature"], "defaultContent": [] },
+        { "id": 6, "name": "awards-recognition", "selector": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(6)"], "style": null, "blocks": [], "defaultContent": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(6)"] },
+        { "id": 7, "name": "insights-resources", "selector": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(7)"], "style": null, "blocks": ["cards-article"], "defaultContent": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(7)"] },
+        { "id": 8, "name": "faqs", "selector": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(8)"], "style": null, "blocks": ["accordion-faq"], "defaultContent": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:nth-of-type(8)"] }
+      ]
+    },
+    {
+      "name": "why-etrade",
+      "urls": [
+        "https://us.etrade.com/why-etrade"
+      ],
+      "representativeUrl": "https://us.etrade.com/why-etrade",
+      "description": "E*TRADE brand/story page: a dark intro feature, a scrolling 'Our story' carousel, a 'Who we serve' icon-card grid, and a promo article-card grid.",
+      "urlPattern": "/why-etrade",
+      "blocks": [
+        { "name": "columns-feature", "instances": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:has(.rounded-corner-image)"] },
+        { "name": "carousel-story", "instances": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:has(.card-carousel)"] },
+        { "name": "cards-icon", "instances": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:has(.card-icon)"] },
+        { "name": "cards-article", "instances": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:has(.promo-card)"] }
+      ],
+      "sections": [
+        { "id": 1, "name": "what-sets-apart", "selector": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:has(.rounded-corner-image)"], "style": "dark", "blocks": ["columns-feature"], "defaultContent": [] },
+        { "id": 2, "name": "our-story", "selector": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:has(.card-carousel)"], "style": null, "blocks": ["carousel-story"], "defaultContent": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:has(.card-carousel)"] },
+        { "id": 3, "name": "who-we-serve", "selector": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:has(.card-icon)"], "style": null, "blocks": ["cards-icon"], "defaultContent": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:has(.card-icon)"] },
+        { "id": 4, "name": "more-sets-apart", "selector": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:has(.promo-card)"], "style": null, "blocks": ["cards-article"], "defaultContent": ["div.root.maincontainer.responsivegrid div.maincontainer.responsivegrid > div.aem-Grid > div.componentContainer:has(.promo-card)"] }
+      ]
+    }
+  ]
+}

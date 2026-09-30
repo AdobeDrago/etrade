@@ -1,0 +1,10 @@
+{
+  "variantName": "cards-numbered",
+  "baseBlock": "cards",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Grid of numbered feature cards, each with a large ordinal number, a heading, a description, and a 'Learn more' link. No images.",
+  "contentPattern": "One row per card, single column: heading, description paragraph(s), link. The ordinal number is generated from the card position.",
+  "usage": "Present a short ordered list of reasons/steps/features as numbered cards.",
+  "options": [],
+  "memberVariantIds": ["cards-numbered"]
+}

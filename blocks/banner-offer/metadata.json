@@ -1,0 +1,10 @@
+{
+  "variantName": "banner-offer",
+  "baseBlock": "banner-offer",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Dark rounded promotional banner card with a heading, a terms paragraph (often including a promo code), a primary CTA button, and a secondary text link.",
+  "contentPattern": "Single column: heading, terms paragraph(s) including promo code, and CTA link(s).",
+  "usage": "Highlight a limited-time promotional offer with a headline, terms/promo code, and CTAs on a dark rounded card.",
+  "options": [],
+  "memberVariantIds": ["banner-offer"]
+}

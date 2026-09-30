@@ -1,0 +1,60 @@
+/* widget-calculator — structural layout only; brand styling applied in design pass. */
+
+.widget-calculator {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  box-sizing: border-box;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.widget-calculator-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.widget-calculator-control {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.widget-calculator-field,
+.widget-calculator-result {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.widget-calculator-label {
+  font-size: 0.85em;
+  color: #666;
+}
+
+.widget-calculator-funding,
+.widget-calculator-bonus {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--brand-accent);
+  font-family: var(--brand-font-family);
+}
+
+.widget-calculator-slider {
+  width: 100%;
+  accent-color: var(--brand-accent);
+}
+
+@media (width >= 900px) {
+  .widget-calculator-control {
+    grid-template-columns: 1fr 2fr 1fr;
+  }
+
+  .widget-calculator-slider {
+    grid-column: 2;
+  }
+}

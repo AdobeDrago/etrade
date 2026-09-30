@@ -1,0 +1,210 @@
+/* hero-dark — E*TRADE hero banner layout.
+   Production layout (extracted from us.etrade.com/home):
+   - Section: dark bg (#121213), full viewport width, padding: 20px 0 40px
+   - Content inside a centered max-width:1200px container (margin:auto, 10px padding)
+   - H1 sits above the hero image in normal flow
+   - Overlay card (~492px, bg:#121213, border-radius:0 0 16px, padding:0 0 20px)
+     contains the paragraph text + CTAs, positioned with margin-bottom:-180px
+     so the image below it is pulled UP and the overlay appears ON TOP of the image
+   - Hero image: full container width (1180px), border-radius:16px */
+
+/* Hide the "Home" breadcrumb above the hero. */
+.hero-dark-container > .default-content-wrapper {
+  display: none;
+}
+
+/* Remove section padding-top so hero sits flush below nav. */
+.hero-dark-container {
+  padding-top: 0 !important;
+}
+
+.hero-dark-container .hero-dark-wrapper {
+  max-width: unset;
+  padding: 0;
+}
+
+.hero-dark {
+  position: relative;
+  padding: 40px 24px;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+  gap: 16px;
+  overflow: hidden;
+  background-color: #0d0f12;
+}
+
+/* Hero image. Mobile: below the content, full width. */
+.hero-dark picture {
+  display: block;
+  width: 100%;
+}
+
+.hero-dark img {
+  object-fit: cover;
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+}
+
+.hero-dark h1,
+.hero-dark h2,
+.hero-dark h3,
+.hero-dark p,
+.hero-dark-actions {
+  position: relative;
+  z-index: 1;
+  max-width: 640px;
+}
+
+/* Actions row — CTA links side by side. */
+.hero-dark-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.hero-dark-actions p {
+  margin: 0;
+}
+
+/* Replace <em>arrow_forward</em> with arrow character. */
+.hero-dark-actions em {
+  font-style: normal;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
+}
+
+.hero-dark-actions em::after {
+  content: '\2192';
+  font-size: 15px;
+  line-height: 1;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
+/* =============================================
+   DESKTOP LAYOUT (>= 900px)
+   Production structure: h1 → overlay (p + CTAs with negative margin) → image
+   The overlay has margin-bottom:-180px which pulls the image UP behind it.
+   ============================================= */
+@media (width >= 900px) {
+  .hero-dark {
+    /* Centered container: (viewport - 1200px) / 2 + 10px padding, min 48px */
+    padding: 20px max(48px, calc((100% - 1200px) / 2 + 10px)) 40px;
+    min-height: auto;
+    gap: 0;
+  }
+
+  /* Flex ordering: text wrapper (order:1) above image wrapper (order:2). */
+  .hero-dark > div:first-child {
+    order: 2;
+    width: 100%;
+  }
+
+  .hero-dark > div:last-child {
+    order: 1;
+    width: 100%;
+  }
+
+  /* H1: full container width, no max-width. */
+  .hero-dark h1,
+  .hero-dark h2,
+  .hero-dark h3 {
+    max-width: none;
+    margin-bottom: 0;
+  }
+
+  /* Paragraph and actions form the "overlay card" that overlaps the image.
+     Production overlay: width ~42% of container, bg: #121213,
+     border-radius: 0 0 16px, padding: 0 0 20px, margin-bottom: -180px.
+     The negative bottom margin pulls the image wrapper UP so the image
+     renders BEHIND these elements. */
+  .hero-dark p {
+    max-width: 42%;
+    z-index: 2;
+    background-color: var(--brand-dark-bg, #121213);
+    border-radius: 0;
+    padding: 12px 0 0;
+    margin-bottom: 0;
+  }
+
+  .hero-dark-actions {
+    max-width: 42%;
+    z-index: 2;
+    background-color: var(--brand-dark-bg, #121213);
+    border-radius: 0 0 16px 16px;
+    padding: 12px 0 20px;
+    margin-bottom: -180px;
+  }
+
+  /* Image wrapper: full width, normal flow.
+     The negative margin-bottom on .hero-dark-actions pulls this UP
+     so the image renders behind the overlay text. */
+  .hero-dark picture {
+    position: relative;
+    width: 100%;
+  }
+
+  .hero-dark img {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    display: block;
+  }
+
+  /* No gradient overlay needed. */
+  .hero-dark::after {
+    display: none;
+  }
+}
+
+/* --- E*TRADE brand styling --- */
+.hero-dark h1, .hero-dark h2, .hero-dark p {
+  color: #fff;
+  font-family: var(--brand-font-family);
+}
+
+.hero-dark h1 {
+  font-weight: 600;
+}
+
+/* "Open an account" CTA — purple button.
+   Extracted from us.etrade.com: bg #5627d8, border-radius 2px, padding 8px 15px. */
+main .section.dark .hero-dark .hero-dark-actions p:first-child a {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--brand-accent, #5627d8);
+  border: 1px solid var(--brand-accent, #5627d8);
+  border-radius: 2px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 8px 15px;
+  text-decoration: none;
+}
+
+main .section.dark .hero-dark .hero-dark-actions p:first-child a:hover {
+  background-color: var(--brand-accent-hover, #7852e0);
+  border-color: var(--brand-accent-hover, #7852e0);
+  text-decoration: none;
+}
+
+/* "Learn more" link — #ab80ff on dark bg. */
+main .section.dark .hero-dark .hero-dark-actions p:last-child a {
+  color: var(--brand-link-on-dark, #ab80ff);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+main .section.dark .hero-dark .hero-dark-actions p:last-child a:hover {
+  text-decoration: underline;
+}

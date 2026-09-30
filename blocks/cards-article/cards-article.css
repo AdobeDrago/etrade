@@ -1,0 +1,66 @@
+/* cards-article — structural layout only; brand styling applied in design pass. */
+
+.cards-article ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.cards-article li {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.cards-article-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.cards-article-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 20px 20px;
+}
+
+.cards-article-body :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+  font-family: var(--brand-font-family);
+  color: var(--brand-text);
+  font-weight: 600;
+  font-size: var(--heading-font-size-xs);
+}
+
+.cards-article-body p {
+  margin: 0;
+  color: #666;
+  font-size: var(--body-font-size-s);
+}
+
+.cards-article-body a:any-link {
+  color: var(--brand-link);
+  font-weight: 500;
+}
+
+@media (width >= 600px) {
+  .cards-article ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 1200px) {
+  .cards-article ul {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

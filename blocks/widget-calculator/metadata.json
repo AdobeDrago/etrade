@@ -1,0 +1,10 @@
+{
+  "variantName": "widget-calculator",
+  "baseBlock": "widget",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Interactive funding calculator card with an intro heading, a range slider for the funding amount, and a live-updating projected bonus value.",
+  "contentPattern": "Optional intro row(s) of heading/copy, followed by one row per tier with two numeric cells: funding amount and corresponding bonus amount.",
+  "usage": "Lets a visitor drag a slider across funding amounts and see the projected bonus update in real time.",
+  "options": [],
+  "memberVariantIds": ["widget-calculator"]
+}

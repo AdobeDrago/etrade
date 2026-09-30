@@ -1,0 +1,10 @@
+{
+  "variantName": "hero-product",
+  "baseBlock": "hero",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Dark hero with an eyebrow, centered white heading, supporting paragraph, a primary CTA button, and a foreground product screenshot (e.g. a phone/app shot).",
+  "contentPattern": "Single column: eyebrow/heading, paragraph(s), CTA link(s), and a foreground product image.",
+  "usage": "Introduce a product with a headline, CTA, and a foreground device/app screenshot on a dark background.",
+  "options": [],
+  "memberVariantIds": ["hero-product"]
+}

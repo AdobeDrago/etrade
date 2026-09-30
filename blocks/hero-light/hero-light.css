@@ -1,0 +1,53 @@
+/* hero-light — structural layout only; brand styling applied in design pass. */
+
+.hero-light-container .hero-light-wrapper {
+  max-width: unset;
+}
+
+.hero-light {
+  padding: 32px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.hero-light h1,
+.hero-light h2,
+.hero-light p {
+  margin: 0;
+  max-width: 800px;
+  color: #444;
+  font-size: var(--body-font-size-m);
+}
+
+.hero-light-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.hero-light-actions p {
+  margin: 0;
+}
+
+@media (width >= 900px) {
+  .hero-light {
+    padding: 48px 0;
+  }
+}
+
+/* --- E*TRADE brand styling --- */
+.hero-light h1, .hero-light h2 {
+  font-family: var(--brand-font-family);
+  color: var(--brand-text);
+  font-weight: 600;
+}
+
+.hero-light-actions a:any-link {
+  color: var(--brand-link);
+  font-weight: 500;
+}

@@ -1,0 +1,59 @@
+/* hero-product — structural layout only; brand styling applied in design pass. */
+
+.hero-product-container .hero-product-wrapper {
+  max-width: unset;
+}
+
+.hero-product {
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  background-color: var(--brand-dark-bg);
+}
+
+.hero-product h1,
+.hero-product h2,
+.hero-product h3,
+.hero-product p {
+  margin: 0;
+  max-width: 720px;
+  color: #fff;
+  font-family: var(--brand-font-family);
+}
+
+.hero-product-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-product-actions p {
+  margin: 0;
+}
+
+.hero-product-media {
+  margin-top: 16px;
+}
+
+.hero-product-media img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+@media (width >= 900px) {
+  .hero-product {
+    padding: 72px 32px;
+  }
+}
+
+/* --- E*TRADE brand styling --- */
+.hero-product h1,
+.hero-product h2 {
+  font-weight: 600;
+}

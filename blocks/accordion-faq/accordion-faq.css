@@ -1,0 +1,70 @@
+/* accordion-faq — structural layout only; brand styling applied in design pass. */
+
+.accordion-faq details {
+  border: 1px solid #dadada;
+  border-color: #e0e0e0;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.accordion-faq details + details {
+  margin-top: 16px;
+}
+
+.accordion-faq details p {
+  margin-bottom: 0.8em;
+}
+
+.accordion-faq details summary {
+  position: relative;
+  padding: 16px;
+  padding-right: 46px;
+  cursor: pointer;
+  list-style: none;
+  overflow: auto;
+  font-family: var(--brand-font-family);
+  font-weight: 500;
+  color: var(--brand-text);
+}
+
+.accordion-faq details summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion-faq details summary::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  transform: translateY(-50%) rotate(135deg);
+  width: 6px;
+  height: 6px;
+  border: 2px solid;
+  border-width: 2px 2px 0 0;
+  transition: transform 0.2s;
+  border-color: var(--brand-accent);
+}
+
+.accordion-faq details[open] summary::after {
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+.accordion-faq details .accordion-faq-item-body {
+  padding: 0 16px 16px;
+}
+
+.accordion-faq-expand-all {
+  display: block;
+  margin-left: auto;
+  margin-bottom: 16px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 8px;
+  color: var(--brand-link);
+  font-weight: 500;
+}
+
+/* --- E*TRADE brand styling --- */
+.accordion-faq details .accordion-faq-item-body a:any-link {
+  color: var(--brand-link);
+}

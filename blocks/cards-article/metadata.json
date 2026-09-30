@@ -1,0 +1,10 @@
+{
+  "variantName": "cards-article",
+  "baseBlock": "cards",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Grid of editorial article cards, each with a top image, a heading, a short description, and a 'Read more' link.",
+  "contentPattern": "One row per card, two columns: an image and a body (heading, description paragraph(s), link).",
+  "usage": "Surface a set of articles or insights as image-topped cards linking to full content.",
+  "options": [],
+  "memberVariantIds": ["cards-article"]
+}
