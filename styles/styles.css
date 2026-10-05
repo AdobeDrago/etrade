@@ -103,11 +103,11 @@ h6 {
 
 /* h1 — extracted from us.etrade.com hero heading (48px): letter-spacing -1px, line-height ~1.0833 (51.9984px / 48px) */
 h1 {
+  font-size: var(--heading-font-size-xxl);
   letter-spacing: -1px;
   line-height: 1.0833;
 }
 
-h1 { font-size: var(--heading-font-size-xxl); }
 h2 { font-size: var(--heading-font-size-xl); }
 h3 { font-size: var(--heading-font-size-l); }
 h4 { font-size: var(--heading-font-size-m); }

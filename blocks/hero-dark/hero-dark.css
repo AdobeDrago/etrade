@@ -191,17 +191,17 @@ main .section.dark .hero-dark .hero-dark-actions p:first-child a {
   text-decoration: none;
 }
 
-main .section.dark .hero-dark .hero-dark-actions p:first-child a:hover {
-  background-color: var(--brand-accent-hover, #7852e0);
-  border-color: var(--brand-accent-hover, #7852e0);
-  text-decoration: none;
-}
-
 /* "Learn more" link — #ab80ff on dark bg. */
 main .section.dark .hero-dark .hero-dark-actions p:last-child a {
   color: var(--brand-link-on-dark, #ab80ff);
   font-size: 15px;
   font-weight: 500;
+  text-decoration: none;
+}
+
+main .section.dark .hero-dark .hero-dark-actions p:first-child a:hover {
+  background-color: var(--brand-accent-hover, #7852e0);
+  border-color: var(--brand-accent-hover, #7852e0);
   text-decoration: none;
 }
 
