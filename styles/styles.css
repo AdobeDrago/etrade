@@ -75,7 +75,12 @@ body.appear {
 }
 
 header {
-  height: var(--nav-height);
+  min-height: var(--nav-height);
+  height: auto;
+}
+
+header:has(.header[data-block-status="loaded"]) {
+  min-height: 0;
 }
 
 header .header,
@@ -410,5 +415,15 @@ body.homepage main sup {
     max-width: 1200px;
     padding-right: 10px;
     padding-left: 10px;
+  }
+}
+
+body.homepage .hero-dark-container > .banner-offer-wrapper {
+  margin-top: 40px;
+}
+
+@media (width < 768px) {
+  body.homepage .hero-dark-container > .banner-offer-wrapper {
+    margin-top: 60px;
   }
 }
