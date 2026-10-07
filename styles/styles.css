@@ -377,7 +377,7 @@ main .section > .hero-dark-wrapper {
   }
 }
 
-/* Homepage layout is selected through authored Template metadata. */
+/* Shared homepage section layout, selected through authored Template metadata. */
 body.homepage {
   background: #fafafa;
 

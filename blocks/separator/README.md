@@ -47,8 +47,12 @@ Shared homepage content-gutter rules must exclude dedicated `data-section-kind` 
 
 ## Migration review
 
-This component is migrated on `et-separator`. Review its changes against `et-homepage-layout`; merge the prerequisite first when the base is a feature branch.
+This component is migrated on `et-separator`. Review its changes against `develop`.
 
 Preview: https://et-separator--etrade--AdobeDrago.aem.page/home
 
 Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
+
+## Style ownership
+
+The block stylesheet owns the component itself. Common homepage gutters, dedicated divider/overlay section spacing, and superscript typography remain in `styles/styles.css`; `scripts/section-layout.js` only identifies section boundaries. These shared rules are identical across the layout-dependent PRs.
