@@ -346,3 +346,8 @@ main .section.dark a:any-link {
 main .section.dark a.button:any-link {
   color: #fff;
 }
+
+body.homepage .awards-section h2 {
+  margin: 0 0 32px;
+  text-align: center;
+}
