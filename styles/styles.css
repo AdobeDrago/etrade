@@ -347,3 +347,50 @@ main .section.dark a:any-link {
 main .section.dark a.button:any-link {
   color: #fff;
 }
+
+body.homepage main > .section.pricing-intro {
+  padding-bottom: 20px;
+  text-align: center;
+}
+
+body.homepage .pricing-intro .etrade-actions {
+  justify-content: center;
+  margin-top: 24px;
+}
+
+body.homepage .pricing-intro h2 {
+  margin: 0 0 20px;
+  letter-spacing: -0.4px;
+  font-size: 28px;
+  line-height: 32px;
+}
+
+@media (width >= 768px) {
+  body.homepage main > .section.pricing-intro {
+    text-align: left;
+  }
+
+  body.homepage .pricing-intro .columns > div {
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+  }
+
+  body.homepage .pricing-intro .columns > div > div:first-child {
+    flex: 7;
+  }
+
+  body.homepage .pricing-intro .columns > div > div:last-child {
+    flex: 5;
+  }
+
+  body.homepage .pricing-intro h2 {
+    margin-bottom: 40px;
+    font-size: 40px;
+    line-height: 44px;
+  }
+
+  body.homepage .pricing-intro .etrade-actions {
+    margin: 0;
+  }
+}
