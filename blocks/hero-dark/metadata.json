@@ -2,18 +2,19 @@
   "variantName": "hero-dark",
   "baseBlock": "hero",
   "canonicalModel": "standalone",
-  "visualCharacteristics": "Full-bleed dark hero banner with a background image (blue tech/circuit graphic), centered white heading, supporting paragraph, and one or more call-to-action buttons.",
-  "contentPattern": "Single row, single column: background image, H1 heading, paragraph(s), CTA link(s).",
+  "visualCharacteristics": "Dark hero with a white heading to the left of supporting copy and CTAs on desktop, followed by full-width media and an optional authored caption. Content stacks on smaller screens.",
+  "contentPattern": "Authored image, H1/H2/H3 heading, supporting paragraphs, and standalone CTA links across one or more cells. Text accompanying a separate image cell becomes its caption.",
   "usage": {
     "pagesUsing": [
+      "/home",
       "/platforms"
     ],
-    "reuseCount": 1,
-    "lastUsed": "2026-09-20T12:33:20.244Z"
+    "reuseCount": 2,
+    "lastUsed": "2026-10-06"
   },
   "options": [],
   "memberVariantIds": [
     "hero-dark"
   ],
-  "usageDescription": "Prominent top-of-page banner introducing a primary message with CTAs over a dark background image."
+  "usageDescription": "Introduces an authored campaign with accessible CTA links and a responsive image; missing optional content is supported."
 }
