@@ -8,8 +8,12 @@ Standalone links become secondary actions with a decorative arrow. Text, destina
 
 ## Migration review
 
-This component is migrated on `et-cards-pricing`. Review its changes against `et-actions`; merge the prerequisite first when the base is a feature branch.
+This component is migrated on `et-cards-pricing`. Review its changes against `develop`.
 
 Preview: https://et-cards-pricing--etrade--AdobeDrago.aem.page/home
 
 Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
+
+## Style ownership
+
+The block stylesheet owns both the component and its feature-specific surrounding section styles. Section selectors require this block to be present; `:where()` preserves their existing specificity. Shared homepage section spacing remains in `styles/styles.css`.

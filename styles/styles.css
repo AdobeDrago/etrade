@@ -381,21 +381,6 @@ body.homepage main > .section.hero-dark-container:has(.hero-dark.has-video) {
   padding-top: 20px;
 }
 
-body.homepage main > .section.pricing-cards {
-  padding-top: 0;
-}
-
-body.homepage .pricing-cards > div + div {
-  margin-top: 20px;
-}
-
-body.homepage .pricing-cards .default-content-wrapper {
-  margin-top: 24px;
-  font-size: 13px;
-  line-height: 18px;
-  text-align: center;
-}
-
 body.homepage .hero-dark-container > .banner-offer-wrapper {
   margin-top: 40px;
 }

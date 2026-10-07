@@ -1,3 +1,19 @@
+/* Section styling belongs to the block present in that section. */
+body.homepage main > .section.pricing-cards:where(:has(.cards-pricing)) {
+  padding-top: 0;
+}
+
+body.homepage .pricing-cards:where(:has(.cards-pricing)) > div + div {
+  margin-top: 20px;
+}
+
+body.homepage .pricing-cards:where(:has(.cards-pricing)) .default-content-wrapper {
+  margin-top: 24px;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: center;
+}
+
 .cards-pricing {
   color: #242424;
   letter-spacing: -0.21px;
