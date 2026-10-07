@@ -1,45 +1,104 @@
-/* cards-product — structural layout only; brand styling applied in design pass. */
+.cards-product {
+  color: #242424;
+  letter-spacing: -0.21px;
+  font-size: 16px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
 
-.cards-product ul {
-  list-style: none;
+.cards-product[hidden] {
+  display: none;
+}
+
+.cards-product > ul {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
+  list-style: none;
 }
 
-.cards-product li {
+.cards-product > ul > li {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 24px;
   box-sizing: border-box;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  background-color: #fff;
+  min-width: 0;
+  border: 1px solid #e2e2e2;
+  border-radius: 16px;
+  padding: 16px;
+  background: #fff;
 }
 
-.cards-product-body :is(h1, h2, h3, h4, h5, h6) {
-  margin: 0;
-  font-family: var(--brand-font-family);
-  color: var(--brand-text);
+.cards-product .cards-product-body {
+  min-width: 0;
+}
+
+.cards-product .cards-product-body :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0 0 26px;
+  color: inherit;
+  font-size: 24px;
   font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.4px;
 }
 
-.cards-product-body p {
-  margin: 0;
-  color: #666;
-  font-size: var(--body-font-size-s);
+.cards-product .cards-product-body p {
+  margin: 0 0 9.1px;
+  color: inherit;
 }
 
-@media (width >= 900px) {
-  .cards-product ul {
-    grid-template-columns: repeat(2, 1fr);
+.cards-product .cards-product-body .cards-product-value {
+  margin-bottom: 14px;
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 52px;
+  letter-spacing: -1px;
+}
+
+.cards-product .cards-product-has-value h3 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.cards-product .cards-product-body .cards-product-rate {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: -0.21px;
+}
+
+.cards-product .cards-product-actions {
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+@media (width >= 768px) {
+  .cards-product > ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-.cards-product-body a:any-link {
-  color:var(--brand-link);
-  font-weight:500;
+@media (width >= 768px) {
+  .cards-product > ul > li {
+    padding: 24px;
+  }
+
+  .cards-product .cards-product-body :is(h1, h2, h3, h4, h5, h6) {
+    font-size: 28px;
+    line-height: 32px;
+  }
+}
+
+@media (width >= 768px) {
+  .cards-product .cards-product-body .cards-product-rate {
+    font-size: 18px;
+    line-height: 22px;
+  }
+}
+
+@media (width < 768px) {
+  .cards-product .cards-product-actions {
+    padding-top: 21px;
+  }
 }
