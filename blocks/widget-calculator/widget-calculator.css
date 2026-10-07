@@ -31,6 +31,37 @@ main .widget-calculator .widget-calculator-heading p {
   line-height: 22px;
 }
 
+/* Section styling belongs to the block present in that section. */
+body.homepage .widget-calculator-container:where(:has(.widget-calculator)) > .default-content-wrapper {
+  text-align: center;
+}
+
+body.homepage .widget-calculator-container:where(:has(.widget-calculator)) > .default-content-wrapper h2 {
+  margin: 0 0 10px;
+  font-size: 28px;
+  line-height: 32px;
+}
+
+@media (width >= 768px) {
+  body.homepage .widget-calculator-container:where(:has(.widget-calculator)) > .default-content-wrapper h2 {
+    font-size: 36px;
+    line-height: 40px;
+  }
+}
+
+
+main .section:has(> .widget-calculator-wrapper > .widget-calculator) {
+  margin: 0;
+  padding: 0;
+  background: #fafafa;
+}
+
+.section > .widget-calculator-wrapper:has(> .widget-calculator) {
+  box-sizing: border-box;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
 .widget-calculator .widget-calculator-layout {
   display: grid;
   align-items: center;
