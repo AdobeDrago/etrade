@@ -1,4 +1,5 @@
 @import url('brand.css');
+@import url('actions.css');
 
 /*
  * Copyright 2020 Adobe. All rights reserved.
@@ -345,4 +346,14 @@ main .section.dark a:any-link {
 /* buttons inside dark sections keep the purple accent fill */
 main .section.dark a.button:any-link {
   color: #fff;
+}
+
+body.homepage .hero-dark-container > .banner-offer-wrapper {
+  margin-top: 40px;
+}
+
+@media (width < 768px) {
+  body.homepage .hero-dark-container > .banner-offer-wrapper {
+    margin-top: 60px;
+  }
 }
