@@ -75,12 +75,28 @@ function buildWidgetAutoBlocks(main) {
   });
 }
 
+/** Converts the imported sticky CTA paragraphs into an authored floating dock. */
+function buildFloatingDockAutoBlock(main) {
+  main.querySelectorAll('a[href*="stickyCTA_LTO"]').forEach((offer) => {
+    const links = offer.closest('p');
+    if (offer.closest('.floating-dock') || !links) return;
+    const primary = links.nextElementSibling;
+    if (!primary?.matches('p') || !primary.querySelector('a[href*="stickyCTA_openaccount"]')) return;
+    const toggle = primary.nextElementSibling;
+    const dock = buildBlock('floating-dock', { elems: [...links.querySelectorAll('a'), ...primary.querySelectorAll('a')] });
+    links.replaceWith(dock);
+    primary.remove();
+    if (toggle?.matches('p') && /^\[\s*\]\s*add$/.test(toggle.textContent.trim())) toggle.remove();
+  });
+}
+
 /**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
 function buildAutoBlocks(main) {
   try {
+    buildFloatingDockAutoBlock(main);
     // auto load `*/fragments/*` references
     const fragments = [...main.querySelectorAll('a[href*="/fragments/"]')].filter((f) => !f.closest('.fragment'));
     if (fragments.length > 0) {
