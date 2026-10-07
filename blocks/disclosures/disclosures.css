@@ -1,3 +1,14 @@
+/* Page references are marked by the disclosures decorator. */
+main sup:where(.disclosures-reference) a:any-link {
+  color: inherit;
+  text-decoration: underline;
+}
+
+main sup:where(.disclosures-reference) a:focus-visible {
+  outline: 2px solid currentcolor;
+  outline-offset: 2px;
+}
+
 .disclosures {
   box-sizing: border-box;
   width: 100%;

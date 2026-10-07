@@ -1,5 +1,40 @@
 import { loadFragment } from '../fragment/fragment.js';
 
+/** Link only references backed by an authored disclosure item. */
+function linkDisclosureReferences(main) {
+  if (!main) return;
+  main.querySelectorAll('sup').forEach((sup) => {
+    sup.classList.add('disclosures-reference');
+    const outerLink = sup.closest('a[href]');
+    if (outerLink) {
+      // DA may serialize a linked superscript as <a><sup>…</sup></a>.
+      // Move that existing link inside the marker; never create nested anchors.
+      if (outerLink === sup.parentElement && outerLink.children.length === 1
+        && outerLink.textContent.trim() === sup.textContent.trim()) {
+        outerLink.replaceWith(sup);
+        outerLink.replaceChildren(...sup.childNodes);
+        sup.append(outerLink);
+      }
+      if (/^#disclosure-\d+$/.test(outerLink.getAttribute('href'))) {
+        outerLink.setAttribute('aria-label', `Disclosure ${sup.textContent.trim()}`);
+      }
+      return;
+    }
+    if (sup.querySelector('a') || !/^\s*\d+(?:\s*,\s*\d+)*\s*$/.test(sup.textContent)) return;
+    const parts = sup.textContent.trim().split(/\s*,\s*/);
+    if (!parts.every((number) => document.getElementById(`disclosure-${number}`))) return;
+    sup.replaceChildren();
+    parts.forEach((number, index) => {
+      if (index) sup.append(',');
+      const link = document.createElement('a');
+      link.href = `#disclosure-${number}`;
+      link.textContent = number;
+      link.setAttribute('aria-label', `Disclosure ${number}`);
+      sup.append(link);
+    });
+  });
+}
+
 export default async function decorate(block) {
   const reference = block.querySelector(':scope > div > div > a[href], :scope > div > div > p > a[href]');
   const isReference = reference && block.textContent.trim() === reference.textContent.trim();
@@ -10,6 +45,7 @@ export default async function decorate(block) {
       block.replaceChildren(...(content ? [...content.childNodes] : []));
       block.hidden = !content;
     } catch { block.hidden = true; }
+    if (!block.hidden) linkDisclosureReferences(document.querySelector('main'));
     return;
   }
   const intro = document.createElement('div');
@@ -52,4 +88,5 @@ export default async function decorate(block) {
   if (list.children.length) block.append(list);
   if (closing.children.length) block.append(closing);
   block.hidden = !block.children.length;
+  if (!block.hidden) linkDisclosureReferences(document.querySelector('main'));
 }

@@ -12,8 +12,12 @@ The disclosure area has a full-width light background. Its introduction, numbere
 
 ## Migration review
 
-This component is migrated on `et-disclosures`. Review its changes against `et-homepage-layout`; merge the prerequisite first when the base is a feature branch.
+This component is migrated on `et-disclosures`. Review its changes against `develop`.
 
 Preview: https://et-disclosures--etrade--AdobeDrago.aem.page/home
 
 Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
+
+## Style ownership
+
+The block stylesheet owns the disclosure region and `.disclosures-reference` markers in page content. The block decorator links those markers after the authored disclosure items are available. Shared homepage section spacing remains in `styles/styles.css`.

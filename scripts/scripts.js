@@ -1,5 +1,5 @@
 import { groupActions } from './actions.js';
-import { decorateSectionBoundaries, linkDisclosureReferences } from './section-layout.js';
+import decorateSectionBoundaries from './section-layout.js';
 import {
   loadHeader,
   loadFooter,
@@ -219,7 +219,6 @@ async function loadLazy(doc) {
     decorateBlock(disclosures);
     await loadBlock(disclosures);
   }
-  linkDisclosureReferences(main);
   if (hash) doc.getElementById(hash.substring(1))?.scrollIntoView();
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
