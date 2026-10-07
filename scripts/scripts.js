@@ -1,3 +1,5 @@
+import { groupActions } from './actions.js';
+import { decorateSectionBoundaries } from './section-layout.js';
 import {
   loadHeader,
   loadFooter,
@@ -151,6 +153,7 @@ export function decorateMain(main) {
   decorateIcons(main);
   buildAutoBlocks(main);
   decorateSections(main);
+  decorateSectionBoundaries(main);
   decorateBlocks(main);
   decorateButtons(main);
 }
@@ -188,6 +191,13 @@ async function loadLazy(doc) {
 
   const main = doc.querySelector('main');
   await loadSections(main);
+  if (doc.body.classList.contains('homepage')) {
+    main.querySelectorAll('.default-content-wrapper').forEach((content) => {
+      const secondary = content.closest('.awards-section')
+        || content.closest('.section')?.querySelector('.accordion-faq');
+      groupActions(content, 'homepage', secondary ? 'secondary' : 'primary');
+    });
+  }
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;

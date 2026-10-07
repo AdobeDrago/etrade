@@ -1,4 +1,5 @@
 @import url('brand.css');
+@import url('actions.css');
 
 /*
  * Copyright 2020 Adobe. All rights reserved.
@@ -103,11 +104,11 @@ h6 {
 
 /* h1 — extracted from us.etrade.com hero heading (48px): letter-spacing -1px, line-height ~1.0833 (51.9984px / 48px) */
 h1 {
+  font-size: var(--heading-font-size-xxl);
   letter-spacing: -1px;
   line-height: 1.0833;
 }
 
-h1 { font-size: var(--heading-font-size-xxl); }
 h2 { font-size: var(--heading-font-size-xl); }
 h3 { font-size: var(--heading-font-size-l); }
 h4 { font-size: var(--heading-font-size-m); }
@@ -345,4 +346,59 @@ main .section.dark a:any-link {
 /* buttons inside dark sections keep the purple accent fill */
 main .section.dark a.button:any-link {
   color: #fff;
+}
+
+/* Homepage layout is selected through authored Template metadata. */
+body.homepage {
+  background: #fafafa;
+
+  --faq-gutter-offset: 0px;
+}
+
+body.homepage main > .section {
+  margin: 0;
+  padding: 40px 0;
+}
+
+body.homepage main > .section:where(:not([data-section-kind])) > div {
+  box-sizing: border-box;
+  max-width: 1220px;
+  padding: 0 20px;
+}
+
+body main > .section[data-section-kind="separator"],
+body main > .section[data-section-kind="overlay"] {
+  margin: 0;
+  padding: 0;
+}
+
+body main > .section[data-section-kind="separator"] > div {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+main > .section[data-separator-before] {
+  margin-top: 0;
+}
+
+main > .section[data-separator-after] {
+  margin-bottom: 0;
+}
+
+body.homepage main sup {
+  position: relative;
+  top: -0.5em;
+  font-size: 65%;
+  line-height: 0;
+  vertical-align: baseline;
+}
+
+
+@media (width >= 768px) {
+  body.homepage main > .section:where(:not([data-section-kind])) > div {
+    max-width: 1200px;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
 }

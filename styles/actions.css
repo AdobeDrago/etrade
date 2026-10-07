@@ -1,0 +1,77 @@
+/* Shared action styling. Text, destinations, and tracking stay authored. */
+.etrade-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px 32px;
+}
+
+.etrade-actions .etrade-action:any-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  box-sizing: border-box;
+  max-width: 100%;
+  min-height: 45px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  padding: 12px 30px 13px;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.etrade-actions .etrade-action.etrade-action-primary:any-link {
+  background: var(--brand-accent, #5627d8);
+  color: #fff;
+}
+
+.etrade-actions .etrade-action.etrade-action-secondary:any-link {
+  padding: 8px 0;
+  background: transparent;
+  color: var(--action-link-color, #5627d8);
+}
+
+.etrade-actions .etrade-action.etrade-action-outline:any-link {
+  border-color: var(--action-link-color, #5627d8);
+  background: transparent;
+  color: var(--action-link-color, #5627d8);
+}
+
+.etrade-actions .etrade-action.etrade-action-outline:hover {
+  background: var(--action-link-color, #5627d8);
+  color: #fff;
+}
+
+.etrade-actions .etrade-action.etrade-action-primary:hover {
+  background: var(--brand-accent-hover, #7852e0);
+}
+
+.etrade-actions .etrade-action.etrade-action-secondary:hover {
+  text-decoration: underline;
+}
+
+.etrade-actions .etrade-action:focus-visible {
+  outline: 2px solid var(--action-link-color, #5627d8);
+  outline-offset: 3px;
+}
+
+.etrade-actions .etrade-action-icon {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  fill: currentcolor;
+}
+
+@media (width >= 768px) {
+  .etrade-actions .etrade-action:any-link {
+    min-height: 33px;
+    padding: 8px 15px;
+    font-size: 15px;
+    line-height: 15px;
+  }
+}
