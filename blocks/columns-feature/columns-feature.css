@@ -1,3 +1,12 @@
+/* Section styling belongs to the block present in that section. */
+body.homepage main > .section.columns-feature-container:where(:has(.columns-feature)) {
+  padding: 60px 0;
+}
+
+body.homepage main > .section.banking-feature:where(:has(.columns-feature)) {
+  background: #1c1a1e;
+}
+
 .columns-feature {
   --action-link-color: #5627d8;
 
