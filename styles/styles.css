@@ -347,3 +347,31 @@ main .section.dark a:any-link {
 main .section.dark a.button:any-link {
   color: #fff;
 }
+
+main .section.hero-dark-container {
+  margin: 0;
+  padding: 20px 0 40px;
+  background: var(--brand-dark-bg, #121213);
+}
+
+/* The imported homepage includes a plain-text breadcrumb before its hero. */
+.hero-dark-container > .hero-dark-breadcrumb {
+  display: none;
+}
+
+main .section > .hero-dark-wrapper {
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+@media (width >= 768px) {
+  main .section > .hero-dark-wrapper {
+    padding: 0 10px;
+  }
+}
+
+body.homepage main > .section.hero-dark-container:has(.hero-dark.has-video) {
+  padding-top: 20px;
+}
