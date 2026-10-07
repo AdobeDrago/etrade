@@ -1,5 +1,5 @@
 import { groupActions } from './actions.js';
-import { decorateSectionBoundaries } from './section-layout.js';
+import { decorateSectionBoundaries, linkDisclosureReferences } from './section-layout.js';
 import {
   loadHeader,
   loadFooter,
@@ -12,6 +12,9 @@ import {
   loadSections,
   loadCSS,
   buildBlock,
+  decorateBlock,
+  loadBlock,
+  getMetadata,
 } from './aem.js';
 
 if (window.trustedTypes && window.trustedTypes.createPolicy) {
@@ -203,7 +206,21 @@ async function loadLazy(doc) {
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
 
-  loadFooter(doc.querySelector('body > footer'));
+  await loadFooter(doc.querySelector('body > footer'));
+  const disclosurePath = getMetadata('disclosures');
+  if (disclosurePath && !doc.querySelector('.disclosures')) {
+    const link = document.createElement('a');
+    link.href = disclosurePath;
+    const disclosures = buildBlock('disclosures', { elems: [link] });
+    const region = document.createElement('aside');
+    region.setAttribute('aria-label', 'Important disclosures');
+    region.append(disclosures);
+    doc.querySelector('body > footer').after(region);
+    decorateBlock(disclosures);
+    await loadBlock(disclosures);
+  }
+  linkDisclosureReferences(main);
+  if (hash) doc.getElementById(hash.substring(1))?.scrollIntoView();
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();

@@ -1,0 +1,143 @@
+.disclosures {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px 48px;
+  background: #f5f5f5;
+  color: #242424;
+  font-size: 13px;
+  line-height: 18px;
+  overflow-wrap: anywhere;
+}
+
+.disclosures[hidden] {
+  display: none;
+}
+
+.disclosures .disclosures-intro,
+.disclosures .disclosures-items {
+  min-width: 0;
+}
+
+.disclosures .disclosures-items > li {
+  margin-bottom: 24px;
+  padding-left: 8px;
+  scroll-margin-top: 32px;
+}
+
+.disclosures :is(h2, h3, h4) {
+  margin: 0 0 16px;
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.disclosures p {
+  margin: 0 0 12px;
+}
+
+.disclosures a:any-link {
+  color: #5627d8;
+  text-decoration: underline;
+}
+
+.disclosures a:focus-visible,
+.disclosures li:focus {
+  outline: 2px solid #5627d8;
+  outline-offset: 3px;
+}
+
+.disclosures :is(img, table) {
+  max-width: 100%;
+}
+
+.disclosures img {
+  width: auto;
+  max-height: 48px;
+}
+
+@media (width < 768px) {
+  .disclosures {
+    font-size: 15px;
+    line-height: 22px;
+  }
+}
+
+.disclosures table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.disclosures :is(th, td) {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.disclosures .disclosures-intro,
+.disclosures .disclosures-items,
+.disclosures .disclosures-closing {
+  box-sizing: border-box;
+  max-width: 1180px;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 24px 20px;
+  background: #f5f5f5;
+}
+
+.disclosures .disclosures-intro {
+  border-radius: 16px 16px 0 0;
+  text-align: center;
+}
+
+.disclosures .disclosures-items {
+  margin-top: 0;
+  padding-left: 44px;
+}
+
+.disclosures .disclosures-closing {
+  margin-top: 0;
+  border-radius: 0 0 16px 16px;
+}
+
+.disclosures .disclosures-notice {
+  width: fit-content;
+  max-width: 100%;
+  margin: 20px auto;
+  border: 1px solid #dbdbdb;
+  padding: 10px 20px;
+}
+
+.disclosures .disclosures-notice p {
+  margin: 0;
+}
+
+.disclosures .icon-sipc-mark,
+.disclosures .icon-fdic-mark {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 20px auto;
+}
+
+.disclosures .icon-sipc-mark {
+  max-width: 110px;
+}
+
+.disclosures .icon-fdic-mark {
+  max-width: 375px;
+}
+
+.disclosures :is(.icon-sipc-mark, .icon-fdic-mark) img {
+  display: block;
+  width: 100%;
+  max-height: none;
+}
+
+.disclosures .disclosures-intro > div + div {
+  margin-top: 20px;
+}
+
+.disclosures .disclosures-intro img:not(.icon img) {
+  height: 16px;
+  vertical-align: middle;
+}
