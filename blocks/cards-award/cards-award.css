@@ -1,3 +1,9 @@
+/* Section styling belongs to the block present in that section. */
+body.homepage .awards-section:where(:has(.cards-award)) h2 {
+  margin: 0 0 32px;
+  text-align: center;
+}
+
 .cards-award > ul {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

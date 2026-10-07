@@ -13,3 +13,7 @@ This component is migrated on `et-cards-award`. Review its changes against `deve
 Preview: https://et-cards-award--etrade--AdobeDrago.aem.page/home
 
 Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
+
+## Style ownership
+
+The block stylesheet owns both the component and its feature-specific surrounding section styles. Section selectors require this block to be present; `:where()` preserves their existing specificity. Shared homepage section spacing remains in `styles/styles.css`.

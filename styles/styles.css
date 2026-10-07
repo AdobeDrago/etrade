@@ -381,11 +381,6 @@ body.homepage main > .section.hero-dark-container:has(.hero-dark.has-video) {
   padding-top: 20px;
 }
 
-body.homepage .awards-section h2 {
-  margin: 0 0 32px;
-  text-align: center;
-}
-
 body.homepage .hero-dark-container > .banner-offer-wrapper {
   margin-top: 40px;
 }
