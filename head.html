@@ -4,6 +4,34 @@
   move-to-http-header="true"
 />
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<script nonce="aem">
+  // Run during parsing: deferred block decoration is too late to prioritize this request.
+  (() => {
+    const observer = new MutationObserver(() => {
+      const image = document.querySelector('main > div')?.querySelector('.hero-dark img');
+      if (!image?.getAttribute('src')) return;
+      const sources = [...(image.closest('picture')?.querySelectorAll('source') || [])];
+      const source = sources.find((candidate) => candidate.srcset
+        && (!candidate.media || window.matchMedia(candidate.media).matches));
+      const srcset = source?.srcset || image.srcset;
+      const sizes = source?.sizes || image.sizes;
+      const preload = document.createElement('link');
+      preload.rel = 'preload';
+      preload.as = 'image';
+      preload.setAttribute('fetchpriority', 'high');
+      preload.href = source ? srcset.trim().split(/[\s,]+/)[0] : image.src;
+      if (srcset) preload.setAttribute('imagesrcset', srcset);
+      if (sizes) preload.setAttribute('imagesizes', sizes);
+      if (source?.type) preload.type = source.type;
+      document.head.append(preload);
+      image.setAttribute('fetchpriority', 'high');
+      image.loading = 'eager';
+      observer.disconnect();
+    });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+    document.addEventListener('DOMContentLoaded', () => observer.disconnect(), { once: true });
+  })();
+</script>
 <link rel="preconnect" href="https://cdn2.etrade.net" crossorigin/>
 <script nonce="aem" src="/scripts/aem.js" type="module"></script>
 <script nonce="aem" src="/scripts/scripts.js" type="module"></script>
