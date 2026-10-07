@@ -347,3 +347,18 @@ main .section.dark a:any-link {
 main .section.dark a.button:any-link {
   color: #fff;
 }
+
+body.homepage main > .section.pricing-cards {
+  padding-top: 0;
+}
+
+body.homepage .pricing-cards > div + div {
+  margin-top: 20px;
+}
+
+body.homepage .pricing-cards .default-content-wrapper {
+  margin-top: 24px;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: center;
+}
