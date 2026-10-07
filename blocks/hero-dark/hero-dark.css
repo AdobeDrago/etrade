@@ -1,210 +1,299 @@
-/* hero-dark — E*TRADE hero banner layout.
-   Production layout (extracted from us.etrade.com/home):
-   - Section: dark bg (#121213), full viewport width, padding: 20px 0 40px
-   - Content inside a centered max-width:1200px container (margin:auto, 10px padding)
-   - H1 sits above the hero image in normal flow
-   - Overlay card (~492px, bg:#121213, border-radius:0 0 16px, padding:0 0 20px)
-     contains the paragraph text + CTAs, positioned with margin-bottom:-180px
-     so the image below it is pulled UP and the overlay appears ON TOP of the image
-   - Hero image: full container width (1180px), border-radius:16px */
-
-/* Hide the "Home" breadcrumb above the hero. */
-.hero-dark-container > .default-content-wrapper {
-  display: none;
-}
-
-/* Remove section padding-top so hero sits flush below nav. */
-.hero-dark-container {
-  padding-top: 0 !important;
-}
-
-.hero-dark-container .hero-dark-wrapper {
-  max-width: unset;
-  padding: 0;
-}
-
 .hero-dark {
-  position: relative;
-  padding: 40px 24px;
-  min-height: 320px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  text-align: left;
-  gap: 16px;
-  overflow: hidden;
-  background-color: #0d0f12;
+  --action-link-color: #ab80ff;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  color: #fff;
+  font-family: var(--brand-font-family);
+  font-size: 16px;
+  font-feature-settings: "kern", "liga";
+  font-synthesis: none;
+  line-height: 20px;
+  text-align: center;
+  text-rendering: optimizelegibility;
+  letter-spacing: -0.21px;
 }
 
-/* Hero image. Mobile: below the content, full width. */
-.hero-dark picture {
+.hero-dark *,
+.hero-dark *::before,
+.hero-dark *::after {
+  box-sizing: border-box;
+}
+
+.hero-dark :is(b, strong) {
+  font-weight: 600;
+}
+
+.hero-dark sup {
+  position: relative;
+  top: -0.5em;
+  font-size: 65%;
+  line-height: 0;
+  vertical-align: baseline;
+}
+
+main .hero-dark :is(h1, h2, h3).hero-dark-heading {
+  margin: 0 0 10px;
+  color: #fff;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  overflow-wrap: anywhere;
+}
+
+.hero-dark .hero-dark-copy {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+main .hero-dark .hero-dark-copy p {
+  margin: 0 0 20px;
+  color: #fff;
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: -0.21px;
+}
+
+main .hero-dark .hero-dark-copy > :last-child {
+  margin-bottom: 0;
+}
+
+.hero-dark a:focus-visible {
+  outline: 2px solid #ab80ff;
+  outline-offset: 4px;
+}
+
+main .hero-dark .hero-dark-copy a:any-link {
+  color: var(--brand-link-on-dark, #ab80ff);
+  text-decoration: underline;
+}
+
+.hero-dark .hero-dark-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px 24px;
+  align-items: center;
+  margin: 0;
+}
+
+.hero-dark .hero-dark-action {
+  min-width: 0;
+  max-width: 100%;
+  margin-bottom: 15px;
+  padding: 0;
+  text-align: center;
+}
+
+main .hero-dark a.hero-dark-primary:any-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  margin: 0 0 10px;
+  border: 1px solid var(--brand-accent, #5627d8);
+  border-radius: 2px;
+  padding: 12px 30px 13px;
+  background: var(--brand-accent, #5627d8);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 18px;
+  text-align: center;
+  text-decoration: none;
+}
+
+main .hero-dark a.hero-dark-secondary:any-link {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  margin: 0 0 10px;
+  padding: 9px 0;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: -0.21px;
+  text-decoration: none;
+}
+
+main .hero-dark a.hero-dark-primary:hover {
+  border-color: var(--brand-accent-hover, #7852e0);
+  background: var(--brand-accent-hover, #7852e0);
+}
+
+main .hero-dark a.hero-dark-secondary:hover {
+  text-decoration: underline;
+}
+
+.hero-dark .hero-dark-media {
+  position: relative;
+  min-width: 0;
+  margin-top: 20px;
+}
+
+.hero-dark .hero-dark-media picture,
+.hero-dark .hero-dark-media img {
   display: block;
   width: 100%;
 }
 
-.hero-dark img {
-  object-fit: cover;
-  width: 100%;
+.hero-dark .hero-dark-media img {
   height: auto;
   border-radius: 16px;
 }
 
-.hero-dark h1,
-.hero-dark h2,
-.hero-dark h3,
-.hero-dark p,
-.hero-dark-actions {
-  position: relative;
-  z-index: 1;
-  max-width: 640px;
+main .hero-dark .hero-dark-media p,
+.hero-dark .hero-dark-media figcaption {
+  margin: 20px 0 0;
+  color: #fff;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
 }
 
-/* Actions row — CTA links side by side. */
-.hero-dark-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  justify-content: flex-start;
-  align-items: center;
-  margin-top: 8px;
-}
+@media (width >= 768px) {
+  main .hero-dark :is(h1, h2, h3).hero-dark-heading {
+    font-size: 48px;
+    line-height: 1.0833;
+  }
 
-.hero-dark-actions p {
-  margin: 0;
-}
-
-/* Replace <em>arrow_forward</em> with arrow character. */
-.hero-dark-actions em {
-  font-style: normal;
-  font-size: 0;
-  line-height: 0;
-  overflow: hidden;
-}
-
-.hero-dark-actions em::after {
-  content: '\2192';
-  font-size: 15px;
-  line-height: 1;
-  vertical-align: middle;
-  margin-left: 6px;
-}
-
-/* =============================================
-   DESKTOP LAYOUT (>= 900px)
-   Production structure: h1 → overlay (p + CTAs with negative margin) → image
-   The overlay has margin-bottom:-180px which pulls the image UP behind it.
-   ============================================= */
-@media (width >= 900px) {
   .hero-dark {
-    /* Centered container: (viewport - 1200px) / 2 + 10px padding, min 48px */
-    padding: 20px max(48px, calc((100% - 1200px) / 2 + 10px)) 40px;
-    min-height: auto;
-    gap: 0;
+    text-align: left;
   }
 
-  /* Flex ordering: text wrapper (order:1) above image wrapper (order:2). */
-  .hero-dark > div:first-child {
-    order: 2;
-    width: 100%;
+  .hero-dark .hero-dark-copy {
+    margin-bottom: 20px;
   }
 
-  .hero-dark > div:last-child {
-    order: 1;
-    width: 100%;
+  .hero-dark .hero-dark-actions {
+    justify-content: flex-start;
   }
 
-  /* H1: full container width, no max-width. */
-  .hero-dark h1,
-  .hero-dark h2,
-  .hero-dark h3 {
-    max-width: none;
+  .hero-dark .hero-dark-action {
     margin-bottom: 0;
+    text-align: left;
   }
 
-  /* Paragraph and actions form the "overlay card" that overlaps the image.
-     Production overlay: width ~42% of container, bg: #121213,
-     border-radius: 0 0 16px, padding: 0 0 20px, margin-bottom: -180px.
-     The negative bottom margin pulls the image wrapper UP so the image
-     renders BEHIND these elements. */
-  .hero-dark p {
-    max-width: 42%;
-    z-index: 2;
-    background-color: var(--brand-dark-bg, #121213);
-    border-radius: 0;
-    padding: 12px 0 0;
-    margin-bottom: 0;
+  main .hero-dark a.hero-dark-primary:any-link {
+    padding: 8px 15px;
+    font-size: 15px;
+    line-height: 15px;
   }
 
-  .hero-dark-actions {
-    max-width: 42%;
-    z-index: 2;
-    background-color: var(--brand-dark-bg, #121213);
-    border-radius: 0 0 16px 16px;
-    padding: 12px 0 20px;
-    margin-bottom: -180px;
+  main .hero-dark a.hero-dark-secondary:any-link {
+    padding: 6px 0;
+    font-size: 15px;
+    line-height: 21px;
   }
 
-  /* Image wrapper: full width, normal flow.
-     The negative margin-bottom on .hero-dark-actions pulls this UP
-     so the image renders behind the overlay text. */
-  .hero-dark picture {
-    position: relative;
-    width: 100%;
+  .hero-dark .hero-dark-media {
+    margin: 0;
+  }
+}
+
+@media (width >= 992px) {
+  .hero-dark {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: center;
+    column-gap: 20px;
   }
 
-  .hero-dark img {
-    width: 100%;
-    height: auto;
-    border-radius: 16px;
-    display: block;
+  main .hero-dark :is(h1, h2, h3).hero-dark-heading {
+    grid-area: 1 / 1 / auto / span 6;
+    margin-bottom: 30px;
   }
 
-  /* No gradient overlay needed. */
-  .hero-dark::after {
+  .hero-dark .hero-dark-copy {
+    grid-area: 1 / 8 / auto / span 5;
+  }
+
+  .hero-dark .hero-dark-actions {
+    gap: 16px 36px;
+  }
+
+  .hero-dark .hero-dark-media {
+    grid-area: 2 / 1 / auto / -1;
+    align-self: start;
+  }
+
+  .hero-dark.no-heading .hero-dark-copy,
+  main .hero-dark.no-copy :is(h1, h2, h3).hero-dark-heading {
+    grid-column: 1 / -1;
+  }
+
+  .hero-dark.no-heading.no-copy .hero-dark-media {
+    grid-row: 1;
+  }
+}
+
+.hero-dark .hero-dark-media video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 25 / 14;
+  border-radius: 16px;
+  background: #000;
+}
+
+.hero-dark .hero-dark-media-toggle {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  background: #121213;
+  color: #fff;
+  cursor: pointer;
+}
+
+.hero-dark .hero-dark-media-toggle:focus-visible {
+  outline: 2px solid #ab80ff;
+  outline-offset: 3px;
+}
+
+.hero-dark .hero-dark-media-description {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+main .hero-dark .hero-dark-copy sup a:any-link {
+  color: inherit;
+}
+
+@media (width <= 768px) {
+  .hero-dark.has-video .hero-dark-media {
     display: none;
   }
 }
 
-/* --- E*TRADE brand styling --- */
-.hero-dark h1, .hero-dark h2, .hero-dark p {
-  color: #fff;
-  font-family: var(--brand-font-family);
+@media (width < 768px) {
+  .hero-dark.has-video .hero-dark-actions {
+    flex-wrap: nowrap;
+    gap: 20px;
+  }
+
+  .hero-dark.has-video .hero-dark-action {
+    flex: 1;
+    margin-bottom: 0;
+  }
+
+  .hero-dark.has-video .hero-dark-action:first-child {
+    flex: 0 0 calc(58.3333% - 8.3333px);
+  }
+
+  main .hero-dark.has-video a.hero-dark-primary:any-link {
+    width: 100%;
+  }
 }
 
-.hero-dark h1 {
-  font-weight: 600;
-}
-
-/* "Open an account" CTA — purple button.
-   Extracted from us.etrade.com: bg #5627d8, border-radius 2px, padding 8px 15px. */
-main .section.dark .hero-dark .hero-dark-actions p:first-child a {
-  display: inline-flex;
-  align-items: center;
-  background-color: var(--brand-accent, #5627d8);
-  border: 1px solid var(--brand-accent, #5627d8);
-  border-radius: 2px;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 500;
-  padding: 8px 15px;
-  text-decoration: none;
-}
-
-/* "Learn more" link — #ab80ff on dark bg. */
-main .section.dark .hero-dark .hero-dark-actions p:last-child a {
-  color: var(--brand-link-on-dark, #ab80ff);
-  font-size: 15px;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-main .section.dark .hero-dark .hero-dark-actions p:first-child a:hover {
-  background-color: var(--brand-accent-hover, #7852e0);
-  border-color: var(--brand-accent-hover, #7852e0);
-  text-decoration: none;
-}
-
-main .section.dark .hero-dark .hero-dark-actions p:last-child a:hover {
-  text-decoration: underline;
+@media (width >= 992px) {
+  .hero-dark.has-video .hero-dark-actions {
+    padding-bottom: 4px;
+  }
 }
