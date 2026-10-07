@@ -1,70 +1,141 @@
-/* columns-feature — structural layout only; brand styling applied in design pass. */
+.columns-feature {
+  --action-link-color: #5627d8;
+
+  box-sizing: border-box;
+  border-radius: 16px;
+  padding: 20px 20px 0;
+  background: #fafafa;
+  color: #242424;
+  font-size: 16px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+
+.columns-feature.dark {
+  --action-link-color: #ab80ff;
+
+  background: #121213;
+  color: #fff;
+}
 
 .columns-feature > div {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
+  gap: 32px;
 }
 
-.columns-feature-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  align-items: center;
-  margin-top: 8px;
+.columns-feature .columns-feature-media,
+.columns-feature .columns-feature-copy {
+  min-width: 0;
 }
 
-.columns-feature-actions p {
-  margin: 0;
+.columns-feature .columns-feature-copy {
+  order: -1;
 }
 
-.columns-feature img {
-  width: 100%;
-  height: auto;
+.columns-feature:is(.light, .dark) .columns-feature-copy :is(h1, h2, h3, h4, h5, h6, p) {
+  color: inherit;
+}
+
+.columns-feature .columns-feature-copy h2 {
+  margin: 0 0 20px;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 36px;
+  letter-spacing: -0.4px;
+}
+
+.columns-feature .columns-feature-copy p {
+  margin: 0 0 20px;
+}
+
+.columns-feature .columns-feature-media p {
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: center;
+}
+
+.columns-feature .columns-feature-copy h2 + p {
+  margin-bottom: 40px;
+}
+
+.columns-feature .columns-feature-copy > p:first-child:has(+ h2) {
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 16px;
+}
+
+.columns-feature .columns-feature-actions {
+  margin-top: 0;
+}
+
+.columns-feature .columns-feature-media :is(picture, img) {
   display: block;
-  border-radius: 8px;
+  width: 100%;
 }
 
-@media (width >= 900px) {
+.columns-feature .columns-feature-media img {
+  height: auto;
+  border-radius: 16px;
+}
+
+@media (width >= 768px) {
   .columns-feature > div {
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
   }
 
-  /* image-right option: place the image column second.
-     On us.etrade.com, the "Exclusive opportunity to stack up your cash" section
-     places its image on the RIGHT (image left edge 875.9px vs heading left edge
-     325.9px at 1731.8px section width) and background rgb(28, 26, 30). The
-     "image-right" modifier below already reproduces that placement; it is
-     applied by adding an "image-right" class to the columns-feature block in
-     the authored content — no CSS defect found here. */
-  .columns-feature.image-right .columns-feature-img-col {
-    order: 2;
+  .columns-feature .columns-feature-copy {
+    order: 0;
+  }
+
+  .columns-feature.image-right .columns-feature-media {
+    order: 1;
+  }
+
+  .columns-feature .columns-feature-copy h2 {
+    font-size: 44px;
+    line-height: 48px;
   }
 }
 
-/* --- E*TRADE brand styling ---
-   Background color extracted from us.etrade.com "Exclusive opportunity to stack
-   up your cash" section (the columns-feature equivalent): rgb(28, 26, 30),
-   mapped to var(--brand-dark-bg-alt) (corrected in brand.css). The site-wide
-   near-black rgb(18, 18, 19) is used for the hero/other full dark sections and
-   is mapped separately to var(--brand-dark-bg). */
-.columns-feature {
-  background-color: var(--brand-dark-bg-alt, #1c1a1e);
-  color: #fff;
-  border-radius: 8px;
-  padding: 40px 24px;
+.columns-feature.band {
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
 }
 
-.columns-feature :is(h1, h2, h3, h4, h5, h6),
-.columns-feature p {
-  color: #fff;
-  font-family: var(--brand-font-family);
+
+@media (width >= 768px) {
+  .columns-feature .columns-feature-copy {
+    box-sizing: border-box;
+    width: calc(83.3333% + 16.6667px);
+    margin: 0 auto;
+    padding: 0 10px;
+  }
+
+  .columns-feature.band .columns-feature-copy h2 {
+    font-size: 40px;
+    line-height: 44px;
+  }
+
 }
 
-@media (width >= 900px) {
-  .columns-feature {
-    padding: 56px 48px;
+@media (width >= 992px) {
+  .columns-feature .columns-feature-copy:has(> p:first-child + h2) h2 {
+    max-width: 82.6135%;
+  }
+}
+
+@media (width >= 768px) and (width < 992px) {
+  .columns-feature .columns-feature-copy {
+    width: 100%;
+    padding: 0;
+  }
+
+  .columns-feature .columns-feature-copy:has(> p:first-child + h2) h2 {
+    max-width: calc(83.3333% - 3.3333px);
   }
 }

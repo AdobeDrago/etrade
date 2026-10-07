@@ -347,3 +347,11 @@ main .section.dark a:any-link {
 main .section.dark a.button:any-link {
   color: #fff;
 }
+
+body.homepage main > .section.columns-feature-container {
+  padding: 60px 0;
+}
+
+body.homepage main > .section.banking-feature {
+  background: #1c1a1e;
+}
