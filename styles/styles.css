@@ -75,7 +75,12 @@ body.appear {
 }
 
 header {
-  height: var(--nav-height);
+  min-height: var(--nav-height);
+  height: auto;
+}
+
+header:has(.header[data-block-status="loaded"]) {
+  min-height: 0;
 }
 
 header .header,
@@ -376,4 +381,14 @@ main .section:has(> .widget-calculator-wrapper > .widget-calculator) {
   box-sizing: border-box;
   max-width: 1200px;
   padding: 0 20px;
+}
+
+body.homepage .hero-dark-container > .banner-offer-wrapper {
+  margin-top: 40px;
+}
+
+@media (width < 768px) {
+  body.homepage .hero-dark-container > .banner-offer-wrapper {
+    margin-top: 60px;
+  }
 }
