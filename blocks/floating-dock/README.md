@@ -54,3 +54,7 @@ This component is included on `et-dock-rebuild`. Review its changes against `dev
 Preview: https://et-dock-rebuild--etrade--AdobeDrago.aem.page/home
 
 Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
+
+## Style ownership
+
+The block stylesheet owns the component itself. Common homepage gutters, dedicated divider/overlay section spacing, and superscript typography remain in `styles/styles.css`; `scripts/section-layout.js` only identifies section boundaries. These shared rules are identical across the layout-dependent PRs.

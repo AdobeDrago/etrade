@@ -1,5 +1,5 @@
 import { groupActions } from './actions.js';
-import { decorateSectionBoundaries } from './section-layout.js';
+import decorateSectionBoundaries from './section-layout.js';
 import {
   loadHeader,
   loadFooter,
