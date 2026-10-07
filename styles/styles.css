@@ -1,4 +1,5 @@
 @import url('brand.css');
+@import url('actions.css');
 
 /*
  * Copyright 2020 Adobe. All rights reserved.
@@ -74,7 +75,12 @@ body.appear {
 }
 
 header {
-  height: var(--nav-height);
+  min-height: var(--nav-height);
+  height: auto;
+}
+
+header:has(.header[data-block-status="loaded"]) {
+  min-height: 0;
 }
 
 header .header,
@@ -350,4 +356,14 @@ main .section.dark a.button:any-link {
 body.homepage .awards-section h2 {
   margin: 0 0 32px;
   text-align: center;
+}
+
+body.homepage .hero-dark-container > .banner-offer-wrapper {
+  margin-top: 40px;
+}
+
+@media (width < 768px) {
+  body.homepage .hero-dark-container > .banner-offer-wrapper {
+    margin-top: 60px;
+  }
 }
