@@ -1,0 +1,12 @@
+{
+  "variantName": "footer",
+  "baseBlock": "footer",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Dark contact-and-navigation footer with circular social icons and stacked mobile columns.",
+  "contentPattern": "Authored two-column rows: Contact, Social, optional Brand, and repeatable Column rows. Loaded globally from the Footer metadata fragment or /footer.",
+  "options": [],
+  "memberVariantIds": [
+    "footer"
+  ],
+  "usageDescription": "Author headings, phone links, social labels and icons, optional logo, and navigation links. Disclosure content remains a separate component."
+}

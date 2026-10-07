@@ -1,53 +1,99 @@
-/* banner-offer — structural layout only; brand styling applied in design pass. */
-
 .banner-offer {
-  border-radius: 12px;
-  padding: 32px 24px;
+  --action-link-color: #ab80ff;
+
+  display: grid;
   box-sizing: border-box;
-  background-color: var(--brand-dark-bg);
+  border-radius: 16px;
+  padding: 20px 20px 30px;
+  background: #121213;
   color: #fff;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: -0.21px;
+  overflow-wrap: anywhere;
 }
 
-.banner-offer-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: flex-start;
-  max-width: 800px;
+.banner-offer.light {
+  --action-link-color: #5627d8;
+
+  background: #fff;
+  color: #242424;
 }
 
-.banner-offer-content :is(h1, h2, h3, h4, h5, h6) {
+.banner-offer[hidden] {
+  display: none;
+}
+
+.banner-offer > div {
+  min-width: 0;
+}
+
+main .banner-offer :is(h1, h2, h3, h4, h5, h6).banner-offer-heading {
+  margin: 0 0 10px;
+  color: inherit;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.4px;
+}
+
+main .banner-offer .banner-offer-copy p {
   margin: 0;
+  color: inherit;
 }
 
-.banner-offer-content p {
-  margin: 0;
+.banner-offer .banner-offer-actions {
+  margin-top: 20px;
 }
 
-.banner-offer-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  align-items: center;
-  margin-top: 4px;
+.banner-offer .banner-offer-actions a {
+  width: 100%;
 }
 
-.banner-offer-actions p {
-  margin: 0;
+main .banner-offer.light sup a:any-link {
+  color: inherit;
 }
 
-@media (width >= 900px) {
-  .banner-offer {
-    padding: 40px 48px;
+.banner-offer .banner-offer-media {
+  display: none;
+}
+
+.banner-offer .banner-offer-media :is(picture, img) {
+  display: block;
+  width: 100%;
+  border-radius: 16px;
+}
+
+@media (width >= 768px) {
+  .banner-offer.light {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: center;
+    column-gap: 20px;
+    padding: 20px;
   }
-}
 
-/* --- E*TRADE brand styling --- */
-.banner-offer-content :is(h1,h2,h3,h4,h5,h6), .banner-offer-content p {
-  color: #fff;
-  font-family: var(--brand-font-family);
-}
+  .banner-offer.light .banner-offer-media {
+    display: block;
+    grid-column: span 1;
+  }
 
-.banner-offer-content strong {
-  color: #fff;
+  main .banner-offer.light .banner-offer-heading {
+    grid-column: span 5;
+    margin: 0;
+    font-size: 20px;
+    line-height: 24px;
+  }
+
+  .banner-offer.light.no-media .banner-offer-heading {
+    grid-column: span 6;
+  }
+
+  .banner-offer.light .banner-offer-copy {
+    grid-column: span 4;
+  }
+
+  .banner-offer.light .banner-offer-actions {
+    grid-column: span 2;
+    margin: 0;
+  }
 }
