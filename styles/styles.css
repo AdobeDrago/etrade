@@ -75,7 +75,12 @@ body.appear {
 }
 
 header {
-  height: var(--nav-height);
+  min-height: var(--nav-height);
+  height: auto;
+}
+
+header:has(.header[data-block-status="loaded"]) {
+  min-height: 0;
 }
 
 header .header,
