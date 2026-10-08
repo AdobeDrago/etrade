@@ -253,7 +253,8 @@ export const scenarios = {
     label: 'Live E*TRADE — aggregate POST',
     live: true,
   },
-  'published-sample': { source: 'direct', endpoint: '/data/dynamic-rates-sample.json', label: 'Published JSON — sample rates' },
+  'published-sample': { source: 'direct', endpoint: '/phx/pros/apicontent/init/bankRates.json', label: 'Published JSON — sample rates' },
+  'published-aggregate-sample': { source: 'direct', endpoint: '/phx/pros/aggregate.json', label: 'Published JSON — aggregate response sample' },
 };
 
 export function exampleContent(doc, example) {
