@@ -33,6 +33,21 @@
       <p>This guide covers the current technical Rate settings format. Named rate presets, Structured Content and DA library configuration are proposed follow-up work. The live API connection still needs verification in Step 8.</p>
       <p class="note"><strong>All numbers on these test pages are examples.</strong> API samples come from the guest responses supplied on October 8, 2026. The deliberate fallback <strong>1.11%</strong> makes failures easy to recognise. Use this pack on a previewed test page; use approved rates and legal copy when applying it to delivery pages.</p>
 
+      <section id="comparison-pack">
+        <h2>Copy a clear dynamic-versus-manual demonstration</h2>
+        <p>This shorter page has two sections, each with three product cards, and actual horizontal rules for EDS section breaks. The dynamic cards show <strong>3.75%, 2.00% and 4.40%</strong>. The manual cards show <strong>6.50%, 7.50% and 8.50%</strong> as ordinary authored text.</p>
+        <ol>
+          <li>Click <strong>Copy comparison page</strong> and replace the body of your existing <code>/drafts/dynamic-rates</code> document in DA with the copied content.</li>
+          <li>The copied page includes its own Metadata table pointing to <code>/phx/pros/apicontent/init/bankRates.json</code>. Keep one Metadata table.</li>
+          <li>Keep the horizontal rules and the Rate settings cells as pasted. The manual cards have no rate markers or settings.</li>
+          <li>Preview again, then open <a href="https://et-dynamic--etrade--AdobeDrago.aem.page/drafts/dynamic-rates">the branch preview</a>. Publish the content to update the live page.</li>
+        </ol>
+        <button data-copy="comparison-content">Copy comparison page</button><output aria-live="polite"></output>
+        <p><a href="./dynamic-rates-demo.html?scenario=published-sample&amp;pack=comparison">Preview the dynamic and manual values locally</a></p>
+        <details open><summary>Copy-ready comparison page</summary><div id="comparison-content"></div></details>
+        <p>To demonstrate the difference, change a rate in the dummy JSON and push the branch, then reload. The dynamic cards read the new data; the manual cards retain their authored numbers. To change a manual card, edit its number in DA and preview again.</p>
+      </section>
+
       <section id="step-1">
         <h2>Step 1 — Keep both local servers running</h2>
         <ol>

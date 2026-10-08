@@ -234,6 +234,76 @@ export const rateExamples = [
   },
 ];
 
+/** A short authoring page contrasts fetched values with ordinary authored copy. */
+export const comparisonSections = [
+  {
+    heading: 'Dynamic rates — populated from the demo JSON',
+    description: 'These three cards read their rates from the JSON endpoint. Expected demo values: 3.75%, 2.00% and 4.40%.',
+    examples: [
+      {
+        id: 'dynamic-savings',
+        title: 'DYNAMIC · Premium Savings',
+        block: 'cards-product',
+        copy: '<h4>{{rate}}% APY</h4><p>Fetched from the demo JSON: savings advertised APY at balance 0.</p>',
+        settings: [savings],
+        expected: ['3.75'],
+        source: 'api',
+      },
+      {
+        id: 'dynamic-checking',
+        title: 'DYNAMIC · Max-Rate Checking',
+        block: 'cards-product',
+        copy: '<h4>{{rate}}% APY</h4><p>Fetched from the demo JSON: checking advertised APY at balance 10,000.</p>',
+        settings: [[...checking, 'Balance: 10000', fallback]],
+        expected: ['2.00'],
+        source: 'api',
+      },
+      {
+        id: 'dynamic-cd',
+        title: 'DYNAMIC · 12-month CD',
+        block: 'cards-product',
+        copy: '<h4>{{rate}}% APY</h4><p>Fetched from the demo JSON: disclosure APY for the 12-month term.</p>',
+        settings: [[...cd, 'Term: 12M', fallback]],
+        expected: ['4.40'],
+        source: 'api',
+      },
+    ],
+  },
+  {
+    heading: 'Manual rates — fixed values authored on this page',
+    description: 'These three cards contain ordinary authored text. Their deliberately different rates stay at 6.50%, 7.50% and 8.50%, even when the JSON changes or is unavailable.',
+    examples: [
+      {
+        id: 'authored-savings',
+        title: 'MANUAL · Premium Savings',
+        block: 'cards-product',
+        copy: '<h4>6.50% APY</h4><p>Fixed demo value entered by the author. Edit this text to change it.</p>',
+        settings: [],
+        expected: [],
+        authoredRate: '6.50',
+      },
+      {
+        id: 'authored-checking',
+        title: 'MANUAL · Max-Rate Checking',
+        block: 'cards-product',
+        copy: '<h4>7.50% APY</h4><p>Fixed demo value entered by the author. Edit this text to change it.</p>',
+        settings: [],
+        expected: [],
+        authoredRate: '7.50',
+      },
+      {
+        id: 'authored-cd',
+        title: 'MANUAL · 12-month CD',
+        block: 'cards-product',
+        copy: '<h4>8.50% APY</h4><p>Fixed demo value entered by the author. Edit this text to change it.</p>',
+        settings: [],
+        expected: [],
+        authoredRate: '8.50',
+      },
+    ],
+  },
+];
+
 export const scenarios = {
   direct: { source: 'direct', endpoint: '/test/fixtures/bank-rates.json', label: 'Direct GET — sample rates' },
   aggregate: { source: 'aggregate', endpoint: '/test/fixtures/bank-rates-aggregate.json', label: 'Aggregate POST — sample rates' },

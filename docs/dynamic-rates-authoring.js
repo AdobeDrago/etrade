@@ -1,5 +1,5 @@
 import {
-  rateExamples, scenarios, exampleTable, metadataTable,
+  rateExamples, scenarios, comparisonSections, exampleTable, metadataTable,
 } from './dynamic-rates-examples.js';
 
 function authoringPack(target, examples, scenario) {
@@ -16,6 +16,25 @@ function authoringPack(target, examples, scenario) {
 authoringPack(document.getElementById('authored-pack'), rateExamples, scenarios.direct);
 const manual = rateExamples.filter((example) => ['static', 'manual', 'hybrid-override', 'zero'].includes(example.id));
 authoringPack(document.getElementById('manual-pack'), manual, scenarios.manual);
+const comparison = document.getElementById('comparison-content');
+const comparisonHeading = document.createElement('h1');
+comparisonHeading.textContent = 'Dynamic and manual rates — side-by-side demonstration';
+const comparisonNotice = document.createElement('p');
+comparisonNotice.textContent = 'DEMO ONLY — all rates on this page are sample values. Dynamic cards fetch the supplied JSON snapshot; manual cards contain fixed authored text. A dynamic fallback of 1.11% identifies an unavailable request.';
+comparison.append(comparisonHeading, comparisonNotice);
+comparisonSections.forEach((section) => {
+  const heading = document.createElement('h2');
+  heading.textContent = section.heading;
+  const description = document.createElement('p');
+  description.textContent = section.description;
+  const [first, ...rest] = section.examples;
+  const table = exampleTable(document, first);
+  rest.forEach((example) => {
+    table.tBodies[0].append(exampleTable(document, example).tBodies[0].lastElementChild);
+  });
+  comparison.append(document.createElement('hr'), heading, description, table);
+});
+comparison.append(document.createElement('hr'), metadataTable(document, scenarios['published-sample']));
 Object.entries(scenarios).forEach(([key, scenario]) => {
   document.getElementById(`metadata-${key}`)?.append(metadataTable(document, scenario));
 });

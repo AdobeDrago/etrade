@@ -2,10 +2,11 @@ import decorateProduct from '../blocks/cards-product/cards-product.js';
 import decorateAccount from '../blocks/cards-account/cards-account.js';
 import decoratePricing from '../blocks/cards-pricing/cards-pricing.js';
 import {
-  rateExamples, scenarios, exampleContent, settingsContent,
+  rateExamples, scenarios, comparisonSections, exampleContent, settingsContent,
 } from './dynamic-rates-examples.js';
 
 const requested = new URLSearchParams(window.location.search).get('scenario') || 'direct';
+const comparison = new URLSearchParams(window.location.search).get('pack') === 'comparison';
 const scenario = Object.hasOwn(scenarios, requested) ? requested : 'direct';
 const selected = scenarios[scenario];
 const connection = document.getElementById('connection');
@@ -35,9 +36,14 @@ window.fetch = async (input, options) => {
   return fetchOriginal(input, options);
 };
 
+const examples = comparison
+  ? comparisonSections.flatMap((section) => section.examples) : rateExamples;
+const manualExamples = examples.filter((example) => (comparison
+  ? !example.settings.length
+  : ['static', 'manual', 'hybrid-override', 'zero'].includes(example.id)));
 const samples = scenario === 'manual'
-  ? rateExamples.filter((example) => ['static', 'manual', 'hybrid-override', 'zero'].includes(example.id))
-  : rateExamples.filter((example) => !selected.live || !example.error);
+  ? manualExamples
+  : examples.filter((example) => !selected.live || !example.error);
 const failed = ['failure', 'invalid', 'timeout'].includes(scenario);
 const connectionErrors = { failure: 'http-status', invalid: 'invalid-json', timeout: 'timeout' };
 const decorators = {
@@ -46,6 +52,21 @@ const decorators = {
   'cards-pricing': decoratePricing,
 };
 const container = document.getElementById('demo-cards');
+const sectionTargets = new Map();
+if (comparison) {
+  document.querySelector('h1').textContent = 'Dynamic JSON rates and manual authored rates';
+  comparisonSections.forEach((section, index) => {
+    if (index) container.append(document.createElement('hr'));
+    const target = document.createElement('section');
+    const heading = document.createElement('h2');
+    heading.textContent = section.heading;
+    const description = document.createElement('p');
+    description.textContent = section.description;
+    target.append(heading, description);
+    container.append(target);
+    section.examples.forEach((example) => sectionTargets.set(example.id, target));
+  });
+}
 const pending = samples.map(async (example) => {
   const panel = document.createElement('section');
   panel.dataset.demoPanel = example.id;
@@ -58,7 +79,7 @@ const pending = samples.map(async (example) => {
   const status = document.createElement('div');
   status.className = 'review-status';
   panel.append(block, status);
-  container.append(panel);
+  (sectionTargets.get(example.id) || container).append(panel);
   await decorators[example.block](block);
   const markers = [...block.querySelectorAll('[data-rate-name]')];
   const connectionFailed = failed && (example.source === 'api' || example.error === 'missing-tier');
@@ -75,13 +96,14 @@ const pending = samples.map(async (example) => {
     ? markers.length === example.expected.length && actual.every((value) => /^\d+\.\d{2,}$/.test(value))
     : JSON.stringify(actual) === JSON.stringify(expected);
   const matches = valuesMatch
+    && (!example.authoredRate || block.textContent.includes(`${example.authoredRate}% APY`))
     && markers.every((marker) => marker.dataset.rateSource === expectedSource
       && marker.dataset.rateError === expectedError
       && (expectedSource !== 'api' || Number.isFinite(Date.parse(marker.dataset.rateFetchedAt))));
   panel.dataset.check = matches ? 'passed' : 'failed';
   const sources = [...new Set(markers.map((marker) => marker.dataset.rateSource))];
   const errors = [...new Set(markers.map((marker) => marker.dataset.rateError).filter(Boolean))];
-  status.textContent = `${matches ? 'PASS' : 'FAIL'} · Expected: ${liveValue ? 'live API value' : expected.join(' / ') || 'authored text'} · Displayed: ${actual.join(' / ') || 'authored text'} · Source: ${sources.join(' / ') || 'authored'}${errors.length ? ` · Reason: ${errors.join(' / ')}` : ''}`;
+  status.textContent = `${matches ? 'PASS' : 'FAIL'} · Expected: ${liveValue ? 'live API value' : expected.join(' / ') || example.authoredRate || 'authored text'} · Displayed: ${actual.join(' / ') || example.authoredRate || 'authored text'} · Source: ${sources.join(' / ') || 'authored'}${errors.length ? ` · Reason: ${errors.join(' / ')}` : ''}`;
 });
 await Promise.all(pending);
 const failures = document.querySelectorAll('[data-check="failed"]').length;
