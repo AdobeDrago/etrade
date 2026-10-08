@@ -1,45 +1,51 @@
-/* cards-award — structural layout only; brand styling applied in design pass. */
-
-.cards-award ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 32px;
+/* Section styling belongs to the block present in that section. */
+body.homepage .awards-section:where(:has(.cards-award)) h2 {
+  margin: 0 0 32px;
+  text-align: center;
 }
 
-/* Alignment extracted from us.etrade.com award cards (heading/body under
-   "Awards and recognition"): text-align left (computed "start"), content not
-   centered within the card column. */
-.cards-award li {
+.cards-award > ul {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 40px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cards-award > ul > li {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  text-align: left;
-  gap: 12px;
+  min-width: 0;
+  gap: 16px;
+  color: #242424;
+  font-size: 15px;
+  line-height: 22px;
+  overflow-wrap: anywhere;
 }
 
-.cards-award-image img {
-  width: auto;
-  max-height: 72px;
+.cards-award .cards-award-image :is(img, svg, .icon) {
   display: block;
+  width: 48px;
+  height: 48px;
 }
 
-.cards-award-body :is(h1, h2, h3, h4, h5, h6) {
-  margin: 0;
-  font-family: var(--brand-font-family);
-  color: var(--brand-text);
+.cards-award .cards-award-body h3 {
+  margin: 0 0 12px;
+  color: inherit;
+  font-size: 24px;
   font-weight: 600;
+  line-height: 28px;
 }
 
-.cards-award-body p {
-  margin: 0;
-  color: #666;
+.cards-award .cards-award-body p {
+  margin: 0 0 10px;
 }
 
-@media (width >= 900px) {
-  .cards-award ul {
-    grid-template-columns: repeat(3, 1fr);
+@media (width >= 768px) {
+  .cards-award > ul {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px;
   }
 }
