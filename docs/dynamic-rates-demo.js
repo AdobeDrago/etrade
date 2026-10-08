@@ -24,17 +24,20 @@ connection.addEventListener('change', () => {
 });
 document.querySelector('meta[name="bank-rates-source"]').content = selected.source;
 document.querySelector('meta[name="bank-rates-endpoint"]').content = selected.endpoint;
+if (selected.live) {
+  document.querySelector('.notice').textContent = 'Live endpoint test. API cards request current data from E*TRADE. Manual overrides and fallbacks are test values. Success requires source api; a fallback does not count as a working connection.';
+}
 
 let requestCount = 0;
 const fetchOriginal = window.fetch.bind(window);
 window.fetch = async (input, options) => {
-  if (String(input).includes('/test/fixtures/')) requestCount += 1;
+  if (String(input) === new URL(selected.endpoint, window.location.href).href) requestCount += 1;
   return fetchOriginal(input, options);
 };
 
 const samples = scenario === 'manual'
   ? rateExamples.filter((example) => ['static', 'manual', 'hybrid-override', 'zero'].includes(example.id))
-  : rateExamples;
+  : rateExamples.filter((example) => !selected.live || !example.error);
 const failed = ['failure', 'invalid', 'timeout'].includes(scenario);
 const connectionErrors = { failure: 'http-status', invalid: 'invalid-json', timeout: 'timeout' };
 const decorators = {
@@ -67,19 +70,24 @@ const pending = samples.map(async (example) => {
   const expectedSource = connectionFailed ? failureSource : example.source;
   const expectedError = connectionFailed ? connectionErrors[scenario] : example.error;
   const actual = markers.map((marker) => marker.textContent);
-  const matches = JSON.stringify(actual) === JSON.stringify(expected)
+  const liveValue = selected.live && example.source === 'api';
+  const valuesMatch = liveValue
+    ? markers.length === example.expected.length && actual.every((value) => /^\d+\.\d{2,}$/.test(value))
+    : JSON.stringify(actual) === JSON.stringify(expected);
+  const matches = valuesMatch
     && markers.every((marker) => marker.dataset.rateSource === expectedSource
       && marker.dataset.rateError === expectedError
       && (expectedSource !== 'api' || Number.isFinite(Date.parse(marker.dataset.rateFetchedAt))));
   panel.dataset.check = matches ? 'passed' : 'failed';
   const sources = [...new Set(markers.map((marker) => marker.dataset.rateSource))];
   const errors = [...new Set(markers.map((marker) => marker.dataset.rateError).filter(Boolean))];
-  status.textContent = `${matches ? 'PASS' : 'FAIL'} · Expected: ${expected.join(' / ') || 'authored text'} · Displayed: ${actual.join(' / ') || 'authored text'} · Source: ${sources.join(' / ') || 'authored'}${errors.length ? ` · Reason: ${errors.join(' / ')}` : ''}`;
+  status.textContent = `${matches ? 'PASS' : 'FAIL'} · Expected: ${liveValue ? 'live API value' : expected.join(' / ') || 'authored text'} · Displayed: ${actual.join(' / ') || 'authored text'} · Source: ${sources.join(' / ') || 'authored'}${errors.length ? ` · Reason: ${errors.join(' / ')}` : ''}`;
 });
 await Promise.all(pending);
 const failures = document.querySelectorAll('[data-check="failed"]').length;
 const expectedRequests = scenario === 'manual' ? 0 : 1;
 const requestCheck = requestCount === expectedRequests;
-document.getElementById('demo-summary').textContent = `${samples.length - failures}/${samples.length} examples match. Rate requests: ${requestCount}.${requestCheck ? '' : ` FAIL: expected ${expectedRequests} requests.`} Connection: ${selected.label}.`;
+const liveStatus = selected.live ? `Live connection ${!failures && requestCheck ? 'succeeded' : 'failed'}. ` : '';
+document.getElementById('demo-summary').textContent = `${liveStatus}${samples.length - failures}/${samples.length} examples match. Rate requests: ${requestCount}.${requestCheck ? '' : ` FAIL: expected ${expectedRequests} requests.`} Connection: ${selected.label}.`;
 document.body.dataset.demoPassed = String(!failures && requestCheck);
 document.body.dataset.demoReady = 'true';

@@ -241,6 +241,19 @@ export const scenarios = {
   invalid: { source: 'direct', endpoint: '/test/fixtures/invalid-json', label: 'Invalid JSON — authored fallback' },
   timeout: { source: 'direct', endpoint: '/test/fixtures/timeout', label: 'Timeout — authored fallback after five seconds' },
   manual: { source: 'direct', endpoint: '/test/fixtures/unavailable', label: 'Manual-only — zero requests' },
+  'live-direct': {
+    source: 'direct',
+    endpoint: 'https://us.etrade.com/phx/pros/apicontent/init/bankRates',
+    label: 'Live E*TRADE — direct GET',
+    live: true,
+  },
+  'live-aggregate': {
+    source: 'aggregate',
+    endpoint: 'https://us.etrade.com/phx/pros/aggregate',
+    label: 'Live E*TRADE — aggregate POST',
+    live: true,
+  },
+  'published-sample': { source: 'direct', endpoint: '/data/dynamic-rates-sample.json', label: 'Published JSON — sample rates' },
 };
 
 export function exampleContent(doc, example) {
