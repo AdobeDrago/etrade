@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="bank-rates-source" content="direct">
+    <meta name="bank-rates-endpoint" content="/test/fixtures/bank-rates.json">
+    <title>Dynamic rates — working sample</title>
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="/blocks/cards-product/cards-product.css">
+    <link rel="stylesheet" href="/blocks/cards-account/cards-account.css">
+    <link rel="stylesheet" href="/blocks/cards-pricing/cards-pricing.css">
+    <style>
+      body { display: block; background: #f6f6fa; }
+      main { max-width: 1100px; margin: auto; padding: 32px 24px 80px; }
+      h1 { font-size: 36px; line-height: 1.2; }
+      h2 { font-size: 26px; margin-top: 40px; }
+      .notice { background: #fff4d7; border-left: 4px solid #b57e00; padding: 16px; }
+      select { font: inherit; padding: 8px; max-width: 100%; }
+      .review-status { background: #eae5f5; border-radius: 8px; padding: 10px 14px; margin-top: 12px; font: 14px/1.5 system-ui, sans-serif; }
+      [data-demo-panel] { margin-bottom: 28px; }
+    </style>
+    <script src="./dynamic-rates-demo.js" type="module"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Dynamic rates with manual overrides</h1>
+      <p class="notice"><strong>Sample data — not live rates.</strong> API values use the guest responses supplied on October 8, 2026. Manual values and fallbacks demonstrate author controls.</p>
+      <p><a href="./dynamic-rates-authoring.html">Step-by-step setup and complete copyable test page</a></p>
+      <label for="connection">Review scenario:</label>
+      <select id="connection">
+        <option value="direct">Direct GET response</option>
+        <option value="aggregate">Aggregate POST response</option>
+        <option value="failure">Failed API request</option>
+        <option value="manual">Manual-only cards — no API request</option>
+      </select>
+      <p id="demo-summary" role="status">Loading sample…</p>
+      <div id="demo-cards"></div>
+    </main>
+  </body>
+</html>
