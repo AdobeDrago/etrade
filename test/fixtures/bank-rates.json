@@ -1,0 +1,139 @@
+{
+  "campaign": {
+    "offer": {
+      "offerCode": "STOF1",
+      "productList": [
+        {
+          "minBalance": "0.00",
+          "rates": [
+            {
+              "advertisedAPY": "3.75",
+              "disclosureAPY": "3.75",
+              "balHiRange": "4999.99",
+              "balLowRange": "0.00",
+              "finalRate": "3.68"
+            },
+            {
+              "advertisedAPY": "3.75",
+              "disclosureAPY": "3.75",
+              "balHiRange": "49999.99",
+              "balLowRange": "5000.00",
+              "finalRate": "3.68"
+            },
+            {
+              "advertisedAPY": "3.75",
+              "disclosureAPY": "3.75",
+              "balHiRange": "99999.99",
+              "balLowRange": "50000.00",
+              "finalRate": "3.68"
+            },
+            {
+              "advertisedAPY": "3.75",
+              "disclosureAPY": "3.75",
+              "balHiRange": "499999.99",
+              "balLowRange": "100000.00",
+              "finalRate": "3.68"
+            },
+            {
+              "advertisedAPY": "3.75",
+              "disclosureAPY": "3.75",
+              "balHiRange": "0.00",
+              "balLowRange": "500000.00",
+              "finalRate": "3.68"
+            }
+          ],
+          "description": "Premium Savings Account",
+          "shortDescription": "Premium Savings",
+          "productType": "3100"
+        },
+        {
+          "minBalance": "0.00",
+          "rates": [
+            {
+              "advertisedAPY": "0.05",
+              "disclosureAPY": "0.05",
+              "balHiRange": "9999.99",
+              "balLowRange": "0.00",
+              "finalRate": "0.05"
+            },
+            {
+              "advertisedAPY": "2.00",
+              "disclosureAPY": "2.00",
+              "balHiRange": "0.00",
+              "balLowRange": "10000.00",
+              "finalRate": "1.98"
+            }
+          ],
+          "description": "Max-Rate Checking",
+          "shortDescription": "Max-Rate Checking",
+          "productType": "4240"
+        },
+        {
+          "minBalance": "0.00",
+          "rates": [
+            {
+              "disclosureAPY": "4.20",
+              "finalRate": "4.1144",
+              "durationDescription": "6 Months",
+              "durationCode": "6M",
+              "sequence": "1"
+            },
+            {
+              "disclosureAPY": "4.40",
+              "finalRate": "4.3062",
+              "durationDescription": "9 Months",
+              "durationCode": "9M",
+              "sequence": "2"
+            },
+            {
+              "disclosureAPY": "4.40",
+              "finalRate": "4.3062",
+              "durationDescription": "12 Months",
+              "durationCode": "12M",
+              "sequence": "3"
+            },
+            {
+              "disclosureAPY": "4.40",
+              "finalRate": "4.3062",
+              "durationDescription": "18 Months",
+              "durationCode": "18M",
+              "sequence": "4"
+            },
+            {
+              "disclosureAPY": "4.40",
+              "finalRate": "4.3062",
+              "durationDescription": "24 Months",
+              "durationCode": "24M",
+              "sequence": "5"
+            },
+            {
+              "disclosureAPY": "4.40",
+              "finalRate": "4.3062",
+              "durationDescription": "36 Months",
+              "durationCode": "36M",
+              "sequence": "6"
+            },
+            {
+              "disclosureAPY": "4.40",
+              "finalRate": "4.3062",
+              "durationDescription": "60 Months",
+              "durationCode": "60M",
+              "sequence": "7"
+            }
+          ],
+          "description": "Certificate of Deposit",
+          "shortDescription": "CD",
+          "productType": "3500",
+          "calculatedFields": {
+            "minDurationDescription": "6 Months",
+            "maxDurationDescription": "60 Months",
+            "minDisclosureAPY": "4.20",
+            "maxDisclosureAPY": "4.40"
+          }
+        }
+      ]
+    },
+    "campaignCode": "5000"
+  },
+  "errors": []
+}
