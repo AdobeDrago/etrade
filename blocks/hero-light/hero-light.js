@@ -1,19 +1,19 @@
-/**
- * hero-light — light, left-aligned intro hero: a heading, an intro paragraph,
- * and an optional text CTA. No background image. Variant of the base `hero`.
- *
- * Expected authored structure (1 column):
- *   [ H1 heading, paragraph(s), optional link(s) ]
- */
-export default function decorate(block) {
-  block.classList.add('no-image');
+import { groupActions } from '../../scripts/actions.js';
 
-  // Group any CTA links into an actions row.
-  const ctaParagraphs = [...block.querySelectorAll(':scope p')].filter((p) => p.querySelector('a'));
-  if (ctaParagraphs.length) {
-    const actions = document.createElement('div');
-    actions.className = 'hero-light-actions';
-    ctaParagraphs[0].before(actions);
-    ctaParagraphs.forEach((p) => actions.append(p));
-  }
+/** Text-only intro; preserve inline links and combine optional author cells. */
+export default function decorate(block) {
+  const heading = block.querySelector('h1, h2, h3');
+  const previous = block.parentElement.previousElementSibling;
+  if (heading && previous?.matches('.default-content-wrapper')
+    && previous.children.length === 1 && previous.firstElementChild.matches('p')
+    && previous.textContent.trim() === heading.textContent.trim()
+    && !previous.querySelector('a, img')) previous.classList.add('hero-light-breadcrumb');
+  const content = document.createElement('div');
+  content.className = 'hero-light-content';
+  [...block.children].forEach((row) => {
+    [...row.children].forEach((cell) => content.append(...cell.childNodes));
+  });
+  groupActions(content, 'hero-light', 'outline');
+  block.classList.add('no-image');
+  block.replaceChildren(content);
 }

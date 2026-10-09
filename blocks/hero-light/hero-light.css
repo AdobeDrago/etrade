@@ -1,53 +1,65 @@
-/* hero-light — structural layout only; brand styling applied in design pass. */
-
-.hero-light-container .hero-light-wrapper {
-  max-width: unset;
-}
-
 .hero-light {
-  padding: 32px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: flex-start;
-  text-align: left;
-}
+  --action-link-color: var(--brand-link, #5627d8);
 
-.hero-light h1,
-.hero-light h2,
-.hero-light p {
-  margin: 0;
-  max-width: 800px;
-  color: #444;
-  font-size: var(--body-font-size-m);
-}
-
-.hero-light-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  align-items: center;
-  margin-top: 4px;
-}
-
-.hero-light-actions p {
-  margin: 0;
-}
-
-@media (width >= 900px) {
-  .hero-light {
-    padding: 48px 0;
-  }
-}
-
-/* --- E*TRADE brand styling --- */
-.hero-light h1, .hero-light h2 {
+  padding: 32px 0 48px;
+  color: var(--brand-text, #242424);
   font-family: var(--brand-font-family);
-  color: var(--brand-text);
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 21px;
+  text-align: left;
+  overflow-wrap: anywhere;
 }
 
-.hero-light-actions a:any-link {
-  color: var(--brand-link);
-  font-weight: 500;
+.hero-light .hero-light-content {
+  min-width: 0;
+}
+
+main .hero-light :is(h1, h2, h3) {
+  margin: 0 0 20px;
+  color: inherit;
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 52px;
+  letter-spacing: -1.2px;
+}
+
+main .hero-light p {
+  max-width: 800px;
+  margin: 0 0 24px;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.hero-light .hero-light-actions {
+  margin-top: 24px;
+}
+
+.hero-light a:any-link {
+  color: var(--brand-link, #5627d8);
+}
+
+.hero-light a:focus-visible {
+  outline: 2px solid var(--brand-link, #5627d8);
+  outline-offset: 3px;
+}
+
+.hero-light sup {
+  position: relative;
+  top: -0.5em;
+  font-size: 65%;
+  line-height: 0;
+  vertical-align: baseline;
+}
+
+@media (width >= 768px) {
+  .hero-light {
+    padding: 40px 0 60px;
+  }
+
+  main .hero-light :is(h1, h2, h3) {
+    font-size: 72px;
+    line-height: 76px;
+  }
 }
