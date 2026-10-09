@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dynamic rates — complete setup walkthrough</title>
+    <style>
+      body { font: 16px/1.6 system-ui, sans-serif; color: #242424; margin: 0; background: #f6f6fa; }
+      main { max-width: 1080px; margin: auto; padding: 32px 24px 80px; }
+      h1, h2, h3 { line-height: 1.25; }
+      section { background: white; border: 1px solid #ddd; border-radius: 12px; padding: 24px; margin: 24px 0; }
+      table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+      td, th { border: 1px solid #aaa; padding: 12px; text-align: left; vertical-align: top; }
+      th { background: #eeeafa; }
+      td p { margin: 6px 0; }
+      button, .demo-link { font: inherit; background: #5627d8; color: white; border: 0; border-radius: 6px; padding: 10px 18px; cursor: pointer; text-decoration: none; }
+      code { background: #f0eef8; padding: 2px 5px; overflow-wrap: anywhere; }
+      .note { background: #fff4d7; padding: 16px; border-left: 4px solid #b57e00; }
+      .success { background: #e8f5eb; padding: 16px; border-left: 4px solid #238636; }
+      .scroll { overflow-x: auto; }
+      output { display: block; margin: 8px 0; }
+      summary { cursor: pointer; font-weight: 600; }
+      details { margin: 16px 0; }
+      li { margin-bottom: 8px; }
+      .scroll > table { min-width: 650px; }
+    </style>
+    <script src="./dynamic-rates-authoring.js" type="module"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Dynamic rates: set up and demonstrate every use case</h1>
+      <p>Follow these steps in order. You will create one authored test page containing <strong>22 numbered examples</strong>, run it with sample API data, edit the author controls, and test both response formats and failure handling.</p>
+      <p>This guide covers the current technical Rate settings format. Named rate presets, Structured Content and DA library configuration are proposed follow-up work. The live API connection still needs verification in Step 8.</p>
+      <p class="note"><strong>All numbers on these test pages are examples.</strong> API-shaped guest samples have distinct fabricated savings rates for balance testing. The deliberate fallback <strong>1.11%</strong> makes failures easy to recognise. Use this pack on a previewed test page; use approved rates and legal copy when applying it to delivery pages.</p>
+
+      <section id="comparison-pack">
+        <h2>Copy a clear dynamic-versus-manual demonstration</h2>
+        <p>This shorter page has two sections, each with three product cards, and actual horizontal rules for EDS section breaks. The dynamic cards show <strong>3.75%, 2.00% and 4.40%</strong>. The manual cards show <strong>6.50%, 7.50% and 8.50%</strong> as ordinary authored text.</p>
+        <ol>
+          <li>Click <strong>Copy comparison page</strong> and replace the body of your existing <code>/drafts/dynamic-rates</code> document in DA with the copied content.</li>
+          <li>The copied page includes its own Metadata table pointing to <code>/phx/pros/apicontent/init/bankRates.json</code>. Keep one Metadata table.</li>
+          <li>Keep the horizontal rules and the Rate settings cells as pasted. The manual cards have no rate markers or settings.</li>
+          <li>Preview again, then open <a href="https://et-dynamic--etrade--AdobeDrago.aem.page/drafts/dynamic-rates">the branch preview</a>. Publish the content to update the live page.</li>
+        </ol>
+        <button data-copy="comparison-content">Copy comparison page</button><output aria-live="polite"></output>
+        <p><a href="./dynamic-rates-demo.html?scenario=published-sample&amp;pack=comparison">Preview the dynamic and manual values locally</a></p>
+        <details open><summary>Copy-ready comparison page</summary><div id="comparison-content"></div></details>
+        <p>To demonstrate the difference, change a rate in the dummy JSON and push the branch, then reload. The dynamic cards read the new data; the manual cards retain their authored numbers. To change a manual card, edit its number in DA and preview again.</p>
+      </section>
+
+      <section id="step-1">
+        <h2>Step 1 — Keep both local servers running</h2>
+        <ol>
+          <li>Start your AEM server from the <strong>etrade repository on et-dynamic</strong>: <code>npx -y @adobe/aem-cli up</code>. Its usual address is <a href="http://localhost:3000/home">localhost:3000/home</a>.</li>
+          <li>In a second terminal, start the rate test helper: <code>npm run demo:rates</code>. This guide and its sample API run on <strong>127.0.0.1:3020</strong>. Keep both servers running. Use Node.js 22.7 or newer for the helper and automated tests.</li>
+          <li>Open <a href="./dynamic-rates-demo.html?scenario=direct">the complete working showcase</a>. The summary should read <strong>22/22 examples match</strong> and <strong>Rate requests: 1</strong>.</li>
+          <li>Open <a href="/test/card-rates.html">the card regression checks</a>. Expect <strong>24/24 checks passed</strong> for empty rows, extra cells, rich text, independent binding names and numeric or placeholder fallbacks.</li>
+        </ol>
+        <p class="success"><strong>Why two addresses?</strong> Port 3000 loads your previewed DA content. Port 3020 reads that content through port 3000 and supplies the sample rates on the same local address. This lets you test authored API cards while access to the live E*TRADE endpoint is unresolved. The helper adds a rate inspector at the bottom of authored pages.</p>
+      </section>
+
+      <section id="step-2">
+        <h2>Step 2 — Create and fill one DA test page</h2>
+        <ol>
+          <li>In your existing etrade DA site, create a page at <code>/drafts/dynamic-rates</code>.</li>
+          <li>Click <strong>Copy complete test page</strong> below.</li>
+          <li>Paste into the new page. The pack contains a title, sample-data notice, 22 block tables and <strong>one Metadata table</strong>.</li>
+          <li>Keep the tables as tables. Keep every “Rate settings” cell in the same row as the card it controls. Each setting is a separate paragraph.</li>
+          <li>Preview the page using your existing DA preview workflow.</li>
+        </ol>
+        <button data-copy="authored-pack">Copy complete test page</button><output aria-live="polite"></output>
+        <details><summary>See exactly what will be pasted</summary><div id="authored-pack"></div></details>
+        <p>The initial Metadata selects <strong>direct</strong> and <code>/test/fixtures/bank-rates.json</code>. These are local sample settings for the test helper.</p>
+      </section>
+
+      <section id="step-3">
+        <h2>Step 3 — Open the authored page with sample data</h2>
+        <ol>
+          <li>After previewing, open <a href="http://127.0.0.1:3020/drafts/dynamic-rates">127.0.0.1:3020/drafts/dynamic-rates</a>.</li>
+          <li>Check the numbered cards against the table below.</li>
+          <li>Scroll to <strong>Local rate test inspector</strong> at the bottom. It shows the displayed value, its source and any error for each marker.</li>
+        </ol>
+        <p><strong>Use port 3020 for this sample-data test.</strong> The sample endpoints are excluded from AEM delivery. Opening the same fixture-configured page directly on port 3000 can therefore show fallbacks.</p>
+        <div class="scroll"><table id="expected-cases"><thead><tr><th>Example</th><th>Expected display</th><th>Source</th><th>What it proves</th></tr></thead><tbody></tbody></table></div>
+        <p>If you see 404, confirm the DA path and preview the page again. If you see 502, confirm that your AEM server is running on port 3000. If you see literal <code>{{rate}}</code> text or a visible settings cell, confirm that local code is running from <code>et-dynamic</code> and that the block table name is supported.</p>
+      </section>
+
+      <section id="step-4">
+        <h2>Step 4 — Edit the author controls and verify the result</h2>
+        <p>Make one change at a time in DA, <strong>preview again, then reload the port-3020 page</strong>. Return each example to its original settings before moving to the next check.</p>
+        <div class="scroll"><table><thead><tr><th>Edit this example</th><th>Change</th><th>Expected result</th></tr></thead><tbody>
+          <tr><td>02. Manual rate</td><td>Override: 3.90 → Override: 4.00</td><td>4.00%; source manual.</td></tr>
+          <tr><td>03. Hybrid with override</td><td>Empty the Override value.</td><td>3.75%; source api. Restore 4.10 and the source becomes override again.</td></tr>
+          <tr><td>04. Hybrid zero override</td><td>Keep Override: 0, then empty it.</td><td>0.00% while populated; 3.75% when empty. Zero is not treated as missing.</td></tr>
+          <tr><td>08. Checking lower tier</td><td>Balance: 9999.99 → Balance: 10000 → Balance: 1000000</td><td>0.05% → 2.00% → 2.00%.</td></tr>
+          <tr><td>12. Twelve-month CD</td><td>Term: 12M → Term: 6M → Term: 60M</td><td>4.40% → 4.20% → 4.40%.</td></tr>
+          <tr><td>16. API mode ignores Override</td><td>Mode: api → Mode: hybrid</td><td>3.75% → 4.10%. Switching back to api ignores the Override again.</td></tr>
+          <tr><td>17. Named and repeated base rate</td><td>Use Mode: hybrid and Override: 3.90.</td><td>Both base markers become 3.90%. The authored promotional headline stays 4.25%.</td></tr>
+          <tr><td>18. Missing CD term with fallback</td><td>Term: 3M → Term: 6M</td><td>1.11% fallback → 4.20% api.</td></tr>
+          <tr><td>20. Invalid authored override</td><td>Override: not-a-number → Override: 4.10</td><td>1.11% fallback with invalid-settings → 4.10% override.</td></tr>
+          <tr><td>21. Marker without settings</td><td>Add a settings cell copied from example 05 to the same row.</td><td>— unavailable → 3.75% api.</td></tr>
+          <tr><td>22. Duplicate binding names</td><td>Give the first cell Name: low and the second Name: high. Change the content to {{rate:low}}%–{{rate:high}}%.</td><td>1.00%–2.00%, both source manual.</td></tr>
+        </tbody></table></div>
+        <p>Named markers and their Name must match. The default name is <code>rate</code>; <code>{{rate:base}}</code> uses <strong>Name: base</strong>. The marker outputs the number only. Keep <strong>%</strong>, APY labels, links and superscripts in authored copy.</p>
+      </section>
+
+      <section id="step-5">
+        <h2>Step 5 — Test aggregate POST</h2>
+        <ol>
+          <li>Replace the existing Metadata table with the aggregate sample table below, or edit its two rows to match. Keep one Metadata table.</li>
+          <li>Preview again and reload <a href="http://127.0.0.1:3020/drafts/dynamic-rates">the authored test page</a>.</li>
+          <li>The sample values should match the direct GET case. API sources should still say <strong>api</strong>.</li>
+        </ol>
+        <div id="metadata-aggregate"></div><button data-copy="metadata-aggregate">Copy aggregate sample metadata</button><output aria-live="polite"></output>
+        <p>This sends the supplied bank-rate POST payload and parses the JSON string inside the response’s body. You can also verify it immediately in <a href="./dynamic-rates-demo.html?scenario=aggregate">the aggregate showcase</a>.</p>
+      </section>
+
+      <section id="step-6">
+        <h2>Step 6 — Test failures and restoration</h2>
+        <p>Replace the Metadata table with one of these, preview, and reload. Cards that normally use API data should show <strong>1.11%</strong> with source <strong>fallback</strong>. Cards without a fallback show <strong>—</strong>. Manual and populated hybrid overrides keep their values. The intentionally invalid settings examples keep their own invalid-settings result.</p>
+        <details><summary>A. HTTP failure — reason http-status</summary><div id="metadata-failure"></div><button data-copy="metadata-failure">Copy HTTP-failure metadata</button><output aria-live="polite"></output><p><a href="./dynamic-rates-demo.html?scenario=failure">Run the HTTP-failure showcase</a></p></details>
+        <details><summary>B. Invalid response body — reason invalid-json</summary><div id="metadata-invalid"></div><button data-copy="metadata-invalid">Copy invalid-JSON metadata</button><output aria-live="polite"></output><p><a href="./dynamic-rates-demo.html?scenario=invalid">Run the invalid-JSON showcase</a></p></details>
+        <details><summary>C. Stalled request — reason timeout after five seconds</summary><div id="metadata-timeout"></div><button data-copy="metadata-timeout">Copy timeout metadata</button><output aria-live="polite"></output><p><a href="./dynamic-rates-demo.html?scenario=timeout">Run the timeout showcase</a></p></details>
+        <p>Restore the direct sample metadata below, preview, and reload. The API-selected rates should return. There is no automatic retry or polling; reloading starts a fresh page request.</p>
+        <div id="metadata-direct"></div><button data-copy="metadata-direct">Copy restored direct sample metadata</button><output aria-live="polite"></output>
+      </section>
+
+      <section id="step-7">
+        <h2>Step 7 — Prove that manual-only pages make no rate request</h2>
+        <ol>
+          <li>Open <a href="./dynamic-rates-demo.html?scenario=manual">the manual-only showcase</a>. Expect <strong>4/4 examples match</strong> and <strong>Rate requests: 0</strong>.</li>
+          <li>For the authored version, create <code>/drafts/dynamic-rates-manual</code> in DA.</li>
+          <li>Copy the manual-only page below into it, preview, then open <a href="http://127.0.0.1:3020/drafts/dynamic-rates-manual">the manual-only authored page</a>.</li>
+          <li>The rates should be 3.90%, 4.10% and 0.00%, even though the configured sample endpoint returns an error.</li>
+        </ol>
+        <button data-copy="manual-pack">Copy manual-only test page</button><output aria-live="polite"></output>
+        <details><summary>See the manual-only page content</summary><div id="manual-pack"></div></details>
+        <p>The full 22-example page still makes one shared request because other cards use API data. “No request” applies to the manual or overridden binding; it means zero requests for the whole page only when all its bindings are manual or overridden.</p>
+      </section>
+
+      <section id="step-8">
+        <h2>Step 8 — Switch to the approved live connection</h2>
+        <p>Your remote draft must use one of the live tables below instead of <code>/test/fixtures/bank-rates.json</code>. That local fixture is deliberately excluded from AEM delivery. The production rate client already supports both approved endpoints.</p>
+        <ol>
+          <li>Use the intended page’s connection: <strong>direct</strong> for the homepage, <strong>aggregate</strong> for Our Accounts.</li>
+          <li>Remove the <strong>Bank rates endpoint</strong> sample row to use the supplied E*TRADE endpoint, or replace it with an approved same-origin route that supports the chosen request format.</li>
+          <li>Preview and test on <a href="http://localhost:3000/drafts/dynamic-rates">localhost:3000/drafts/dynamic-rates</a>. After the branch code is pushed, its review link is <a href="https://et-dynamic--etrade--AdobeDrago.aem.page/drafts/dynamic-rates">the et-dynamic preview page</a>.</li>
+          <li>Confirm an actual successful API response. Earlier requests carrying the AEM preview Origin returned 403; a displayed fallback is not proof of a working live connection.</li>
+        </ol>
+        <h3>Homepage: direct GET</h3>
+        <div id="metadata-live-direct"></div><button data-copy="metadata-live-direct">Copy live GET metadata</button><output aria-live="polite"></output>
+        <p><a href="./dynamic-rates-demo.html?scenario=live-direct">Test the actual GET endpoint now</a></p>
+        <h3>Our Accounts: aggregate POST</h3>
+        <div id="metadata-live-aggregate"></div><button data-copy="metadata-live-aggregate">Copy live POST metadata</button><output aria-live="polite"></output>
+        <p><a href="./dynamic-rates-demo.html?scenario=live-aggregate">Test the actual POST endpoint now</a></p>
+        <p>Replace the draft's existing Metadata table with one of these, then preview again. Open the branch's <strong>aem.page</strong> URL to check preview content. Publish the content as well before expecting the same settings on <strong>aem.live</strong>.</p>
+        <p>The live showcase uses valid bindings and checks for API values, API source and retrieval timestamps. It does not compare current rates with fixed sample numbers. If it reports network or timeout, the browser cannot read a valid response; inspect its console and request response to identify the access issue. Changing the URL alone cannot grant cross-origin access.</p>
+        <p>Sample values above are fixed test expectations. Live rates may differ. Keep the promotional headline separate from the base-rate API and use approved overrides, fallbacks and disclosure copy on delivery pages.</p>
+      </section>
+
+      <section id="dummy-balance">
+        <h2>Test a dummy user balance</h2>
+        <p>On the page you are testing, open the browser console and set <code>userBalance</code> in localStorage, then reload:</p>
+        <pre><code>localStorage.setItem('userBalance', '100000');
+location.reload();</code></pre>
+        <p>Use a plain non-negative decimal without commas or a currency symbol. This works on localhost, 127.0.0.1, IPv6 loopback and <strong>aem.page</strong> preview hosts. Storage is separate for every origin, including port: set it on the same page you are testing. The local <a href="./dynamic-rates-demo.html">showcase</a> also has an Apply balance control.</p>
+        <p>Savings and checking API bindings, including hybrid bindings with empty Override, use the dummy balance to select their JSON tier. This is client-side selection; the dummy balance is not sent to the rate endpoint. Manual rates, populated hybrid overrides, CD terms and ordinary authored copy keep their values. Production hosts, including aem.live, ignore this key.</p>
+        <div class="scroll"><table><thead><tr><th>Dummy balance</th><th>Savings sample APY</th><th>Checking sample APY</th></tr></thead><tbody>
+          <tr><td>0</td><td>3.75%</td><td>0.05%</td></tr>
+          <tr><td>5000</td><td>3.85%</td><td>0.05%</td></tr>
+          <tr><td>10000</td><td>3.85%</td><td>2.00%</td></tr>
+          <tr><td>50000</td><td>4.00%</td><td>2.00%</td></tr>
+          <tr><td>100000</td><td>4.15%</td><td>2.00%</td></tr>
+          <tr><td>500000</td><td>4.25%</td><td>2.00%</td></tr>
+        </tbody></table></div>
+        <p>These are fabricated sample savings rates. Keep the page connected to the sample JSON to see these values. The live API may return identical rates for different balances. The showcase reports the effective balance beside each value; for dummy balances it checks API success and numeric values. The browser regression checks exact dummy-tier values.</p>
+        <p>To restore each card’s authored Balance, clear the key and reload:</p>
+        <pre><code>localStorage.removeItem('userBalance');
+location.reload();</code></pre>
+        <p>Missing, invalid or blocked storage also restores authored Balance. Zero is a valid dummy balance. Keep the required Balance setting in every savings/checking binding: a dummy value does not repair invalid authoring. If the request fails, the existing Fallback, including <code>-.--</code>, is still used. Changes take effect on reload; storage changes do not update already rendered cards.</p>
+      </section>
+
+      <section id="json-delivery">
+        <h2>Serve JSON on the branch, or author it as shared content</h2>
+        <p><strong>For a remote test today:</strong> <a href="/phx/pros/apicontent/init/bankRates.json">phx/pros/apicontent/init/bankRates.json</a> contains an API-shaped guest sample with distinct dummy savings rates. Its directories mirror the production GET endpoint, with a <code>.json</code> suffix for static delivery. It is a fixed sample, not a live feed. Unlike the local test fixtures, this file is included in AEM code delivery. Open <code>https://et-dynamic--etrade--adobedrago.aem.page/phx/pros/apicontent/init/bankRates.json</code> and confirm that it returns JSON.</p>
+        <div id="metadata-published-sample"></div><button data-copy="metadata-published-sample">Copy branch JSON metadata</button><output aria-live="polite"></output>
+        <p>Use that table on the draft, preview and reload. The remote page can now exercise the same sample bindings without the local helper. A developer edits this file in Git; this is not an author-managed JSON source.</p>
+        <p>The dummy files preserve the supplied API response structure: all three products, five savings balance tiers, two checking balance tiers, seven CD terms, calculated CD minimum/maximum fields, campaign codes and the empty errors array. They retain the API's string values and precision. Savings rates have been changed to distinct fabricated values so balance changes are visible. Checking and CD values retain the supplied examples; none of these files is a live rate feed.</p>
+        <p><strong>Aggregate response sample:</strong> <a href="/phx/pros/aggregate.json">phx/pros/aggregate.json</a> mirrors the production aggregate endpoint and contains the exact <code>responses</code> envelope, with <code>status: 200</code>, <code>index: 0</code> and the bank data encoded as a JSON string in <code>body</code>.</p>
+        <div id="metadata-published-aggregate-sample"></div><button data-copy="metadata-published-aggregate-sample">Copy aggregate JSON sample metadata</button><output aria-live="polite"></output>
+        <p>For this static file, use <strong>source direct</strong> to request it with GET; the rate client still parses the aggregate envelope. Static JSON does not implement the production POST endpoint. Use the local aggregate scenario to check the POST payload, or the live aggregate scenario when access is available.</p>
+        <p><a href="./dynamic-rates-demo.html?scenario=published-sample">Check the direct JSON sample</a> · <a href="./dynamic-rates-demo.html?scenario=published-aggregate-sample">Check the aggregate JSON sample</a>. Both should report <strong>22/22 examples match</strong> and one rate request.</p>
+        <p><strong>For author-managed JSON:</strong> use <a href="https://www.aem.live/docs/ew/administering/structured-content">Experience Workspace Structured Content</a>. Configure a dedicated folder and schema, create a document using its form, then preview or publish it. The JSON is delivered through <code>https://da-sc.adobeaem.workers.dev/preview/{org}/{site}/{document-path}</code> or the corresponding <code>/live/</code> URL. Your folder and schema configuration are separate from this branch.</p>
+        <p><a href="https://www.aem.live/developer/spreadsheets">AEM spreadsheets</a> are another authoring option: a previewed sheet becomes a <code>.json</code> source with a <code>data</code> array. The current rate client expects the bank API's <code>campaign.offer.productList</code> format, so a sheet needs an adapter. Structured Content also needs an approved delivery connection; the current client only accepts the two E*TRADE URLs and same-origin routes. Pasting JSON into a normal page does not make it a JSON endpoint.</p>
+      </section>
+
+      <section>
+        <h2>Settings reference</h2>
+        <div class="scroll"><table><thead><tr><th>Setting</th><th>Values</th></tr></thead><tbody>
+          <tr><td>Name</td><td>Optional, defaults to rate. A unique name per binding within its row; letters, numbers and hyphens, starting with a letter.</td></tr>
+          <tr><td>Mode</td><td>Required: api, manual or hybrid. API ignores Override; manual requires Override; hybrid uses it only when populated.</td></tr>
+          <tr><td>Product</td><td>3100 = Premium Savings; 4240 = Max-Rate Checking; 3500 = CD.</td></tr>
+          <tr><td>Field</td><td>advertisedAPY, disclosureAPY or finalRate. CDs also support minDisclosureAPY and maxDisclosureAPY. CD responses have no advertisedAPY field.</td></tr>
+          <tr><td>Balance</td><td>Required for savings/checking API bindings. Plain non-negative decimal; no commas or currency symbols.</td></tr>
+          <tr><td>Term</td><td>Required for a CD tier. Sample terms: 6M, 9M, 12M, 18M, 24M, 36M, 60M. Omit Term and Balance when using the CD calculated minimum/maximum fields.</td></tr>
+          <tr><td>Override</td><td>Plain non-negative decimal, without %. 0 is valid.</td></tr>
+          <tr><td>Fallback</td><td>Optional plain non-negative decimal, without %, or the display placeholder <code>-.--</code>. With <code>Fallback: -.--</code>, valid API/hybrid cards still request rates and show the placeholder while loading or when a rate cannot be resolved. Keep % and APY authored beside the marker. An omitted fallback displays — when data cannot be resolved.</td></tr>
+        </tbody></table></div>
+        <p>Supported blocks: <code>cards-product</code>, <code>cards-account</code> and <code>cards-pricing</code>. Add one Rate settings cell for each distinct named value. Repeated markers in a row share that binding. Existing ordinary cards do not need settings.</p>
+        <p>Automated checks: <code>npm run test:rates</code> and <code>npm run lint</code>. The local showcase validates displayed values, sources, error states, API retrieval timestamps and request counts. Docs, local test fixtures and the inspector are excluded from AEM delivery; the dummy JSON files under <code>/phx/pros/</code> are included for branch testing. The production blocks do not import this test helper.</p>
+      </section>
+    </main>
+  </body>
+</html>

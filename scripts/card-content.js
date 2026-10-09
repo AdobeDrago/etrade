@@ -21,9 +21,17 @@ export default function decorateCards(block, name) {
       heading.replaceWith(replacement);
     }
     const first = body.firstElementChild;
-    if (first?.matches('p') && /^\s*\$?[\d,.]+%?\s*$/.test(first.textContent)) {
-      first.classList.add(`${name}-value`);
-      item.classList.add(`${name}-has-value`);
+    if (first?.matches('p')) {
+      let value = /^\s*\$?[\d,.]+%?\s*$/.test(first.textContent);
+      if (!value && first.querySelector('[data-rate-name]')) {
+        const copy = first.cloneNode(true);
+        copy.querySelectorAll('[data-rate-name]').forEach((marker) => marker.remove());
+        value = /^\s*\$?\s*%?\s*$/.test(copy.textContent);
+      }
+      if (value) {
+        first.classList.add(`${name}-value`);
+        item.classList.add(`${name}-has-value`);
+      }
     }
     const rate = body.querySelector('h4, h5, h6');
     if (rate) rate.classList.add(`${name}-rate`);

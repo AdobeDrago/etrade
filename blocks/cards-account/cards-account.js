@@ -1,3 +1,6 @@
+import decorateCardRates from '../../scripts/card-rates.js';
+import { standaloneAction } from '../../scripts/actions.js';
+
 /**
  * cards-account — grid of account cards, each with a top accent bar, an account
  * name, a short label/description, and one or two CTA links. No images.
@@ -5,18 +8,20 @@
  * Expected authored structure (one row per card, single column):
  *   [ heading (account name), label/description paragraph(s), CTA link(s) ]
  */
-export default function decorate(block) {
+export default async function decorate(block) {
+  const rates = decorateCardRates(block);
   const ul = document.createElement('ul');
   [...block.children].forEach((row) => {
+    const cells = [...row.children];
+    if (!cells.some((cell) => cell.textContent.trim() || cell.querySelector('img, picture, .icon'))) return;
     const li = document.createElement('li');
-    while (row.firstElementChild) li.append(row.firstElementChild);
-    [...li.children].forEach((div) => {
-      div.className = 'cards-account-body';
-    });
+    const body = document.createElement('div');
+    body.className = 'cards-account-body';
+    cells.forEach((cell) => body.append(...cell.childNodes));
+    li.append(body);
 
     // Group CTA links into an actions row.
-    const body = li.querySelector('.cards-account-body') || li;
-    const ctaParagraphs = [...body.querySelectorAll(':scope > p')].filter((p) => p.querySelector('a'));
+    const ctaParagraphs = [...body.querySelectorAll(':scope > p')].filter((p) => standaloneAction(p));
     if (ctaParagraphs.length) {
       const actions = document.createElement('div');
       actions.className = 'cards-account-actions';
@@ -27,4 +32,6 @@ export default function decorate(block) {
     ul.append(li);
   });
   block.replaceChildren(ul);
+  block.hidden = !ul.children.length;
+  await rates;
 }

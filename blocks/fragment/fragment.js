@@ -16,9 +16,10 @@ import {
 /**
  * Loads a fragment.
  * @param {string} path The path to the fragment
+ * @param {object} options Whether to decorate blocks and default content
  * @returns {HTMLElement} The root element of the fragment
  */
-export async function loadFragment(path) {
+export async function loadFragment(path, { decorate: shouldDecorate = true } = {}) {
   if (path && path.startsWith('/') && !path.startsWith('//')) {
     const resp = await fetch(`${path}.plain.html`);
     if (resp.ok) {
@@ -34,8 +35,10 @@ export async function loadFragment(path) {
       resetAttributeBase('img', 'src');
       resetAttributeBase('source', 'srcset');
 
-      decorateMain(main);
-      await loadSections(main);
+      if (shouldDecorate) {
+        decorateMain(main);
+        await loadSections(main);
+      }
       return main;
     }
   }

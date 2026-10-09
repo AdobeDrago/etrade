@@ -6,6 +6,10 @@ Put the amount in the first paragraph (for example `$0`, `$0.65`, or `0.50%`), f
 
 Standalone links become secondary actions with a decorative arrow. Text, destinations, and tracking parameters come from DA. The grid has one column on narrow phones, two from 600px, and three from 900px. Cards stretch evenly and align their actions at the bottom.
 
+## Optional dynamic bank rates
+
+The shared rate binding supports `{{rate}}` or named markers plus a separate **Rate settings** cell. API, manual and hybrid modes are documented in the [authoring guide](../../docs/dynamic-rates-authoring.html). Keep units and disclosure superscripts authored. Commission amounts and ordinary pricing remain authored unless explicitly configured; the bank-rate endpoint does not supply trading fees. Review: https://et-dynamic--etrade--AdobeDrago.aem.page/home.
+
 ## Migration review
 
 This component is migrated on `et-cards-pricing`. Review its changes against `develop`.
