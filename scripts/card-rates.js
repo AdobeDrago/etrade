@@ -1,5 +1,6 @@
 import { formatBankRate, loadBankRates, selectBankRate } from './bank-rates.js';
 import parseRateSettings from './rate-settings.js';
+import applyDemoBalance from './demo-balance.js';
 
 function cellLines(cell) {
   const clone = cell.cloneNode(true);
@@ -46,11 +47,15 @@ function rateMarkers(row) {
 
 function updateRate(markers, settings, result) {
   const {
-    value, source, error, fetchedAt,
+    value, display, source, error, fetchedAt,
   } = result;
   markers.forEach((marker) => {
-    marker.textContent = value === null ? '—' : formatBankRate(value);
+    marker.textContent = value === null ? display || '—' : formatBankRate(value);
     marker.dataset.rateSource = source;
+    if (settings.balance !== undefined) {
+      marker.dataset.rateBalance = settings.balance;
+      marker.dataset.rateBalanceSource = settings.balanceSource || 'authored';
+    }
     if (error) marker.dataset.rateError = error;
     else delete marker.dataset.rateError;
     if (fetchedAt) marker.dataset.rateFetchedAt = fetchedAt;
@@ -64,6 +69,8 @@ function updateRate(markers, settings, result) {
         product: settings.product,
         field: settings.field,
         balance: settings.balance,
+        authoredBalance: settings.authoredBalance ?? settings.balance,
+        balanceSource: settings.balance === undefined ? undefined : settings.balanceSource || 'authored',
         term: settings.term,
         ...result,
       },
@@ -72,7 +79,11 @@ function updateRate(markers, settings, result) {
 }
 
 async function resolveRate(markers, settings, options) {
-  const fallback = { value: settings.fallback, source: settings.fallback === null ? 'unavailable' : 'fallback' };
+  const fallback = {
+    value: settings.fallback,
+    display: settings.fallbackText,
+    source: settings.fallback === null && !settings.fallbackText ? 'unavailable' : 'fallback',
+  };
   if (!settings.valid) {
     updateRate(markers, settings, { ...fallback, error: 'invalid-settings' });
     return;
@@ -108,7 +119,8 @@ export default function decorateCardRates(block) {
       const matches = settings.filter((entry) => entry.name === name);
       const selected = matches.length === 1 ? matches[0] : { name, valid: false, fallback: null };
       const selectedMarkers = markers.filter((marker) => marker.dataset.rateName === name);
-      pending.push(resolveRate(selectedMarkers, selected, options));
+      const effective = applyDemoBalance(selected, block.ownerDocument.defaultView);
+      pending.push(resolveRate(selectedMarkers, effective, options));
     });
   });
   return Promise.all(pending);

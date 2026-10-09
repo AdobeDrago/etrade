@@ -17,6 +17,8 @@
       h2 { font-size: 26px; margin-top: 40px; }
       .notice { background: #fff4d7; border-left: 4px solid #b57e00; padding: 16px; }
       select { font: inherit; padding: 8px; max-width: 100%; }
+      #demo-balance-form { margin-top: 20px; }
+      #demo-balance { font: inherit; padding: 8px; width: 180px; }
       .review-status { background: #eae5f5; border-radius: 8px; padding: 10px 14px; margin-top: 12px; font: 14px/1.5 system-ui, sans-serif; }
       [data-demo-panel] { margin-bottom: 28px; }
     </style>
@@ -25,7 +27,7 @@
   <body>
     <main>
       <h1>Dynamic rates with manual overrides</h1>
-      <p class="notice"><strong>Sample data — not live rates.</strong> API values use the guest responses supplied on October 8, 2026. Manual values and fallbacks demonstrate author controls.</p>
+      <p class="notice"><strong>Sample data — not live rates.</strong> API-shaped guest samples have distinct dummy savings rates for balance testing. Manual values and fallbacks demonstrate author controls.</p>
       <p><a href="./dynamic-rates-authoring.html">Step-by-step setup and complete copyable test page</a></p>
       <label for="connection">Review scenario:</label>
       <select id="connection">
@@ -34,6 +36,13 @@
         <option value="failure">Failed API request</option>
         <option value="manual">Manual-only cards — no API request</option>
       </select>
+      <form id="demo-balance-form">
+        <label for="demo-balance">Dummy user balance ($):</label>
+        <input id="demo-balance" type="number" min="0" step="0.01" placeholder="Authored balance">
+        <button type="submit">Apply balance</button>
+        <button id="clear-balance" type="button">Use authored balance</button>
+      </form>
+      <p id="balance-status" role="status"></p>
       <p id="demo-summary" role="status">Loading sample…</p>
       <div id="demo-cards"></div>
     </main>

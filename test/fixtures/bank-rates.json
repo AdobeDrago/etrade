@@ -14,32 +14,32 @@
               "finalRate": "3.68"
             },
             {
-              "advertisedAPY": "3.75",
-              "disclosureAPY": "3.75",
+              "advertisedAPY": "3.85",
+              "disclosureAPY": "3.85",
               "balHiRange": "49999.99",
               "balLowRange": "5000.00",
-              "finalRate": "3.68"
+              "finalRate": "3.78"
             },
             {
-              "advertisedAPY": "3.75",
-              "disclosureAPY": "3.75",
+              "advertisedAPY": "4.00",
+              "disclosureAPY": "4.00",
               "balHiRange": "99999.99",
               "balLowRange": "50000.00",
-              "finalRate": "3.68"
+              "finalRate": "3.92"
             },
             {
-              "advertisedAPY": "3.75",
-              "disclosureAPY": "3.75",
+              "advertisedAPY": "4.15",
+              "disclosureAPY": "4.15",
               "balHiRange": "499999.99",
               "balLowRange": "100000.00",
-              "finalRate": "3.68"
+              "finalRate": "4.07"
             },
             {
-              "advertisedAPY": "3.75",
-              "disclosureAPY": "3.75",
+              "advertisedAPY": "4.25",
+              "disclosureAPY": "4.25",
               "balHiRange": "0.00",
               "balLowRange": "500000.00",
-              "finalRate": "3.68"
+              "finalRate": "4.17"
             }
           ],
           "description": "Premium Savings Account",

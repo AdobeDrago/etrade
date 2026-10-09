@@ -11,7 +11,16 @@ if (previewOrigin.protocol !== 'http:' || !['localhost', '127.0.0.1', '[::1]'].i
   throw new Error('AEM_LOCAL_ORIGIN must be your local HTTP preview server.');
 }
 const types = {
-  '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.woff2': 'font/woff2',
+  '.html': 'text/html',
+  '.js': 'text/javascript',
+  '.css': 'text/css',
+  '.json': 'application/json',
+  '.woff2': 'font/woff2',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
 };
 const server = createServer(async (request, response) => {
   const { pathname, search } = new URL(request.url, 'http://localhost');

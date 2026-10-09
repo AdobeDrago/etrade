@@ -21,10 +21,11 @@ export default function parseRateSettings(lines) {
   const term = settings.term?.toUpperCase();
   const override = rateDecimal(settings.override);
   const fallback = rateDecimal(settings.fallback);
+  const fallbackText = settings.fallback === '-.--' ? settings.fallback : null;
   if (!/^[a-z][a-z0-9-]{0,31}$/.test(name)) errors.push('Invalid rate name.');
   if (!['api', 'manual', 'hybrid'].includes(mode)) errors.push('Mode must be api, manual or hybrid.');
   if (mode !== 'api' && settings.override && override === null) errors.push('Invalid override value.');
-  if (settings.fallback && fallback === null) errors.push('Invalid fallback value.');
+  if (settings.fallback && fallback === null && fallbackText === null) errors.push('Invalid fallback value.');
   if (mode === 'manual' && override === null) errors.push('Manual mode requires an override.');
   if (mode === 'api' || mode === 'hybrid') {
     if (!['3100', '4240', '3500'].includes(settings.product) || !field) {
@@ -42,6 +43,14 @@ export default function parseRateSettings(lines) {
     }
   }
   return {
-    ...settings, name, mode, field, term, override, fallback, valid: errors.length === 0,
+    ...settings,
+    name,
+    mode,
+    field,
+    term,
+    override,
+    fallback,
+    fallbackText,
+    valid: errors.length === 0,
   };
 }

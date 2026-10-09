@@ -1,6 +1,8 @@
 import decorateProduct from '../blocks/cards-product/cards-product.js';
 import decorateAccount from '../blocks/cards-account/cards-account.js';
 import decoratePricing from '../blocks/cards-pricing/cards-pricing.js';
+import { rateDecimal } from '../scripts/bank-rates.js';
+import { DEMO_BALANCE_KEY, readDemoBalance } from '../scripts/demo-balance.js';
 import {
   rateExamples, scenarios, comparisonSections, exampleContent, settingsContent,
 } from './dynamic-rates-examples.js';
@@ -9,6 +11,35 @@ const requested = new URLSearchParams(window.location.search).get('scenario') ||
 const comparison = new URLSearchParams(window.location.search).get('pack') === 'comparison';
 const scenario = Object.hasOwn(scenarios, requested) ? requested : 'direct';
 const selected = scenarios[scenario];
+const balanceForm = document.getElementById('demo-balance-form');
+const balanceInput = document.getElementById('demo-balance');
+const balanceStatus = document.getElementById('balance-status');
+const demoBalance = readDemoBalance();
+balanceInput.value = demoBalance ?? '';
+balanceStatus.textContent = demoBalance === null
+  ? 'Using each card’s authored balance.'
+  : `Dummy balance: $${Number(demoBalance).toLocaleString()}. Savings and checking API cards use this balance.`;
+function saveBalance(value) {
+  try {
+    if (value === null) localStorage.removeItem(DEMO_BALANCE_KEY);
+    else localStorage.setItem(DEMO_BALANCE_KEY, value);
+    window.location.reload();
+  } catch {
+    balanceStatus.textContent = 'Browser storage is unavailable. Cards use their authored balance.';
+  }
+}
+balanceInput.addEventListener('input', () => balanceInput.setCustomValidity(''));
+balanceForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const balance = rateDecimal(balanceInput.value);
+  if (balanceInput.value && balance === null) {
+    balanceInput.setCustomValidity('Enter a non-negative decimal balance.');
+    balanceInput.reportValidity();
+    return;
+  }
+  saveBalance(balance);
+});
+document.getElementById('clear-balance').addEventListener('click', () => saveBalance(null));
 const connection = document.getElementById('connection');
 connection.replaceChildren();
 Object.entries(scenarios).forEach(([key, config]) => {
@@ -92,7 +123,9 @@ const pending = samples.map(async (example) => {
   const expectedError = connectionFailed ? connectionErrors[scenario] : example.error;
   const actual = markers.map((marker) => marker.textContent);
   const liveValue = selected.live && example.source === 'api';
-  const valuesMatch = liveValue
+  const dummyValue = expectedSource === 'api' && markers.some((marker) => marker.dataset.rateBalanceSource === 'demo');
+  const variableValue = liveValue || dummyValue;
+  const valuesMatch = variableValue
     ? markers.length === example.expected.length && actual.every((value) => /^\d+\.\d{2,}$/.test(value))
     : JSON.stringify(actual) === JSON.stringify(expected);
   const matches = valuesMatch
@@ -103,7 +136,11 @@ const pending = samples.map(async (example) => {
   panel.dataset.check = matches ? 'passed' : 'failed';
   const sources = [...new Set(markers.map((marker) => marker.dataset.rateSource))];
   const errors = [...new Set(markers.map((marker) => marker.dataset.rateError).filter(Boolean))];
-  status.textContent = `${matches ? 'PASS' : 'FAIL'} · Expected: ${liveValue ? 'live API value' : expected.join(' / ') || example.authoredRate || 'authored text'} · Displayed: ${actual.join(' / ') || example.authoredRate || 'authored text'} · Source: ${sources.join(' / ') || 'authored'}${errors.length ? ` · Reason: ${errors.join(' / ')}` : ''}`;
+  let expectedLabel = liveValue ? 'live API value' : expected.join(' / ') || example.authoredRate || 'authored text';
+  if (dummyValue) expectedLabel = `API value for dummy balance ${demoBalance}`;
+  const balances = [...new Set(markers.filter((marker) => marker.dataset.rateBalance !== undefined)
+    .map((marker) => `${marker.dataset.rateBalance} (${marker.dataset.rateBalanceSource})`))];
+  status.textContent = `${matches ? 'PASS' : 'FAIL'} · Expected: ${expectedLabel} · Displayed: ${actual.join(' / ') || example.authoredRate || 'authored text'} · Source: ${sources.join(' / ') || 'authored'}${balances.length ? ` · Balance: ${balances.join(' / ')}` : ''}${errors.length ? ` · Reason: ${errors.join(' / ')}` : ''}`;
 });
 await Promise.all(pending);
 const failures = document.querySelectorAll('[data-check="failed"]').length;

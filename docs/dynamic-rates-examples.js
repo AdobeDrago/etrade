@@ -60,7 +60,7 @@ export const rateExamples = [
     block: 'cards-account',
     copy: '<p>{{rate}}% APY</p>',
     settings: [['Mode: api', 'Product: 3100', 'Field: disclosureAPY', 'Balance: 5000', fallback]],
-    expected: ['3.75'],
+    expected: ['3.85'],
     source: 'api',
     description: 'The exact disclosureAPY field is selected; product order does not matter.',
   },
@@ -238,13 +238,13 @@ export const rateExamples = [
 export const comparisonSections = [
   {
     heading: 'Dynamic rates — populated from the demo JSON',
-    description: 'These three cards read their rates from the JSON endpoint. Expected demo values: 3.75%, 2.00% and 4.40%.',
+    description: 'These three cards read their rates from the JSON endpoint. Without a dummy balance, their sample values are 3.75%, 2.00% and 4.40%.',
     examples: [
       {
         id: 'dynamic-savings',
         title: 'DYNAMIC · Premium Savings',
         block: 'cards-product',
-        copy: '<h4>{{rate}}% APY</h4><p>Fetched from the demo JSON: savings advertised APY at balance 0.</p>',
+        copy: '<h4>{{rate}}% APY</h4><p>Savings advertised APY from the demo JSON. Authored default balance: $0.</p>',
         settings: [savings],
         expected: ['3.75'],
         source: 'api',
@@ -253,7 +253,7 @@ export const comparisonSections = [
         id: 'dynamic-checking',
         title: 'DYNAMIC · Max-Rate Checking',
         block: 'cards-product',
-        copy: '<h4>{{rate}}% APY</h4><p>Fetched from the demo JSON: checking advertised APY at balance 10,000.</p>',
+        copy: '<h4>{{rate}}% APY</h4><p>Checking advertised APY from the demo JSON. Authored default balance: $10,000.</p>',
         settings: [[...checking, 'Balance: 10000', fallback]],
         expected: ['2.00'],
         source: 'api',

@@ -1,4 +1,6 @@
 import { loadFragment } from '../fragment/fragment.js';
+import { decorateIcons } from '../../scripts/aem.js';
+import { disclosureSetRequest, loadDisclosureSet } from '../../scripts/disclosure-sets.js';
 
 /** Link only references backed by an authored disclosure item. */
 function linkDisclosureReferences(main) {
@@ -35,32 +37,19 @@ function linkDisclosureReferences(main) {
   });
 }
 
-export default async function decorate(block) {
-  const reference = block.querySelector(':scope > div > div > a[href], :scope > div > div > p > a[href]');
-  const isReference = reference && block.textContent.trim() === reference.textContent.trim();
-  if (block.children.length === 1 && isReference) {
-    try {
-      const fragment = await loadFragment(new URL(reference.href).pathname);
-      const content = fragment?.querySelector('.disclosures');
-      block.replaceChildren(...(content ? [...content.childNodes] : []));
-      block.hidden = !content;
-    } catch { block.hidden = true; }
-    if (!block.hidden) linkDisclosureReferences(document.querySelector('main'));
-    return;
-  }
+/** Render both legacy table rows and resolved rich-text fragments consistently. */
+function renderDisclosures(block, entries) {
   const intro = document.createElement('div');
   intro.className = 'disclosures-intro';
   const closing = document.createElement('div');
   closing.className = 'disclosures-closing';
   const list = document.createElement('ol');
   list.className = 'disclosures-items';
-  [...block.children].forEach((row) => {
-    const [key, ...cells] = row.children;
-    if (!key || !cells.length) return;
-    const label = key.textContent.trim();
+  entries.forEach(({ label, nodes }) => {
     const content = document.createElement(/^\d+$/.test(label) ? 'li' : 'div');
-    cells.forEach((cell) => content.append(...cell.childNodes));
+    content.append(...nodes);
     if (!content.textContent.trim() && !content.querySelector('img, picture, .icon')) return;
+    decorateIcons(content);
     content.querySelectorAll('a').forEach((link) => link.classList.remove('button', 'primary', 'secondary', 'accent'));
     if (/^\d+$/.test(label)) {
       content.id = `disclosure-${Number(label)}`;
@@ -89,4 +78,57 @@ export default async function decorate(block) {
   if (closing.children.length) block.append(closing);
   block.hidden = !block.children.length;
   if (!block.hidden) linkDisclosureReferences(document.querySelector('main'));
+}
+
+/** Fetch each document once, then clone it for every position in the set. */
+async function renderSet(block, url) {
+  const entries = await loadDisclosureSet(url);
+  const documents = new Map();
+  entries.forEach(({ path }) => {
+    if (!documents.has(path)) documents.set(path, loadFragment(path, { decorate: false }));
+  });
+  const rows = await Promise.all(entries.map(async ({ label, path }) => {
+    const fragment = await documents.get(path);
+    if (!fragment) throw new Error(`Disclosure fragment could not be loaded: ${path}`);
+    const nodes = [...fragment.childNodes].flatMap((section) => (
+      section.nodeType === 1 && section.tagName === 'DIV'
+        ? [...section.childNodes] : [section]
+    )).map((node) => node.cloneNode(true));
+    return { label, nodes };
+  }));
+  renderDisclosures(block, rows);
+}
+
+export default async function decorate(block) {
+  const reference = block.querySelector(':scope > div > div > a[href], :scope > div > div > p > a[href]');
+  const isReference = reference && block.textContent.trim() === reference.textContent.trim();
+  if (block.children.length === 1 && isReference) {
+    try {
+      const request = disclosureSetRequest(reference.href);
+      if (request) {
+        await renderSet(block, request);
+      } else {
+        const fragment = await loadFragment(new URL(reference.href).pathname);
+        const content = fragment?.querySelector('.disclosures');
+        block.replaceChildren(...(content ? [...content.childNodes] : []));
+        block.hidden = !content;
+        if (!block.hidden) linkDisclosureReferences(document.querySelector('main'));
+      }
+    } catch (error) {
+      block.replaceChildren();
+      block.hidden = true;
+      // eslint-disable-next-line no-console
+      console.error('Disclosure loading failed', error);
+    }
+    return;
+  }
+  const entries = [...block.children].flatMap((row) => {
+    const [key, ...cells] = row.children;
+    if (!key || !cells.length) return [];
+    return [{
+      label: key.textContent.trim(),
+      nodes: cells.flatMap((cell) => [...cell.childNodes]),
+    }];
+  });
+  renderDisclosures(block, entries);
 }

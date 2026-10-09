@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Welcome Back — authoring and Monday handoff</title>
+  <style>
+    body { margin: 0; background: #f5f4f8; color: #242424; font: 16px/1.6 system-ui, sans-serif; }
+    main { max-width: 1100px; margin: auto; padding: 32px 24px 80px; }
+    section { margin: 24px 0; padding: 24px; background: #fff; border: 1px solid #ddd; border-radius: 8px; }
+    h1, h2 { line-height: 1.2; }
+    a { color: #5627d8; }
+    button { padding: 12px 20px; background: #5627d8; color: #fff; border: 0; border-radius: 4px; cursor: pointer; font: inherit; }
+    table { width: 100%; border-collapse: collapse; margin: 24px 0; }
+    th, td { padding: 12px; border: 1px solid #aaa; text-align: left; vertical-align: top; }
+    th { background: #eeeafa; }
+    td:first-child { width: 24%; }
+    img { max-width: 100%; max-height: 200px; }
+    output { display: block; margin-top: 12px; }
+    .note { padding: 16px; border-left: 4px solid #a87800; background: #fff3cd; }
+    code { overflow-wrap: anywhere; }
+  </style>
+  <script src="./welcome-back-authoring.js" type="module"></script>
+</head>
+<body><main>
+  <h1>Welcome Back: authoring and Monday handoff</h1>
+  <p>Page target: <code>/home/welcome-back</code>. Reference: <a href="https://us.etrade.com/home/welcome-back">current public page</a>. Due Monday, October 12, 2026.</p>
+  <p><a href="./welcome-back-demo.html">Open the working sample review</a> · <a href="./welcome-back-demo.html?data=live">Check live API access</a> · <a href="./welcome-back-demo.html?data=unavailable">Check failure handling</a></p>
+  <section>
+    <h2>Current delivery state</h2>
+    <p>Four custom blocks are implemented: Welcome Hero, Market Ticker, Market Overview, and Market Top Five. The campaign cards reuse Cards Icon with the Welcome Back variant. The existing global header and footer load normally.</p>
+    <p class="note">The live page is not yet authored or published in DA. The sample review uses fabricated prices and rankings, clearly labeled in every market region. Live API access from preview still needs verification. Login currently navigates to E*TRADE's existing sign-in; the embedded login form requires a supported identity integration.</p>
+    <p>The October 9 local browser check failed to fetch quote, chart and Top Five data from the live endpoints (<code>network-or-response</code>). The local failure does not establish whether preview-domain CORS, network filtering, or gateway rules are responsible. Verify access from the deployed preview and obtain the approved service route if direct requests are unavailable.</p>
+    <p>Campaign copy and disclosures below were captured from the public reference on October 9. Confirm the campaign and disclosure content with the content owner before publishing.</p>
+  </section>
+  <section>
+    <h2>Create the authored page</h2>
+    <ol>
+      <li>Create <code>/home/welcome-back</code> in the etrade DA authoring site.</li>
+      <li>Click <strong>Copy complete page</strong> and paste into the DA page body. Keep the tables, horizontal rules, and one Metadata table.</li>
+      <li>Use the existing global navigation and footer. Set their page metadata paths only if this page needs different fragments. The current shared footer contains navigation; compose the common investing, banking, and corporate closing disclosures into a Welcome Back disclosure document or set, then add a <strong>Disclosures</strong> row pointing to that previewed document. The existing Disclosures loader places it after the footer. Do not reuse unrelated homepage offer disclosures.</li>
+      <li>Preview content. Verify <code>/home/welcome-back.plain.html</code> shows the four named blocks before checking their styling.</li>
+      <li>Open the code branch preview at <a href="https://et-dynamic--etrade--AdobeDrago.aem.page/home/welcome-back">et-dynamic--etrade--AdobeDrago.aem.page/home/welcome-back</a> once the code has been pushed. This URL currently returns 404 until the content is previewed.</li>
+    </ol>
+    <button id="copy-page" type="button">Copy complete page</button><output id="copy-status" role="status"></output>
+  </section>
+  <section>
+    <h2>Connect the market service</h2>
+    <p><strong>Market Data Base</strong> defaults to <code>https://us.etrade.com/phx/pros/apicontent/market/</code>. The implementation uses the direct PHX requests observed in the existing site's scripts, with credentials omitted. The existing site also batches its initial requests through <code>/phx/pros/aggregate</code>; this implementation uses the direct service endpoints.</p>
+    <table><tr><th>Operation</th><th>Request</th><th>Response contract</th></tr>
+      <tr><td>Index / recent quotes</td><td>POST <code>quote</code>: <code>{symbol:"DJIND,COMP.IDX,SPX,TNX",detailFlag:"INTRADAY"}</code></td><td><code>quoteData[].product.symbol</code> and <code>intraday.lastTrade/changeClose/changeClosePercentage/dateTime</code>. Timestamp availability must be confirmed from a live response.</td></tr>
+      <tr><td>Chart</td><td>POST <code>chart</code>: <code>{indexes:"DJIND"}</code>; also COMPIDX, SPX, TNX</td><td><code>data[0].dataPoints[].stockDate/highValue</code></td></tr>
+      <tr><td>Symbol lookup</td><td>POST <code>lookup</code>: <code>{searchString:"query"}</code></td><td><code>data[].symbol/description</code></td></tr>
+      <tr><td>Top five</td><td>GET <code>top5/TopDivYieldStocks</code>, <code>top5/MostSearchedMFs</code>, <code>top5/TopETFs</code></td><td><code>top5Response.data[]</code> and <code>chartResponse.data[]</code>, aligned by position as in the current implementation</td></tr>
+    </table>
+    <p>If these requests are blocked by CORS or gateway rules on the preview domain, configure an approved same-origin proxy and set <strong>Market Data Base</strong> to its root-relative base path, ending in a slash, such as <code>/api/market/</code>. The proxy must preserve the paths, POST bodies, methods, and response contracts above. Hosting a proxy is outside this repository's frontend-only deployment.</p>
+    <p>One-minute success caching shares requests within the page. Failures are retryable. Chart and list selections suppress late responses from older selections. Refresh fetches again. No service failure falls back to fabricated data. Missing values show unavailable text.</p>
+    <p>Treasury quote and chart prices are divided by 10, matching the current site. Changes remain as supplied by PHX. Verify this convention against live treasury values.</p>
+  </section>
+  <section>
+    <h2>Resolve login and finish by Monday</h2>
+    <ol>
+      <li><strong>Friday:</strong> create and preview the DA page; confirm campaign assets and the three category disclosures; test all four service operations from the branch preview domain.</li>
+      <li><strong>Friday / weekend:</strong> obtain E*TRADE's supported login web component configuration and domain approval if embedded login is required. Welcome Hero exposes <code>[data-login-slot]</code> and a bubbling <code>welcome:login-ready</code> event for the approved integration to mount into. The current link remains a working handoff.</li>
+      <li><strong>Before Monday review:</strong> verify desktop and mobile layouts, keyboard index tabs, chart slider and data table, company lookup, recent quote links, all three Top Five categories and matching disclaimers, unavailable states, and retries using live data.</li>
+      <li><strong>Monday:</strong> review the branch preview, merge reviewed code, and publish approved content separately. Merging main ships code. Include the branch preview link in the PR.</li>
+    </ol>
+    <p>Do not add the local sample metadata to the DA delivery page. It is restricted to localhost and will refuse to load on preview/live. This guide, the seed, and fixtures are excluded from Edge Delivery by the existing <code>.hlxignore</code>.</p>
+    <p>Local run: start the AEM server on port 3000, then <code>node test/dynamic-rates-server.mjs</code>. Open this guide or the sample page on <code>http://127.0.0.1:3020</code>. Run market checks with <code>node --experimental-vm-modules --test test/market-data.test.js test/welcome-back.test.js</code>.</p>
+  </section>
+  <section><h2>Copy-ready page content</h2><div id="page-content"></div></section>
+</main></body>
+</html>

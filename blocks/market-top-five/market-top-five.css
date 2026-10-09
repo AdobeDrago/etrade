@@ -1,0 +1,126 @@
+.market-top-five .market-top-five-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.market-top-five label {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.market-top-five select {
+  max-width: 100%;
+  min-width: 0;
+  padding: 10px 36px 10px 12px;
+  border: 1px solid #888;
+  background: #fff;
+  color: #242424;
+}
+
+.market-top-five button {
+  padding: 8px 16px;
+  border: 1px solid var(--brand-accent);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--brand-accent);
+  cursor: pointer;
+}
+
+.market-top-five .market-top-five-status {
+  font-size: 13px;
+  color: #595959;
+}
+
+.market-top-five .market-top-five-cards {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  margin: 24px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.market-top-five .market-top-five-card {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-top: 4px solid #5627d8;
+}
+
+.market-top-five .market-top-five-card-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.market-top-five .market-top-five-symbol {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.market-top-five .market-top-five-price {
+  font-size: 16px;
+}
+
+.market-top-five .market-top-five-name {
+  min-height: 2.8em;
+  margin: 8px 0 12px;
+  font-size: 13px;
+  color: #595959;
+}
+
+.market-top-five .market-top-five-change {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.market-top-five .up {
+  color: #157347;
+}
+
+.market-top-five .down {
+  color: #b02a50;
+}
+
+.market-top-five .market-top-five-asof {
+  font-size: 11px;
+  color: #595959;
+}
+
+.market-top-five svg {
+  display: block;
+  width: 100%;
+}
+
+.market-top-five .market-top-five-disclosures {
+  padding: 16px 0;
+  border-top: 1px solid #ddd;
+  font-size: 13px;
+  color: #595959;
+}
+
+.market-top-five summary {
+  color: #242424;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.market-top-five :is(a, button, select, summary):focus-visible {
+  outline: 3px solid var(--brand-accent);
+  outline-offset: 4px;
+}
+
+@media (width >= 600px) {
+  .market-top-five .market-top-five-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (width >= 1100px) {
+  .market-top-five .market-top-five-cards {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}

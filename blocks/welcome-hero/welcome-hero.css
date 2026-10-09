@@ -1,0 +1,90 @@
+.welcome-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  background: var(--brand-dark-bg);
+}
+
+.welcome-hero .welcome-hero-login {
+  padding: 32px;
+  background: #fff;
+  color: var(--brand-text);
+}
+
+.welcome-hero .welcome-hero-login h1 {
+  margin: 0 0 24px;
+  font-size: 28px;
+  text-align: center;
+}
+
+.welcome-hero .welcome-hero-login p {
+  margin: 20px 0;
+}
+
+.welcome-hero .welcome-hero-login a.welcome-hero-primary {
+  width: 100%;
+}
+
+.welcome-hero .welcome-hero-campaign {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 400px;
+  isolation: isolate;
+  overflow: hidden;
+  color: #fff;
+}
+
+.welcome-hero .welcome-hero-image,
+.welcome-hero .welcome-hero-image img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.welcome-hero .welcome-hero-campaign::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, #10121dec, #10121d66);
+  content: '';
+}
+
+.welcome-hero .welcome-hero-copy {
+  padding: 40px 32px;
+  max-width: 580px;
+}
+
+.welcome-hero .welcome-hero-copy h2 {
+  margin: 0 0 24px;
+  font-size: clamp(36px, 4vw, 64px);
+  line-height: 1.08;
+  letter-spacing: -1px;
+}
+
+.welcome-hero .welcome-hero-copy p {
+  margin: 20px 0;
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+.welcome-hero a:focus-visible {
+  outline: 3px solid #ab80ff;
+  outline-offset: 4px;
+}
+
+@media (width >= 900px) {
+  .welcome-hero {
+    grid-template-columns: minmax(300px, 4fr) minmax(0, 8fr);
+  }
+
+  .welcome-hero .welcome-hero-login {
+    padding: 40px 32px;
+  }
+
+  .welcome-hero .welcome-hero-copy {
+    padding: 56px;
+  }
+}

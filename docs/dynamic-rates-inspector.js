@@ -22,7 +22,8 @@ function render() {
   markers.forEach((marker) => {
     const line = document.createElement('p');
     const cardTitle = marker.closest('li')?.querySelector('h3')?.textContent || marker.dataset.rateName;
-    line.textContent = `${cardTitle} · ${marker.dataset.rateName}: ${marker.textContent} · Source: ${marker.dataset.rateSource || 'pending'}${marker.dataset.rateError ? ` · Reason: ${marker.dataset.rateError}` : ''}`;
+    const balance = marker.dataset.rateBalance === undefined ? '' : ` · Balance: ${marker.dataset.rateBalance} (${marker.dataset.rateBalanceSource})`;
+    line.textContent = `${cardTitle} · ${marker.dataset.rateName}: ${marker.textContent} · Source: ${marker.dataset.rateSource || 'pending'}${balance}${marker.dataset.rateError ? ` · Reason: ${marker.dataset.rateError}` : ''}`;
     list.append(line);
   });
 }

@@ -6,13 +6,94 @@ import {
   createBankRateRequest, formatBankRate, loadBankRates, normalizeBankRates, selectBankRate,
 } from '../scripts/bank-rates.js';
 import parseRateSettings from '../scripts/rate-settings.js';
+import applyDemoBalance, { DEMO_BALANCE_KEY, readDemoBalance } from '../scripts/demo-balance.js';
 
 const direct = JSON.parse(await readFile(new URL('./fixtures/bank-rates.json', import.meta.url)));
 const aggregate = JSON.parse(await readFile(new URL('./fixtures/bank-rates-aggregate.json', import.meta.url)));
+const servedDirect = JSON.parse(await readFile(new URL('../phx/pros/apicontent/init/bankRates.json', import.meta.url)));
+const servedAggregate = JSON.parse(await readFile(new URL('../phx/pros/aggregate.json', import.meta.url)));
 const base = 'https://et-dynamic--etrade--adobedrago.aem.page/home';
 
 test('direct and aggregate samples resolve to the same product data', () => {
   assert.deepEqual(normalizeBankRates(aggregate), normalizeBankRates(direct));
+  assert.deepEqual(normalizeBankRates(servedDirect), normalizeBankRates(direct));
+  assert.deepEqual(normalizeBankRates(servedAggregate), normalizeBankRates(direct));
+});
+
+test('dummy savings tiers visibly change at each balance boundary', () => {
+  const data = normalizeBankRates(direct);
+  const cases = [
+    ['0', '3.75'], ['4999.99', '3.75'], ['5000', '3.85'], ['49999.99', '3.85'],
+    ['50000', '4.00'], ['99999.99', '4.00'], ['100000', '4.15'], ['499999.99', '4.15'],
+    ['500000', '4.25'], ['1000000', '4.25'],
+  ];
+  cases.forEach(([balance, expected]) => {
+    ['advertisedAPY', 'disclosureAPY'].forEach((field) => {
+      assert.equal(selectBankRate(data, { product: '3100', field, balance }), expected);
+    });
+  });
+  assert.equal(selectBankRate(data, { product: '3100', field: 'finalRate', balance: '100000' }), '4.07');
+});
+
+function demoWindow(value, hostname = 'localhost') {
+  return {
+    location: { hostname },
+    localStorage: {
+      getItem: (key) => {
+        assert.equal(key, DEMO_BALANCE_KEY);
+        return value;
+      },
+    },
+  };
+}
+
+test('localStorage balances are limited to development and preview hosts', () => {
+  ['localhost', '127.0.0.1', '[::1]', 'et-dynamic--etrade--adobedrago.aem.page'].forEach((hostname) => {
+    assert.equal(readDemoBalance(demoWindow('100000', hostname)), '100000');
+  });
+  ['us.etrade.com', 'main--etrade--adobedrago.aem.live', 'aem.page.example.com'].forEach((hostname) => {
+    assert.equal(readDemoBalance(demoWindow('100000', hostname)), null);
+  });
+  assert.equal(readDemoBalance(null), null);
+});
+
+test('missing, invalid or blocked localStorage keeps the authored balance; zero is valid', () => {
+  [null, '', '-1', '100,000', '$100000', '1e5', 'NaN', 'Infinity', '{}'].forEach((value) => {
+    assert.equal(readDemoBalance(demoWindow(value)), null);
+  });
+  assert.equal(readDemoBalance(demoWindow(' 0 ')), '0');
+  assert.equal(readDemoBalance(demoWindow('9999.99')), '9999.99');
+  const denied = { location: { hostname: 'localhost' }, get localStorage() { throw new Error('Denied'); } };
+  assert.equal(readDemoBalance(denied), null);
+  const settings = parseRateSettings(['Mode: api', 'Product: 3100', 'Field: advertisedAPY', 'Balance: 5000']);
+  assert.equal(applyDemoBalance(settings, demoWindow('bad')), settings);
+  assert.equal(applyDemoBalance(settings, denied), settings);
+});
+
+test('dummy balance selects API tiers without mutating authored settings or overriding manual values', () => {
+  const win = demoWindow('100000');
+  const data = normalizeBankRates(direct);
+  ['api', 'hybrid'].forEach((mode) => {
+    ['3100', '4240'].forEach((product) => {
+      const settings = parseRateSettings([`Mode: ${mode}`, `Product: ${product}`, 'Field: advertisedAPY', 'Balance: 0']);
+      const effective = applyDemoBalance(settings, win);
+      assert.equal(settings.balance, '0');
+      assert.equal(effective.authoredBalance, '0');
+      assert.equal(effective.balanceSource, 'demo');
+      assert.equal(effective.balance, '100000');
+      assert.equal(selectBankRate(data, effective), product === '3100' ? '4.15' : '2.00');
+      assert.equal(applyDemoBalance(settings, demoWindow('100000', 'us.etrade.com')), settings);
+    });
+  });
+  [
+    ['Mode: manual', 'Override: 1'],
+    ['Mode: hybrid', 'Product: 3100', 'Field: advertisedAPY', 'Balance: 0', 'Override: 0'],
+    ['Mode: api', 'Product: 3500', 'Field: disclosureAPY', 'Term: 12M'],
+    ['Mode: api', 'Product: 3100', 'Field: advertisedAPY'],
+  ].forEach((lines) => {
+    const settings = parseRateSettings(lines);
+    assert.equal(applyDemoBalance(settings, win), settings);
+  });
 });
 
 test('aggregate responses select index 0 regardless of response order', () => {
@@ -76,7 +157,7 @@ test('zero is valid and formatting preserves final-rate precision', () => {
   assert.equal(formatBankRate(0), '0.00');
   assert.equal(formatBankRate('4.3062'), '4.3062');
   assert.equal(formatBankRate('4.4'), '4.40');
-  ['', null, undefined, NaN, Infinity, '-1', '3.75%', '1e2'].forEach((value) => {
+  ['', null, undefined, NaN, Infinity, '-1', '-.--', '3.75%', '1e2'].forEach((value) => {
     assert.throws(() => formatBankRate(value), { code: 'invalid-value' });
   });
 });
@@ -90,6 +171,31 @@ test('author controls validate modes, explicit zero, CD terms and manual-only se
   assert.equal(parseRateSettings(['Mode: api', 'Product: 3500', 'Field: disclosureAPY', 'Term: 12m']).term, '12M');
   assert.equal(parseRateSettings(['Mode: api', 'Product: 3500', 'Field: maxDisclosureAPY']).valid, true);
   assert.equal(parseRateSettings(['Mode: api', 'Product: 3100', 'Field: advertisedAPY', 'Balance: 0', 'Override: ignored']).valid, true);
+});
+
+test('authored unavailable fallback permits API and hybrid rate lookups without becoming a number', () => {
+  ['api', 'hybrid'].forEach((mode) => {
+    const settings = parseRateSettings([
+      `Mode: ${mode}`, 'Product: 3100', 'Field: advertisedAPY', 'Balance: 0', 'Fallback: -.--',
+    ]);
+    assert.equal(settings.valid, true);
+    assert.equal(settings.fallback, null);
+    assert.equal(settings.fallbackText, '-.--');
+  });
+});
+
+test('placeholder fallback preserves numeric override and fallback validation', () => {
+  assert.equal(parseRateSettings(['Mode: manual', 'Override: -.--', 'Fallback: -.--']).valid, false);
+  const manual = parseRateSettings(['Mode: manual', 'Override: 0', 'Fallback: -.--']);
+  assert.equal(manual.valid, true);
+  assert.equal(manual.override, '0');
+  const numeric = parseRateSettings(['Mode: manual', 'Override: 1', 'Fallback: 0']);
+  assert.equal(numeric.valid, true);
+  assert.equal(numeric.fallback, '0');
+  assert.equal(numeric.fallbackText, null);
+  ['not-a-number', '3.75%', '-1'].forEach((fallback) => {
+    assert.equal(parseRateSettings(['Mode: manual', 'Override: 1', `Fallback: ${fallback}`]).valid, false);
+  });
 });
 
 test('malformed rate entries do not prevent selecting a valid tier', () => {

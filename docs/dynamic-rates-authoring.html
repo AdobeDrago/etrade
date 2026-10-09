@@ -31,7 +31,7 @@
       <h1>Dynamic rates: set up and demonstrate every use case</h1>
       <p>Follow these steps in order. You will create one authored test page containing <strong>22 numbered examples</strong>, run it with sample API data, edit the author controls, and test both response formats and failure handling.</p>
       <p>This guide covers the current technical Rate settings format. Named rate presets, Structured Content and DA library configuration are proposed follow-up work. The live API connection still needs verification in Step 8.</p>
-      <p class="note"><strong>All numbers on these test pages are examples.</strong> API samples come from the guest responses supplied on October 8, 2026. The deliberate fallback <strong>1.11%</strong> makes failures easy to recognise. Use this pack on a previewed test page; use approved rates and legal copy when applying it to delivery pages.</p>
+      <p class="note"><strong>All numbers on these test pages are examples.</strong> API-shaped guest samples have distinct fabricated savings rates for balance testing. The deliberate fallback <strong>1.11%</strong> makes failures easy to recognise. Use this pack on a previewed test page; use approved rates and legal copy when applying it to delivery pages.</p>
 
       <section id="comparison-pack">
         <h2>Copy a clear dynamic-versus-manual demonstration</h2>
@@ -54,7 +54,7 @@
           <li>Start your AEM server from the <strong>etrade repository on et-dynamic</strong>: <code>npx -y @adobe/aem-cli up</code>. Its usual address is <a href="http://localhost:3000/home">localhost:3000/home</a>.</li>
           <li>In a second terminal, start the rate test helper: <code>npm run demo:rates</code>. This guide and its sample API run on <strong>127.0.0.1:3020</strong>. Keep both servers running. Use Node.js 22.7 or newer for the helper and automated tests.</li>
           <li>Open <a href="./dynamic-rates-demo.html?scenario=direct">the complete working showcase</a>. The summary should read <strong>22/22 examples match</strong> and <strong>Rate requests: 1</strong>.</li>
-          <li>Open <a href="/test/card-rates.html">the card regression checks</a>. Expect <strong>10/10 checks passed</strong> for empty rows, extra cells, rich text, independent binding names and unavailable value styling.</li>
+          <li>Open <a href="/test/card-rates.html">the card regression checks</a>. Expect <strong>24/24 checks passed</strong> for empty rows, extra cells, rich text, independent binding names and numeric or placeholder fallbacks.</li>
         </ol>
         <p class="success"><strong>Why two addresses?</strong> Port 3000 loads your previewed DA content. Port 3020 reads that content through port 3000 and supplies the sample rates on the same local address. This lets you test authored API cards while access to the live E*TRADE endpoint is unresolved. The helper adds a rate inspector at the bottom of authored pages.</p>
       </section>
@@ -158,12 +158,34 @@
         <p>Sample values above are fixed test expectations. Live rates may differ. Keep the promotional headline separate from the base-rate API and use approved overrides, fallbacks and disclosure copy on delivery pages.</p>
       </section>
 
+      <section id="dummy-balance">
+        <h2>Test a dummy user balance</h2>
+        <p>On the page you are testing, open the browser console and set <code>userBalance</code> in localStorage, then reload:</p>
+        <pre><code>localStorage.setItem('userBalance', '100000');
+location.reload();</code></pre>
+        <p>Use a plain non-negative decimal without commas or a currency symbol. This works on localhost, 127.0.0.1, IPv6 loopback and <strong>aem.page</strong> preview hosts. Storage is separate for every origin, including port: set it on the same page you are testing. The local <a href="./dynamic-rates-demo.html">showcase</a> also has an Apply balance control.</p>
+        <p>Savings and checking API bindings, including hybrid bindings with empty Override, use the dummy balance to select their JSON tier. This is client-side selection; the dummy balance is not sent to the rate endpoint. Manual rates, populated hybrid overrides, CD terms and ordinary authored copy keep their values. Production hosts, including aem.live, ignore this key.</p>
+        <div class="scroll"><table><thead><tr><th>Dummy balance</th><th>Savings sample APY</th><th>Checking sample APY</th></tr></thead><tbody>
+          <tr><td>0</td><td>3.75%</td><td>0.05%</td></tr>
+          <tr><td>5000</td><td>3.85%</td><td>0.05%</td></tr>
+          <tr><td>10000</td><td>3.85%</td><td>2.00%</td></tr>
+          <tr><td>50000</td><td>4.00%</td><td>2.00%</td></tr>
+          <tr><td>100000</td><td>4.15%</td><td>2.00%</td></tr>
+          <tr><td>500000</td><td>4.25%</td><td>2.00%</td></tr>
+        </tbody></table></div>
+        <p>These are fabricated sample savings rates. Keep the page connected to the sample JSON to see these values. The live API may return identical rates for different balances. The showcase reports the effective balance beside each value; for dummy balances it checks API success and numeric values. The browser regression checks exact dummy-tier values.</p>
+        <p>To restore each card’s authored Balance, clear the key and reload:</p>
+        <pre><code>localStorage.removeItem('userBalance');
+location.reload();</code></pre>
+        <p>Missing, invalid or blocked storage also restores authored Balance. Zero is a valid dummy balance. Keep the required Balance setting in every savings/checking binding: a dummy value does not repair invalid authoring. If the request fails, the existing Fallback, including <code>-.--</code>, is still used. Changes take effect on reload; storage changes do not update already rendered cards.</p>
+      </section>
+
       <section id="json-delivery">
         <h2>Serve JSON on the branch, or author it as shared content</h2>
-        <p><strong>For a remote test today:</strong> <a href="/phx/pros/apicontent/init/bankRates.json">phx/pros/apicontent/init/bankRates.json</a> contains the supplied guest response. Its directories mirror the production GET endpoint, with a <code>.json</code> suffix for static delivery. It is a fixed sample, not a live feed. Unlike the local test fixtures, this file is included in AEM code delivery. Open <code>https://et-dynamic--etrade--adobedrago.aem.page/phx/pros/apicontent/init/bankRates.json</code> and confirm that it returns JSON.</p>
+        <p><strong>For a remote test today:</strong> <a href="/phx/pros/apicontent/init/bankRates.json">phx/pros/apicontent/init/bankRates.json</a> contains an API-shaped guest sample with distinct dummy savings rates. Its directories mirror the production GET endpoint, with a <code>.json</code> suffix for static delivery. It is a fixed sample, not a live feed. Unlike the local test fixtures, this file is included in AEM code delivery. Open <code>https://et-dynamic--etrade--adobedrago.aem.page/phx/pros/apicontent/init/bankRates.json</code> and confirm that it returns JSON.</p>
         <div id="metadata-published-sample"></div><button data-copy="metadata-published-sample">Copy branch JSON metadata</button><output aria-live="polite"></output>
         <p>Use that table on the draft, preview and reload. The remote page can now exercise the same sample bindings without the local helper. A developer edits this file in Git; this is not an author-managed JSON source.</p>
-        <p>The dummy files reproduce the supplied API responses: all three products, five savings balance tiers, two checking balance tiers, seven CD terms, calculated CD minimum/maximum fields, campaign codes and the empty errors array. They retain the API's string values and precision. They are snapshots of the supplied examples, not a guarantee of today's live rates.</p>
+        <p>The dummy files preserve the supplied API response structure: all three products, five savings balance tiers, two checking balance tiers, seven CD terms, calculated CD minimum/maximum fields, campaign codes and the empty errors array. They retain the API's string values and precision. Savings rates have been changed to distinct fabricated values so balance changes are visible. Checking and CD values retain the supplied examples; none of these files is a live rate feed.</p>
         <p><strong>Aggregate response sample:</strong> <a href="/phx/pros/aggregate.json">phx/pros/aggregate.json</a> mirrors the production aggregate endpoint and contains the exact <code>responses</code> envelope, with <code>status: 200</code>, <code>index: 0</code> and the bank data encoded as a JSON string in <code>body</code>.</p>
         <div id="metadata-published-aggregate-sample"></div><button data-copy="metadata-published-aggregate-sample">Copy aggregate JSON sample metadata</button><output aria-live="polite"></output>
         <p>For this static file, use <strong>source direct</strong> to request it with GET; the rate client still parses the aggregate envelope. Static JSON does not implement the production POST endpoint. Use the local aggregate scenario to check the POST payload, or the live aggregate scenario when access is available.</p>
@@ -181,7 +203,8 @@
           <tr><td>Field</td><td>advertisedAPY, disclosureAPY or finalRate. CDs also support minDisclosureAPY and maxDisclosureAPY. CD responses have no advertisedAPY field.</td></tr>
           <tr><td>Balance</td><td>Required for savings/checking API bindings. Plain non-negative decimal; no commas or currency symbols.</td></tr>
           <tr><td>Term</td><td>Required for a CD tier. Sample terms: 6M, 9M, 12M, 18M, 24M, 36M, 60M. Omit Term and Balance when using the CD calculated minimum/maximum fields.</td></tr>
-          <tr><td>Override / Fallback</td><td>Plain non-negative decimal, without %. 0 is valid. Fallback is optional; missing/unusable fallback displays — when data cannot be resolved.</td></tr>
+          <tr><td>Override</td><td>Plain non-negative decimal, without %. 0 is valid.</td></tr>
+          <tr><td>Fallback</td><td>Optional plain non-negative decimal, without %, or the display placeholder <code>-.--</code>. With <code>Fallback: -.--</code>, valid API/hybrid cards still request rates and show the placeholder while loading or when a rate cannot be resolved. Keep % and APY authored beside the marker. An omitted fallback displays — when data cannot be resolved.</td></tr>
         </tbody></table></div>
         <p>Supported blocks: <code>cards-product</code>, <code>cards-account</code> and <code>cards-pricing</code>. Add one Rate settings cell for each distinct named value. Repeated markers in a row share that binding. Existing ordinary cards do not need settings.</p>
         <p>Automated checks: <code>npm run test:rates</code> and <code>npm run lint</code>. The local showcase validates displayed values, sources, error states, API retrieval timestamps and request counts. Docs, local test fixtures and the inspector are excluded from AEM delivery; the dummy JSON files under <code>/phx/pros/</code> are included for branch testing. The production blocks do not import this test helper.</p>
