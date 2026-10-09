@@ -266,6 +266,11 @@ main .hero-dark .hero-dark-copy sup a:any-link {
   color: inherit;
 }
 
+.hero-dark .hero-dark-media a:any-link:not(.etrade-action) {
+  color: var(--brand-link-on-dark, #ab80ff);
+  text-decoration: underline;
+}
+
 @media (width <= 768px) {
   .hero-dark.has-video .hero-dark-media {
     display: none;
@@ -295,5 +300,106 @@ main .hero-dark .hero-dark-copy sup a:any-link {
 @media (width >= 992px) {
   .hero-dark.has-video .hero-dark-actions {
     padding-bottom: 4px;
+  }
+}
+
+/* The homepage remains the default; split is an explicit authored variant. */
+.hero-dark.split {
+  align-items: center;
+  gap: 32px;
+}
+
+.hero-dark.split .hero-dark-content,
+.hero-dark.split .hero-dark-title {
+  min-width: 0;
+}
+
+main .hero-dark.split .hero-dark-eyebrow :is(h1, h2, h3, p) {
+  margin: 0 0 20px;
+  color: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.21px;
+}
+
+main .hero-dark.split .hero-dark-heading {
+  margin: 0 0 20px;
+}
+
+.hero-dark.split .hero-dark-copy {
+  margin: 0;
+}
+
+.hero-dark.split .hero-dark-actions {
+  margin-top: 32px;
+}
+
+.hero-dark.split .hero-dark-media {
+  margin: 0;
+}
+
+.hero-dark.split .hero-dark-offer {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+  text-align: left;
+}
+
+main .hero-dark.split .hero-dark-offer-heading {
+  margin: 0;
+  color: inherit;
+  font-size: 20px;
+  line-height: 24px;
+  letter-spacing: -0.4px;
+}
+
+main .hero-dark.split .hero-dark-offer p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: left;
+}
+
+.hero-dark.split .hero-dark-offer-actions {
+  align-self: center;
+}
+
+@media (width >= 768px) {
+  .hero-dark.split {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 20px;
+  }
+
+  .hero-dark.split .hero-dark-content {
+    grid-area: 1 / 1 / auto / span 5;
+  }
+
+  .hero-dark.split .hero-dark-media {
+    grid-area: 1 / 6 / auto / -1;
+  }
+
+  .hero-dark.split.balanced .hero-dark-content {
+    grid-column: 1 / span 6;
+  }
+
+  .hero-dark.split.balanced .hero-dark-media {
+    grid-column: 7 / -1;
+  }
+
+  .hero-dark.split.inset .hero-dark-content {
+    padding: 0 40px;
+  }
+
+  .hero-dark.split.no-image:not(.has-offer) .hero-dark-content,
+  .hero-dark.split.no-content .hero-dark-media {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (width >= 992px) {
+  .hero-dark.split .hero-dark-offer {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 5fr) auto;
+    gap: 20px;
   }
 }

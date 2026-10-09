@@ -7,6 +7,7 @@
     "test:disclosures": "node --experimental-vm-modules --test test/disclosures.test.js",
     "test:rates": "node --test test/bank-rates.test.js",
     "demo:rates": "node test/dynamic-rates-server.mjs",
+    "test:hero": "node --experimental-vm-modules --test test/hero.test.js",
     "lint:js": "eslint .",
     "lint:css": "stylelint \"blocks/**/*.css\" \"styles/*.css\"",
     "lint": "npm run lint:js && npm run lint:css",

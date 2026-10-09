@@ -32,6 +32,28 @@ The block supplies its dark component surface regardless of the surrounding page
 
 No Universal Editor model is required; this project uses Document Authoring.
 
+## Split variant
+
+Author **Hero Dark (Split)** for Planning and account detail pages. Use **Hero Dark (Split, Balanced)** for equal text/image columns (Why E*TRADE), or **Hero Dark (Split, Inset)** for additional desktop text padding (Brokerage). The unqualified **Hero Dark** table retains the existing homepage layout.
+
+| Hero Dark (Split) | |
+| --- | --- |
+| Eyebrow | H1: Planning resources |
+| Heading | H2: Plan for the future you envision |
+| Content | Supporting paragraphs, then standalone CTA links in separate paragraphs |
+| Image | Image with authored alternative text; optional caption |
+| Offer | Optional H3, description and standalone link beneath the image |
+
+All five rows are optional and can be reordered. Additional value cells and repeated named rows are combined. Existing unlabelled image/copy cells also work; an imported H1 followed by H2 becomes the eyebrow and visual headline respectively, preserving their heading levels and IDs. Use an H1 visual headline when the eyebrow is a plain paragraph. Main CTA links use primary/secondary styling; standalone offer links use secondary styling. Inline links, tracking, superscripts and rich text remain authored.
+
+Below 768px, text, image and offer stack in that reading order. From 768px, text uses five of twelve columns and media uses seven; Balanced uses six each. The optional offer uses a compact three-column row from 992px. Missing media leaves content at full width. Image-only heroes also use full width. Split currently supports images; the existing default layout retains its MP4 media controls.
+
+Content migration is separate: Brokerage changes from Hero Product; Why E*TRADE changes from its opening Columns Feature and needs its missing headline/image restored; Planning needs a new DA page. Existing authored tables are not automatically rewritten by this code.
+
+Authors provide meaningful alternative text and the heading levels appropriate to their page. Inline caption and offer links use an underlined, high-contrast color on the dark surface.
+
+Branch preview after code push and content preview: https://et-hero-2--etrade--AdobeDrago.aem.page/what-we-offer/our-accounts/brokerage-account
+
 ## Migration review
 
 This component is migrated on `et-hero`. Review its changes against `et-actions`; merge the prerequisite first when the base is a feature branch.

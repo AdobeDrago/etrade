@@ -364,7 +364,8 @@ main .section.hero-dark-container {
   display: none;
 }
 
-main .section > .hero-dark-wrapper {
+main .section > .hero-dark-wrapper,
+main .section > .hero-light-wrapper {
   box-sizing: border-box;
   max-width: 1200px;
   margin: 0 auto;
@@ -372,9 +373,14 @@ main .section > .hero-dark-wrapper {
 }
 
 @media (width >= 768px) {
-  main .section > .hero-dark-wrapper {
+  main .section > .hero-dark-wrapper,
+  main .section > .hero-light-wrapper {
     padding: 0 10px;
   }
+}
+
+.hero-light-container > .hero-light-breadcrumb {
+  display: none;
 }
 
 /* Shared homepage section layout, selected through authored Template metadata. */
