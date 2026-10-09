@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="bank-rates-endpoint" content="/phx/pros/apicontent/init/bankRates.json">
+  <meta name="market-data-sample" content="/test/fixtures/market-data.json">
+  <title>Demo helper review</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <script type="module" src="/scripts/scripts.js"></script>
+</head>
+<body>
+  <header></header>
+  <main>
+    <div>
+      <div class="hero-light"><div><div><h1>Demo feature review</h1><p>Fabricated sample data for checking the demo helper. Open Demo controls to change the balance, inspect values and locate features.</p></div></div></div>
+    </div>
+    <div>
+      <h2>Dynamic and authored rates</h2>
+      <div class="cards-product">
+        <div><div><h3>Savings</h3><h4>{{rate}}% APY</h4><p>API rate selected by user balance.</p></div><div><p>Rate Settings</p><p>Mode: api</p><p>Product: 3100</p><p>Field: advertisedAPY</p><p>Balance: 0</p><p>Fallback: 1.11</p></div></div>
+        <div><div><h3>Checking</h3><h4>{{rate}}% APY</h4><p>API rate selected by user balance.</p></div><div><p>Rate Settings</p><p>Mode: api</p><p>Product: 4240</p><p>Field: advertisedAPY</p><p>Balance: 0</p><p>Fallback: 1.11</p></div></div>
+        <div><div><h3>Manual rate</h3><h4>{{rate}}% APY</h4><p>The author’s value stays fixed.</p></div><div><p>Rate Settings</p><p>Mode: manual</p><p>Override: 6.50</p></div></div>
+        <div><div><h3>Hybrid override</h3><h4>{{rate}}% APY</h4><p>The author’s override takes priority.</p></div><div><p>Rate Settings</p><p>Mode: hybrid</p><p>Product: 3100</p><p>Field: advertisedAPY</p><p>Balance: 0</p><p>Override: 7.50</p></div></div>
+        <div><div><h3>12-month CD</h3><h4>{{rate}}% APY</h4><p>The selected term stays fixed.</p></div><div><p>Rate Settings</p><p>Mode: api</p><p>Product: 3500</p><p>Field: disclosureAPY</p><p>Term: 12M</p><p>Fallback: 1.11</p></div></div>
+        <div><div><h3>Fallback example</h3><h4>{{rate}}% APY</h4><p>Intentional missing CD term demonstrates the authored fallback.</p></div><div><p>Rate Settings</p><p>Mode: api</p><p>Product: 3500</p><p>Field: disclosureAPY</p><p>Term: 3M</p><p>Fallback: 1.11</p></div></div>
+      </div>
+    </div>
+    <div><div class="market-ticker"><div><div>Label</div><div>Sample market indices</div></div></div></div>
+    <div><div class="floating-dock"><div><div>Primary</div><div><a href="/what-we-offer/our-accounts">Explore accounts</a></div></div><div><div>Secondary</div><div><a href="/home">Home</a></div></div></div></div>
+  </main>
+  <footer></footer>
+</body>
+</html>

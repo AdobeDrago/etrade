@@ -247,6 +247,12 @@ async function loadLazy(doc) {
  */
 function loadDelayed() {
   import('./consent-check.js');
+  // This helper exists only on demo; its host guard also prevents accidental exposure.
+  import('./demo-helper.js').then(async ({ default: mountDemoHelper, isDemoHelperHost }) => {
+    if (!isDemoHelperHost(window.location.hostname)) return;
+    await loadCSS(`${window.hlx.codeBasePath}/styles/demo-helper.css`);
+    mountDemoHelper();
+  });
   // load anything that can be postponed to the latest here
 }
 
