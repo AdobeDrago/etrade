@@ -1,5 +1,6 @@
 import { groupActions } from './actions.js';
 import decorateSectionBoundaries from './section-layout.js';
+import decorateDisclosureReferences from './disclosure-references.js';
 import {
   loadHeader,
   loadFooter,
@@ -110,6 +111,7 @@ function buildAutoBlocks(main) {
             const { pathname } = new URL(fragment.href);
             const frag = await loadFragment(pathname);
             fragment.parentElement.replaceWith(...frag.children);
+            decorateDisclosureReferences(main);
           } catch (error) {
             // eslint-disable-next-line no-console
             console.error('Fragment loading failed', error);
@@ -118,6 +120,7 @@ function buildAutoBlocks(main) {
       });
     }
     buildWidgetAutoBlocks(main);
+    decorateDisclosureReferences(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);

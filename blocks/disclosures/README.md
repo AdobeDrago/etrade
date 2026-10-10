@@ -10,7 +10,7 @@ The **Disclosures** row in the page's **Metadata** table can also point to a str
 | --- | --- |
 | Disclosures | /disclosures/sets/homepage |
 
-Create that document with the `disclosure-set` schema in DA. The set selects rich-text documents from the fragment directory; footnote numbers belong to the set, not to the shared fragment. For example:
+Create that document with the `disclosure-set` schema in DA. The set selects rich-text documents from the fragment directory. Each disclosure has a stable `disclosureId`; its position in the `disclosures` array determines its displayed number, starting at 1. Introduction, notice, logo, and closing entries do not count toward numbering. For example:
 
 ```json
 {
@@ -21,8 +21,8 @@ Create that document with the `disclosure-set` schema in DA. The set selects ric
     { "kind": "logo", "fragment": "/disclosures/fragments/sipc-logo" }
   ],
   "disclosures": [
-    { "number": 1, "fragment": "/disclosures/fragments/brokerage-offer" },
-    { "number": 3, "fragment": "/disclosures/fragments/trading-fees" }
+    { "disclosureId": "offer", "fragment": "/disclosures/fragments/brokerage-offer" },
+    { "disclosureId": "fees", "fragment": "/disclosures/fragments/trading-fees" }
   ],
   "closing": [
     { "fragment": "/disclosures/fragments/corporate-closing" }
@@ -34,13 +34,17 @@ The loader uses Adobe's [structured-content delivery endpoint](https://www.aem.l
 
 Preview the set and every referenced fragment before testing on `.aem.page`; publish them before using them on `.aem.live` or the production site. Each unique document loads once per set. The renderer preserves authored order, bold/emphasis, links, anchor IDs, lists, and media without applying page button or auto-block transformations to the fragment body. Notice and logo entries use the existing disclosure styles and accessible logo labels.
 
-Incomplete entries and duplicate footnote numbers are skipped without renumbering subsequent entries. If the set request or a referenced fragment fails, the region is hidden and a loading error is logged; no partial legal footer or fallback copy is generated. Existing inline Disclosures tables and links to legacy disclosure documents continue to work.
+IDs must match `^[a-z][a-z0-9]*$`: `a`, `disc1`, `offer`, and `apy` are valid. Incomplete entries, invalid IDs, duplicate IDs after the first valid entry, and empty fragment bodies are skipped. The rendered items are numbered consecutively from 1 to N in set order. Reusing one fragment with different IDs is supported. If the set request or a referenced fragment fails, the region is hidden and a loading error is logged; no partial legal footer or fallback copy is generated. Previously delivered sets using `number`, inline Disclosures tables, and links to legacy disclosure documents retain their numeric behavior during migration. A set containing `disclosureId` uses the new schema throughout.
+
+Author a claim with `<sup>offer</sup>`. Once its footer item exists, the inline auto-block helper converts it to `<sup><a href="#disclosure-offer" aria-label="Disclosure 1">1</a></sup>`. The footer item uses the same number and the stable `disclosure-offer` anchor. Moving `offer` to the second position makes both its claim marker and footer display 2, while the anchor remains unchanged. Citation order on the page does not affect numbering.
+
+A comma-separated marker such as `<sup>fees,offer</sup>` becomes separate numbered links in that citation order. Each ID must exist in the rendered footer; unmatched markers and groups with any missing ID remain as authored. Ordinary superscripts and external links stay authored. Authors do not need to create links manually. Markers already wrapped in disclosure anchors are normalized without nesting links. The helper retains the original IDs in `data-disclosure-ids` so repeated decoration does not treat display numbers as identifiers.
 
 Run `npm run test:disclosures` to verify set delivery, fragment composition, rich text, footnotes, and legacy rendering.
 
 Use a two-column **Disclosures** table. `Introduction` rows hold introductory rich text. Numbered rows (`1`, `2`, and so on) hold the corresponding legal copy. An optional `Closing` row follows the numbered list. Blank rows and empty cells are skipped. Links, lists, and inline formatting remain authored; the block has no legal-copy fallback.
 
-Numeric superscripts in the page content link to existing numbered entries. A comma-separated reference such as `5,9` becomes two links. References are left unchanged when any target is missing. Numbered items have stable `disclosure-N` IDs and can receive focus after anchor navigation.
+For legacy numeric tables and documents, numeric superscripts in the page content link to existing numbered entries. A comma-separated reference such as `5,9` becomes two links. References are left unchanged when any target is missing. Legacy numbered items retain `disclosure-N` IDs and can receive focus after anchor navigation. Numeric markers do not select items by their display number in ID-based sets; migrate those page markers to their corresponding IDs.
 
 A one-cell block containing a single document link also loads an authored disclosure document. Avoid using both inline disclosures and page Metadata to define duplicate entries. Update offer rates, dates, eligibility, tiers, and associated disclosure copy together.
 
@@ -56,4 +60,4 @@ Authored content is transferred separately. Existing sandbox integration and cam
 
 ## Style ownership
 
-The block stylesheet owns the disclosure region and `.disclosures-reference` markers in page content. The block decorator links those markers after the authored disclosure items are available. Shared homepage section spacing remains in `styles/styles.css`.
+The block stylesheet owns the disclosure region and `.disclosures-reference` markers in page content. The shared `/scripts/disclosure-references.js` helper runs in `buildAutoBlocks` for content added after the footer is ready, and the block decorator runs it after the authored disclosure items are available. Automatically loaded fragments receive another pass after insertion. Shared homepage section spacing remains in `styles/styles.css`.

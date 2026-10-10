@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>E*TRADE hero variants — authoring and review</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="/blocks/hero-dark/hero-dark.css">
+  <link rel="stylesheet" href="/blocks/hero-light/hero-light.css">
+  <style>
+    body.hero-review { display: block; background: #fafafa; }
+    .hero-review-controls, .hero-review-notes { box-sizing: border-box; max-width: 1200px; margin: auto; padding: 24px 20px; }
+    .hero-review-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+    .hero-review-controls p { margin: 0; font-weight: 600; }
+    .hero-review-controls label { margin-left: auto; }
+    .hero-review-controls select { max-width: 100%; padding: 10px; border: 1px solid #aaa; background: white; font: inherit; }
+    .hero-review-notes h2 { margin: 0 0 16px; font-size: 24px; }
+    .hero-review-notes p { max-width: 850px; }
+    .hero-review-notes button { margin: 16px 0; }
+    .hero-review-notes details { margin-top: 24px; }
+    .hero-review-notes summary { cursor: pointer; font-weight: 600; }
+    .hero-review-notes .table-scroll { overflow-x: auto; margin-top: 16px; }
+    .hero-review-notes table { width: 100%; border-collapse: collapse; background: white; }
+    .hero-review-notes th, .hero-review-notes td { padding: 12px; border: 1px solid #ccc; text-align: left; vertical-align: top; }
+    .hero-review-notes td:first-child { min-width: 90px; }
+    .hero-review-notes th { background: #eee8fb; }
+    .hero-review-notes :is(h1, h2, h3) { font-size: 22px; line-height: 1.3; }
+    .hero-review-notes img { max-width: 300px; }
+    .hero-review-notes code { white-space: normal; }
+    @media (width < 768px) {
+      .hero-review-controls label { margin-left: 0; }
+      .hero-review-controls { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+  <script type="module" src="/docs/hero-variants.js"></script>
+</head>
+<body class="hero-review appear">
+  <div class="hero-review-controls">
+    <p>E*TRADE · Hero review</p>
+    <label for="hero-example">Page</label>
+    <select id="hero-example">
+      <option value="planning">Planning — split</option>
+      <option value="brokerage">Brokerage — split with offer</option>
+      <option value="why">Why E*TRADE — balanced split</option>
+      <option value="accounts">Our Accounts — light intro</option>
+      <option value="home">Homepage — existing layout</option>
+    </select>
+  </div>
+  <main aria-label="Hero preview"></main>
+  <aside class="hero-review-notes">
+    <h2 id="example-title">Planning</h2>
+    <p id="example-note"></p>
+    <p>Local component review on <strong>et-hero-2</strong>. These examples have not been saved to DA. Copy the selected table into the page, replace the image with a DA-uploaded asset, and preview the content separately.</p>
+    <button id="copy-hero" type="button">Copy authoring table</button>
+    <span id="copy-status" role="status" aria-live="polite"></span>
+    <button id="check-hero" type="button">Check hero accessibility</button>
+    <p id="audit-status" role="status" aria-live="polite"></p>
+    <ul id="audit-findings"></ul>
+    <details>
+      <summary>Selected authoring table</summary>
+      <div id="author-table" class="table-scroll"></div>
+    </details>
+    <details>
+      <summary>Variant options and content migration</summary>
+      <p><strong>Hero Dark</strong> keeps the homepage layout: headline and supporting copy above wide media.</p>
+      <p><strong>Hero Dark (Split)</strong> puts text beside the image. <strong>Balanced</strong> uses equal columns; <strong>Inset</strong> adds desktop text padding. Below 768px, content precedes media and the offer.</p>
+      <p>Split supports optional <strong>Eyebrow</strong>, <strong>Heading</strong>, <strong>Content</strong>, <strong>Image</strong>, and <strong>Offer</strong> rows. Rows can be omitted or reordered; extra value cells are combined. Use an H1 for the page title. An H1 eyebrow and H2 visual headline match the current E*TRADE pages.</p>
+      <p><strong>Hero Light</strong> is a text introduction with an outline CTA. Inline paragraph links stay within the copy; standalone links become actions.</p>
+      <p><strong>Brokerage:</strong> replace the existing Hero Product table with the selected split example, including the offer if required. <strong>Why E*TRADE:</strong> replace the opening Columns Feature table; the previewed content currently has a missing headline and invalid image. <strong>Planning:</strong> create and preview the page. <strong>Accounts:</strong> keep its Hero Light table.</p>
+      <p>Campaign copy, offers, superscripts, image alternative text and tracking links remain authored. Review the offer and its disclosures before publishing.</p>
+      <p>Branch preview targets, after code push and DA content preview: <a href="https://et-hero-2--etrade--AdobeDrago.aem.page/home">Home</a> · <a href="https://et-hero-2--etrade--AdobeDrago.aem.page/what-we-offer/our-accounts/brokerage-account">Brokerage</a> · <a href="https://et-hero-2--etrade--AdobeDrago.aem.page/planning">Planning</a> · <a href="https://et-hero-2--etrade--AdobeDrago.aem.page/why-etrade">Why E*TRADE</a> · <a href="https://et-hero-2--etrade--AdobeDrago.aem.page/what-we-offer/our-accounts">Accounts</a>.</p>
+    </details>
+  </aside>
+  <template id="planning" data-title="Planning" data-note="Text uses five columns and media uses seven. Optional eyebrow, authored headline and primary CTA.">
+    <table><thead><tr><th colspan="2">Hero Dark (Split)</th></tr></thead><tbody>
+      <tr><td>Eyebrow</td><td><h1 id="planning-resources">Planning resources</h1></td></tr>
+      <tr><td>Heading</td><td><h2 id="plan-for-the-future">Plan for the future you envision</h2></td></tr>
+      <tr><td>Content</td><td><p>Starting out, leveling up, or looking ahead? Here’s where to begin.</p><p><a href="https://express.etrade.com/etx/rtao/ma/account-category?icid=et-planning-hero-openaccount">Open an account</a></p></td></tr>
+      <tr><td>Image</td><td><img src="https://cdn2.etrade.net/1/26022711220.0/aempros/content/dam/etrade/retail/en_US/images/planning/hero-planning-desk-680x420.jpg" alt="Person reviewing financial plan and investing charts on a desktop monitor" width="680" height="420"></td></tr>
+    </tbody></table>
+  </template>
+  <template id="brokerage" data-title="Brokerage" data-note="The same split layout with inset text and an optional compact offer beneath the image.">
+    <table><thead><tr><th colspan="2">Hero Dark (Split, Inset)</th></tr></thead><tbody>
+      <tr><td>Eyebrow</td><td><h1 id="brokerage-account">Brokerage account</h1></td></tr>
+      <tr><td>Heading</td><td><h2 id="investing-should-be-this-easy">Investing should be this easy</h2></td></tr>
+      <tr><td>Content</td><td><p>Straightforward tools, no account minimums and a range of investment choices.</p><p><a href="https://express.etrade.com/etx/rtao/ma/account-types/brokerage?icid=et-brokerage-hero-openaccount">Open an account</a></p></td></tr>
+      <tr><td>Image</td><td><img src="https://cdn2.etrade.net/1/25120911130.0/aempros/content/dam/etrade/retail/en_US/images/accounts/brokerage-account/hero-brokerage-account-mobile-app-visual.jpg" alt="E*TRADE mobile app on an iPhone showing stock charting for a brokerage account" width="800" height="445"></td></tr>
+      <tr><td>Offer</td><td><h3>Now get up to <s>$1,000</s> $1,500 for a limited time<sup>1</sup></h3><p>Open and fund a new brokerage account with a qualifying deposit by 10/31/26. <a href="https://us.etrade.com/promo/brokerage">Terms apply.</a> Use promo code: <strong>OFFER26</strong></p><p><a href="https://us.etrade.com/promo/brokerage?icid=et-brokerage-hero-learn-how">Learn how</a></p></td></tr>
+    </tbody></table>
+  </template>
+  <template id="why" data-title="Why E*TRADE" data-note="A balanced split gives the text and image equal width while sharing the same hero behavior.">
+    <table><thead><tr><th colspan="2">Hero Dark (Split, Balanced)</th></tr></thead><tbody>
+      <tr><td>Eyebrow</td><td><h1 id="what-sets-us-apart">What sets us apart</h1></td></tr>
+      <tr><td>Heading</td><td><h2 id="empowering-investors">Empowering investors is in our DNA</h2></td></tr>
+      <tr><td>Content</td><td><p>Putting clients first is what drives us. From day one, we’ve never stopped innovating for you.</p><p><a href="https://express.etrade.com/etx/rtao/ma/account-category?icid=et-whyet-hero-openaccount">Open an account</a></p></td></tr>
+      <tr><td>Image</td><td><img src="https://cdn2.etrade.net/1/26022715290.0/aempros/content/dam/etrade/retail/en_US/images/why-etrade/hero-why-etrade-trading-screen-680x420.jpg" alt="Man looking at a multi-monitor trading screen system" width="680" height="420"></td></tr>
+    </tbody></table>
+  </template>
+  <template id="accounts" data-title="Our Accounts" data-note="The existing light intro now has the reference heading size, supporting copy and outline CTA.">
+    <table><thead><tr><th>Hero Light</th></tr></thead><tbody><tr><td>
+      <h1 id="our-accounts">Our Accounts</h1>
+      <p>You probably know E*TRADE for trading. After all, it’s in our name. But we offer so much more than that. Whether you want to seize opportunities in the markets, plan and invest for your long-term goals, or experience our award-winning banking,<sup>1</sup> we have accounts for you—all in one convenient, integrated place.</p>
+      <p><a href="https://us.etrade.com/what-we-offer/pricing-and-rates">See all pricing and rates</a></p>
+    </td></tr></tbody></table>
+  </template>
+  <template id="home" data-title="Homepage" data-note="The existing Hero Dark layout stays the default. This example uses the currently previewed IPO campaign.">
+    <table><thead><tr><th>Hero Dark</th></tr></thead><tbody>
+      <tr><td><img src="/home/media_18dacc94e46e3766e88d4cd8906b7e8618806faec.jpg?width=2000&amp;format=webply&amp;optimize=medium" alt="IPO campaign illustration" width="2000" height="835"></td></tr>
+      <tr><td><h1 id="access-to-ipos">Access to IPOs starts here</h1><p>See IPO opportunities with an eligible E*TRADE from Morgan Stanley account.</p><p><a href="https://express.etrade.com/etx/rtao/ma/account-types/brokerage?icid=et-prospecthp_hero_openaccount-ipo">Open an account</a></p><p><a href="https://us.etrade.com/what-we-offer/investment-choices/new-issues?icid=et-prospecthp_hero_learnmore-ipo">Learn more</a></p></td></tr>
+    </tbody></table>
+  </template>
+</body>
+</html>

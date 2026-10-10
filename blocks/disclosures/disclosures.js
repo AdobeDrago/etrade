@@ -1,41 +1,7 @@
 import { loadFragment } from '../fragment/fragment.js';
 import { decorateIcons } from '../../scripts/aem.js';
 import { disclosureSetRequest, loadDisclosureSet } from '../../scripts/disclosure-sets.js';
-
-/** Link only references backed by an authored disclosure item. */
-function linkDisclosureReferences(main) {
-  if (!main) return;
-  main.querySelectorAll('sup').forEach((sup) => {
-    sup.classList.add('disclosures-reference');
-    const outerLink = sup.closest('a[href]');
-    if (outerLink) {
-      // DA may serialize a linked superscript as <a><sup>…</sup></a>.
-      // Move that existing link inside the marker; never create nested anchors.
-      if (outerLink === sup.parentElement && outerLink.children.length === 1
-        && outerLink.textContent.trim() === sup.textContent.trim()) {
-        outerLink.replaceWith(sup);
-        outerLink.replaceChildren(...sup.childNodes);
-        sup.append(outerLink);
-      }
-      if (/^#disclosure-\d+$/.test(outerLink.getAttribute('href'))) {
-        outerLink.setAttribute('aria-label', `Disclosure ${sup.textContent.trim()}`);
-      }
-      return;
-    }
-    if (sup.querySelector('a') || !/^\s*\d+(?:\s*,\s*\d+)*\s*$/.test(sup.textContent)) return;
-    const parts = sup.textContent.trim().split(/\s*,\s*/);
-    if (!parts.every((number) => document.getElementById(`disclosure-${number}`))) return;
-    sup.replaceChildren();
-    parts.forEach((number, index) => {
-      if (index) sup.append(',');
-      const link = document.createElement('a');
-      link.href = `#disclosure-${number}`;
-      link.textContent = number;
-      link.setAttribute('aria-label', `Disclosure ${number}`);
-      sup.append(link);
-    });
-  });
-}
+import decorateDisclosureReferences from '../../scripts/disclosure-references.js';
 
 /** Render both legacy table rows and resolved rich-text fragments consistently. */
 function renderDisclosures(block, entries) {
@@ -45,15 +11,17 @@ function renderDisclosures(block, entries) {
   closing.className = 'disclosures-closing';
   const list = document.createElement('ol');
   list.className = 'disclosures-items';
-  entries.forEach(({ label, nodes }) => {
+  entries.forEach(({ label, disclosureId, nodes }) => {
     const content = document.createElement(/^\d+$/.test(label) ? 'li' : 'div');
     content.append(...nodes);
     if (!content.textContent.trim() && !content.querySelector('img, picture, .icon')) return;
     decorateIcons(content);
     content.querySelectorAll('a').forEach((link) => link.classList.remove('button', 'primary', 'secondary', 'accent'));
     if (/^\d+$/.test(label)) {
-      content.id = `disclosure-${Number(label)}`;
-      content.value = Number(label);
+      const number = disclosureId ? list.children.length + 1 : Number(label);
+      content.id = `disclosure-${disclosureId || number}`;
+      content.setAttribute('value', String(number));
+      if (disclosureId) content.dataset.disclosureId = disclosureId;
       content.tabIndex = -1;
       list.append(content);
     } else if (/^closing$/i.test(label)) closing.append(content);
@@ -77,7 +45,7 @@ function renderDisclosures(block, entries) {
   if (list.children.length) block.append(list);
   if (closing.children.length) block.append(closing);
   block.hidden = !block.children.length;
-  if (!block.hidden) linkDisclosureReferences(document.querySelector('main'));
+  if (!block.hidden) decorateDisclosureReferences(document.querySelector('main'), block);
 }
 
 /** Fetch each document once, then clone it for every position in the set. */
@@ -87,14 +55,14 @@ async function renderSet(block, url) {
   entries.forEach(({ path }) => {
     if (!documents.has(path)) documents.set(path, loadFragment(path, { decorate: false }));
   });
-  const rows = await Promise.all(entries.map(async ({ label, path }) => {
+  const rows = await Promise.all(entries.map(async ({ label, disclosureId, path }) => {
     const fragment = await documents.get(path);
     if (!fragment) throw new Error(`Disclosure fragment could not be loaded: ${path}`);
     const nodes = [...fragment.childNodes].flatMap((section) => (
       section.nodeType === 1 && section.tagName === 'DIV'
         ? [...section.childNodes] : [section]
     )).map((node) => node.cloneNode(true));
-    return { label, nodes };
+    return { label, disclosureId, nodes };
   }));
   renderDisclosures(block, rows);
 }
@@ -112,7 +80,7 @@ export default async function decorate(block) {
         const content = fragment?.querySelector('.disclosures');
         block.replaceChildren(...(content ? [...content.childNodes] : []));
         block.hidden = !content;
-        if (!block.hidden) linkDisclosureReferences(document.querySelector('main'));
+        if (!block.hidden) decorateDisclosureReferences(document.querySelector('main'), block);
       }
     } catch (error) {
       block.replaceChildren();

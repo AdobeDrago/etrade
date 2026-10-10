@@ -28,35 +28,44 @@ export function disclosureSetRequest(value, base = window.location.href) {
   return `${DELIVERY_ORIGIN}/${preview ? 'preview' : 'live'}${SITE_PATH}${path}`;
 }
 
-/** Keep authored order and explicit numbers; omit incomplete or duplicate entries. */
+/** Number valid, unique disclosure IDs in authored array order. */
 export function disclosureSetEntries(payload) {
   const set = payload?.data ?? payload;
   if (!set || !Array.isArray(set.disclosures)) throw new Error('Invalid disclosure set.');
   const entries = [];
-  const append = (items, labelFor) => {
+  const append = (items, entryFor) => {
     if (!Array.isArray(items)) return;
     items.forEach((item) => {
       const path = disclosureFragmentPath(item?.fragment);
       if (!path) return;
-      const label = labelFor(item);
-      if (label !== null) entries.push({ label, path });
+      const entry = entryFor(item);
+      if (entry) entries.push({ ...entry, path });
     });
   };
   append(set.introduction, (item) => {
-    if (item.kind === 'notice') return 'Notice';
-    if (item.kind === 'logo') return 'Logo';
-    return 'Introduction';
+    if (item.kind === 'notice') return { label: 'Notice' };
+    if (item.kind === 'logo') return { label: 'Logo' };
+    return { label: 'Introduction' };
   });
+  const ids = new Set();
   const numbers = new Set();
+  const usesIds = set.disclosures.some((item) => item && Object.hasOwn(item, 'disclosureId'));
   append(set.disclosures, (item) => {
-    const number = typeof item.number === 'string' && /^\d+$/.test(item.number)
-      ? Number(item.number) : item.number;
-    if (!Number.isSafeInteger(number) || number < 1 || numbers.has(number)) return null;
-    if (!disclosureFragmentPath(item.fragment)) return null;
-    numbers.add(number);
-    return String(number);
+    // Preview/live content may still serve the previous schema during migration.
+    if (!usesIds) {
+      const number = typeof item.number === 'string' && /^\d+$/.test(item.number)
+        ? Number(item.number) : item.number;
+      if (!Number.isSafeInteger(number) || number < 1 || numbers.has(number)) return null;
+      numbers.add(number);
+      return { label: String(number) };
+    }
+    const { disclosureId } = item;
+    if (typeof disclosureId !== 'string' || !/^[a-z][a-z0-9]*$/.test(disclosureId)
+      || ids.has(disclosureId)) return null;
+    ids.add(disclosureId);
+    return { label: String(ids.size), disclosureId };
   });
-  append(set.closing, () => 'Closing');
+  append(set.closing, () => ({ label: 'Closing' }));
   return entries;
 }
 

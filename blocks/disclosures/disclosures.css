@@ -1,10 +1,10 @@
-/* Page references are marked by the disclosures decorator. */
-main sup:where(.disclosures-reference) a:any-link {
+/* Inline disclosure references are auto-linked after the footer is available. */
+.disclosures-reference a:any-link {
   color: inherit;
   text-decoration: underline;
 }
 
-main sup:where(.disclosures-reference) a:focus-visible {
+.disclosures-reference a:focus-visible {
   outline: 2px solid currentcolor;
   outline-offset: 2px;
 }

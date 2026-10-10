@@ -14,7 +14,7 @@ const endpoint = 'https://da-sc.adobeaem.workers.dev/preview/adobedrago/etrade/d
 const fragments = '/disclosures/fragments';
 
 /** Run the real block, fragment loader and AEM helpers without loading the whole page. */
-async function harness(routes = new Map(), body = '<p>References <sup>7,2</sup> <sup>8</sup></p>') {
+async function harness(routes = new Map(), body = '<p>References <sup>offer,apy</sup> <sup>missing</sup></p>') {
   const { document, window } = parseHTML(`<!doctype html><html><head>
     <meta name="disclosures" content="/disclosures/sets/homepage">
     </head><body><main>${body}</main><footer></footer></body></html>`);
@@ -73,6 +73,7 @@ async function harness(routes = new Map(), body = '<p>References <sup>7,2</sup> 
     errors,
     state,
     decorate: blockModule.namespace.default,
+    decorateReferences: modules.get('/scripts/disclosure-references.js').namespace.default,
     loadFragment: modules.get('/blocks/fragment/fragment.js').namespace.loadFragment,
   };
 }
@@ -98,7 +99,7 @@ test('metadata paths select preview/live delivery, and explicit JSON paths load 
   assert.equal(disclosureSetRequest('https://example.com/set.json', preview), null);
 });
 
-test('incomplete entries and duplicate numbers never shift existing footnote numbers', () => {
+test('previously previewed sets retain their explicit numbers during migration', () => {
   const payload = {
     introduction: [null, {}, { kind: 'notice', fragment: `${fragments}/notice.html` }],
     disclosures: [
@@ -119,6 +120,25 @@ test('incomplete entries and duplicate numbers never shift existing footnote num
     .forEach((path) => assert.equal(disclosureFragmentPath(path), null));
 });
 
+test('IDs follow the schema and unique valid items are numbered in array order', () => {
+  const disclosures = [
+    null, {}, { disclosureId: 'offer', fragment: 'https://example.com/legal' },
+    { disclosureId: 'apy', fragment: `${fragments}/rate` },
+    { disclosureId: 'apy', fragment: `${fragments}/duplicate` },
+    { disclosureId: 'offer', fragment: `${fragments}/offer` },
+    { disclosureId: 'disc1', fragment: `${fragments}/terms` },
+    ...['A', 'a-b', '1a', 'a_b', 'a b', '', 1].map((disclosureId) => (
+      { disclosureId, fragment: `${fragments}/invalid` }
+    )),
+    { number: 9, fragment: `${fragments}/old` },
+  ];
+  assert.deepEqual(disclosureSetEntries({ disclosures }), [
+    { label: '1', disclosureId: 'apy', path: `${fragments}/rate` },
+    { label: '2', disclosureId: 'offer', path: `${fragments}/offer` },
+    { label: '3', disclosureId: 'disc1', path: `${fragments}/terms` },
+  ]);
+});
+
 test('Metadata set renders rich text, media, accessible logos and authored footnote order', async () => {
   const data = {
     id: 'homepage',
@@ -128,9 +148,9 @@ test('Metadata set renders rich text, media, accessible logos and authored footn
       { kind: 'logo', fragment: `${fragments}/logo` },
     ],
     disclosures: [
-      { number: 7, fragment: `${fragments}/legal` },
-      { number: 2, fragment: `${fragments}/shared` },
-      { number: 9, fragment: `${fragments}/shared` },
+      { disclosureId: 'offer', fragment: `${fragments}/legal` },
+      { disclosureId: 'apy', fragment: `${fragments}/shared` },
+      { disclosureId: 'disc1', fragment: `${fragments}/shared` },
     ],
     closing: [{ fragment: `${fragments}/closing` }],
   };
@@ -152,11 +172,12 @@ test('Metadata set renders rich text, media, accessible logos and authored footn
   assert.equal(app.block.hidden, false);
   assert.deepEqual(
     [...app.block.querySelectorAll('.disclosures-items > li')].map((li) => li.id),
-    ['disclosure-7', 'disclosure-2', 'disclosure-9'],
+    ['disclosure-offer', 'disclosure-apy', 'disclosure-disc1'],
   );
-  assert.equal(app.block.querySelector('#disclosure-7').value, 7);
-  assert.equal(app.block.querySelector('#disclosure-7 strong a').textContent, 'Bold linked terms');
-  assert.equal(app.block.querySelector('#disclosure-7 em').textContent, 'Emphasized');
+  assert.equal(app.block.querySelector('#disclosure-offer').getAttribute('value'), '1');
+  assert.equal(app.block.querySelector('#disclosure-offer').dataset.disclosureId, 'offer');
+  assert.equal(app.block.querySelector('#disclosure-offer strong a').textContent, 'Bold linked terms');
+  assert.equal(app.block.querySelector('#disclosure-offer em').textContent, 'Emphasized');
   assert.ok(app.block.querySelector('#conditions'));
   assert.equal(app.block.querySelector('a[href="#conditions"]').textContent, 'Conditions anchor');
   assert.equal(
@@ -164,16 +185,17 @@ test('Metadata set renders rich text, media, accessible logos and authored footn
     'https://et-dynamic--etrade--adobedrago.aem.page/disclosures/fragments/media_terms.png',
   );
   assert.equal(app.block.querySelector('picture img').getAttribute('alt'), 'Terms image');
-  assert.ok(app.block.querySelector('#disclosure-7 ul li'));
+  assert.ok(app.block.querySelector('#disclosure-offer ul li'));
   assert.equal(app.block.querySelector('.disclosures-notice strong').textContent, 'May lose value');
   assert.equal(app.block.querySelector('.disclosures-logo .icon').getAttribute('aria-label'), 'Member SIPC');
   assert.ok(app.block.querySelector('.disclosures-logo img[src="/icons/sipc-mark.svg"]'));
   assert.equal(app.block.querySelector('.disclosures-closing').textContent, 'Corporate closing');
   assert.deepEqual(
     [...app.document.querySelectorAll('main sup a')].map((a) => a.getAttribute('href')),
-    ['#disclosure-7', '#disclosure-2'],
+    ['#disclosure-offer', '#disclosure-apy'],
   );
-  assert.equal(app.document.querySelector('main sup:last-child').textContent, '8');
+  assert.equal(app.document.querySelector('main sup').textContent, '1,2');
+  assert.equal(app.document.querySelector('main sup:last-child').textContent, 'missing');
   assert.equal(app.requests.filter((url) => url === `${fragments}/shared.plain.html`).length, 1);
   assert.equal(app.state.decorated, 0);
 });
@@ -181,12 +203,12 @@ test('Metadata set renders rich text, media, accessible logos and authored footn
 test('an explicit site JSON file uses the same renderer for an unwrapped set', async () => {
   const url = 'https://et-dynamic--etrade--adobedrago.aem.page/disclosures/sets/homepage.json';
   const app = await harness(new Map([
-    [url, { id: 'homepage', disclosures: [{ number: 7, fragment: `${fragments}/legal` }] }],
+    [url, { id: 'homepage', disclosures: [{ disclosureId: 'offer', fragment: `${fragments}/legal` }] }],
     [`${fragments}/legal.plain.html`, '<div><p>Legal copy</p></div>'],
   ]));
   app.block.querySelector('a').href = url;
   await app.decorate(app.block);
-  assert.ok(app.block.querySelector('#disclosure-7'));
+  assert.ok(app.block.querySelector('#disclosure-offer'));
   assert.equal(app.requests[0], url);
 });
 
@@ -194,7 +216,7 @@ test('failed sets and failed fragments do not create a partial footer or danglin
   const cases = [
     new Map(),
     new Map([[endpoint, 'invalid json']]),
-    new Map([[endpoint, { disclosures: [{ number: 7, fragment: `${fragments}/missing` }] }]]),
+    new Map([[endpoint, { disclosures: [{ disclosureId: 'offer', fragment: `${fragments}/missing` }] }]]),
     new Map([[endpoint, new Error('Network unavailable')]]),
   ];
   await Promise.all(cases.map(async (routes) => {
@@ -208,7 +230,7 @@ test('failed sets and failed fragments do not create a partial footer or danglin
 });
 
 test('inline Disclosures tables keep their existing labels, numbers and footnote behavior', async () => {
-  const app = await harness();
+  const app = await harness(new Map(), '<p><sup>7</sup> <sup>8</sup></p>');
   app.block.innerHTML = `<div><div>Notice</div><div><p><strong>Investment risk</strong></p></div></div>
     <div><div>7</div><div><p>Legacy <a href="https://example.com/terms">terms</a></p></div></div>
     <div><div>Closing</div><div><p>Legacy closing</p></div></div>`;
@@ -217,15 +239,100 @@ test('inline Disclosures tables keep their existing labels, numbers and footnote
   assert.equal(app.block.querySelector('#disclosure-7').textContent, 'Legacy terms');
   assert.equal(app.block.querySelector('.disclosures-closing').textContent, 'Legacy closing');
   assert.equal(app.requests.length, 0);
+  assert.equal(app.document.querySelector('sup a').getAttribute('href'), '#disclosure-7');
+  assert.equal(app.document.querySelector('sup:last-child').textContent, '8');
 });
 
 test('legacy document references still load and fragment decoration remains the default', async () => {
   const app = await harness(new Map([
     ['/homepage-disclosures.plain.html', '<div><div class="disclosures"><ol class="disclosures-items"><li id="disclosure-7">Legacy document</li></ol></div></div>'],
-  ]));
+  ]), '<p><sup>7</sup></p>');
   app.block.querySelector('a').href = new URL('/homepage-disclosures', preview).href;
   await app.decorate(app.block);
   assert.equal(app.block.hidden, false);
   assert.equal(app.block.querySelector('#disclosure-7').textContent, 'Legacy document');
   assert.equal(app.state.decorated, 1);
+  assert.equal(app.document.querySelector('sup a').getAttribute('href'), '#disclosure-7');
+});
+
+test('reordering the set renumbers repeated references while retaining ID anchors', async () => {
+  const disclosures = [
+    { disclosureId: 'apy', fragment: `${fragments}/rate` },
+    { disclosureId: 'offer', fragment: `${fragments}/offer` },
+    { disclosureId: 'disc1', fragment: `${fragments}/terms` },
+  ];
+  const routes = new Map([
+    [endpoint, { disclosures }],
+    [`${fragments}/rate.plain.html`, '<div><p>Rate terms</p></div>'],
+    [`${fragments}/offer.plain.html`, '<div><p>Offer terms</p></div>'],
+    [`${fragments}/terms.plain.html`, '<div><p>More terms</p></div>'],
+  ]);
+  // The first citation is to the second item; citation order must not assign numbers.
+  const app = await harness(routes, '<p><sup>offer</sup> <sup>apy,disc1</sup> <sup>offer</sup></p>');
+  const main = app.document.querySelector('main');
+  app.decorateReferences(main);
+  assert.equal(main.querySelector('sup').textContent, 'offer');
+  assert.equal(main.querySelectorAll('a').length, 0);
+  await app.decorate(app.block);
+  assert.deepEqual([...main.querySelectorAll('sup')].map((sup) => sup.textContent), ['2', '1,3', '2']);
+  assert.equal(main.querySelector('sup a').getAttribute('aria-label'), 'Disclosure 2');
+  const originalLink = main.querySelector('sup a');
+  app.decorateReferences(main);
+  assert.equal(main.querySelector('sup a'), originalLink);
+  disclosures.push(disclosures.shift());
+  app.block.innerHTML = `<div><div><a href="${endpoint}">${endpoint}</a></div></div>`;
+  await app.decorate(app.block);
+  app.decorateReferences(main);
+  assert.deepEqual([...main.querySelectorAll('sup')].map((sup) => sup.textContent), ['1', '3,2', '1']);
+  assert.deepEqual([...app.block.querySelectorAll('.disclosures-items > li')]
+    .map((item) => [item.dataset.disclosureId, item.getAttribute('value')]), [
+    ['offer', '1'], ['disc1', '2'], ['apy', '3'],
+  ]);
+  assert.equal(main.querySelector('sup a').getAttribute('href'), '#disclosure-offer');
+  assert.equal(main.querySelector('sup a').getAttribute('aria-label'), 'Disclosure 1');
+  // Content decorated after the footer has loaded is also linked by the auto-block helper.
+  const late = app.document.createElement('div');
+  late.innerHTML = '<p><sup>apy</sup></p>';
+  main.append(late);
+  app.decorateReferences(late);
+  assert.equal(late.querySelector('sup a').textContent, '3');
+});
+
+test('only matching markers are converted, with no nested anchors or external link changes', async () => {
+  const app = await harness(new Map([
+    [endpoint, { disclosures: [{ disclosureId: 'offer', fragment: `${fragments}/offer` }] }],
+    [`${fragments}/offer.plain.html`, '<div><p>Terms with authored <sup>offer</sup></p></div>'],
+  ]), `<p><sup>offer</sup> <a href="#disclosure-offer"><sup>offer</sup></a>
+    <sup><a href="#disclosure-offer">offer</a></sup>
+    <sup>missing</sup> <sup>offer,missing</sup> <sup>1</sup> <sup>™</sup>
+    <sup><a href="https://example.com/source">offer</a></sup>
+    <a href="/claim">Claim <sup>offer</sup></a></p>`);
+  await app.decorate(app.block);
+  const main = app.document.querySelector('main');
+  assert.equal(main.querySelectorAll('.disclosures-reference').length, 3);
+  assert.equal(main.querySelectorAll('a a').length, 0);
+  assert.deepEqual(
+    [...main.querySelectorAll('sup')].map((sup) => sup.textContent),
+    ['1', '1', '1', 'missing', 'offer,missing', '1', '™', 'offer', 'offer'],
+  );
+  assert.equal(main.querySelector('a[href="https://example.com/source"]').textContent, 'offer');
+  assert.equal(app.block.querySelector('sup').textContent, 'offer');
+});
+
+test('empty fragment bodies create neither numbered gaps nor reference targets', async () => {
+  const app = await harness(new Map([
+    [endpoint, {
+      disclosures: [
+        { disclosureId: 'empty', fragment: `${fragments}/empty` },
+        { disclosureId: 'offer', fragment: `${fragments}/offer` },
+      ],
+    }],
+    [`${fragments}/empty.plain.html`, '<div><p> </p></div>'],
+    [`${fragments}/offer.plain.html`, '<div><p>Offer terms</p></div>'],
+  ]), '<p><sup>empty</sup> <sup>offer</sup></p>');
+  await app.decorate(app.block);
+  assert.equal(app.block.querySelectorAll('.disclosures-items > li').length, 1);
+  assert.equal(app.block.querySelector('#disclosure-offer').getAttribute('value'), '1');
+  assert.equal(app.document.querySelector('sup').textContent, 'empty');
+  assert.equal(app.document.querySelector('sup:last-child a').textContent, '1');
 });
