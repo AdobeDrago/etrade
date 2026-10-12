@@ -1,0 +1,639 @@
+{
+  "checked_on": "2026-10-12",
+  "live_reference_url": "https://us.etrade.com/what-we-offer/investment-choices",
+  "images": [
+    {
+      "cta_url": "/what-we-offer/investment-choices/stocks",
+      "heading": "Stocks",
+      "height": 368,
+      "loaded": true,
+      "source_alt": "Learn more about stocks",
+      "source_url": "https://cdn2.etrade.net/1/20033018150.0/aempros/content/dam/etrade/retail/en_US/images/what-we-offer/investment-choices/stocks-bull-vs-bear.jpg",
+      "width": 551,
+      "http_status": 200,
+      "content_type": "image/jpeg",
+      "authoring_action": "Replace the broken image with this confirmed source asset, upload/select it in DA, and preserve the generated DA media URL after preview."
+    },
+    {
+      "cta_url": "/what-we-offer/investment-choices/options",
+      "heading": "Options",
+      "height": 368,
+      "loaded": true,
+      "source_alt": "Learn more about options",
+      "source_url": "https://cdn2.etrade.net/1/20033018150.0/aempros/content/dam/etrade/retail/en_US/images/what-we-offer/investment-choices/options-call-put.jpg",
+      "width": 551,
+      "http_status": 200,
+      "content_type": "image/jpeg",
+      "authoring_action": "Replace the broken image with this confirmed source asset, upload/select it in DA, and preserve the generated DA media URL after preview."
+    },
+    {
+      "cta_url": "/what-we-offer/investment-choices/futures",
+      "heading": "Futures",
+      "height": 368,
+      "loaded": true,
+      "source_alt": "Learn more about futures",
+      "source_url": "https://cdn2.etrade.net/1/20033018150.0/aempros/content/dam/etrade/retail/en_US/images/what-we-offer/investment-choices/futures-open-24hr.jpg",
+      "width": 551,
+      "http_status": 200,
+      "content_type": "image/jpeg",
+      "authoring_action": "Replace the broken image with this confirmed source asset, upload/select it in DA, and preserve the generated DA media URL after preview."
+    },
+    {
+      "cta_url": "/what-we-offer/investment-choices/etfs",
+      "heading": "ETFs",
+      "height": 368,
+      "loaded": true,
+      "source_alt": "Learn more about ETFs",
+      "source_url": "https://cdn2.etrade.net/1/20033018150.0/aempros/content/dam/etrade/retail/en_US/images/what-we-offer/investment-choices/etfs-containers.jpg",
+      "width": 551,
+      "http_status": 200,
+      "content_type": "image/jpeg",
+      "authoring_action": "Replace the broken image with this confirmed source asset, upload/select it in DA, and preserve the generated DA media URL after preview."
+    },
+    {
+      "cta_url": "/what-we-offer/investment-choices/mutual-funds",
+      "heading": "Mutual Funds",
+      "height": 368,
+      "loaded": true,
+      "source_alt": "Learn more about mutual funds",
+      "source_url": "https://cdn2.etrade.net/1/20033018150.0/aempros/content/dam/etrade/retail/en_US/images/what-we-offer/investment-choices/mutual-funds-graphs.jpg",
+      "width": 551,
+      "http_status": 200,
+      "content_type": "image/jpeg",
+      "authoring_action": "Replace the broken image with this confirmed source asset, upload/select it in DA, and preserve the generated DA media URL after preview."
+    },
+    {
+      "cta_url": "/what-we-offer/investment-choices/bonds",
+      "heading": "Bonds & CDs",
+      "height": 368,
+      "loaded": true,
+      "source_alt": "Learn more about Bonds and CDs",
+      "source_url": "https://cdn2.etrade.net/1/20033018150.0/aempros/content/dam/etrade/retail/en_US/images/what-we-offer/investment-choices/bonds-cds-blue-umbrella.jpg",
+      "width": 551,
+      "http_status": 200,
+      "content_type": "image/jpeg",
+      "authoring_action": "Replace the broken image with this confirmed source asset, upload/select it in DA, and preserve the generated DA media URL after preview."
+    }
+  ],
+  "tabs": [
+    {
+      "label": "Most Popular",
+      "live_panel_selector": "#dttab_0",
+      "selected_by_ui": true,
+      "accounts": [
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/brokerage-account?icid=et-global-brokeragecard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://express.etrade.com/etx/rtao/ma/account-types/brokerage?icid=et-global-brokeragecard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "Brokerage account"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Get started",
+              "target": "_self",
+              "url": "https://us.etrade.com/etx/wm/core-portfolios/rtq/1"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [
+            "5"
+          ],
+          "heading": "Core Portfolios"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/traditional-ira?icid=et-global-traditionaliracard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://express.etrade.com/etx/rtao/ma/account-types/retirement/traditional?icid=et-global-traditionaliracard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "Traditional IRA"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/roth-ira?icid=et-global-rothiracard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://express.etrade.com/etx/rtao/ma/account-types/retirement/roth?icid=et-global-rothiracard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [
+            "4"
+          ],
+          "heading": "Roth IRA"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/rollover-ira?icid=et-global-rolloveriracard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://express.etrade.com/etx/rtao/ma/account-types/retirement/rollover?icid=et-global-rolloveriracard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "Rollover IRA"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/bank/premium-savings-account?icid=et-global-psacard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/premium-savings-account?tb=5000&icid=et-global-psacard-openaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [
+            "8",
+            "9",
+            "10"
+          ],
+          "heading": "Premium Savings Account"
+        }
+      ],
+      "panel_heading": "Most Popular",
+      "visible": true,
+      "expected_account_count": 6,
+      "preview_accounts": [
+        "Brokerage Account",
+        "Retirement Accounts",
+        "Premium Savings Account"
+      ],
+      "missing_in_current_preview": [
+        "Core Portfolios",
+        "Traditional IRA",
+        "Roth IRA",
+        "Rollover IRA"
+      ],
+      "unexpected_in_current_preview": [
+        "Retirement Accounts"
+      ]
+    },
+    {
+      "label": "Brokerage",
+      "live_panel_selector": "#dttab_1",
+      "selected_by_ui": true,
+      "accounts": [
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/brokerage-account?icid=et-global-brokeragecard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://express.etrade.com/etx/rtao/ma/account-types/brokerage?icid=et-global-brokeragecard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "Brokerage account"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/coverdell-education-savings-account?icid=et-global-coverdellesacard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://us.etrade.com/speedbump/education-mssb-agreement?target=https://na3.docusign.net/Member/PowerFormSigning.aspx%3fPowerFormId=cb7a7343-5d4a-4661-9cc0-1bbd3c2c28a0&env=na3&acct=b84afcca-6edf-4712-bded-5017d67b751f&v=2&icid=et-global-coverdellesacard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "Coverdell ESA"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/custodial-account?icid=et-global-custodialcard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://express.etrade.com/etx/rtao/ma/account-types/brokerage/custodial?icid=et-global-custodialcard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "Custodial Account"
+        }
+      ],
+      "panel_heading": "Brokerage",
+      "visible": true,
+      "expected_account_count": 3,
+      "preview_accounts": [
+        "Brokerage Account",
+        "Custodial Account"
+      ],
+      "missing_in_current_preview": [
+        "Coverdell ESA"
+      ],
+      "unexpected_in_current_preview": []
+    },
+    {
+      "label": "Retirement",
+      "live_panel_selector": "#dttab_2",
+      "selected_by_ui": true,
+      "accounts": [
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/rollover-ira?icid=et-global-rolloveriracard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://express.etrade.com/etx/rtao/ma/account-types/retirement/rollover?icid=et-global-rolloveriracard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "Rollover IRA"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/roth-ira?icid=et-global-rothiracard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://express.etrade.com/etx/rtao/ma/account-types/retirement/roth?icid=et-global-rothiracard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [
+            "4"
+          ],
+          "heading": "Roth IRA"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/traditional-ira?icid=et-global-traditionaliracard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://express.etrade.com/etx/rtao/ma/account-types/retirement/traditional?icid=et-global-traditionaliracard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "Traditional IRA"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/beneficiary-ira?icid=et-global-beneficiaryiracard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://us.etrade.com/speedbump/retirement-mssb-agreement?target=https://na3.docusign.net/Member/PowerFormSigning.aspx%3fPowerFormId=8281578d-c91d-4e80-bb8f-6ae20a2d1dd1&env=na3&acct=b84afcca-6edf-4712-bded-5017d67b751f&v=2&icid=et-global-beneficiaryiracard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "Inherited (Beneficiary) IRA"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/complete-ira?icid=et-global-completeiracard-learnmore"
+            },
+            {
+              "label": "Apply now",
+              "target": "_self",
+              "url": "https://us.etrade.com/etx/pxy/complete-ira/get-started?neo.skin=mininav?icid=et-global-completeiracard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [
+            "6,7"
+          ],
+          "heading": "E*TRADE Complete™ IRA"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/ira-for-minors?icid=et-global-iraforminorscard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://us.etrade.com/speedbump/retirement-mssb-agreement?target=https://na3.docusign.net/Member/PowerFormSigning.aspx%3fPowerFormId=72170a31-bcc3-4cec-9760-98ee66166955&env=na3&acct=b84afcca-6edf-4712-bded-5017d67b751f&v=2&icid=et-global-iraforminorscard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "IRA for Minors"
+        }
+      ],
+      "panel_heading": "Retirement",
+      "visible": true,
+      "expected_account_count": 6,
+      "preview_accounts": [
+        "Traditional IRA",
+        "Roth IRA",
+        "Rollover IRA",
+        "E*TRADE Complete™ IRA"
+      ],
+      "missing_in_current_preview": [
+        "Inherited (Beneficiary) IRA",
+        "IRA for Minors"
+      ],
+      "unexpected_in_current_preview": []
+    },
+    {
+      "label": "Managed Portfolios",
+      "live_panel_selector": "#dttab_3",
+      "selected_by_ui": true,
+      "accounts": [
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/core-portfolios?icid=et-global-coreportfolioscard-learnmore"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "Core Portfolios"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more (login required)",
+              "target": "_self",
+              "url": "https://us.etrade.com/c/s/what-we-offer/msfa?campaignCode=MSSignal-MSVA-Site-ManagedPortfoliosMSOrganic&icid=et-global-msadvisorscard-learnmore"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "Morgan Stanley Financial Advisors"
+        }
+      ],
+      "panel_heading": "Managed Portfolios",
+      "visible": true,
+      "expected_account_count": 2,
+      "preview_accounts": [
+        "Core Portfolios",
+        "Blend Portfolios",
+        "Fixed Income Portfolios"
+      ],
+      "missing_in_current_preview": [
+        "Morgan Stanley Financial Advisors"
+      ],
+      "unexpected_in_current_preview": [
+        "Blend Portfolios",
+        "Fixed Income Portfolios"
+      ]
+    },
+    {
+      "label": "Small Business Retirement",
+      "live_panel_selector": "#dttab_4",
+      "selected_by_ui": true,
+      "accounts": [
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/individual-401k?icid=et-global-individualiracard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://us.etrade.com/speedbump/qrp-mssb-agreement?target=https://content.etrade.com/etrade/mssb/pdf/Qualified_Retirement_Plan_App.pdf?icid=et-global-individualiracard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "Traditional and Roth Individual 401(k)"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/simple-ira?icid=et-global-simpleiracard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://us.etrade.com/speedbump/retirement-mssb-agreement?target=https://na3.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=a11fb16c-94f1-4027-8bd3-2349e447b112&env=na3&acct=b84afcca-6edf-4712-bded-5017d67b751f&v=2&icid=et-global-simpleiracard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "SIMPLE IRA"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/sep-ira?icid=et-global-sepiracard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://express.etrade.com/etx/rtao/ma/account-types/retirement/sep?icid=et-global-sepiracard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "SEP IRA"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/what-we-offer/our-accounts/investment-only-non-custodial?icid=et-global-investmentonlycard-learnmore"
+            },
+            {
+              "label": "Get application",
+              "target": "_blank",
+              "url": "/speedbump/investment-mssb-agreement?target=https%3A%2F%2Fcontent.etrade.com/etrade/mssb/pdf/noncustodialaccountapplication.pdf?icid=et-global-investmentonlycard-openanaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [],
+          "heading": "Investment-Only Account"
+        }
+      ],
+      "panel_heading": "Small business retirement",
+      "visible": true,
+      "expected_account_count": 4,
+      "preview_accounts": [
+        "Individual 401(k)",
+        "SEP IRA",
+        "SIMPLE IRA"
+      ],
+      "missing_in_current_preview": [
+        "Traditional and Roth Individual 401(k)",
+        "Investment-Only Account"
+      ],
+      "unexpected_in_current_preview": [
+        "Individual 401(k)"
+      ]
+    },
+    {
+      "label": "Bank",
+      "live_panel_selector": "#dttab_5",
+      "selected_by_ui": true,
+      "accounts": [
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/bank/certificate-of-deposit?icid=et-global-bankcdcard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/certificate-of-deposit?tb=5000&icid=et-global-bankcdcard-openaccount&cdTermLength=12months"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [
+            "15,16",
+            "17"
+          ],
+          "heading": "Certificates of Deposit (CD)"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/bank/max-rate-checking?icid=et-global-maxratecard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/max-rate-checking?tb=5000&icid=et-global-maxratecard-openaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [
+            "12",
+            "13,14"
+          ],
+          "heading": "Max-Rate Checking"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/bank/premium-savings-account?icid=et-global-psacard-learnmore"
+            },
+            {
+              "label": "Open an account",
+              "target": "_self",
+              "url": "https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/premium-savings-account?tb=5000&icid=et-global-psacard-openaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [
+            "8",
+            "9",
+            "10"
+          ],
+          "heading": "Premium Savings Account"
+        },
+        {
+          "ctas": [
+            {
+              "label": "Learn more",
+              "target": "_self",
+              "url": "/bank/line-of-credit?icid=et-global-loccard-learnmore"
+            },
+            {
+              "label": "Get started",
+              "target": "_self",
+              "url": "https://us.etrade.com/etx/mm/lineofcredit?icid=et-global-loccard-openaccount"
+            }
+          ],
+          "disclosure_numbers_from_live_snapshot": [
+            "18"
+          ],
+          "heading": "Line of Credit"
+        }
+      ],
+      "panel_heading": "Morgan Stanley Private Bank",
+      "visible": true,
+      "expected_account_count": 4,
+      "preview_accounts": [
+        "Premium Savings Account",
+        "Max-Rate Checking",
+        "Certificates of Deposit",
+        "Line of Credit"
+      ],
+      "missing_in_current_preview": [],
+      "unexpected_in_current_preview": []
+    }
+  ],
+  "schema_version": "1.0",
+  "page_path": "/what-we-offer/investment-choices",
+  "preview_url": "https://demo--etrade--AdobeDrago.aem.page/what-we-offer/investment-choices",
+  "verification": {
+    "images": "Exact URLs read from live DOM; all six rendered successfully at 551 x 368 and returned HTTP 200 image/jpeg.",
+    "tabs": "Each of the six live tabs was selected through the browser UI; each selected panel was visible when its account list and CTA URLs were recorded.",
+    "saved_DA_document_inspected": false
+  },
+  "authoring_contract": {
+    "table_name": "Tabs Accounts",
+    "row_count": 6,
+    "row_cells": [
+      "Category label",
+      "Panel H2/introduction and UL containing one LI per account",
+      "Optional separately named Rate Settings cells"
+    ],
+    "account_item": [
+      "H3 account name",
+      "Accurate supporting copy from this live panel",
+      "Each CTA in its own paragraph, preserving the recorded tracked URL"
+    ],
+    "disclosures": "Live numeric superscripts are reference evidence only. Bind each actual claim to its existing migrated disclosureId by fragment identity; preserve trademark superscripts.",
+    "campaigns": "Verify current approved promotional copy. Use the existing rate-authoring contract for dynamic base rates; do not copy incomplete static-scrape values."
+  },
+  "correction_to_prior_prompt": "Investment Choices has six live account categories. The earlier instruction to use seven categories including Cryptocurrency was incorrect for this page."
+}
