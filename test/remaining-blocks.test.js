@@ -5,7 +5,7 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { parseHTML } from 'linkedom';
 
-async function render(name, rows, variants = '') {
+async function render(name, rows, variants = '', hash = '') {
   const { document, window } = parseHTML(`<html><body><main><div class="section"><div class="${name} ${variants}">${rows}</div></div></main></body></html>`);
   Object.defineProperty(window.HTMLSelectElement.prototype, 'value', {
     configurable: true,
@@ -17,6 +17,7 @@ async function render(name, rows, variants = '') {
     get() { return (this.getAttribute('rel') || '').split(/\s+/).filter(Boolean); },
   });
   window.matchMedia = () => ({ matches: true });
+  window.location = { hash };
   const context = vm.createContext({
     document,
     window,
@@ -88,6 +89,39 @@ test('icons support named glyphs, icons inside paragraphs, and omitted media', a
   assert.equal(block.querySelector('.cards-icon-glyph-book').getAttribute('aria-hidden'), 'true');
   assert.equal(block.querySelector('.cards-icon-icon svg').tagName, 'SVG');
   assert.equal(block.querySelectorAll('.cards-icon-actions').length, 3);
+});
+
+test('compact investment cards preserve native links with the text action treatment', async () => {
+  const { block } = await render('cards-platform', row(image, copy), 'compact');
+  const link = block.querySelector('.cards-platform-link');
+  assert.equal(link.getAttribute('href'), '/learn?track=2');
+  assert.equal(link.classList.contains('etrade-action-secondary'), true);
+  assert.equal(block.querySelector('.cards-platform-body a').getAttribute('href'), '/inline?track=1');
+});
+
+test('pricing band recognizes cents and groups authored actions below the values', async () => {
+  const { block } = await render('cards-pricing', row('<p>$0</p><h3>Stocks<sup>b</sup></h3><p><a href="/pricing?track=1">View all pricing</a></p>') + row('<p>65¢</p><h3>Options</h3>') + row('<p>$1.50</p><h3>Futures</h3>'), 'band');
+  assert.deepEqual([...block.querySelectorAll('.cards-pricing-value')].map((p) => p.textContent), ['$0', '65¢', '$1.50']);
+  assert.equal(block.querySelectorAll('li .cards-pricing-actions').length, 0);
+  const link = block.querySelector(':scope > .cards-pricing-actions a');
+  assert.equal(link.getAttribute('href'), '/pricing?track=1');
+  assert.equal(link.classList.contains('etrade-action-primary'), true);
+  assert.equal(link.classList.contains('etrade-action-outline'), false);
+  assert.equal(block.querySelector('sup').textContent, 'b');
+});
+
+test('account application actions have outlines even without a Learn more link', async () => {
+  const { block } = await render('tabs-accounts', row('Managed', '<ul><li><h3>Core Portfolios</h3><p><a href="/start?track=1">Get started</a></p></li></ul>'));
+  assert.equal(block.querySelector('.etrade-action-outline').getAttribute('href'), '/start?track=1');
+});
+
+test('account tabs select a valid live-style deep link and safely ignore missing panels', async () => {
+  const rows = ['Popular', 'Brokerage', 'Retirement', 'Managed', 'Small Business', 'Bank'].map((label) => row(label, `<h2>${label}</h2>`)).join('');
+  const { block } = await render('tabs-accounts', rows, '', '#tab_5');
+  assert.equal(block.querySelector('[aria-selected="true"]').textContent, 'Bank');
+  assert.equal(block.querySelectorAll('[role="tabpanel"]:not([hidden])').length, 1);
+  const fallback = await render('tabs-accounts', rows, '', '#tab_99');
+  assert.equal(fallback.block.querySelector('[aria-selected="true"]').textContent, 'Popular');
 });
 
 test('numbered cards skip blank rows and use semantic contiguous ordering', async () => {

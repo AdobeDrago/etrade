@@ -20,7 +20,15 @@ export function standaloneAction(paragraph) {
 
 export function decorateAction(link, kind, prefix) {
   const variant = kind || 'secondary';
-  link.classList.remove('button', 'primary', 'secondary', 'accent');
+  link.classList.remove(
+    'button',
+    'primary',
+    'secondary',
+    'accent',
+    'etrade-action-primary',
+    'etrade-action-secondary',
+    'etrade-action-outline',
+  );
   link.classList.add('etrade-action', `etrade-action-${variant}`);
   if (prefix) link.classList.add(`${prefix}-${variant}`);
   link.removeAttribute('role');

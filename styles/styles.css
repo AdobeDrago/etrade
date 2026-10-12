@@ -68,6 +68,10 @@ body {
   font-family: var(--body-font-family);
   font-size: var(--body-font-size-m);
   line-height: 1.6;
+
+  /* Match the live site's Graphik rendering. */
+  text-rendering: optimizelegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 body.appear {
@@ -425,7 +429,7 @@ body.homepage main > .section.hero-dark-container:has(.hero-dark.has-video) {
   padding-top: 20px;
 }
 
-body.homepage main sup {
+main sup {
   position: relative;
   top: -0.5em;
   font-size: 65%;

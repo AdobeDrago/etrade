@@ -89,6 +89,98 @@
   content: '';
 }
 
+/* Investment-choice cards use a compact, full-width image treatment. */
+main .section:has(.cards-platform.compact) {
+  margin: 0;
+  padding: 60px 0 30px;
+  background: #fff;
+}
+
+main .section:has(.cards-platform.compact) > div {
+  box-sizing: border-box;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+main .section:has(.cards-platform.compact) .default-content-wrapper {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+main .section:has(.cards-platform.compact) :where(.default-content-wrapper h2) {
+  margin: 0 0 15px;
+  font-size: 37px;
+  font-weight: 500;
+  line-height: 42px;
+}
+
+main .section:has(.cards-platform.compact) :where(.default-content-wrapper p) {
+  max-width: 760px;
+  margin: 0 auto;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 21px;
+}
+
+main .section:has(.cards-platform.compact) :where(.default-content-wrapper h4) {
+  margin: 30px 0 0;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 21px;
+}
+
+.cards-platform.compact .cards-platform-card {
+  text-align: left;
+}
+
+.cards-platform.compact .cards-platform-image {
+  margin: -15px -15px 15px;
+}
+
+.cards-platform.compact .cards-platform-heading {
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 28px;
+  letter-spacing: normal;
+}
+
+.cards-platform.compact .cards-platform-body p {
+  margin-bottom: 9px;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.cards-platform.compact .cards-platform-actions {
+  justify-content: flex-start;
+  margin-top: 0;
+  padding-bottom: 24px;
+}
+
+.cards-platform.compact .cards-platform-actions a:any-link {
+  min-height: 33px;
+  padding: 9px 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 13px;
+}
+
+.cards-platform.compact .etrade-action-icon {
+  flex-basis: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+@media (width >= 768px) {
+  main .section:has(.cards-platform.compact) > div {
+    padding: 0 10px;
+  }
+
+  main .section:has(.cards-platform.compact) :where(.default-content-wrapper h2) {
+    font-size: 46px;
+    line-height: 54px;
+  }
+}
+
 .cards-platform .cards-platform-card:has(.cards-platform-link):hover {
   border-color: #5627d8;
 }

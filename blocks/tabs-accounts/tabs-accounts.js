@@ -31,17 +31,19 @@ function decorateCards(panel) {
     card.classList.add('tabs-accounts-card');
     const actions = document.createElement('div');
     actions.className = 'etrade-actions tabs-accounts-actions';
+    const addAction = (link) => {
+      const kind = /^learn more\b/i.test(link.textContent.trim()) ? 'secondary' : 'outline';
+      actions.append(decorateAction(link, kind, 'tabs-accounts'));
+    };
     [...card.querySelectorAll('p')].forEach((paragraph) => {
       const link = standaloneAction(paragraph);
       if (!link) return;
-      decorateAction(link, actions.children.length ? 'outline' : 'secondary', 'tabs-accounts');
-      actions.append(link);
+      addAction(link);
       paragraph.remove();
     });
     // Older imports retain the card-footer anchors without paragraph wrappers.
     card.querySelectorAll('.card-footer a[href]').forEach((link) => {
-      decorateAction(link, actions.children.length ? 'outline' : 'secondary', 'tabs-accounts');
-      actions.append(link);
+      addAction(link);
     });
     if (actions.children.length) card.append(actions);
   });
@@ -112,7 +114,11 @@ export default async function decorate(block) {
   });
   select.addEventListener('change', () => activate(Number(select.value)));
   block.replaceChildren(mobile, tablist, ...panels);
-  if (panels.length) activate(0);
+  if (panels.length) {
+    const match = /^#tab_(\d+)$/.exec(window.location?.hash || '');
+    const requested = match ? Number(match[1]) : 0;
+    activate(requested < panels.length ? requested : 0);
+  }
   block.hidden = !panels.length;
   await rates;
 }

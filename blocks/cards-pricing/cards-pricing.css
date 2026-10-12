@@ -130,3 +130,73 @@ body.homepage .pricing-cards:where(:has(.cards-pricing)) .default-content-wrappe
     line-height: 32px;
   }
 }
+
+/* The authored Band variant owns its heading and shared pricing action. */
+main .section:has(.cards-pricing.band) {
+  box-sizing: border-box;
+  max-width: 980px;
+  margin: 30px auto 60px;
+  padding: 35px 20px 30px;
+  background: #19223c;
+  color: #fff;
+}
+
+main .section:has(.cards-pricing.band) > div {
+  max-width: none;
+  padding: 0;
+}
+
+main .section:has(.cards-pricing.band) .default-content-wrapper h2 {
+  margin: 0 0 30px;
+  color: #6ccdf6;
+  text-align: center;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 36px;
+}
+
+.cards-pricing.band {
+  color: #fff;
+}
+
+.cards-pricing.band sup a:any-link {
+  color: inherit;
+}
+
+.cards-pricing.band > ul > li {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  text-align: center;
+}
+
+.cards-pricing.band .cards-pricing-body h3 {
+  margin-bottom: 10px;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 28px;
+  letter-spacing: normal;
+}
+
+.cards-pricing.band .cards-pricing-body .cards-pricing-value {
+  margin: 0 0 10px;
+  padding: 0;
+  font-size: 46px;
+  font-weight: 500;
+  line-height: 54px;
+  letter-spacing: normal;
+}
+
+.cards-pricing.band .cards-pricing-actions {
+  justify-content: center;
+  margin-top: 30px;
+  padding-top: 0;
+}
+
+@media (width >= 768px) {
+  main .section:has(.cards-pricing.band) {
+    padding-right: 90px;
+    padding-left: 90px;
+  }
+}

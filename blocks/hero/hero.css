@@ -18,6 +18,7 @@ main .section.hero-container > .hero-wrapper {
   padding: 50px 0;
   background: #24134b;
   color: #fff;
+  letter-spacing: -0.21px;
 }
 
 .hero .hero-media {
@@ -58,6 +59,7 @@ main .section.hero-container > .hero-wrapper {
 .hero h1 {
   font-size: 37px;
   line-height: 42px;
+  letter-spacing: inherit;
 }
 
 .hero h2 {
@@ -108,5 +110,20 @@ main .section.hero-container > .hero-wrapper {
     max-width: 380px;
     font-size: 15px;
     line-height: 21px;
+  }
+}
+
+@media (width >= 768px) {
+  .hero.wide {
+    min-height: 415px;
+    padding: 100px 0;
+  }
+
+  .hero.wide :is(h1, h2, p) {
+    max-width: 580px;
+  }
+
+  .hero.wide p {
+    margin-bottom: 25px;
   }
 }

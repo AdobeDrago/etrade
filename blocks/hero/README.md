@@ -12,6 +12,10 @@ The first image becomes the full-width background, retaining its picture sources
 
 Copy stays left aligned in a 1200px container. The first standalone CTA becomes a primary action; additional standalone CTAs become secondary actions. Inline links remain in the body. Headings, IDs, superscripts, rich text, destinations and tracking remain authored. First-section images load eagerly; later images retain their loading behavior.
 
+For Investment Choices, use **Hero (Wide)** with the verified cactus background.
+This variant gives desktop copy a 580px maximum width and 100px vertical padding,
+matching the live introduction. The ordinary Hero keeps the Platforms layout.
+
 Use **Hero Dark (Split)** for the existing separate text/media design and **Hero Light** for the text-only introduction. Those are different layouts.
 
 Save and preview content separately from shipping code. Local preview with the working tree: http://127.0.0.1:3030/platforms.

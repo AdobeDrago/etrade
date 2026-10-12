@@ -22,7 +22,7 @@ export default function decorateCards(block, name) {
     }
     const first = body.firstElementChild;
     if (first?.matches('p')) {
-      let value = /^\s*\$?[\d,.]+%?\s*$/.test(first.textContent);
+      let value = /^\s*\$?[\d,.]+[%¢]?\s*$/.test(first.textContent);
       if (!value && first.querySelector('[data-rate-name]')) {
         const copy = first.cloneNode(true);
         copy.querySelectorAll('[data-rate-name]').forEach((marker) => marker.remove());
