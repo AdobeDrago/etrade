@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>E*TRADE remaining blocks — review</title>
+  <link rel="stylesheet" href="/styles/styles.css">
+  <style>
+    body.block-review { display: block; background: #fafafa; }
+    .block-review-controls, .block-review-notes { max-width: 1200px; margin: auto; padding: 24px; }
+    .block-review-controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+    .block-review-controls p { margin: 0; }
+    .block-review-controls select { max-width: 100%; padding: 12px; font: inherit; }
+    .block-review-notes { font-size: 14px; }
+    .block-review-notes details { margin-top: 20px; }
+    .block-review-notes .table-scroll { overflow: auto; }
+    .block-review-notes table { border-collapse: collapse; background: white; }
+    .block-review-notes :is(td, th) { padding: 12px; border: 1px solid #ccc; vertical-align: top; }
+    .block-review-notes :is(h1, h2, h3) { font-size: 22px; line-height: 26px; }
+    .block-review-notes img { max-width: 250px; }
+  </style>
+  <script type="module" src="/docs/remaining-blocks.js"></script>
+</head>
+<body class="block-review appear">
+  <div class="block-review-controls">
+    <p><strong>E*TRADE · Block review</strong></p>
+    <label for="block-example">Example</label>
+    <select id="block-example"></select>
+    <a id="live-source" target="_blank" rel="noopener noreferrer">Live reference</a>
+  </div>
+  <main aria-label="Block preview"></main>
+  <aside class="block-review-notes">
+    <p>Examples imported from the live pages on October 12, 2026. Code changes are local. These authoring tables have not been saved to DA.</p>
+    <p>The Why E*TRADE preview needs its empty icon cells and broken image URLs replaced. Accounts and Brokerage are available in the current preview; Accounts needs its tab structure restored, and Brokerage needs its hero offer and missing section headings. Account rates and campaign terms in this snapshot remain authored content.</p>
+    <p><a href="/docs/authoring-checklist.json" download>Download the page-by-page authoring checklist (JSON)</a></p>
+    <p>Copyable tables use the migrated letter disclosure IDs in source order. The component preview retains the live snapshot’s displayed numbers. Production numbers come from the page’s disclosure set.</p>
+    <button id="copy-block" type="button">Copy authoring table</button>
+    <span id="copy-status" role="status"></span>
+    <details><summary>Authoring table</summary><div id="author-table" class="table-scroll"></div></details>
+  </aside>
+</body>
+</html>
