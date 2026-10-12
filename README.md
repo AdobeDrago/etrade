@@ -38,3 +38,7 @@ npm run lint
 The October 12, 2026 [authoring pack](docs/current-pages-authoring.html) supersedes the older page examples for Home, Welcome Back, Our Accounts, Brokerage, Planning and Why E*TRADE. It includes rendered local reviews, copyable DA tables, current assets, page-specific disclosure sets and fragments, and save/preview instructions. Content is prepared locally; DA save and preview are separate.
 
 Run `npm run demo:rates` with the AEM proxy on port 3000, then open http://127.0.0.1:3020/docs/current-pages-authoring.html. This review renders page bodies and disclosures with the local blocks; verify the shared header/footer in the branch preview after saving content.
+
+The [Our Accounts rate and content audit](docs/our-accounts-rate-setup.html) documents named rate settings, corrected disclosure references, and the remaining live-service connection work.
+
+Captured local reviews: [six-page authoring](docs/current-pages-demo.png), [Welcome Back hero](docs/welcome-back-corrected-demo.png), and [Welcome Back sample market charts](docs/welcome-back-json-charts.png). These screenshots record earlier review states; use the rendered authoring pack for the current content and the branch preview for the shared layout.
