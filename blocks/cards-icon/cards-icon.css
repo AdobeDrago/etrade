@@ -39,6 +39,11 @@
   line-height: 20px;
 }
 
+/* Each card keeps the text color for its own surface inside a dark section. */
+main .section.dark .cards-icon .cards-icon-card :is(h1, h2, h3, h4, h5, h6, p) {
+  color: inherit;
+}
+
 .cards-icon .cards-icon-eyebrow {
   font-size: 14px;
   line-height: 18px;
