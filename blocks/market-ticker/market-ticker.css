@@ -1,5 +1,12 @@
+.market-ticker-wrapper {
+  background: #24114c;
+}
+
 .market-ticker {
-  padding: 20px 24px;
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
   background: #24114c;
   color: #fff;
   font-size: 13px;
@@ -51,6 +58,13 @@
 .market-ticker button:focus-visible {
   outline: 3px solid #fff;
   outline-offset: 4px;
+}
+
+@media (width >= 768px) {
+  .market-ticker {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
 }
 
 @media (width >= 900px) {
