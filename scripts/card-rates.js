@@ -17,23 +17,26 @@ function pageOptions(doc) {
 }
 
 /** Replace only explicit text markers; keep rich text, links and superscripts. */
-function rateMarkers(row) {
+function rateMarkers(row, settings) {
   const doc = row.ownerDocument;
+  const names = new Set(settings.map((entry) => entry.name));
   const walker = doc.createTreeWalker(row, NodeFilter.SHOW_TEXT);
   const nodes = [];
   while (walker.nextNode()) nodes.push(walker.currentNode);
   const markers = [];
   nodes.forEach((node) => {
     if (node.parentElement.closest('code, pre, script, style')) return;
-    const pattern = /\{\{rate(?::([a-z][a-z0-9-]{0,31}))?\}\}/gi;
-    const matches = [...node.textContent.matchAll(pattern)];
+    const pattern = /\{\{(?:rate(?::([a-z][a-z0-9-]{0,31}))?|([a-z][a-z0-9-]{0,31}))\}\}/gi;
+    // Accept shorthand only for names explicitly configured in this row.
+    const matches = [...node.textContent.matchAll(pattern)]
+      .filter((match) => !match[2] || names.has(match[2].toLowerCase()));
     if (!matches.length) return;
     const content = doc.createDocumentFragment();
     let offset = 0;
     matches.forEach((match) => {
       content.append(node.textContent.slice(offset, match.index));
       const span = doc.createElement('span');
-      span.dataset.rateName = (match[1] || 'rate').toLowerCase();
+      span.dataset.rateName = (match[1] || match[2] || 'rate').toLowerCase();
       span.textContent = '—';
       content.append(span);
       markers.push(span);
@@ -113,7 +116,7 @@ export default function decorateCardRates(block) {
       settings.push(parseRateSettings(lines.slice(1)));
       cell.remove();
     });
-    const markers = rateMarkers(row);
+    const markers = rateMarkers(row, settings);
     const names = [...new Set(markers.map((marker) => marker.dataset.rateName))];
     names.forEach((name) => {
       const matches = settings.filter((entry) => entry.name === name);

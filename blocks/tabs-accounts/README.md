@@ -16,6 +16,14 @@ purple top border, and account cards use slate accents and compact typography.
 Rate markers and extra `Rate Settings` cells use the existing `/scripts/card-rates.js`
 mechanism. Name each rate independently when a panel needs multiple rates; see
 `docs/dynamic-rates-demo.html` for settings. Do not bake live bank rates into code.
+Prefer `{{rate:psa-rate}}` with `Name: psa-rate`. Existing shorthand such as
+`{{psa-rate}}` also resolves when that name has a Rate Settings cell in the same
+panel row. Unconfigured shorthand remains authored text.
+`/phx/pros/apicontent/init/bankRates.json` is bundled **sample data**, not a live
+bank-rates feed. Delivery pages need the approved live endpoint (the default when
+Bank rates endpoint is omitted), or a verified same-origin proxy. Verify browser
+access before using either. Fixed promotional APYs and their offer terms remain
+authored; do not replace a promotional savings APY with a standard balance-tier APY.
 
 Blank rows are skipped; extra content cells are combined. Rich text, tracking URLs,
 inline links and superscripts remain authored. Standalone link paragraphs become
