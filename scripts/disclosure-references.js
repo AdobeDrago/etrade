@@ -2,11 +2,21 @@
 export default function decorateDisclosureReferences(main, disclosures = document.querySelector('.disclosures:not([hidden])')) {
   if (!main || !disclosures || disclosures.hidden) return;
   const targets = new Map();
-  disclosures.querySelectorAll('.disclosures-items > li[id]').forEach((item, index) => {
+  const items = [...disclosures.querySelectorAll('.disclosures-items > li[id]')];
+  const usesIds = items.some((item) => item.dataset.disclosureId);
+  items.forEach((item, index) => {
     const legacyId = item.id.match(/^disclosure-(\d+)$/)?.[1];
     const id = item.dataset.disclosureId || legacyId;
     const number = Number(item.getAttribute('value') || legacyId || index + 1);
-    if (id && number > 0) targets.set(id, { href: `#${item.id}`, number: String(number) });
+    if (id && number > 0) {
+      const target = { href: `#${item.id}`, number: String(number) };
+      targets.set(id, target);
+      // Pages may already author a–z IDs while preview still delivers the numeric schema.
+      const legacyNumber = Number(legacyId);
+      if (!usesIds && legacyNumber >= 1 && legacyNumber <= 26) {
+        targets.set(String.fromCharCode(96 + legacyNumber), target);
+      }
+    }
   });
   main.querySelectorAll('sup').forEach((sup) => {
     if (sup.closest('.disclosures')) return;

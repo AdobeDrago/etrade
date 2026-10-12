@@ -120,6 +120,66 @@ test('previously previewed sets retain their explicit numbers during migration',
     .forEach((path) => assert.equal(disclosureFragmentPath(path), null));
 });
 
+test('letter superscripts resolve to explicit legacy numbers on the demo homepage', async () => {
+  const numbers = [12, 2, 1, 13, 11, 7];
+  const routes = new Map([
+    [endpoint, { disclosures: numbers.map((number) => ({ number, fragment: `${fragments}/terms${number}` })) }],
+    ...numbers.map((number) => [`${fragments}/terms${number}.plain.html`, `<div><p>Terms ${number}</p></div>`]),
+  ]);
+  const app = await harness(routes, `<h2>Offer <sup>a</sup></h2>
+    <p>Fees <sup>b</sup>, awards <sup>l,m,k</sup>, CD <sup>g</sup>, again <sup>a</sup>.</p>
+    <p><sup>2</sup> <sup>c</sup> <sup>a,c</sup> <sup>aa</sup> <sup>™</sup>
+    <sup><a href="https://example.com/source">a</a></sup>
+    <a href="#disclosure-a"><sup>a</sup></a></p>`);
+  const main = app.document.querySelector('main');
+  app.decorateReferences(main);
+  assert.equal(main.querySelector('sup').textContent, 'a');
+  await app.decorate(app.block);
+  assert.deepEqual(
+    [...main.querySelectorAll('sup')].map((sup) => sup.textContent),
+    ['1', '2', '12,13,11', '7', '1', '2', 'c', 'a,c', 'aa', '™', 'a', '1'],
+  );
+  assert.deepEqual([...main.querySelectorAll('.disclosures-reference a')]
+    .map((link) => [link.getAttribute('href'), link.getAttribute('aria-label')]), [
+    ['#disclosure-1', 'Disclosure 1'], ['#disclosure-2', 'Disclosure 2'],
+    ['#disclosure-12', 'Disclosure 12'], ['#disclosure-13', 'Disclosure 13'],
+    ['#disclosure-11', 'Disclosure 11'], ['#disclosure-7', 'Disclosure 7'],
+    ['#disclosure-1', 'Disclosure 1'], ['#disclosure-2', 'Disclosure 2'],
+    ['#disclosure-1', 'Disclosure 1'],
+  ]);
+  assert.equal(main.querySelector('sup').dataset.disclosureIds, 'a');
+  assert.equal(main.querySelectorAll('a a').length, 0);
+  const link = main.querySelector('sup a');
+  app.decorateReferences(main);
+  assert.equal(main.querySelector('sup a'), link);
+  const late = app.document.createElement('p');
+  late.innerHTML = 'Later claim <sup>b</sup>';
+  main.append(late);
+  app.decorateReferences(late);
+  assert.equal(late.querySelector('sup a').getAttribute('href'), '#disclosure-2');
+});
+
+test('single-letter IDs use set order without legacy letter aliases', async () => {
+  const app = await harness(new Map([
+    [endpoint, {
+      disclosures: [
+        { disclosureId: 'g', fragment: `${fragments}/cd` },
+        { disclosureId: 'a', fragment: `${fragments}/offer` },
+      ],
+    }],
+    [`${fragments}/cd.plain.html`, '<div><p>CD terms</p></div>'],
+    [`${fragments}/offer.plain.html`, '<div><p>Offer terms</p></div>'],
+  ]), '<p><sup>a,g</sup> <sup>b</sup> <sup>1</sup></p>');
+  await app.decorate(app.block);
+  assert.equal(app.document.querySelector('sup').textContent, '2,1');
+  assert.deepEqual(
+    [...app.document.querySelectorAll('sup a')].map((link) => link.getAttribute('href')),
+    ['#disclosure-a', '#disclosure-g'],
+  );
+  assert.equal(app.document.querySelector('sup:nth-child(2)').textContent, 'b');
+  assert.equal(app.document.querySelector('sup:last-child').textContent, '1');
+});
+
 test('IDs follow the schema and unique valid items are numbered in array order', () => {
   const disclosures = [
     null, {}, { disclosureId: 'offer', fragment: 'https://example.com/legal' },
