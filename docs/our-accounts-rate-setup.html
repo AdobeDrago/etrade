@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Our Accounts — rate and content setup audit</title>
+  <style>
+    body { margin: 0; color: #242424; background: #f6f6fa; font: 16px/1.6 system-ui, sans-serif; }
+    main { max-width: 1080px; margin: auto; padding: 32px 24px 80px; }
+    section { background: white; border: 1px solid #ddd; border-radius: 10px; padding: 24px; margin: 24px 0; }
+    h1, h2, h3 { line-height: 1.25; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { padding: 10px; border: 1px solid #aaa; text-align: left; vertical-align: top; }
+    th { background: #eeeafa; }
+    code { overflow-wrap: anywhere; }
+    pre { white-space: pre-wrap; background: #f0eef8; padding: 16px; }
+    .status { background: #fff4d7; border-left: 4px solid #b57e00; padding: 16px; }
+    .scroll { overflow-x: auto; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Our Accounts: fix rate bindings and page authoring</h1>
+  <p>Audited October 12, 2026 against the <a href="https://demo--etrade--adobedrago.aem.page/what-we-offer/our-accounts#disclosure-2">affected preview</a>, its backend HTML, and the <a href="https://us.etrade.com/what-we-offer/our-accounts">current public page</a>.</p>
+  <p class="status"><strong>The renderer fix is verified locally. Live data is still unavailable.</strong> The page's configured <code>/phx/pros/apicontent/init/bankRates.json</code> returns bundled, fabricated demo data. Both the official direct GET and aggregate POST failed with a network error in browser tests. A verified live connection or approved proxy is required before the delivery page can display current API rates. Content has not been saved or previewed in DA.</p>
+
+  <section>
+    <h2>What caused the missing rates</h2>
+    <p>The Bank row has valid Rate settings cells, but its four text markers use shorthand: <code>{{psa-rate}}</code> twice, <code>{{checking-rate}}</code>, and <code>{{cd-rate}}</code>. The renderer previously recognized only <code>{{rate}}</code> and <code>{{rate:name}}</code>. The settings were removed during decoration while the markers stayed visible, so no bank-rate request was made.</p>
+    <p>The renderer now also accepts shorthand when a matching Name is configured in that same row. Other placeholders stay authored. Prefer the explicit syntax for new content:</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Existing marker</th><th>Preferred marker</th><th>Matching setting</th></tr></thead>
+      <tbody>
+        <tr><td><code>{{psa-rate}}</code></td><td><code>{{rate:psa-rate}}</code></td><td><code>Name: psa-rate</code></td></tr>
+        <tr><td><code>{{checking-rate}}</code></td><td><code>{{rate:checking-rate}}</code></td><td><code>Name: checking-rate</code></td></tr>
+        <tr><td><code>{{cd-rate}}</code></td><td><code>{{rate:cd-rate}}</code></td><td><code>Name: cd-rate</code></td></tr>
+      </tbody>
+    </table></div>
+    <p>Each Rate settings cell belongs in the same Tabs Accounts row as the panel copy. Put each setting in its own paragraph. Markers can appear in headings, descriptions and bold text; the replacement keeps links and superscripts.</p>
+  </section>
+
+  <section>
+    <h2>Replace the outdated page body</h2>
+    <p>Use the <a href="./current-pages-authoring.html?page=our-accounts">corrected full-page review and copyable DA tables</a> or <a href="./our-accounts-current-authoring.html">the page HTML</a>. The pack includes the full current account lists, five FAQs, semantic disclosure IDs, and an API binding for the checking APY. It does not put the demo endpoint in saved page metadata.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Category</th><th>Existing preview accounts</th><th>Current reference accounts</th></tr></thead>
+      <tbody>
+        <tr><td>Most Popular</td><td>4</td><td>6</td></tr>
+        <tr><td>Brokerage</td><td>2</td><td>3</td></tr>
+        <tr><td>Retirement</td><td>5</td><td>6</td></tr>
+        <tr><td>Managed Portfolios</td><td>3</td><td>2</td></tr>
+        <tr><td>Small Business Retirement</td><td>3</td><td>4</td></tr>
+        <tr><td>Bank</td><td>4</td><td>4</td></tr>
+        <tr><td>Cryptocurrency</td><td>1</td><td>1</td></tr>
+      </tbody>
+    </table></div>
+    <p>Current Bank order is Premium Savings Account, Certificates of Deposit, Max-Rate Checking, Line of Credit. The preview's brokerage commission claims cite <code>b</code>, which maps to disclosure 2 in its numeric set: promotional savings APY. That reference does not substantiate a commission claim. Use the semantic IDs and matching fragments supplied with the corrected pack; do not map the new IDs to the old set by displayed number.</p>
+    <p>Save and preview every supplied disclosure fragment, the <code>/disclosures/sets/our-accounts-current</code> set, and the page. Keep one Metadata table. The current pack's stable savings disclosure anchor is <code>#disclosure-savingsboost</code>; the old numeric <code>#disclosure-2</code> belongs to the previous set.</p>
+  </section>
+
+  <section>
+    <h2>Use the right kind of rate</h2>
+    <p>The source's guaranteed savings APY for six months and its dated 12-month CD promotion are campaign terms. Keep those authored with their matching terms and expiry dates. Product 3100's balance-tier APY is a standard savings rate; replacing the guaranteed promotional APY with it would change the offer. The corrected pack keeps the captured promotional copy and makes the variable checking APY dynamic.</p>
+    <p>Checking panel copy contains <code>up to {{rate:checking-rate}}% Annual Percentage Yield</code> and this separate settings cell:</p>
+    <pre>Rate settings
+Name: checking-rate
+Mode: api
+Product: 4240
+Field: advertisedAPY
+Balance: 10000
+Fallback: -.--</pre>
+    <p>For a separately labeled <strong>standard savings APY</strong>, use Product <code>3100</code>, Field <code>advertisedAPY</code> and an explicit Balance. The existing Balance <code>0</code> selects the tier containing $0; it does not select the highest savings APY.</p>
+    <p>For a specific 12-month CD APY, use Product <code>3500</code>, Field <code>disclosureAPY</code> and Term <code>12M</code>. For an “up to” maximum across CD terms, use Field <code>maxDisclosureAPY</code> and omit Term and Balance. Do not label a single term's rate as the maximum across all terms.</p>
+  </section>
+
+  <section>
+    <h2>Connect a live service and verify it</h2>
+    <p>Keep Metadata <strong>Bank rates source</strong> = <code>direct</code>. Remove the current demo <strong>Bank rates endpoint</strong> value. Omitting that endpoint uses the approved default <code>https://us.etrade.com/phx/pros/apicontent/init/bankRates</code>, but the browser connection is currently failing. If the site has an approved same-origin proxy, put its verified route in Bank rates endpoint. Merely changing metadata does not create a proxy or make the upstream service accessible.</p>
+    <ol>
+      <li>Run <code>aem up --no-open --url https://demo--etrade--adobedrago.aem.page</code> and <code>npm run demo:rates</code>.</li>
+      <li>Use the <a href="./dynamic-rates-demo.html?scenario=live-direct">direct live connection check</a> or <a href="./dynamic-rates-demo.html?scenario=live-aggregate">aggregate check</a>. Success requires <code>Source: api</code>; an authored fallback does not count.</li>
+      <li>In the previewed page, check that every rate span has <code>data-rate-source="api"</code>, a fetched timestamp, and no <code>data-rate-error</code>. Verify that the requested URL is the live service or verified proxy rather than the bundled JSON file.</li>
+      <li>Verify the Bank panel, mobile category selector, CTA URLs and disclosure links after code deployment and content preview. Confirm the claim's tier, term and legal copy match the supplied rate.</li>
+    </ol>
+    <p>The <a href="./current-pages-authoring.html?page=our-accounts">rendered authoring review</a> deliberately uses sample JSON to exercise the checking binding while the live service is unresolved. Its sample values are not evidence of a live connection.</p>
+  </section>
+</main>
+</body>
+</html>

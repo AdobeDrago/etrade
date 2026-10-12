@@ -175,7 +175,7 @@ for (let i = 0; i < paths.length; i += 1) {
     const managed = [...legalRoot.querySelectorAll('span')].filter((e) => /^(Diversification and asset allocation|Prior to investing in a managed|The material provided by Morgan Stanley)/.test(e.textContent.trim()));
     disclosures.push({ id: 'managedportfolios', sourceNumber: null, html: managed.map((e) => `<p>${clean(e)}</p>`).join('') });
     sections[1].blocks[0].rows[3][1] = sections[1].blocks[0].rows[3][1].replace('<sup>8</sup>', '<sup>managedportfolios</sup>');
-    sections[1].blocks[0].rows[5][1] = sections[1].blocks[0].rows[5][1].replace('<sup>4</sup>', '<sup>2</sup>').replace('<sup>18</sup>', '<sup>16</sup>');
+    sections[1].blocks[0].rows[5][1] = sections[1].blocks[0].rows[5][1].replace('months,<sup>4</sup>', 'months,<sup>2</sup>').replace('<sup>18</sup>', '<sup>16</sup>');
   }
   const migrate = (html) => html.replace(/<sup>(\d+(?:\s*,\s*\d+)*)<\/sup>/g, (match, nums) => {
     const mapped = nums.split(/\s*,\s*/).map((n) => disclosureIds[i][Number(n) - 1]);
@@ -186,8 +186,17 @@ for (let i = 0; i < paths.length; i += 1) {
     s.html = migrate(s.html);
     s.blocks.forEach((b) => { b.rows = b.rows.map((r) => r.map(migrate)); });
   });
+  if (i === 2) {
+    const bank = sections.flatMap((s) => s.blocks).find((b) => b.name === 'Tabs Accounts')
+      .rows.find((r) => r[0] === 'Bank');
+    const original = bank[1];
+    bank[1] = original.replace(/up to \d+\.\d+% Annual Percentage Yield/, 'up to {{rate:checking-rate}}% Annual Percentage Yield');
+    if (bank[1] === original) throw new Error('The checking APY claim needs review before adding its rate binding.');
+    bank.push('<p>Rate settings</p><p>Name: checking-rate</p><p>Mode: api</p><p>Product: 4240</p><p>Field: advertisedAPY</p><p>Balance: 10000</p><p>Fallback: -.--</p>');
+  }
   const metadata = [['Title', titles[i]], ['Description', `E*TRADE ${titles[i]} page.`], ['Header Theme', [0, 3, 4, 5].includes(i) ? 'dark' : 'light'], ['Nav Link Base', 'https://us.etrade.com'], ['Disclosures', `/disclosures/sets/${ids[i]}-current`]];
   if (i === 0) metadata.push(['Template', 'homepage']);
+  if (i === 2) metadata.push(['Bank rates source', 'direct']);
   if (i === 1) {
     metadata.push(
       ['Market Data Base', 'https://us.etrade.com/phx/pros/apicontent/market/'],

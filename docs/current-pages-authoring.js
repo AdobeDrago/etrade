@@ -12,7 +12,7 @@ const status = document.querySelector('#copy-status');
 const notes = [
   'Home: savings-rate hero and MP4, savings banner, brokerage feature, all ten calculator tiers, five pricing tiles, three product cards, banking, three awards and six FAQs. The live calculator headline advertises $1,500 while its upper tiers reach $10,000; all captured tiers are preserved.',
   'Welcome Back: full-width AI cybersecurity image, campaign on the left, white login panel on the right, two current campaign cards using DA-safe named icons, market ticker, overview and Top Five. Market regions currently read /data/market-data.json and show sample-data labels. The sign-in link works; embedded authentication remains a separate integration.',
-  'Our Accounts: seven tabs with 6 / 3 / 6 / 2 / 4 / 4 / 1 accounts, including Cryptocurrency, and five FAQs. Bank order differs from Investment Choices. The source savings banner cites 4 and a nonexistent 18; prepared IDs bind its actual boosted-rate and bonus claims. The managed intro cites Roth disclosure 8 on the source; the pack instead binds the matching managed-portfolio text from the same footer.',
+  'Our Accounts: seven tabs with 6 / 3 / 6 / 2 / 4 / 4 / 1 accounts, including Cryptocurrency, and five FAQs. Bank order differs from Investment Choices. Checking uses a named API binding; this local review uses sample JSON. Its saved page metadata uses the live API default, which still requires a working connection or verified proxy. Savings and CD promotional rates remain authored campaign terms. The prepared semantic IDs correct the savings banner and managed intro disclosure references.',
   'Brokerage: split product hero and offer, six pricing tiles, offer banner, three reasons, Power E*TRADE Pro, NerdWallet recognition, four current articles and seven FAQs. The struck-through $1,000 is preserved beside $1,500.',
   'Planning: full live structure with six life-event/offer cards, readiness calculator, four retirement tools, tax feature, three action cards and nine FAQs. The live retirement tile still says 06/30/26 while its disclosure says 10/31/26. The captured tile is retained and must be corrected to the content owner’s intended campaign before publishing. The source tax FAQ’s unmatched d1 marker binds to its existing tax-advice disclaimer.',
   'Why E*TRADE: current split hero, all seven dated story cards (1982–2025), six audience cards and three promo cards. Replace the shortened generic preview body with this full structure.',
@@ -103,6 +103,16 @@ async function show() {
   theme.name = 'header-theme';
   const [, headerTheme] = page.metadata.find(([key]) => key === 'Header Theme');
   theme.content = headerTheme;
+  ['bank-rates-source', 'bank-rates-endpoint'].forEach((name) => {
+    document.querySelector(`meta[name="${name}"]`)?.remove();
+  });
+  if (page.id === 'our-accounts') {
+    // The review uses sample data; copyable page metadata never includes this endpoint.
+    const endpoint = document.createElement('meta');
+    endpoint.name = 'bank-rates-endpoint';
+    endpoint.content = '/phx/pros/apicontent/init/bankRates.json';
+    document.head.append(endpoint);
+  }
   main.replaceChildren();
   page.sections.forEach((section) => {
     const node = document.createElement('div');
