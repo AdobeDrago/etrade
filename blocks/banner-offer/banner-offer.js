@@ -19,7 +19,7 @@ export default function decorate(block) {
       paragraph.remove();
     }
   }
-  const actions = groupActions(content, 'banner-offer', block.classList.contains('light') ? 'outline' : 'primary');
+  const actions = groupActions(content, 'banner-offer', block.matches('.light, .compact') ? 'outline' : 'primary');
   heading?.remove();
   actions.remove();
   block.replaceChildren();

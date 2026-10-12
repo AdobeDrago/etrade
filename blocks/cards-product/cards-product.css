@@ -102,3 +102,9 @@
     padding-top: 21px;
   }
 }
+
+@media (width >= 900px) {
+  .cards-product.three-columns > ul {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

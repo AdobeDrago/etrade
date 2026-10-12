@@ -21,3 +21,9 @@ Authored content is transferred separately. Existing sandbox integration and cam
 ## Style ownership
 
 The block stylesheet owns both the component and its feature-specific surrounding section styles. Section selectors require this block to be present; `:where()` preserves their existing specificity. Shared homepage section spacing remains in `styles/styles.css`.
+
+**Columns Feature (Media First)** keeps the image before the copy on mobile, as
+used by the current homepage brokerage feature and Planning retirement feature.
+Combine it with Dark or Outline as needed. The default reading/layout order is
+unchanged. **Award** limits logo media to 200px for the brokerage recognition
+section. Updated copyable page examples: `docs/current-pages-authoring.html`.

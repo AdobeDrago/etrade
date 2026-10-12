@@ -28,3 +28,9 @@ one action. Include the panel H2 and both links where the live page has them.
 Review actual live-content examples at `http://127.0.0.1:3030/docs/remaining-blocks.html`
 after `npm run demo:blocks`. Copyable tables are local review artifacts; content
 changes must be saved and previewed separately in DA.
+
+The October 12, 2026 **Our Accounts** reference has seven categories, ending in
+Cryptocurrency. Its account counts are 6, 3, 6, 2, 4, 4, 1. This page's Bank order
+is Premium Savings Account, Certificates of Deposit, Max-Rate Checking, Line of
+Credit. Do not reuse the Investment Choices page's six-category snapshot or Bank
+order. Copyable current panels: `docs/current-pages-authoring.html`.

@@ -299,3 +299,47 @@ test('importers preserve icon names, promo eyebrows, hero offers and unique bann
     check(block);
   }));
 });
+
+test('current Planning cards keep nine named icons, an independent offer, and tool actions', async () => {
+  const pages = JSON.parse(await readFile(new URL('../docs/current-pages.json', import.meta.url), 'utf8'));
+  const planning = pages.find((page) => page.id === 'planning');
+  const icons = planning.sections.flatMap((section) => section.blocks).filter((item) => item.name.startsWith('Cards Icon'));
+  const { block: events } = await render('cards-icon', icons[0].rows.map((cells) => row(...cells)).join(''), 'planning');
+  assert.equal(events.querySelectorAll('.cards-icon-glyph').length, 5);
+  assert.equal(events.querySelectorAll('.cards-icon-card').length, 6);
+  const offer = events.querySelector('.cards-icon-offer');
+  assert.match(offer.textContent, /RETIRE26/);
+  assert.ok(offer.querySelector('a[href*="retirement"]'));
+  assert.equal(offer.querySelector('.cards-icon-icon'), null);
+  assert.equal(offer.textContent.includes('offer Get'), false);
+  const { block: tools } = await render('cards-icon', icons[1].rows.map((cells) => row(...cells)).join(''), 'tools');
+  assert.equal(tools.querySelectorAll('.cards-icon-glyph').length, 4);
+  assert.equal(tools.querySelectorAll('.etrade-action-outline').length, 4);
+  assert.equal(tools.querySelectorAll('a[href*="icid="]').length, 4);
+});
+
+test('current six-page pack has complete account panels, FAQs, and bound legal references', async () => {
+  const pages = JSON.parse(await readFile(new URL('../docs/current-pages.json', import.meta.url), 'utf8'));
+  const counts = {
+    homepage: 6, 'our-accounts': 5, brokerage: 7, planning: 9,
+  };
+  pages.forEach((page) => {
+    const blocks = page.sections.flatMap((section) => section.blocks);
+    const faq = blocks.find((item) => item.name === 'Accordion FAQ');
+    if (counts[page.id]) assert.equal(faq.rows.length, counts[page.id], page.id);
+    const { document } = parseHTML(`<div>${page.sections.map((section) => section.html + section.blocks.flatMap((item) => item.rows.flat()).join('')).join('')}</div>`);
+    const ids = new Set(page.legal.disclosures.map((item) => item.id));
+    document.querySelectorAll('sup').forEach((sup) => {
+      if (sup.textContent === 'TM') return;
+      assert.ok(sup.textContent.split(',').every((id) => ids.has(id)), `${page.id}: ${sup.textContent}`);
+    });
+    assert.equal(document.querySelector('script,style,iframe'), null, page.id);
+  });
+  const accounts = pages.find((page) => page.id === 'our-accounts').sections[1].blocks[0];
+  const { block } = await render('tabs-accounts', accounts.rows.map((cells) => row(...cells)).join(''), '', '#tab_6');
+  assert.equal(block.querySelectorAll('[role="tab"]').length, 7);
+  const panels = [...block.querySelectorAll('[role="tabpanel"]')];
+  assert.deepEqual(panels.map((panel) => panel.querySelectorAll('.tabs-accounts-card').length), [6, 3, 6, 2, 4, 4, 1]);
+  assert.match(panels[6].textContent, /zerohash/);
+  assert.equal(panels[6].hidden, false);
+});

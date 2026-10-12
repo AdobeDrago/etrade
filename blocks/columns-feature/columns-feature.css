@@ -43,6 +43,10 @@ body.homepage main > .section.banking-feature:where(:has(.columns-feature)) {
   order: -1;
 }
 
+.columns-feature.media-first .columns-feature-copy {
+  order: 0;
+}
+
 .columns-feature:is(.light, .dark) .columns-feature-copy :is(h1, h2, h3, h4, h5, h6, p) {
   color: inherit;
 }
@@ -88,6 +92,11 @@ body.homepage main > .section.banking-feature:where(:has(.columns-feature)) {
 .columns-feature .columns-feature-media img {
   height: auto;
   border-radius: 16px;
+}
+
+.columns-feature.award .columns-feature-media img {
+  max-width: 200px;
+  margin: auto;
 }
 
 @media (width >= 768px) {

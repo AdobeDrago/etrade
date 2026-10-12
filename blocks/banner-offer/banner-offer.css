@@ -65,34 +65,34 @@ main .banner-offer.light sup a:any-link {
 }
 
 @media (width >= 768px) {
-  .banner-offer.light {
+  .banner-offer:is(.light, .compact) {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     align-items: center;
     column-gap: 20px;
     padding: 20px;
   }
 
-  .banner-offer.light .banner-offer-media {
+  .banner-offer:is(.light, .compact) .banner-offer-media {
     display: block;
     grid-column: span 1;
   }
 
-  main .banner-offer.light .banner-offer-heading {
+  main .banner-offer:is(.light, .compact) .banner-offer-heading {
     grid-column: span 5;
     margin: 0;
     font-size: 20px;
     line-height: 24px;
   }
 
-  .banner-offer.light.no-media .banner-offer-heading {
+  .banner-offer:is(.light, .compact).no-media .banner-offer-heading {
     grid-column: span 6;
   }
 
-  .banner-offer.light .banner-offer-copy {
+  .banner-offer:is(.light, .compact) .banner-offer-copy {
     grid-column: span 4;
   }
 
-  .banner-offer.light .banner-offer-actions {
+  .banner-offer:is(.light, .compact) .banner-offer-actions {
     grid-column: span 2;
     margin: 0;
   }
@@ -141,28 +141,32 @@ main .section.banner-offer-container:has(.banner-offer.centered) > div {
     padding: 0 10px;
   }
 
-  .banner-offer:not(.light) .banner-offer-heading {
+  .banner-offer:not(.light, .compact) .banner-offer-heading {
   font-size: 32px;
   line-height: 36px;
 }
 
-  .banner-offer:not(.light) .banner-offer-actions a {
+  .banner-offer:not(.light, .compact) .banner-offer-actions a {
   width: auto;
 }
 
-  .banner-offer:not(.light, .no-media) {
+  .banner-offer:not(.light, .compact, .no-media) {
   grid-template-columns: 1fr 1fr;
   column-gap: 40px;
   padding: 40px;
 }
 
-  .banner-offer:not(.light) .banner-offer-media {
+  .banner-offer:not(.light, .compact) .banner-offer-media {
   display: block;
   grid-row: span 3;
   align-self: center;
 }
 
-  .banner-offer:not(.light, .no-media) > :not(.banner-offer-media) {
+  .banner-offer:not(.light, .compact, .no-media) > :not(.banner-offer-media) {
   grid-column: 2;
 }
+}
+
+.banner-offer.compact {
+  background: #1c1a1e;
 }

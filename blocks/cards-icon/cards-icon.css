@@ -129,6 +129,53 @@
   content: '\e924';
 }
 
+.cards-icon .cards-icon-glyph-home-lending::before { content: '\e916'; }
+.cards-icon .cards-icon-glyph-group-family::before { content: '\e912'; }
+.cards-icon .cards-icon-glyph-graduation-gift::before { content: '\e911'; }
+.cards-icon .cards-icon-glyph-retirement::before { content: '\e91d'; }
+.cards-icon .cards-icon-glyph-mountain::before { content: '\e954'; }
+.cards-icon .cards-icon-glyph-ira-selector::before { content: '\e931'; }
+.cards-icon .cards-icon-glyph-money-automatic-investing::before { content: '\e918'; }
+.cards-icon .cards-icon-glyph-calculator::before { content: '\e930'; }
+.cards-icon .cards-icon-glyph-add-funds::before { content: '\e900'; }
+.cards-icon .cards-icon-glyph-idea::before { content: '\e917'; }
+
+.cards-icon .cards-icon-offer {
+  --action-link-color: #ab80ff;
+
+  background: #121213;
+  color: #fff;
+}
+
+.cards-icon .cards-icon-offer .cards-icon-heading {
+  color: #fff;
+}
+
+.cards-icon .cards-icon-offer p {
+  color: inherit;
+}
+
+.cards-icon .cards-icon-offer .etrade-action-secondary {
+  border: 1px solid #ab80ff;
+  padding: 10px 15px;
+}
+
+.cards-icon.tools .cards-icon-heading {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.cards-icon.tools .cards-icon-body p {
+  font-size: 15px;
+  line-height: 21px;
+}
+
+@media (width >= 900px) {
+  .cards-icon.tools > ul {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
 .cards-icon.welcome-back > ul {
   gap: 24px;
 }

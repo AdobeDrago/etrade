@@ -376,6 +376,19 @@ main .section > .hero-light-wrapper {
   padding: 0 20px;
 }
 
+/* Welcome Back has a full-width hero followed immediately by its market ticker. */
+main > .section.welcome-hero-container {
+  margin: 0;
+  padding: 0;
+}
+
+main > .section > .welcome-hero-wrapper,
+main > .section > .market-ticker-wrapper {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
 @media (width >= 768px) {
   main .section > .hero-dark-wrapper,
   main .section > .hero-light-wrapper {

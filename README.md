@@ -32,3 +32,9 @@ npm run lint
 1. Install the [AEM CLI](https://github.com/adobe/helix-cli): `npm install -g @adobe/aem-cli`
 1. Start AEM Proxy: `aem up` (opens your browser at `http://localhost:3000`)
 1. Open the `etrade` directory in your favorite IDE and start coding :)
+
+## Current six-page authoring
+
+The October 12, 2026 [authoring pack](docs/current-pages-authoring.html) supersedes the older page examples for Home, Welcome Back, Our Accounts, Brokerage, Planning and Why E*TRADE. It includes rendered local reviews, copyable DA tables, current assets, page-specific disclosure sets and fragments, and save/preview instructions. Content is prepared locally; DA save and preview are separate.
+
+Run `npm run demo:rates` with the AEM proxy on port 3000, then open http://127.0.0.1:3020/docs/current-pages-authoring.html. This review renders page bodies and disclosures with the local blocks; verify the shared header/footer in the branch preview after saving content.

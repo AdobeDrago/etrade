@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "checked_on": "2026-10-12",
-  "scope": "Seven migrated disclosure-set pages, plus Planning from the earlier hero review.",
+  "scope": "Current six-page authoring pack, plus historical records for Platforms, Investment Choices and Pricing.",
   "purpose": "Page-by-page DA authoring work. This checklist does not apply changes or publish content.",
   "evidence": {
-    "content_source": "Fresh local AEM preview HTML from port 3001 and disclosure preview delivery, plus existing repository authoring guides and prior live comparisons.",
+    "content_source": "For the six current pages: October 12 live browser DOM and disclosure captures, compared with fresh backend .plain.html through the local AEM proxy on port 3000 (main preview content). Other page records retain their earlier evidence.",
     "saved_DA_documents_inspected": false,
     "status_definition": "pending_preview_or_edit means the preview lacks the intended result; first check whether the change is already saved in DA and only needs previewing.",
-    "correction_to_previous_review": "Accounts and Brokerage currently return 200. Their earlier 404 observations are superseded. Planning still returns 404."
+    "correction_to_previous_review": "All six current paths, including Planning, returned HTTP 200. The earlier six-page instructions are superseded by the complete current pack. DA documents have not been inspected or saved."
   },
   "shared_tasks": [
     {
@@ -19,7 +19,7 @@
         "Verify preview delivery returns the saved string disclosureId entries.",
         "The schema and seven sets were reported migrated already; do not repeat or overwrite that migration.",
         "Keep identifiers matching ^[a-z][a-z0-9]*$ and unique within each set.",
-        "Order the middle disclosures array in the required display order; retain each fragment’s stable ID while reordering."
+        "Order the middle disclosures array in the required display order; retain each fragment\u2019s stable ID while reordering."
       ]
     },
     {
@@ -49,212 +49,236 @@
   "pages": [
     {
       "id": "homepage",
-      "title": "Homepage",
+      "title": "Home",
       "path": "/home",
-      "preview_url": "https://demo--etrade--AdobeDrago.aem.page/home",
-      "inspected_url": "http://127.0.0.1:3001/home",
       "live_reference_url": "https://us.etrade.com/home",
-      "assessment": "preview_markup_and_existing_authoring_guides",
+      "preview_url": "https://demo--etrade--AdobeDrago.aem.page/home",
+      "inspected_url": "http://127.0.0.1:3000/home.plain.html",
       "preview_http_status": 200,
-      "observed": {
-        "disclosures_metadata": "/homepage-disclosures",
-        "broken_image_count": 1,
-        "authored_block_names": [
-          "hero-dark",
-          "separator",
-          "columns-feature dark",
-          "widget-calculator",
-          "columns",
-          "cards-pricing",
-          "cards-product",
-          "columns-feature image-right dark band outline",
-          "cards-award",
-          "accordion-faq",
-          "floating-dock"
-        ]
-      },
-      "disclosure_set": {
-        "name": "homepage",
-        "metadata_value": "/disclosures/sets/homepage",
-        "migration_reported_by_user": "saved_with_string_disclosureId",
-        "preview_delivery_http_status": 200,
-        "preview_delivery_schema": "legacy_number",
-        "count": 13,
-        "bindings": [
-          {
-            "disclosureId_from_reported_migration": "a",
-            "legacy_number": 1,
-            "fragment": "/disclosures/fragments/brokerage-offer"
-          },
-          {
-            "disclosureId_from_reported_migration": "b",
-            "legacy_number": 2,
-            "fragment": "/disclosures/fragments/trading-fees"
-          },
-          {
-            "disclosureId_from_reported_migration": "c",
-            "legacy_number": 3,
-            "fragment": "/disclosures/fragments/futures-trading-fees"
-          },
-          {
-            "disclosureId_from_reported_migration": "d",
-            "legacy_number": 4,
-            "fragment": "/disclosures/fragments/fixed-income-pricing"
-          },
-          {
-            "disclosureId_from_reported_migration": "e",
-            "legacy_number": 5,
-            "fragment": "/disclosures/fragments/premium-savings-promotional-apy"
-          },
-          {
-            "disclosureId_from_reported_migration": "f",
-            "legacy_number": 6,
-            "fragment": "/disclosures/fragments/premium-savings-standard-apy"
-          },
-          {
-            "disclosureId_from_reported_migration": "g",
-            "legacy_number": 7,
-            "fragment": "/disclosures/fragments/certificate-of-deposit-apy"
-          },
-          {
-            "disclosureId_from_reported_migration": "h",
-            "legacy_number": 8,
-            "fragment": "/disclosures/fragments/certificate-of-deposit-terms"
-          },
-          {
-            "disclosureId_from_reported_migration": "i",
-            "legacy_number": 9,
-            "fragment": "/disclosures/fragments/savings-competitor-comparison"
-          },
-          {
-            "disclosureId_from_reported_migration": "j",
-            "legacy_number": 10,
-            "fragment": "/disclosures/fragments/premium-savings-cash-bonus"
-          },
-          {
-            "disclosureId_from_reported_migration": "k",
-            "legacy_number": 11,
-            "fragment": "/disclosures/fragments/savings-award-wsj-2025"
-          },
-          {
-            "disclosureId_from_reported_migration": "l",
-            "legacy_number": 12,
-            "fragment": "/disclosures/fragments/brokerage-awards-stockbrokers-2026"
-          },
-          {
-            "disclosureId_from_reported_migration": "m",
-            "legacy_number": 13,
-            "fragment": "/disclosures/fragments/brokerage-awards-kiplinger-2025"
-          }
-        ],
-        "binding_note": "Confirm these identities in the saved migrated DA set. Letter IDs follow the user-reported migration; fragment associations are from the still-legacy preview delivery. Keep the stable ID attached to its fragment if the array order changes."
-      },
-      "apply_shared_tasks": [
-        "preview-migrated-disclosure-sets",
-        "preview-and-verify"
+      "assessment": "rebuilt_from_current_live_source",
+      "prepared_block_names": [
+        "Hero Dark",
+        "Banner Offer (Light)",
+        "Separator",
+        "Columns Feature (Dark, Media First)",
+        "Widget Calculator",
+        "Cards Pricing",
+        "Cards Product (Three Columns)",
+        "Columns Feature (Image Right, Dark, Band, Outline)",
+        "Cards Award",
+        "Accordion FAQ"
       ],
+      "disclosure_set": "homepage-current",
+      "review_url": "http://127.0.0.1:3020/docs/current-pages-authoring.html?page=homepage",
+      "authoring_file": "docs/homepage-current-authoring.html",
+      "status": "prepared_locally_not_saved_in_DA",
       "authoring_tasks": [
         {
-          "id": "homepage-disclosure-metadata",
-          "status": "pending_preview_or_edit",
-          "action": "Wire the page Metadata table to its disclosure set and preview the page.",
-          "table_name": "Metadata",
-          "metadata_key": "Disclosures",
-          "current_preview_value": "/homepage-disclosures",
-          "required_value": "/disclosures/sets/homepage",
-          "instructions": [
-            "Replace the legacy fragment path or add the missing row.",
-            "Keep one actual Metadata table; do not paste ASCII table text into the page body."
-          ]
+          "id": "homepage-save-current-body",
+          "status": "pending_DA_save",
+          "action": "Use Copy complete page from the current review. Preserve section breaks and block variants; merge metadata into one existing Metadata table."
         },
         {
-          "id": "home-keep-hero",
-          "status": "pending_preview_or_edit",
-          "action": "Keep the existing Hero Dark table and authored campaign content; verify heading, media, CTA destinations and tracking after preview.",
-          "block": "hero-dark",
-          "table_name": "Hero Dark",
-          "change_type": "verify",
-          "review_url": "http://127.0.0.1:3030/docs/hero-variants.html?page=home"
+          "id": "homepage-save-current-disclosures",
+          "status": "pending_DA_save",
+          "action": "Create the listed fragments and page-specific semantic disclosure set from Copyable DA tables. Do not overwrite the earlier migrated a-z sets by displayed number."
         },
         {
-          "id": "home-promotional-rate",
-          "status": "pending_preview_or_edit",
-          "action": "Correct the Premium Savings promotional/base-rate binding.",
-          "block": "cards-product",
-          "observed": "The promotional six-month headline uses an API marker for product 3100 advertisedAPY, while the base APY is fixed text.",
-          "instructions": [
-            "Author the promotional APY as approved campaign copy or a manual/hybrid override.",
-            "If the base APY should be dynamic, bind a separate {{rate:base}} marker to product 3100 and the intended field/balance.",
-            "Keep % signs, APY labels, offer terms and disclosure IDs in the copy. The bank-rate API does not supply a boosted promotional APY."
-          ]
+          "id": "homepage-preview-current",
+          "status": "pending_preview",
+          "action": "Preview fragments, set and page. Inspect backend markup and then the branch preview, including shared header/footer, desktop/mobile, images, controls, tracked CTAs and footnotes. Read the selected page note for source inconsistencies and integration limits."
+        }
+      ]
+    },
+    {
+      "id": "welcome-back",
+      "title": "Welcome Back",
+      "path": "/home/welcome-back",
+      "live_reference_url": "https://us.etrade.com/home/welcome-back",
+      "preview_url": "https://demo--etrade--AdobeDrago.aem.page/home/welcome-back",
+      "inspected_url": "http://127.0.0.1:3000/home/welcome-back.plain.html",
+      "preview_http_status": 200,
+      "assessment": "rebuilt_from_current_live_source",
+      "prepared_block_names": [
+        "Welcome Hero",
+        "Market Ticker",
+        "Cards Icon (Welcome Back)",
+        "Market Overview",
+        "Market Top Five"
+      ],
+      "disclosure_set": "welcome-back-current",
+      "review_url": "http://127.0.0.1:3020/docs/current-pages-authoring.html?page=welcome-back",
+      "authoring_file": "docs/welcome-back-current-authoring.html",
+      "status": "prepared_locally_not_saved_in_DA",
+      "authoring_tasks": [
+        {
+          "id": "welcome-back-save-current-body",
+          "status": "pending_DA_save",
+          "action": "Use Copy complete page from the current review. Preserve section breaks and block variants; merge metadata into one existing Metadata table."
         },
         {
-          "id": "home-cd-rate",
-          "status": "pending_preview_or_edit",
-          "action": "Align the CD rate selector with the authored claim.",
-          "block": "cards-product",
-          "observed": "The headline says Up to while the rate settings select disclosureAPY for Term: 12M.",
-          "instructions": [
-            "For a 12-month-specific claim, label the term explicitly and keep the matching term selector.",
-            "For the maximum APY across CD terms, use Product: 3500 and Field: maxDisclosureAPY without Term or Balance."
-          ]
+          "id": "welcome-back-save-current-disclosures",
+          "status": "pending_DA_save",
+          "action": "Create the listed fragments and page-specific semantic disclosure set from Copyable DA tables. Do not overwrite the earlier migrated a-z sets by displayed number."
         },
         {
-          "id": "home-rate-endpoint",
-          "status": "pending_preview_or_edit",
-          "action": "Use the intended approved direct GET rate connection before publishing.",
-          "metadata": {
-            "Bank rates source": "direct",
-            "Bank rates endpoint": null
-          },
-          "instructions": [
-            "Remove the sample endpoint row to use the configured E*TRADE default, or supply an approved same-origin route.",
-            "The local /phx/pros JSON and test fixtures contain fabricated data; a sample or fallback display is not proof of a working live response."
-          ],
-          "guide": "docs/dynamic-rates-authoring.html#step-8"
+          "id": "welcome-back-preview-current",
+          "status": "pending_preview",
+          "action": "Preview fragments, set and page. Inspect backend markup and then the branch preview, including shared header/footer, desktop/mobile, images, controls, tracked CTAs and footnotes. Read the selected page note for source inconsistencies and integration limits."
+        }
+      ]
+    },
+    {
+      "id": "our-accounts",
+      "title": "Our Accounts",
+      "path": "/what-we-offer/our-accounts",
+      "live_reference_url": "https://us.etrade.com/what-we-offer/our-accounts",
+      "preview_url": "https://demo--etrade--AdobeDrago.aem.page/what-we-offer/our-accounts",
+      "inspected_url": "http://127.0.0.1:3000/what-we-offer/our-accounts.plain.html",
+      "preview_http_status": 200,
+      "assessment": "rebuilt_from_current_live_source",
+      "prepared_block_names": [
+        "Hero Light",
+        "Tabs Accounts",
+        "Accordion FAQ"
+      ],
+      "disclosure_set": "our-accounts-current",
+      "review_url": "http://127.0.0.1:3020/docs/current-pages-authoring.html?page=our-accounts",
+      "authoring_file": "docs/our-accounts-current-authoring.html",
+      "status": "prepared_locally_not_saved_in_DA",
+      "authoring_tasks": [
+        {
+          "id": "our-accounts-save-current-body",
+          "status": "pending_DA_save",
+          "action": "Use Copy complete page from the current review. Preserve section breaks and block variants; merge metadata into one existing Metadata table."
         },
         {
-          "id": "home-cleanup-image",
-          "status": "pending_preview_or_edit",
-          "action": "Remove or replace the broken about:error image beside See all FAQs; verify whether it is an imported tracking artifact before retaining it.",
-          "change_type": "cleanup"
+          "id": "our-accounts-save-current-disclosures",
+          "status": "pending_DA_save",
+          "action": "Create the listed fragments and page-specific semantic disclosure set from Copyable DA tables. Do not overwrite the earlier migrated a-z sets by displayed number."
         },
         {
-          "id": "home-campaign-consistency",
-          "status": "pending_preview_or_edit",
-          "action": "Verify the offer heading, funding-calculator configuration, dates, promo code and disclosure fragments describe the same intended campaign.",
-          "blocks": [
-            "widget-calculator",
-            "cards-product"
-          ],
-          "change_type": "verify"
+          "id": "our-accounts-preview-current",
+          "status": "pending_preview",
+          "action": "Preview fragments, set and page. Inspect backend markup and then the branch preview, including shared header/footer, desktop/mobile, images, controls, tracked CTAs and footnotes. Read the selected page note for source inconsistencies and integration limits."
+        }
+      ]
+    },
+    {
+      "id": "brokerage",
+      "title": "Brokerage Account",
+      "path": "/what-we-offer/our-accounts/brokerage-account",
+      "live_reference_url": "https://us.etrade.com/what-we-offer/our-accounts/brokerage-account",
+      "preview_url": "https://demo--etrade--AdobeDrago.aem.page/what-we-offer/our-accounts/brokerage-account",
+      "inspected_url": "http://127.0.0.1:3000/what-we-offer/our-accounts/brokerage-account.plain.html",
+      "preview_http_status": 200,
+      "assessment": "rebuilt_from_current_live_source",
+      "prepared_block_names": [
+        "Hero Product",
+        "Cards Pricing (Text Links)",
+        "Banner Offer",
+        "Cards Numbered",
+        "Columns Feature (Dark, Media First, Outline)",
+        "Columns Feature (Light, Award)",
+        "Cards Article",
+        "Accordion FAQ"
+      ],
+      "disclosure_set": "brokerage-current",
+      "review_url": "http://127.0.0.1:3020/docs/current-pages-authoring.html?page=brokerage",
+      "authoring_file": "docs/brokerage-current-authoring.html",
+      "status": "prepared_locally_not_saved_in_DA",
+      "authoring_tasks": [
+        {
+          "id": "brokerage-save-current-body",
+          "status": "pending_DA_save",
+          "action": "Use Copy complete page from the current review. Preserve section breaks and block variants; merge metadata into one existing Metadata table."
         },
         {
-          "id": "homepage-disclosure-markers",
-          "status": "pending_preview_or_edit",
-          "action": "Replace numeric disclosure references with the matching stable IDs from the migrated set.",
-          "observed_numeric_markers": [
-            "2",
-            "1",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "12",
-            "13",
-            "11"
-          ],
-          "examples": [
-            "<sup>a</sup>",
-            "<sup>a,b</sup>"
-          ],
-          "instructions": [
-            "Match the claim to its actual disclosure fragment; do not derive IDs from current displayed positions after reordering.",
-            "Keep trademark superscripts such as TM unchanged.",
-            "The footer converts IDs to matching numbers and anchor links only when the footer items exist."
-          ]
+          "id": "brokerage-save-current-disclosures",
+          "status": "pending_DA_save",
+          "action": "Create the listed fragments and page-specific semantic disclosure set from Copyable DA tables. Do not overwrite the earlier migrated a-z sets by displayed number."
+        },
+        {
+          "id": "brokerage-preview-current",
+          "status": "pending_preview",
+          "action": "Preview fragments, set and page. Inspect backend markup and then the branch preview, including shared header/footer, desktop/mobile, images, controls, tracked CTAs and footnotes. Read the selected page note for source inconsistencies and integration limits."
+        }
+      ]
+    },
+    {
+      "id": "planning",
+      "title": "Planning",
+      "path": "/planning",
+      "live_reference_url": "https://us.etrade.com/planning",
+      "preview_url": "https://demo--etrade--AdobeDrago.aem.page/planning",
+      "inspected_url": "http://127.0.0.1:3000/planning.plain.html",
+      "preview_http_status": 200,
+      "assessment": "rebuilt_from_current_live_source",
+      "prepared_block_names": [
+        "Hero Dark (Split)",
+        "Cards Icon (Planning)",
+        "Columns Feature (Dark, Media First)",
+        "Cards Icon (Tools)",
+        "Banner Offer (Compact)",
+        "Cards Article",
+        "Accordion FAQ"
+      ],
+      "disclosure_set": "planning-current",
+      "review_url": "http://127.0.0.1:3020/docs/current-pages-authoring.html?page=planning",
+      "authoring_file": "docs/planning-current-authoring.html",
+      "status": "prepared_locally_not_saved_in_DA",
+      "authoring_tasks": [
+        {
+          "id": "planning-save-current-body",
+          "status": "pending_DA_save",
+          "action": "Use Copy complete page from the current review. Preserve section breaks and block variants; merge metadata into one existing Metadata table."
+        },
+        {
+          "id": "planning-save-current-disclosures",
+          "status": "pending_DA_save",
+          "action": "Create the listed fragments and page-specific semantic disclosure set from Copyable DA tables. Do not overwrite the earlier migrated a-z sets by displayed number."
+        },
+        {
+          "id": "planning-preview-current",
+          "status": "pending_preview",
+          "action": "Preview fragments, set and page. Inspect backend markup and then the branch preview, including shared header/footer, desktop/mobile, images, controls, tracked CTAs and footnotes. Read the selected page note for source inconsistencies and integration limits."
+        }
+      ]
+    },
+    {
+      "id": "why-etrade",
+      "title": "Why E*TRADE",
+      "path": "/why-etrade",
+      "live_reference_url": "https://us.etrade.com/why-etrade",
+      "preview_url": "https://demo--etrade--AdobeDrago.aem.page/why-etrade",
+      "inspected_url": "http://127.0.0.1:3000/why-etrade.plain.html",
+      "preview_http_status": 200,
+      "assessment": "rebuilt_from_current_live_source",
+      "prepared_block_names": [
+        "Hero Dark (Split, Balanced)",
+        "Carousel Story",
+        "Cards Icon",
+        "Cards Article (Promo)"
+      ],
+      "disclosure_set": "why-etrade-current",
+      "review_url": "http://127.0.0.1:3020/docs/current-pages-authoring.html?page=why-etrade",
+      "authoring_file": "docs/why-etrade-current-authoring.html",
+      "status": "prepared_locally_not_saved_in_DA",
+      "authoring_tasks": [
+        {
+          "id": "why-etrade-save-current-body",
+          "status": "pending_DA_save",
+          "action": "Use Copy complete page from the current review. Preserve section breaks and block variants; merge metadata into one existing Metadata table."
+        },
+        {
+          "id": "why-etrade-save-current-disclosures",
+          "status": "pending_DA_save",
+          "action": "Create the listed fragments and page-specific semantic disclosure set from Copyable DA tables. Do not overwrite the earlier migrated a-z sets by displayed number."
+        },
+        {
+          "id": "why-etrade-preview-current",
+          "status": "pending_preview",
+          "action": "Preview fragments, set and page. Inspect backend markup and then the branch preview, including shared header/footer, desktop/mobile, images, controls, tracked CTAs and footnotes. Read the selected page note for source inconsistencies and integration limits."
         }
       ]
     },
@@ -731,7 +755,7 @@
           ],
           "instructions": [
             "Keep Low pricing as an H2 immediately before the table in the same section.",
-            "Use $0, 65¢ and $1.50 in that order, with the live H3 labels and disclosure IDs b, b and c.",
+            "Use $0, 65\u00a2 and $1.50 in that order, with the live H3 labels and disclosure IDs b, b and c.",
             "Trading commissions remain authored; the bank-rate API does not supply them."
           ],
           "observed": "The current preview has three rounded cards. The live section is one dark blue band with a cyan heading and one shared View all pricing button."
@@ -812,7 +836,7 @@
                 "Roth IRA",
                 "Traditional IRA",
                 "Inherited (Beneficiary) IRA",
-                "E*TRADE Complete™ IRA",
+                "E*TRADE Complete\u2122 IRA",
                 "IRA for Minors"
               ],
               "missing_in_current_preview": [
@@ -1132,842 +1156,20 @@
         "lint": "passed",
         "screenshot": "docs/pricing-accordion-review.jpg"
       }
-    },
-    {
-      "id": "our-accounts",
-      "title": "Our Accounts",
-      "path": "/what-we-offer/our-accounts",
-      "preview_url": "https://demo--etrade--AdobeDrago.aem.page/what-we-offer/our-accounts",
-      "inspected_url": "http://127.0.0.1:3001/what-we-offer/our-accounts",
-      "live_reference_url": "https://us.etrade.com/what-we-offer/our-accounts",
-      "assessment": "live_comparison_and_current_preview_markup",
-      "preview_http_status": 200,
-      "observed": {
-        "disclosures_metadata": null,
-        "broken_image_count": 3,
-        "authored_block_names": [
-          "hero-light",
-          "accordion-faq"
-        ]
-      },
-      "disclosure_set": {
-        "name": "our-accounts",
-        "metadata_value": "/disclosures/sets/our-accounts",
-        "migration_reported_by_user": "saved_with_string_disclosureId",
-        "preview_delivery_http_status": 200,
-        "preview_delivery_schema": "legacy_number",
-        "count": 16,
-        "bindings": [
-          {
-            "disclosureId_from_reported_migration": "a",
-            "legacy_number": 1,
-            "fragment": "/disclosures/fragments/savings-award-wsj-2025"
-          },
-          {
-            "disclosureId_from_reported_migration": "b",
-            "legacy_number": 2,
-            "fragment": "/disclosures/fragments/premium-savings-promotional-apy-1159pm"
-          },
-          {
-            "disclosureId_from_reported_migration": "c",
-            "legacy_number": 3,
-            "fragment": "/disclosures/fragments/savings-national-average-comparison"
-          },
-          {
-            "disclosureId_from_reported_migration": "d",
-            "legacy_number": 4,
-            "fragment": "/disclosures/fragments/premium-savings-deposit-insurance"
-          },
-          {
-            "disclosureId_from_reported_migration": "e",
-            "legacy_number": 5,
-            "fragment": "/disclosures/fragments/certificate-of-deposit-terms"
-          },
-          {
-            "disclosureId_from_reported_migration": "f",
-            "legacy_number": 6,
-            "fragment": "/disclosures/fragments/certificate-of-deposit-apy"
-          },
-          {
-            "disclosureId_from_reported_migration": "g",
-            "legacy_number": 7,
-            "fragment": "/disclosures/fragments/certificate-of-deposit-transaction-limits"
-          },
-          {
-            "disclosureId_from_reported_migration": "h",
-            "legacy_number": 8,
-            "fragment": "/disclosures/fragments/roth-ira-qualified-distributions"
-          },
-          {
-            "disclosureId_from_reported_migration": "i",
-            "legacy_number": 9,
-            "fragment": "/disclosures/fragments/ira-withdrawals"
-          },
-          {
-            "disclosureId_from_reported_migration": "j",
-            "legacy_number": 10,
-            "fragment": "/disclosures/fragments/complete-debit-card-eligibility"
-          },
-          {
-            "disclosureId_from_reported_migration": "k",
-            "legacy_number": 11,
-            "fragment": "/disclosures/fragments/advisory-fee"
-          },
-          {
-            "disclosureId_from_reported_migration": "l",
-            "legacy_number": 12,
-            "fragment": "/disclosures/fragments/max-rate-checking-apy"
-          },
-          {
-            "disclosureId_from_reported_migration": "m",
-            "legacy_number": 13,
-            "fragment": "/disclosures/fragments/max-rate-checking-atm-fees"
-          },
-          {
-            "disclosureId_from_reported_migration": "n",
-            "legacy_number": 14,
-            "fragment": "/disclosures/fragments/foreign-currency-transaction-fee"
-          },
-          {
-            "disclosureId_from_reported_migration": "o",
-            "legacy_number": 15,
-            "fragment": "/disclosures/fragments/securities-based-lending-risks"
-          },
-          {
-            "disclosureId_from_reported_migration": "p",
-            "legacy_number": 16,
-            "fragment": "/disclosures/fragments/premium-savings-cash-bonus"
-          }
-        ],
-        "binding_note": "Confirm these identities in the saved migrated DA set. Letter IDs follow the user-reported migration; fragment associations are from the still-legacy preview delivery. Keep the stable ID attached to its fragment if the array order changes."
-      },
-      "apply_shared_tasks": [
-        "preview-migrated-disclosure-sets",
-        "preview-and-verify"
-      ],
-      "authoring_tasks": [
-        {
-          "id": "our-accounts-disclosure-metadata",
-          "status": "pending_preview_or_edit",
-          "action": "Wire the page Metadata table to its disclosure set and preview the page.",
-          "table_name": "Metadata",
-          "metadata_key": "Disclosures",
-          "current_preview_value": null,
-          "required_value": "/disclosures/sets/our-accounts",
-          "instructions": [
-            "Replace the legacy fragment path or add the missing row.",
-            "Keep one actual Metadata table; do not paste ASCII table text into the page body."
-          ]
-        },
-        {
-          "id": "accounts-hero",
-          "status": "pending_preview_or_edit",
-          "action": "Keep the existing Hero Light introduction and update its disclosure marker.",
-          "block": "hero-light",
-          "table_name": "Hero Light",
-          "change_type": "verify",
-          "review_url": "http://127.0.0.1:3030/docs/hero-variants.html?page=accounts"
-        },
-        {
-          "id": "accounts-selector",
-          "status": "pending_preview_or_edit",
-          "action": "Replace the flattened account-category content with one Tabs Accounts table.",
-          "table_name": "Tabs Accounts",
-          "block": "tabs-accounts",
-          "expected_rows": 7,
-          "categories": [
-            "Most Popular",
-            "Brokerage",
-            "Retirement",
-            "Managed Portfolios",
-            "Small Business Retirement",
-            "Bank",
-            "Cryptocurrency"
-          ],
-          "row_cells": [
-            "Category label",
-            "Panel H2, introductory paragraphs, and a UL with one LI per account",
-            "Optional separate Rate Settings cells"
-          ],
-          "account_item": [
-            "H3 account name",
-            "Description paragraphs",
-            "Standalone Learn more link paragraph",
-            "Standalone Open an account / Apply / Get started link paragraph when applicable"
-          ],
-          "review_url": "http://127.0.0.1:3030/docs/remaining-blocks.html?example=9",
-          "fixture_file": "docs/remaining-block-examples.json",
-          "fixture_index": 9,
-          "images": [],
-          "observed": "The current page contains Hero Light and Accordion FAQ, but no Tabs Accounts block; category/card content is loose text.",
-          "instructions": [
-            "Keep the seven category labels in the intended order.",
-            "Use one UL of account-card LIs per panel; do not flatten cards into page paragraphs.",
-            "Retain the page-specific intros, descriptions, destination URLs and tracking parameters.",
-            "The block name is plural: Tabs Accounts."
-          ]
-        },
-        {
-          "id": "accounts-rates",
-          "status": "pending_preview_or_edit",
-          "action": "Configure named bank-rate bindings in the relevant tab rows and preserve campaign rates as authored content.",
-          "metadata": {
-            "Bank rates source": "aggregate",
-            "Bank rates endpoint": null
-          },
-          "guide": "docs/dynamic-rates-authoring.html#step-8",
-          "instructions": [
-            "Add separate Rate Settings cells for each named binding in the same category row.",
-            "Use Product 3100 for savings, 4240 for checking and 3500 for CDs, with the intended field/balance/term.",
-            "Use distinct binding names when a panel contains multiple products/rates.",
-            "Keep boosted promotional rates and dates authored or deliberately overridden.",
-            "Remove sample endpoint metadata or use the approved aggregate route; verify an actual successful response."
-          ]
-        },
-        {
-          "id": "accounts-footnote-mismatch",
-          "status": "pending_preview_or_edit",
-          "action": "Resolve the savings-offer marker 18 before converting page references to IDs.",
-          "observed": "The current page includes numeric reference 18, while the user-reported Our Accounts set contains 16 IDs, a through p.",
-          "instructions": [
-            "Find the correct disclosure fragment for that exact claim in the saved set.",
-            "The legacy delivered set includes premium-savings-cash-bonus as item 16; verify whether that fragment is the intended binding for the cash-bonus claim.",
-            "Use the fragment’s existing stable ID, or add a required missing fragment with a unique ID. Do not manufacture ID r simply from the old displayed number."
-          ]
-        },
-        {
-          "id": "accounts-faq",
-          "status": "pending_preview_or_edit",
-          "action": "Retain Accordion FAQ and verify the question/answer structure after moving the tab content.",
-          "block": "accordion-faq",
-          "table_name": "Accordion FAQ",
-          "change_type": "verify"
-        },
-        {
-          "id": "accounts-cleanup",
-          "status": "pending_preview_or_edit",
-          "action": "Remove imported tracking/spacer images and empty trailing content after confirming their purpose.",
-          "change_type": "cleanup"
-        },
-        {
-          "id": "our-accounts-disclosure-markers",
-          "status": "pending_preview_or_edit",
-          "action": "Replace numeric disclosure references with the matching stable IDs from the migrated set.",
-          "observed_numeric_markers": [
-            "1",
-            "2",
-            "3",
-            "4",
-            "5,6",
-            "7",
-            "8",
-            "9,10",
-            "12",
-            "13,14",
-            "15",
-            "18"
-          ],
-          "examples": [
-            "<sup>a</sup>",
-            "<sup>a,b</sup>"
-          ],
-          "instructions": [
-            "Match the claim to its actual disclosure fragment; do not derive IDs from current displayed positions after reordering.",
-            "Keep trademark superscripts such as TM unchanged.",
-            "The footer converts IDs to matching numbers and anchor links only when the footer items exist."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "brokerage",
-      "title": "Brokerage Account",
-      "path": "/what-we-offer/our-accounts/brokerage-account",
-      "preview_url": "https://demo--etrade--AdobeDrago.aem.page/what-we-offer/our-accounts/brokerage-account",
-      "inspected_url": "http://127.0.0.1:3001/what-we-offer/our-accounts/brokerage-account",
-      "live_reference_url": "https://us.etrade.com/what-we-offer/our-accounts/brokerage-account",
-      "assessment": "live_comparison_and_current_preview_markup",
-      "preview_http_status": 200,
-      "observed": {
-        "disclosures_metadata": null,
-        "broken_image_count": 3,
-        "authored_block_names": [
-          "hero-product",
-          "cards-pricing",
-          "banner-offer",
-          "cards-numbered",
-          "columns-feature",
-          "cards-article",
-          "accordion-faq",
-          "description"
-        ]
-      },
-      "disclosure_set": {
-        "name": "brokerage",
-        "metadata_value": "/disclosures/sets/brokerage",
-        "migration_reported_by_user": "saved_with_string_disclosureId",
-        "preview_delivery_http_status": 200,
-        "preview_delivery_schema": "legacy_number",
-        "count": 7,
-        "bindings": [
-          {
-            "disclosureId_from_reported_migration": "a",
-            "legacy_number": 1,
-            "fragment": "/disclosures/fragments/brokerage-offer"
-          },
-          {
-            "disclosureId_from_reported_migration": "b",
-            "legacy_number": 2,
-            "fragment": "/disclosures/fragments/general-transaction-fees"
-          },
-          {
-            "disclosureId_from_reported_migration": "c",
-            "legacy_number": 3,
-            "fragment": "/disclosures/fragments/trading-fees"
-          },
-          {
-            "disclosureId_from_reported_migration": "d",
-            "legacy_number": 4,
-            "fragment": "/disclosures/fragments/fixed-income-pricing"
-          },
-          {
-            "disclosureId_from_reported_migration": "e",
-            "legacy_number": 5,
-            "fragment": "/disclosures/fragments/futures-trading-fees"
-          },
-          {
-            "disclosureId_from_reported_migration": "f",
-            "legacy_number": 6,
-            "fragment": "/disclosures/fragments/brokerage-awards-stockbrokers-2026"
-          },
-          {
-            "disclosureId_from_reported_migration": "g",
-            "legacy_number": 7,
-            "fragment": "/disclosures/fragments/brokerage-award-nerdwallet-2024"
-          }
-        ],
-        "binding_note": "Confirm these identities in the saved migrated DA set. Letter IDs follow the user-reported migration; fragment associations are from the still-legacy preview delivery. Keep the stable ID attached to its fragment if the array order changes."
-      },
-      "apply_shared_tasks": [
-        "preview-migrated-disclosure-sets",
-        "preview-and-verify"
-      ],
-      "authoring_tasks": [
-        {
-          "id": "brokerage-disclosure-metadata",
-          "status": "pending_preview_or_edit",
-          "action": "Wire the page Metadata table to its disclosure set and preview the page.",
-          "table_name": "Metadata",
-          "metadata_key": "Disclosures",
-          "current_preview_value": null,
-          "required_value": "/disclosures/sets/brokerage",
-          "instructions": [
-            "Replace the legacy fragment path or add the missing row.",
-            "Keep one actual Metadata table; do not paste ASCII table text into the page body."
-          ]
-        },
-        {
-          "id": "brokerage-hero",
-          "status": "pending_preview_or_edit",
-          "action": "Re-author the existing Hero Product as named rows, including the missing offer under the image.",
-          "block": "hero-product",
-          "table_name": "Hero Product",
-          "review_url": "http://127.0.0.1:3030/docs/remaining-blocks.html?example=0",
-          "fixture_file": "docs/remaining-block-examples.json",
-          "fixture_index": 0,
-          "images": [
-            {
-              "source_url": "https://cdn2.etrade.net/1/25120911130.0/aempros/content/dam/etrade/retail/en_US/images/accounts/brokerage-account/hero-brokerage-account-mobile-app-visual.jpg",
-              "source_alt": "E*TRADE mobile app on an iPhone showing stock charting for a brokerage account",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            }
-          ],
-          "rows": [
-            "Eyebrow",
-            "Heading",
-            "Content",
-            "Image",
-            "Offer"
-          ],
-          "instructions": [
-            "Use Brokerage account as the eyebrow and Investing should be this easy as the visual heading.",
-            "Keep supporting copy and the standalone primary CTA in Content.",
-            "Retain a valid product image; the existing generated media URL can be reused if it is the intended asset.",
-            "Author the compact Offer row with rich heading, campaign terms, stable disclosure ID and standalone Learn how link."
-          ]
-        },
-        {
-          "id": "brokerage-banner",
-          "status": "pending_preview_or_edit",
-          "action": "Repair the Banner Offer table, including the missing decorative arrow image and malformed offer heading.",
-          "block": "banner-offer",
-          "table_name": "Banner Offer",
-          "review_url": "http://127.0.0.1:3030/docs/remaining-blocks.html?example=1",
-          "fixture_file": "docs/remaining-block-examples.json",
-          "fixture_index": 1,
-          "images": [
-            {
-              "source_url": "https://cdn2.etrade.net/1/26041016350.0/aempros/content/dam/etrade/retail/en_US/images/accounts/brokerage-account/brokerage-offer-arrow-right.jpeg",
-              "source_alt": "Arrow pointing to right",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            }
-          ],
-          "row_cells": [
-            "Decorative arrow image, rich heading, terms/promo paragraphs, standalone Open an account and Learn how links"
-          ],
-          "instructions": [
-            "Replace literal <del> text and the misplaced old amount with actual rich-text strikethrough.",
-            "Match the campaign in the hero Offer row."
-          ]
-        },
-        {
-          "id": "brokerage-reasons",
-          "status": "pending_preview_or_edit",
-          "action": "Retain the three Cards Numbered rows and restore the missing section heading/introduction above them.",
-          "block": "cards-numbered",
-          "table_name": "Cards Numbered",
-          "review_url": "http://127.0.0.1:3030/docs/remaining-blocks.html?example=2",
-          "fixture_file": "docs/remaining-block-examples.json",
-          "fixture_index": 2,
-          "images": [],
-          "expected_rows": 3,
-          "section_heading": "Three reasons to invest with an E*TRADE brokerage account",
-          "row_cells": [
-            "H3 reason, description paragraphs and optional standalone link"
-          ],
-          "instructions": [
-            "Do not author the ordinal numbers; row order generates them."
-          ]
-        },
-        {
-          "id": "brokerage-articles",
-          "status": "pending_preview_or_edit",
-          "action": "Retain the four Cards Article rows and restore the education section introduction.",
-          "block": "cards-article",
-          "table_name": "Cards Article",
-          "review_url": "http://127.0.0.1:3030/docs/remaining-blocks.html?example=3",
-          "fixture_file": "docs/remaining-block-examples.json",
-          "fixture_index": 3,
-          "images": [
-            {
-              "source_url": "https://cdn2.etrade.net/1/26041016340.0/aempros/content/dam/etrade/retail/en_US/images/accounts/brokerage-account/article-card-start-investing.jpeg",
-              "source_alt": "Two people reviewing financial documents",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            },
-            {
-              "source_url": "https://cdn2.etrade.net/1/26041016340.0/aempros/content/dam/etrade/retail/en_US/images/accounts/brokerage-account/article-card-no-index-funds.jpeg",
-              "source_alt": "Runners on a track",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            },
-            {
-              "source_url": "https://cdn2.etrade.net/1/26041016340.0/aempros/content/dam/etrade/retail/en_US/images/accounts/brokerage-account/article-card-growth-vs-value.jpeg",
-              "source_alt": "Plants being watered",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            },
-            {
-              "source_url": "https://cdn2.etrade.net/1/26041016340.0/aempros/content/dam/etrade/retail/en_US/images/accounts/brokerage-account/article-card-dollar-cost-averaging.jpeg",
-              "source_alt": "Swimmer doing freestyle",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            }
-          ],
-          "expected_rows": 4,
-          "eyebrow": "Education and resources",
-          "section_heading": "Insights to stay informed and inspired",
-          "row_cells": [
-            "Image",
-            "H3 article heading, description paragraphs and standalone Read more link"
-          ],
-          "instructions": [
-            "Keep the default inset-image card style for Brokerage.",
-            "Preserve existing valid DA media assets and tracked links where correct."
-          ]
-        },
-        {
-          "id": "brokerage-metadata-cleanup",
-          "status": "pending_preview_or_edit",
-          "action": "Remove the literal ASCII Metadata table and imported Description block from body content; author a real Metadata table.",
-          "change_type": "cleanup",
-          "observed": "Metadata currently appears as ASCII text in main content, and no Disclosures head metadata is delivered."
-        },
-        {
-          "id": "brokerage-other-sections",
-          "status": "pending_preview_or_edit",
-          "action": "Verify the retained pricing cards, trading feature, awards and FAQ; repair missing copy and stray imported dock/plus-icon text.",
-          "blocks": [
-            "cards-pricing",
-            "columns-feature",
-            "accordion-faq"
-          ],
-          "change_type": "verify"
-        },
-        {
-          "id": "brokerage-cleanup-images",
-          "status": "pending_preview_or_edit",
-          "action": "Remove imported tracking/spacer images and empty trailing content after confirming their purpose.",
-          "change_type": "cleanup"
-        },
-        {
-          "id": "brokerage-disclosure-markers",
-          "status": "pending_preview_or_edit",
-          "action": "Replace numeric disclosure references with the matching stable IDs from the migrated set.",
-          "observed_numeric_markers": [
-            "3",
-            "4",
-            "5",
-            "1",
-            "6",
-            "7"
-          ],
-          "examples": [
-            "<sup>a</sup>",
-            "<sup>a,b</sup>"
-          ],
-          "instructions": [
-            "Match the claim to its actual disclosure fragment; do not derive IDs from current displayed positions after reordering.",
-            "Keep trademark superscripts such as TM unchanged.",
-            "The footer converts IDs to matching numbers and anchor links only when the footer items exist."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "why-etrade",
-      "title": "Why E*TRADE",
-      "path": "/why-etrade",
-      "preview_url": "https://demo--etrade--AdobeDrago.aem.page/why-etrade",
-      "inspected_url": "http://127.0.0.1:3001/why-etrade",
-      "live_reference_url": "https://us.etrade.com/why-etrade",
-      "assessment": "live_comparison_and_current_preview_markup",
-      "preview_http_status": 200,
-      "observed": {
-        "disclosures_metadata": null,
-        "broken_image_count": 14,
-        "authored_block_names": [
-          "columns-feature",
-          "carousel-story",
-          "cards-icon",
-          "cards-article"
-        ]
-      },
-      "disclosure_set": {
-        "name": "why-etrade",
-        "metadata_value": "/disclosures/sets/why-etrade",
-        "migration_reported_by_user": "saved_with_string_disclosureId",
-        "preview_delivery_http_status": 200,
-        "preview_delivery_schema": "legacy_number",
-        "count": 3,
-        "bindings": [
-          {
-            "disclosureId_from_reported_migration": "a",
-            "legacy_number": 1,
-            "fragment": "/disclosures/fragments/trading-fees"
-          },
-          {
-            "disclosureId_from_reported_migration": "b",
-            "legacy_number": 2,
-            "fragment": "/disclosures/fragments/brokerage-awards-stockbrokers-2026"
-          },
-          {
-            "disclosureId_from_reported_migration": "c",
-            "legacy_number": 3,
-            "fragment": "/disclosures/fragments/financial-advisor-services"
-          }
-        ],
-        "binding_note": "Confirm these identities in the saved migrated DA set. Letter IDs follow the user-reported migration; fragment associations are from the still-legacy preview delivery. Keep the stable ID attached to its fragment if the array order changes."
-      },
-      "apply_shared_tasks": [
-        "preview-migrated-disclosure-sets",
-        "preview-and-verify"
-      ],
-      "authoring_tasks": [
-        {
-          "id": "why-etrade-disclosure-metadata",
-          "status": "pending_preview_or_edit",
-          "action": "Wire the page Metadata table to its disclosure set and preview the page.",
-          "table_name": "Metadata",
-          "metadata_key": "Disclosures",
-          "current_preview_value": null,
-          "required_value": "/disclosures/sets/why-etrade",
-          "instructions": [
-            "Replace the legacy fragment path or add the missing row.",
-            "Keep one actual Metadata table; do not paste ASCII table text into the page body."
-          ]
-        },
-        {
-          "id": "why-hero",
-          "status": "pending_preview_or_edit",
-          "action": "Replace the incomplete opening Columns Feature table with the prepared hero table.",
-          "block": "hero-dark",
-          "table_name": "Hero Dark (Split, Balanced)",
-          "review_url": "http://127.0.0.1:3030/docs/hero-variants.html?page=why",
-          "rows": [
-            "Eyebrow",
-            "Heading",
-            "Content",
-            "Image"
-          ],
-          "eyebrow": "What sets us apart",
-          "heading": "Empowering investors is in our DNA",
-          "observed": "The visual headline is missing and the current hero image URL is about:error.",
-          "image": {
-            "source_url": "https://cdn2.etrade.net/1/26022715290.0/aempros/content/dam/etrade/retail/en_US/images/why-etrade/hero-why-etrade-trading-screen-680x420.jpg",
-            "source_alt": "Man looking at a multi-monitor trading screen system"
-          },
-          "instructions": [
-            "Upload/select a valid DA image asset.",
-            "Remove the stray imported page-title paragraph before the hero.",
-            "Retain the supporting copy and tracked primary CTA."
-          ]
-        },
-        {
-          "id": "why-story",
-          "status": "pending_preview_or_edit",
-          "action": "Repair all seven Carousel Story image cells and add the missing section introduction.",
-          "block": "carousel-story",
-          "table_name": "Carousel Story",
-          "review_url": "http://127.0.0.1:3030/docs/remaining-blocks.html?example=4",
-          "fixture_file": "docs/remaining-block-examples.json",
-          "fixture_index": 4,
-          "images": [
-            {
-              "source_url": "https://cdn2.etrade.net/1/26011514340.0/aempros/content/dam/etrade/retail/en_US/images/why-etrade/why-etrade-history-1982.jpeg",
-              "source_alt": "",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            },
-            {
-              "source_url": "https://cdn2.etrade.net/1/26022715560.0/aempros/content/dam/etrade/retail/en_US/images/why-etrade/why-etrade-history-1983-new.jpeg",
-              "source_alt": "",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            },
-            {
-              "source_url": "https://cdn2.etrade.net/1/26011514340.0/aempros/content/dam/etrade/retail/en_US/images/why-etrade/why-etrade-history-1996.jpeg",
-              "source_alt": "",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            },
-            {
-              "source_url": "https://cdn2.etrade.net/1/26011514340.0/aempros/content/dam/etrade/retail/en_US/images/why-etrade/why-etrade-history-2008.jpeg",
-              "source_alt": "",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            },
-            {
-              "source_url": "https://cdn2.etrade.net/1/26011514340.0/aempros/content/dam/etrade/retail/en_US/images/why-etrade/why-etrade-history-2019.jpeg",
-              "source_alt": "Historical photo showing an old ad from E*TRADE highlighting $0 commissions for stocks, options, ETFs, and ultimately mutual funds",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            },
-            {
-              "source_url": "https://cdn2.etrade.net/1/26011514340.0/aempros/content/dam/etrade/retail/en_US/images/why-etrade/why-etrade-history-2020.jpeg",
-              "source_alt": "E*TRADE and Morgan Stanley logos",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            },
-            {
-              "source_url": "https://cdn2.etrade.net/1/26011514340.0/aempros/content/dam/etrade/retail/en_US/images/why-etrade/why-etrade-history-2025.jpeg",
-              "source_alt": "Power E*TRADE Pro, E*TRADE's desktop trading platform, shown on a monitor",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            }
-          ],
-          "expected_rows": 7,
-          "years": [
-            "1982",
-            "1983",
-            "1996",
-            "2008",
-            "2019",
-            "2020",
-            "2025"
-          ],
-          "eyebrow": "Our story",
-          "section_heading": "The original place to invest online",
-          "row_cells": [
-            "Image",
-            "Year paragraph, H3 heading and description paragraphs"
-          ],
-          "instructions": [
-            "Use the actual seven story images in order, with appropriate source alternative text.",
-            "Keep the section introduction outside the Carousel Story table."
-          ]
-        },
-        {
-          "id": "why-audiences",
-          "status": "pending_preview_or_edit",
-          "action": "Fill the six empty icon cells and restore the section introduction.",
-          "block": "cards-icon",
-          "table_name": "Cards Icon",
-          "review_url": "http://127.0.0.1:3030/docs/remaining-blocks.html?example=5",
-          "fixture_file": "docs/remaining-block-examples.json",
-          "fixture_index": 5,
-          "images": [],
-          "expected_rows": 6,
-          "eyebrow": "Who we serve",
-          "section_heading": "Today, we continue to break down financial barriers for individuals of all kinds",
-          "row_cells": [
-            "Plain-text icon name",
-            "H3 audience, description paragraphs and standalone Learn more link"
-          ],
-          "icon_mapping": [
-            {
-              "heading": "New to Investing",
-              "icon": "book"
-            },
-            {
-              "heading": "Active Trading",
-              "icon": "computer"
-            },
-            {
-              "heading": "Long-term Investors",
-              "icon": "goal"
-            },
-            {
-              "heading": "Savers and Borrowers",
-              "icon": "savings"
-            },
-            {
-              "heading": "Workplace Plan Participants",
-              "icon": "tool-box-welcome-kit"
-            },
-            {
-              "heading": "Advice Seekers",
-              "icon": "umbrella"
-            }
-          ],
-          "instructions": [
-            "Enter the icon name as text in the first cell; an empty icon-font element will not survive authoring serialization."
-          ]
-        },
-        {
-          "id": "why-articles",
-          "status": "pending_preview_or_edit",
-          "action": "Rename the article table to Cards Article (Promo), repair its three images and restore eyebrows and section heading.",
-          "block": "cards-article",
-          "table_name": "Cards Article (Promo)",
-          "review_url": "http://127.0.0.1:3030/docs/remaining-blocks.html?example=6",
-          "fixture_file": "docs/remaining-block-examples.json",
-          "fixture_index": 6,
-          "images": [
-            {
-              "source_url": "https://cdn2.etrade.net/1/25102116330.0/aempros/content/dam/etrade/retail/en_US/images/why-etrade/basic-1up-more-to-love-research.jpg",
-              "source_alt": "",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            },
-            {
-              "source_url": "https://cdn2.etrade.net/1/26011514020.0/aempros/content/dam/etrade/retail/en_US/images/why-etrade/img-card-why-etrade-awards.jpeg",
-              "source_alt": "",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            },
-            {
-              "source_url": "https://cdn2.etrade.net/1/26011514020.0/aempros/content/dam/etrade/retail/en_US/images/why-etrade/img-card-why-etrade-knowledge.jpeg",
-              "source_alt": "",
-              "authoring_action": "Upload or select a valid DA asset and use its generated image URL; retain appropriate alternative text."
-            }
-          ],
-          "expected_rows": 3,
-          "section_heading": "More of what sets E*TRADE apart",
-          "card_eyebrows": [
-            "Thought leadership",
-            "Awards & recognition",
-            "Knowledge & education"
-          ],
-          "row_cells": [
-            "Image",
-            "Eyebrow paragraph, H3 heading and standalone article/library link"
-          ],
-          "instructions": [
-            "Use the promo variant for full-width images and the smaller headline treatment.",
-            "Verify eyebrow wording against the intended live content."
-          ]
-        },
-        {
-          "id": "why-cleanup",
-          "status": "pending_preview_or_edit",
-          "action": "Remove imported dock/plus-icon text, tracking/spacer images and empty trailing content after confirming their purpose.",
-          "change_type": "cleanup"
-        },
-        {
-          "id": "why-etrade-disclosure-markers",
-          "status": "pending_preview_or_edit",
-          "action": "Replace numeric disclosure references with the matching stable IDs from the migrated set.",
-          "observed_numeric_markers": [
-            "1",
-            "2",
-            "3"
-          ],
-          "examples": [
-            "<sup>a</sup>",
-            "<sup>a,b</sup>"
-          ],
-          "instructions": [
-            "Match the claim to its actual disclosure fragment; do not derive IDs from current displayed positions after reordering.",
-            "Keep trademark superscripts such as TM unchanged.",
-            "The footer converts IDs to matching numbers and anchor links only when the footer items exist."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "planning",
-      "title": "Planning",
-      "path": "/planning",
-      "preview_url": "https://demo--etrade--AdobeDrago.aem.page/planning",
-      "inspected_url": "http://127.0.0.1:3001/planning",
-      "live_reference_url": "https://us.etrade.com/planning",
-      "assessment": "prior_hero_review_and_current_preview_availability",
-      "preview_http_status": 404,
-      "observed": {
-        "disclosures_metadata": null,
-        "broken_image_count": 0,
-        "authored_block_names": []
-      },
-      "disclosure_set": null,
-      "apply_shared_tasks": [
-        "preview-and-verify"
-      ],
-      "authoring_tasks": [
-        {
-          "id": "planning-create",
-          "status": "pending_preview_or_edit",
-          "action": "Confirm the intended DA path, then create/save/preview the Planning page there.",
-          "observed": "The current /planning preview returns 404.",
-          "change_type": "create_or_preview"
-        },
-        {
-          "id": "planning-hero",
-          "status": "pending_preview_or_edit",
-          "action": "Author the prepared split hero.",
-          "block": "hero-dark",
-          "table_name": "Hero Dark (Split)",
-          "review_url": "http://127.0.0.1:3030/docs/hero-variants.html?page=planning",
-          "rows": [
-            "Eyebrow",
-            "Heading",
-            "Content",
-            "Image"
-          ],
-          "eyebrow": "Planning resources",
-          "heading": "Plan for the future you envision",
-          "image": {
-            "source_url": "https://cdn2.etrade.net/1/26022711220.0/aempros/content/dam/etrade/retail/en_US/images/planning/hero-planning-desk-680x420.jpg",
-            "source_alt": "Person reviewing financial plan and investing charts on a desktop monitor"
-          },
-          "instructions": [
-            "Upload/select the intended DA asset, retain the introductory copy and tracked CTA, and preview the page."
-          ]
-        },
-        {
-          "id": "planning-scope",
-          "status": "pending_preview_or_edit",
-          "action": "Audit and author the rest of the intended live Planning page; the prepared example covers the hero only.",
-          "change_type": "audit"
-        },
-        {
-          "id": "planning-disclosures",
-          "status": "pending_preview_or_edit",
-          "action": "Determine whether the page needs a disclosure set and author it for the actual claims.",
-          "observed": "No Planning set was included in the seven migrated sets.",
-          "instructions": [
-            "Reuse appropriate disclosure fragments where applicable, with unique stable IDs in a page-specific set.",
-            "Add Disclosures metadata only after a valid set exists and the relevant claims are bound."
-          ]
-        }
-      ]
     }
-  ]
+  ],
+  "current_scope_reference": {
+    "checked_on": "2026-10-12",
+    "review_url": "http://127.0.0.1:3020/docs/current-pages-authoring.html",
+    "pack": "docs/current-pages.json",
+    "status": "prepared_locally_not_saved_in_DA",
+    "paths": [
+      "/home",
+      "/home/welcome-back",
+      "/what-we-offer/our-accounts",
+      "/what-we-offer/our-accounts/brokerage-account",
+      "/planning",
+      "/why-etrade"
+    ]
+  }
 }

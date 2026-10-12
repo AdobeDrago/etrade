@@ -93,6 +93,36 @@ test('empty authored tables and missing cells remain usable', async () => {
   assert.equal(top.block.querySelector('details').hidden, true);
 });
 
+test('current Welcome Back puts one hero image behind the campaign and login siblings', async () => {
+  const pages = JSON.parse(await readFile(new URL('../docs/current-pages.json', import.meta.url), 'utf8'));
+  const welcome = pages.find((page) => page.id === 'welcome-back');
+  const hero = welcome.sections[0].blocks[0];
+  const markup = hero.rows.map((cells) => `<div>${cells.map((cell) => `<div>${cell}</div>`).join('')}</div>`).join('');
+  const { block } = await harness('welcome-hero', markup);
+  assert.ok(block.firstElementChild.matches('.welcome-hero-image'));
+  assert.ok(block.children[1].matches('.welcome-hero-campaign'));
+  assert.ok(block.lastElementChild.matches('.welcome-hero-login'));
+  assert.equal(block.querySelector('.welcome-hero-campaign img'), null);
+  assert.equal(block.querySelectorAll('img').length, 1);
+  assert.match(block.querySelector('h1').textContent, /Stay ahead/);
+  assert.equal(block.querySelector('.welcome-hero-login h2').textContent, 'Log on');
+  assert.equal(block.querySelector('img').loading, 'eager');
+  assert.equal(block.querySelector('img').getAttribute('fetchpriority'), 'high');
+  assert.ok(block.querySelector('[data-login-slot] a[href="https://us.etrade.com/etx/pxy/login"]'));
+});
+
+test('Welcome Back campaign icons survive DA as named text rather than relative images', async () => {
+  const pages = JSON.parse(await readFile(new URL('../docs/current-pages.json', import.meta.url), 'utf8'));
+  const cards = pages.find((page) => page.id === 'welcome-back').sections[1].blocks[0];
+  const markup = cards.rows.map((cells) => `<div>${cells.map((cell) => `<div>${cell}</div>`).join('')}</div>`).join('');
+  const { block } = await harness('cards-icon', markup);
+  assert.equal(block.querySelectorAll('img').length, 0);
+  assert.equal(block.querySelectorAll('.cards-icon-glyph').length, 2);
+  assert.ok(block.querySelector('.cards-icon-glyph-ira-selector'));
+  assert.ok(block.querySelector('.cards-icon-glyph-idea'));
+  assert.equal(block.querySelectorAll('a[href]').length, 2);
+});
+
 test('a failed ticker clears values and Refresh can recover', async () => {
   let failure = true;
   const { block, window } = await harness('market-ticker', '', () => (failure

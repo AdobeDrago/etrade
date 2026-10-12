@@ -23,3 +23,8 @@ This component is migrated on `et-cards-product`. Review its changes against `et
 Preview: https://et-cards-product--etrade--AdobeDrago.aem.page/home
 
 Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
+
+**Cards Product (Three Columns)** displays the three current homepage product
+cards in one row from 900px. The ordinary variant retains its two-column layout.
+Use the fresh six-page authoring pack in `docs/current-pages-authoring.html` for
+current campaign copy; prior dated examples are component demonstrations.

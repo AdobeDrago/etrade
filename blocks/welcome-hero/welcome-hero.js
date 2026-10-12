@@ -14,11 +14,10 @@ export default function decorate(block) {
     img.loading = 'eager';
     img.setAttribute('fetchpriority', 'high');
     image.classList.add('welcome-hero-image');
-    campaign.prepend(image);
     block.classList.add('has-image');
   }
   const copy = element('div', 'welcome-hero-copy');
-  [...campaign.childNodes].filter((node) => node !== image).forEach((node) => copy.append(node));
+  [...campaign.childNodes].forEach((node) => copy.append(node));
   campaign.append(copy);
   [login, copy].forEach((content) => {
     let first = true;
@@ -33,7 +32,9 @@ export default function decorate(block) {
   // Identity integration can mount in this slot while the authored login link remains usable.
   login.dataset.loginSlot = 'true';
   block.replaceChildren();
+  // One image spans the entire hero, behind both campaign copy and the login panel.
+  if (image) block.append(image);
+  if (copy.childNodes.length) block.append(campaign);
   if (login.childNodes.length) block.append(login);
-  if (copy.childNodes.length || image) block.append(campaign);
   block.dispatchEvent(new CustomEvent('welcome:login-ready', { bubbles: true, detail: { slot: login } }));
 }

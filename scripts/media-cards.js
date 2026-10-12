@@ -1,6 +1,10 @@
 import { groupActions } from './actions.js';
 
-const glyphs = new Set(['book', 'computer', 'goal', 'savings', 'tool-box-welcome-kit', 'umbrella']);
+const glyphs = new Set([
+  'book', 'computer', 'goal', 'savings', 'tool-box-welcome-kit', 'umbrella',
+  'home-lending', 'group-family', 'graduation-gift', 'retirement', 'mountain',
+  'ira-selector', 'money-automatic-investing', 'calculator', 'add-funds', 'idea',
+]);
 
 /** Merge optional author cells without discarding rich text or image sources. */
 export function mergeCells(row, content) {
@@ -29,6 +33,8 @@ export default function buildCards(block, { icon = false, numbered = false, acti
     body.className = `${name}-body`;
     // Named glyphs survive DA serialization, unlike an empty icon-font element.
     const token = row.children.length > 1 ? row.firstElementChild.textContent.trim() : '';
+    const offer = icon && token.toLowerCase() === 'offer';
+    if (offer) row.firstElementChild.replaceChildren();
     if (icon && glyphs.has(token)) {
       row.firstElementChild.replaceChildren();
       const glyph = document.createElement('span');
@@ -43,6 +49,7 @@ export default function buildCards(block, { icon = false, numbered = false, acti
     if (!body.textContent.trim() && !media) return;
     const card = document.createElement('li');
     card.className = `${name}-card`;
+    if (offer) card.classList.add(`${name}-offer`);
     if (media) card.append(media);
     if (numbered) {
       const ordinal = document.createElement('span');
