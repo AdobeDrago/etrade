@@ -28,5 +28,6 @@ export default function decorate(block) {
   if (heading) block.append(heading);
   if (content.textContent.trim()) block.append(content);
   if (actions.children.length) block.append(actions);
+  if (!block.classList.contains('light') && !picture && actions.children.length === 1) block.classList.add('centered');
   block.hidden = !block.children.length;
 }

@@ -1,66 +1,104 @@
-/* cards-article — structural layout only; brand styling applied in design pass. */
-
-.cards-article ul {
-  list-style: none;
+/* Layout selectors target only the card list, preserving authored nested lists. */
+.cards-article > ul {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
+  list-style: none;
 }
 
-.cards-article li {
+.cards-article .cards-article-card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  background-color: #fff;
-  overflow: hidden;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid #e4e4e4;
+  border-radius: 16px;
+  background: #fff;
+  color: #242424;
 }
 
-.cards-article-image img {
+.cards-article .cards-article-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.cards-article .cards-article-heading {
+  margin: 0 0 10px;
+  color: inherit;
+  font-size: 24px;
+  line-height: 28px;
+  letter-spacing: -0.4px;
+}
+
+.cards-article .cards-article-body p {
+  margin: 0 0 16px;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.cards-article .cards-article-eyebrow {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.cards-article .cards-article-actions {
+  margin-top: 8px;
+}
+
+.cards-article .cards-article-image {
+  margin-bottom: 20px;
+}
+
+.cards-article .cards-article-image :is(picture, img) {
+  display: block;
   width: 100%;
   height: auto;
-  display: block;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-}
-
-.cards-article-body {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 16px 20px 20px;
-}
-
-.cards-article-body :is(h1, h2, h3, h4, h5, h6) {
-  margin: 0;
-  font-family: var(--brand-font-family);
-  color: var(--brand-text);
-  font-weight: 600;
-  font-size: var(--heading-font-size-xs);
-}
-
-.cards-article-body p {
-  margin: 0;
-  color: #666;
-  font-size: var(--body-font-size-s);
-}
-
-.cards-article-body a:any-link {
-  color: var(--brand-link);
-  font-weight: 500;
 }
 
 @media (width >= 600px) {
-  .cards-article ul {
-    grid-template-columns: repeat(2, 1fr);
+  .cards-article > ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (width >= 1200px) {
-  .cards-article ul {
-    grid-template-columns: repeat(4, 1fr);
+@media (width >= 900px) {
+  .cards-article > ul {
+    grid-template-columns: repeat(var(--card-count, 3), minmax(0, 1fr));
   }
+
+  .cards-article .cards-article-heading {
+    font-size: 28px;
+    line-height: 32px;
+  }
+}
+
+.cards-article.promo .cards-article-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.cards-article.promo .cards-article-image {
+  margin: 0;
+}
+
+.cards-article.promo .cards-article-body {
+  padding: 24px 24px 0;
+}
+
+.cards-article.promo .cards-article-heading {
+  font-size: 22px;
+  line-height: 24px;
+}
+
+.cards-article.promo .cards-article-actions {
+  padding: 0 24px 24px;
+}
+
+@media (width >= 1200px) {
+  .cards-article.four-up > ul {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
 }

@@ -1,32 +1,42 @@
-/**
- * hero-product — dark hero with an eyebrow, centered heading, supporting copy, a
- * primary CTA, and a foreground product screenshot (e.g. a phone/app shot).
- * Variant of the base `hero`.
- *
- * Expected authored structure (1 column):
- *   [ eyebrow/heading, paragraph(s), CTA link(s), product image ]
- * The image is a foreground element (not a full-bleed background).
- */
-export default function decorate(block) {
-  // Separate the foreground product image into its own wrapper.
-  const picture = block.querySelector('picture');
-  if (picture) {
-    const media = document.createElement('div');
-    media.className = 'hero-product-media';
-    const wrapper = picture.closest('div') || picture;
-    media.append(picture);
-    block.append(media);
-    if (wrapper !== picture && !wrapper.children.length) wrapper.remove();
-  } else {
-    block.classList.add('no-image');
-  }
+import { groupActions } from '../../scripts/actions.js';
+import { mergeCells, extractMedia } from '../../scripts/media-cards.js';
 
-  // Group CTA links into an actions row.
-  const ctaParagraphs = [...block.querySelectorAll(':scope p')].filter((p) => p.querySelector('a'));
-  if (ctaParagraphs.length) {
-    const actions = document.createElement('div');
-    actions.className = 'hero-product-actions';
-    ctaParagraphs[0].before(actions);
-    ctaParagraphs.forEach((p) => actions.append(p));
-  }
+export default function decorate(block) {
+  const content = document.createElement('div');
+  content.className = 'hero-product-content';
+  const offer = document.createElement('div');
+  offer.className = 'hero-product-offer';
+  const slots = new Map(['eyebrow', 'heading', 'content', 'image', 'offer'].map((key) => [key, []]));
+  [...block.children].forEach((row) => {
+    const key = row.firstElementChild?.textContent.trim().toLowerCase();
+    if (row.children.length > 1 && slots.has(key)) {
+      row.firstElementChild.remove();
+      const part = document.createElement('div');
+      mergeCells(row, part);
+      slots.get(key).push(...part.childNodes);
+    } else mergeCells(row, content);
+  });
+  content.prepend(...slots.get('eyebrow'), ...slots.get('heading'));
+  content.append(...slots.get('content'), ...slots.get('image'));
+  offer.append(...slots.get('offer'));
+  const media = extractMedia(content, 'picture, img', 'hero-product-media');
+  if (media) {
+    const image = media.querySelector('img');
+    if (image && block.closest('.section') === document.querySelector('main > .section')) {
+      image.loading = 'eager';
+      image.setAttribute('fetchpriority', 'high');
+    }
+  } else block.classList.add('no-image');
+  const headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6');
+  const eyebrow = slots.get('eyebrow').find((node) => node.nodeType === 1)
+    || (headings[0]?.tagName === 'H1' && headings[1]?.tagName === 'H2' ? headings[0] : null);
+  eyebrow?.classList.add('hero-product-eyebrow');
+  const heading = [...headings].find((node) => node !== eyebrow);
+  heading?.classList.add('hero-product-heading');
+  groupActions(content, 'hero-product');
+  groupActions(offer, 'hero-product-offer', 'secondary');
+  block.replaceChildren(content);
+  if (media) block.append(media);
+  if (offer.textContent.trim()) block.append(offer);
+  block.hidden = !content.textContent.trim() && !media && !offer.textContent.trim();
 }

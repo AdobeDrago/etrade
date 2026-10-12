@@ -97,3 +97,43 @@ main .banner-offer.light sup a:any-link {
     margin: 0;
   }
 }
+
+.banner-offer .banner-offer-copy p + p {
+  margin-top: 16px;
+}
+
+.banner-offer.centered {
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.banner-offer.centered .banner-offer-actions {
+  justify-content: center;
+}
+
+@media (width >= 768px) {
+  .banner-offer:not(.light) .banner-offer-heading {
+  font-size: 32px;
+  line-height: 36px;
+}
+
+  .banner-offer:not(.light) .banner-offer-actions a {
+  width: auto;
+}
+
+  .banner-offer:not(.light, .no-media) {
+  grid-template-columns: 1fr 1fr;
+  column-gap: 40px;
+  padding: 40px;
+}
+
+  .banner-offer:not(.light) .banner-offer-media {
+  display: block;
+  grid-row: span 3;
+  align-self: center;
+}
+
+  .banner-offer:not(.light, .no-media) > :not(.banner-offer-media) {
+  grid-column: 2;
+}
+}

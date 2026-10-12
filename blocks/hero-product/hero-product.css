@@ -1,59 +1,116 @@
-/* hero-product — structural layout only; brand styling applied in design pass. */
-
-.hero-product-container .hero-product-wrapper {
-  max-width: unset;
-}
-
 .hero-product {
-  padding: 48px 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 16px;
-  background-color: var(--brand-dark-bg);
-}
+  --action-link-color: #ab80ff;
 
-.hero-product h1,
-.hero-product h2,
-.hero-product h3,
-.hero-product p {
-  margin: 0;
-  max-width: 720px;
+  display: grid;
+  gap: 24px;
+  padding: 24px 20px;
+  border-radius: 16px;
+  background: #121213;
   color: #fff;
-  font-family: var(--brand-font-family);
+  text-align: center;
 }
 
-.hero-product-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
+.hero-product > div {
+  min-width: 0;
+}
+
+.hero-product .hero-product-content p {
+  margin: 0 0 20px;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.hero-product .hero-product-eyebrow {
+  margin: 0 0 12px;
+  color: inherit;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.hero-product .hero-product-heading {
+  margin: 0 0 24px;
+  color: inherit;
+  font-size: 36px;
+  line-height: 40px;
+  letter-spacing: -1px;
+}
+
+.hero-product .hero-product-actions {
   justify-content: center;
-  align-items: center;
 }
 
-.hero-product-actions p {
-  margin: 0;
-}
-
-.hero-product-media {
-  margin-top: 16px;
-}
-
-.hero-product-media img {
-  max-width: 100%;
-  height: auto;
+.hero-product .hero-product-media :is(picture, img) {
   display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+}
+
+.hero-product .hero-product-offer {
+  text-align: left;
+}
+
+.hero-product .hero-product-offer :is(h2, h3, h4) {
+  margin: 0 0 12px;
+  color: inherit;
+  font-size: 22px;
+  line-height: 24px;
+}
+
+.hero-product .hero-product-offer p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.hero-product .hero-product-offer-actions {
+  margin-top: 12px;
 }
 
 @media (width >= 900px) {
   .hero-product {
-    padding: 72px 32px;
-  }
+  grid-template-columns: 5fr 7fr;
+  gap: 20px;
+  padding: 20px;
+  text-align: left;
 }
 
-/* --- E*TRADE brand styling --- */
-.hero-product h1,
-.hero-product h2 {
-  font-weight: 600;
+  .hero-product .hero-product-content {
+  grid-row: span 2;
+  align-self: center;
+  padding: 20px;
+}
+
+  .hero-product .hero-product-heading {
+  font-size: 48px;
+  line-height: 52px;
+}
+
+  .hero-product .hero-product-actions {
+  justify-content: flex-start;
+}
+
+  .hero-product .hero-product-media {
+  grid-column: 2;
+}
+
+  .hero-product .hero-product-offer {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: center;
+  gap: 16px;
+  grid-column: 2;
+}
+
+  .hero-product .hero-product-offer > * {
+  margin: 0;
+}
+
+  .hero-product.no-image {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+  .hero-product.no-image .hero-product-offer {
+  grid-column: 1;
+}
 }

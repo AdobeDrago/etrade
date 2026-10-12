@@ -1,82 +1,145 @@
-/* cards-icon — structural layout only; brand styling applied in design pass. */
-
-.cards-icon ul {
-  list-style: none;
+/* Layout selectors target only the card list, preserving authored nested lists. */
+.cards-icon > ul {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 32px;
+  list-style: none;
 }
 
-.cards-icon li {
+.cards-icon .cards-icon-card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 12px;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid #e4e4e4;
+  border-radius: 16px;
+  background: #fff;
+  color: #242424;
 }
 
-.cards-icon-icon img {
-  width: auto;
-  max-height: 64px;
+.cards-icon .cards-icon-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.cards-icon .cards-icon-heading {
+  margin: 0 0 10px;
+  color: inherit;
+  font-size: 24px;
+  line-height: 28px;
+  letter-spacing: -0.4px;
+}
+
+.cards-icon .cards-icon-body p {
+  margin: 0 0 16px;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.cards-icon .cards-icon-eyebrow {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.cards-icon .cards-icon-actions {
+  margin-top: 8px;
+}
+
+.cards-icon .cards-icon-image {
+  margin-bottom: 20px;
+}
+
+.cards-icon .cards-icon-image :is(picture, img) {
   display: block;
-}
-
-.cards-icon-icon :is(i, svg) {
-  font-size: 48px;
-  color: var(--brand-accent);
-}
-
-.cards-icon-body :is(h1, h2, h3, h4, h5, h6) {
-  margin: 0;
-  font-family: var(--brand-font-family);
-  color: var(--brand-text);
-  font-weight: 600;
-}
-
-.cards-icon-body p {
-  margin: 0;
-  color: #666;
-}
-
-.cards-icon-body a:any-link {
-  color: var(--brand-link);
-  font-weight: 500;
+  width: 100%;
+  height: auto;
 }
 
 @media (width >= 600px) {
-  .cards-icon ul {
-    grid-template-columns: repeat(2, 1fr);
+  .cards-icon > ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (width >= 900px) {
-  .cards-icon ul {
-    grid-template-columns: repeat(3, 1fr);
+  .cards-icon > ul {
+    grid-template-columns: repeat(var(--card-count, 3), minmax(0, 1fr));
+  }
+
+  .cards-icon .cards-icon-heading {
+    font-size: 28px;
+    line-height: 32px;
   }
 }
 
-.cards-icon.welcome-back ul {
+@font-face {
+  font-family: ETRADEIcons;
+  src: url('../../fonts/et-iconography.woff2') format('woff2');
+  font-display: block;
+}
+
+.cards-icon .cards-icon-icon {
+  margin-bottom: 24px;
+  height: 72px;
+}
+
+.cards-icon .cards-icon-icon :is(img, svg) {
+  display: block;
+  max-width: 72px;
+  max-height: 72px;
+}
+
+.cards-icon .cards-icon-icon :is(i, .cards-icon-glyph) {
+  font-family: ETRADEIcons, sans-serif;
+  font-size: 72px;
+  font-style: normal;
+  line-height: 1;
+}
+
+.cards-icon .cards-icon-glyph-book::before,
+.cards-icon .et-book::before {
+  content: '\e955';
+}
+
+.cards-icon .cards-icon-glyph-computer::before,
+.cards-icon .et-computer::before {
+  content: '\e90a';
+}
+
+.cards-icon .cards-icon-glyph-goal::before,
+.cards-icon .et-goal::before {
+  content: '\e910';
+}
+
+.cards-icon .cards-icon-glyph-savings::before,
+.cards-icon .et-savings::before {
+  content: '\e91e';
+}
+
+.cards-icon .cards-icon-glyph-tool-box-welcome-kit::before,
+.cards-icon .et-tool-box-welcome-kit::before {
+  content: '\e922';
+}
+
+.cards-icon .cards-icon-glyph-umbrella::before,
+.cards-icon .et-umbrella::before {
+  content: '\e924';
+}
+
+.cards-icon.welcome-back > ul {
   gap: 24px;
 }
 
-.cards-icon.welcome-back li {
-  padding: 24px;
-  border: 1px solid #ddd;
-  border-top: 4px solid var(--brand-accent);
-  align-items: flex-start;
-  text-align: left;
-}
-
-.cards-icon.welcome-back .cards-icon-body h2 {
-  margin-bottom: 16px;
-  font-size: 22px;
+.cards-icon.welcome-back .cards-icon-card {
+  border-top: 4px solid #5627d8;
 }
 
 .cards-icon.welcome-back .cards-icon-icon {
   flex: 0 0 48px;
-  width: 48px;
+  height: 48px;
 }
 
 .cards-icon.welcome-back .cards-icon-icon img {
@@ -84,19 +147,25 @@
   height: 48px;
 }
 
+.cards-icon.welcome-back .cards-icon-heading {
+  font-size: 22px;
+}
+
 .cards-icon.welcome-back .cards-icon-body p {
-  margin: 12px 0 0;
-  color: #242424;
   font-size: 14px;
 }
 
 @media (width >= 900px) {
-  .cards-icon.welcome-back ul {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  .cards-icon.welcome-back > ul {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 
-  .cards-icon.welcome-back li {
-    flex-direction: row;
-    gap: 24px;
-  }
+  .cards-icon.welcome-back .cards-icon-card {
+  flex-flow: row wrap;
+  gap: 24px;
+}
+
+  .cards-icon.welcome-back .cards-icon-actions {
+  width: 100%;
+}
 }

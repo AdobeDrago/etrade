@@ -21,6 +21,9 @@ export default function parse(element, { document }) {
   cards.forEach((card) => {
     // Column 1: the icon-font element (no <img> in these cards).
     const icon = card.querySelector('i.card-icon, i.et-icon, i[class*="et-icon"], i[class*="icon"]');
+    const token = icon && [...icon.classList].find((name) => name.startsWith('et-') && !name.startsWith('et-icon'));
+    const namedIcon = document.createElement('p');
+    namedIcon.textContent = token ? token.slice(3) : '';
     // Column 2 contents: heading, description paragraph(s), CTA link(s).
     const heading = card.querySelector('.card-text-group h3, h3');
     const description = card.querySelector('.card-text-group .text-default, .text-default');
@@ -28,13 +31,17 @@ export default function parse(element, { document }) {
 
     const bodyCell = [];
     if (heading) bodyCell.push(heading);
-    if (description) bodyCell.push(description);
+    if (description) {
+      const p = document.createElement('p');
+      p.append(...description.childNodes);
+      bodyCell.push(p);
+    }
     bodyCell.push(...links);
 
     // Skip empty placeholder cards (no icon and no text content).
     if (icon || bodyCell.length) {
       // 2-column row: icon cell | body cell (pad icon cell with '' if absent).
-      cells.push([icon || '', bodyCell]);
+      cells.push([namedIcon.textContent ? namedIcon : icon || '', bodyCell]);
     }
   });
 

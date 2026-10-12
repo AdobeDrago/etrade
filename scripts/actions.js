@@ -1,7 +1,7 @@
 /** Normalize authored actions, including imported duplicate arrow links. */
 function label(text) {
   return text.replace(/\barrow_forward\b:?/g, '')
-    .replace(/\s*[→:]\s*$/, '').replace(/\s+/g, ' ').trim();
+    .replace(/\s*[→:>]\s*$/, '').replace(/\s+/g, ' ').trim();
 }
 
 export function standaloneAction(paragraph) {
