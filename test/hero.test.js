@@ -33,6 +33,40 @@ async function render(name, rows, variants = '', firstSection = true, preceding 
 const row = (key, value, extra = '') => `<div><div>${key}</div><div>${value}</div>${extra}</div>`;
 const image = '<picture><source srcset="/hero.webp 2x"><img src="/hero.jpg" alt="Authored media" width="680" height="420" loading="lazy"></picture>';
 
+test('background hero accepts separate content/image rows and preserves claims and actions', async () => {
+  const block = await render('hero', `<div><div><h1 id="platforms">Platforms</h1><h2>Power your <em>trading</em></h2><p>Read <a href="/research">research</a><sup>b</sup>.</p><p><a href="/open?icid=platforms">Open an account</a></p></div></div><div><div><p>${image}</p></div></div>`);
+  assert.deepEqual([...block.children].map((node) => node.className), ['hero-media', 'hero-content']);
+  assert.equal(block.querySelector('h1').id, 'platforms');
+  assert.ok(block.querySelector('h2 em'));
+  assert.ok(block.querySelector('.hero-content > p a[href="/research"]'));
+  assert.equal(block.querySelector('.hero-content sup').textContent, 'b');
+  assert.equal(block.querySelector('.hero-primary').getAttribute('href'), '/open?icid=platforms');
+  assert.equal(block.querySelector('img').getAttribute('alt'), 'Authored media');
+  assert.equal(block.querySelector('source').getAttribute('srcset'), '/hero.webp 2x');
+  assert.equal(block.querySelector('img').getAttribute('fetchpriority'), 'high');
+  assert.equal(block.querySelectorAll('.hero-content > p').length, 1);
+});
+
+test('background hero accepts named extra cells, inline terms, and missing media', async () => {
+  const block = await render('hero', row('Heading', '<h1>Title</h1>')
+    + row('Content', '<p>First.</p>', '<div><p>Second with <a href="/terms">terms</a>.</p></div>')
+    + row('Content', '<p><a href="/open">Open</a></p><p><a href="/more">Learn more</a></p>'));
+  assert.ok(block.classList.contains('no-image'));
+  assert.equal(block.querySelector('h1').textContent, 'Title');
+  assert.deepEqual([...block.querySelectorAll('.hero-content > p')].map((p) => p.textContent), ['First.', 'Second with terms.']);
+  assert.ok(block.querySelector('p a[href="/terms"]'));
+  assert.equal(block.querySelector('.hero-secondary').textContent, 'Learn more');
+  const empty = await render('hero', '<div></div><div><div> </div></div>');
+  assert.equal(empty.children.length, 0);
+});
+
+test('background hero accepts a raw image in a second column and keeps later images lazy', async () => {
+  const block = await render('hero', '<div><div><h1>Title</h1></div><div><img src="/hero.jpg" alt="Scene" loading="lazy"></div></div>', '', false);
+  assert.equal(block.querySelector('.hero-media > img').getAttribute('alt'), 'Scene');
+  assert.equal(block.querySelector('img').getAttribute('loading'), 'lazy');
+  assert.equal(block.querySelector('img').getAttribute('fetchpriority'), null);
+});
+
 test('default homepage keeps headline/copy/media order, inline links, tracking and captions', async () => {
   const block = await render('hero-dark', `<div><div>${image}<p>Illustrative image</p></div></div><div><div><h1 id="campaign">A <em>campaign</em></h1><p>Read our <a href="/research">research</a>.</p><p><a href="/open?icid=campaign">Open an account</a></p><p><a href="/more">Learn more arrow_forward</a></p></div></div>`);
   assert.deepEqual([...block.children].map((node) => node.className), ['hero-dark-heading', 'hero-dark-copy', 'hero-dark-media']);
