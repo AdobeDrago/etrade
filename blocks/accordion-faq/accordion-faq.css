@@ -274,7 +274,7 @@ main .section:has(.accordion-faq.pricing) {
 
 main .section > .accordion-faq-wrapper:has(.accordion-faq.pricing) {
   box-sizing: border-box;
-  max-width: 820px;
+  max-width: 1200px;
   padding: 0 20px;
 }
 
@@ -409,10 +409,6 @@ main .section > .accordion-faq-wrapper:has(.accordion-faq.pricing) {
   }
 }
 
-body.our-accounts main .section > .accordion-faq-wrapper:has(.accordion-faq.pricing) {
-  max-width: 1200px;
-}
-
 body.our-accounts .accordion-faq.pricing {
   padding-top: 0;
 }
@@ -422,7 +418,7 @@ body.our-accounts .accordion-faq.pricing .accordion-faq-heading {
 }
 
 @media (width >= 768px) {
-  body.our-accounts main .section > .accordion-faq-wrapper:has(.accordion-faq.pricing) {
+  main .section > .accordion-faq-wrapper:has(.accordion-faq.pricing) {
     padding-right: 10px;
     padding-left: 10px;
   }
