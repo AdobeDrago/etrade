@@ -8,6 +8,7 @@
     "test:disclosure-manager": "node --experimental-vm-modules --test test/disclosure-manager.test.js",
     "test:rates": "node --test test/bank-rates.test.js",
     "demo:rates": "node test/dynamic-rates-server.mjs",
+    "test:accordion": "node --experimental-vm-modules --test test/accordion-faq.test.js",
     "test:hero": "node --experimental-vm-modules --test test/hero.test.js",
     "test:demo-helper": "node --experimental-vm-modules --test test/demo-helper.test.js",
     "lint:js": "eslint .",

@@ -62,15 +62,21 @@ function answerContent(cells) {
   return content;
 }
 
-function chevron() {
+function disclosureIcon(pricing) {
   const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   icon.classList.add('accordion-faq-item-icon');
   icon.setAttribute('viewBox', '0 0 24 24');
   icon.setAttribute('aria-hidden', 'true');
   icon.setAttribute('focusable', 'false');
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('d', 'M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z');
+  path.setAttribute('d', pricing ? 'M5 11h14v2H5z' : 'M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z');
   icon.append(path);
+  if (pricing) {
+    const vertical = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    vertical.classList.add('accordion-faq-icon-vertical');
+    vertical.setAttribute('d', 'M11 5h2v14h-2z');
+    icon.append(vertical);
+  }
   return icon;
 }
 
@@ -79,6 +85,7 @@ export default function decorate(block) {
   accordionCount += 1;
   const prefix = `accordion-faq-${accordionCount}`;
   const rows = [...block.children];
+  const pricing = block.classList.contains('pricing');
   const { heading, action, auxiliary } = takeAdjacentContent(block);
   const level = heading ? Math.min(Number(heading.tagName.slice(1)) + 1, 6) : 3;
   const items = [];
@@ -107,6 +114,17 @@ export default function decorate(block) {
     if (!title || !answers.length) return;
     const content = answerContent(answers);
     if (!content.textContent.trim() && !content.querySelector('img, picture, video, audio, iframe')) return;
+    if (pricing) {
+      content.querySelectorAll('table').forEach((table) => {
+        const scroll = document.createElement('div');
+        scroll.className = 'accordion-faq-table';
+        scroll.tabIndex = 0;
+        scroll.setAttribute('role', 'region');
+        scroll.setAttribute('aria-label', `${title} fee table`);
+        table.replaceWith(scroll);
+        scroll.append(table);
+      });
+    }
     const index = items.length + 1;
     const element = document.createElement('div');
     element.className = 'accordion-faq-item';
@@ -120,7 +138,7 @@ export default function decorate(block) {
     const text = document.createElement('span');
     text.className = 'accordion-faq-item-text';
     text.textContent = title;
-    button.append(chevron(), text);
+    button.append(disclosureIcon(pricing), text);
     label.append(button);
     const panel = document.createElement('div');
     panel.className = 'accordion-faq-item-body';
