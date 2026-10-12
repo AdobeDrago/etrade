@@ -1,6 +1,7 @@
 import { groupActions } from './actions.js';
 import decorateSectionBoundaries from './section-layout.js';
 import decorateDisclosureReferences from './disclosure-references.js';
+import decoratePageLayout, { localizePageLinks } from './page-layout.js';
 import {
   loadHeader,
   loadFooter,
@@ -187,6 +188,7 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  decoratePageLayout();
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
@@ -226,6 +228,7 @@ async function loadLazy(doc) {
   if (hash && element) element.scrollIntoView();
 
   await loadFooter(doc.querySelector('body > footer'));
+  localizePageLinks(doc);
   const disclosurePath = getMetadata('disclosures');
   if (disclosurePath && !doc.querySelector('.disclosures')) {
     const link = document.createElement('a');

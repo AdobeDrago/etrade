@@ -81,3 +81,24 @@
   line-height: 64px;
   letter-spacing: -2px;
 }
+
+body.brokerage .section:has(.cards-numbered) .default-content-wrapper {
+  max-width: 820px;
+  text-align: center;
+}
+
+body.brokerage .section:has(.cards-numbered) .default-content-wrapper > h2 {
+  font-size: 32px;
+  line-height: 36px;
+}
+
+@media (width >= 768px) {
+  body.brokerage .section:has(.cards-numbered) .default-content-wrapper {
+    max-width: 800px;
+  }
+
+  body.brokerage .section:has(.cards-numbered) .default-content-wrapper > h2 {
+    font-size: 44px;
+    line-height: 48px;
+  }
+}

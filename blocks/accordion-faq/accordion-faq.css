@@ -408,3 +408,22 @@ main .section > .accordion-faq-wrapper:has(.accordion-faq.pricing) {
     transition: none;
   }
 }
+
+body.our-accounts main .section > .accordion-faq-wrapper:has(.accordion-faq.pricing) {
+  max-width: 1200px;
+}
+
+body.our-accounts .accordion-faq.pricing {
+  padding-top: 0;
+}
+
+body.our-accounts .accordion-faq.pricing .accordion-faq-heading {
+  text-align: left;
+}
+
+@media (width >= 768px) {
+  body.our-accounts main .section > .accordion-faq-wrapper:has(.accordion-faq.pricing) {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+}

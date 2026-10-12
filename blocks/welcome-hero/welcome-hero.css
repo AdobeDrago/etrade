@@ -64,7 +64,7 @@
 }
 
 .welcome-hero .welcome-hero-copy {
-  max-width: 600px;
+  max-width: 550px;
 }
 
 .welcome-hero .welcome-hero-copy :is(h1, h2) {
@@ -80,6 +80,10 @@
   color: inherit;
   font-size: 20px;
   line-height: 26px;
+}
+
+.welcome-hero .welcome-hero-copy > p {
+  font-weight: 500;
 }
 
 .welcome-hero .welcome-hero-copy p.etrade-actions {
@@ -104,7 +108,7 @@
 
 @media (width >= 768px) {
   .welcome-hero {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
     align-items: start;
     gap: 20px;
     min-height: 560px;
@@ -135,5 +139,14 @@
   .welcome-hero .welcome-hero-copy :is(h1, h2) {
     font-size: 72px;
     line-height: 76px;
+  }
+}
+
+@media (width >= 992px) {
+  .welcome-hero .welcome-hero-login {
+    justify-self: end;
+    width: 400px;
+    min-height: 445px;
+    margin-right: -10px;
   }
 }

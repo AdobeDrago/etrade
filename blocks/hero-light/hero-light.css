@@ -63,3 +63,17 @@ main .hero-light p {
     line-height: 76px;
   }
 }
+
+body.our-accounts main > .section.hero-light-container {
+  margin: 0;
+  padding: 0;
+  background: #fafafa;
+}
+
+body.our-accounts .hero-light {
+  padding: 32px 0 60px;
+}
+
+body.our-accounts .hero-light-content {
+  max-width: 780px;
+}

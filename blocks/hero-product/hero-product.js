@@ -16,7 +16,13 @@ export default function decorate(block) {
       slots.get(key).push(...part.childNodes);
     } else mergeCells(row, content);
   });
-  content.prepend(...slots.get('eyebrow'), ...slots.get('heading'));
+  const eyebrowNodes = slots.get('eyebrow');
+  if (eyebrowNodes.length && !eyebrowNodes.some((node) => node.nodeType === 1)) {
+    const paragraph = document.createElement('p');
+    paragraph.append(...eyebrowNodes);
+    eyebrowNodes.splice(0, eyebrowNodes.length, paragraph);
+  }
+  content.prepend(...eyebrowNodes, ...slots.get('heading'));
   content.append(...slots.get('content'), ...slots.get('image'));
   offer.append(...slots.get('offer'));
   const media = extractMedia(content, 'picture, img', 'hero-product-media');
@@ -35,6 +41,7 @@ export default function decorate(block) {
   heading?.classList.add('hero-product-heading');
   groupActions(content, 'hero-product');
   groupActions(offer, 'hero-product-offer', 'secondary');
+  if (!offer.querySelector('h1, h2, h3, h4')) block.classList.add('copy-only-offer');
   block.replaceChildren(content);
   if (media) block.append(media);
   if (offer.textContent.trim()) block.append(offer);

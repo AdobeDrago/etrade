@@ -1,13 +1,13 @@
 .carousel-story {
   max-width: 980px;
-  margin: auto;
+  margin: 12px auto 0;
 }
 
 .carousel-story .carousel-story-slides {
   position: relative;
   display: flex;
   gap: 16px;
-  margin: 16px 0 0;
+  margin: 28px 0 0;
   padding: 0 0 4px;
   list-style: none;
   overflow-x: auto;
@@ -57,7 +57,7 @@
 .carousel-story .carousel-story-body .carousel-story-eyebrow {
   margin-bottom: 10px;
   font-size: 14px;
-  line-height: 18px;
+  line-height: 16px;
 }
 
 .carousel-story .carousel-story-heading {
@@ -161,4 +161,35 @@
   .carousel-story .carousel-story-card {
   flex-basis: calc((100% - 16px) / 2);
 }
+}
+
+body.why-etrade .section:has(.carousel-story) .default-content-wrapper {
+  max-width: 1020px;
+  text-align: center;
+}
+
+body.why-etrade .section:has(.carousel-story) .default-content-wrapper > h2 {
+  margin-bottom: 10px;
+  font-size: 32px;
+  line-height: 36px;
+}
+
+body.why-etrade .section:has(.carousel-story) .default-content-wrapper > p {
+  margin-bottom: 16px;
+}
+
+@media (width >= 768px) {
+  body.why-etrade .section:has(.carousel-story) .default-content-wrapper {
+    max-width: 1000px;
+  }
+
+  body.why-etrade .section:has(.carousel-story) .default-content-wrapper > h2 {
+    font-size: 44px;
+    line-height: 48px;
+  }
+}
+
+
+body.why-etrade main > .section:has(.carousel-story) {
+  padding-bottom: 84px;
 }

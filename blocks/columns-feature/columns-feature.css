@@ -157,3 +157,33 @@ body.homepage main > .section.banking-feature:where(:has(.columns-feature)) {
     max-width: calc(83.3333% - 3.3333px);
   }
 }
+
+body.planning .columns-feature .columns-feature-copy h2 {
+  font-size: 28px;
+  line-height: 32px;
+}
+
+@media (width >= 768px) {
+  body.planning .columns-feature .columns-feature-copy {
+    width: 100%;
+    padding: 0;
+  }
+
+  body.planning .columns-feature .columns-feature-copy:has(> p:first-child + h2) h2 {
+    max-width: none;
+    font-size: 40px;
+    line-height: 44px;
+  }
+}
+
+@media (width >= 1200px) {
+  body.planning .columns-feature > div {
+    grid-template-columns: 460px minmax(0, 1fr);
+    gap: 80px;
+  }
+
+  body.planning .columns-feature .columns-feature-copy {
+    max-width: 544px;
+    margin: 0;
+  }
+}

@@ -307,18 +307,19 @@ main > .section {
 }
 
 main > .section > div {
+  box-sizing: border-box;
   max-width: 1200px;
   margin: auto;
-  padding: 0 24px;
+  padding: 0 20px;
 }
 
 main > .section:first-of-type {
   margin-top: 0;
 }
 
-@media (width >= 900px) {
+@media (width >= 768px) {
   main > .section > div {
-    padding: 0 32px;
+    padding: 0 10px;
   }
 }
 
@@ -461,6 +462,41 @@ main sup {
 
 body.homepage .hero-dark-container > .banner-offer-wrapper {
   margin-top: 40px;
+}
+
+/* The six migrated pages share the production 1200px grid, including gutters. */
+body.etrade-page {
+  background: #fafafa;
+
+  --faq-gutter-offset: 0px;
+}
+
+body.etrade-page:not(.homepage, .welcome-back) main > .section:where(:not([data-section-kind], .hero-dark-container, .hero-product-container, .hero-light-container, .tabs-accounts-container)) {
+  margin: 0;
+  padding: 60px 0;
+}
+
+body.etrade-page .default-content-wrapper {
+  font-size: 16px;
+  line-height: 20px;
+}
+
+body.etrade-page .default-content-wrapper > :is(h2, h3) {
+  margin: 0 0 40px;
+  font-size: 28px;
+  line-height: 32px;
+  letter-spacing: -0.4px;
+}
+
+body.etrade-page .default-content-wrapper > p {
+  margin: 0 0 20px;
+}
+
+@media (width >= 768px) {
+  body.etrade-page .default-content-wrapper > :is(h2, h3) {
+    font-size: 40px;
+    line-height: 44px;
+  }
 }
 
 @media (width < 768px) {

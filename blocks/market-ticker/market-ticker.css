@@ -3,6 +3,7 @@
   background: #24114c;
   color: #fff;
   font-size: 13px;
+  line-height: 18px;
 }
 
 .market-ticker .market-ticker-list {
@@ -55,5 +56,20 @@
 @media (width >= 900px) {
   .market-ticker .market-ticker-list {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (width >= 900px) {
+  .market-ticker {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  .market-ticker .market-ticker-change {
+    flex-basis: auto;
+  }
+
+  .market-ticker .market-ticker-status {
+    margin-top: 12px;
   }
 }

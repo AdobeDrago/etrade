@@ -103,6 +103,7 @@ main .hero-dark a.hero-dark-primary:any-link {
   line-height: 18px;
   text-align: center;
   text-decoration: none;
+  letter-spacing: normal;
 }
 
 main .hero-dark a.hero-dark-secondary:any-link {
@@ -315,7 +316,7 @@ main .hero-dark .hero-dark-copy sup a:any-link {
 }
 
 main .hero-dark.split .hero-dark-eyebrow :is(h1, h2, h3, p) {
-  margin: 0 0 20px;
+  margin: 0 0 16px;
   color: inherit;
   font-size: 16px;
   font-weight: 400;
@@ -325,6 +326,7 @@ main .hero-dark.split .hero-dark-eyebrow :is(h1, h2, h3, p) {
 
 main .hero-dark.split .hero-dark-heading {
   margin: 0 0 20px;
+  letter-spacing: -0.4px;
 }
 
 .hero-dark.split .hero-dark-copy {
@@ -332,7 +334,7 @@ main .hero-dark.split .hero-dark-heading {
 }
 
 .hero-dark.split .hero-dark-actions {
-  margin-top: 32px;
+  margin-top: 30px;
 }
 
 .hero-dark.split .hero-dark-media {
@@ -373,6 +375,7 @@ main .hero-dark.split .hero-dark-offer p {
 
   .hero-dark.split .hero-dark-content {
     grid-area: 1 / 1 / auto / span 5;
+    padding: 0 41.6667px 8px 0;
   }
 
   .hero-dark.split .hero-dark-media {
@@ -381,6 +384,7 @@ main .hero-dark.split .hero-dark-offer p {
 
   .hero-dark.split.balanced .hero-dark-content {
     grid-column: 1 / span 6;
+    padding-right: 50px;
   }
 
   .hero-dark.split.balanced .hero-dark-media {
@@ -395,6 +399,11 @@ main .hero-dark.split .hero-dark-offer p {
   .hero-dark.split.no-content .hero-dark-media {
     grid-column: 1 / -1;
   }
+}
+
+
+body.homepage main > .section.hero-dark-container {
+  padding-top: 20px;
 }
 
 @media (width >= 992px) {

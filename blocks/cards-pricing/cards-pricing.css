@@ -22,6 +22,15 @@ body.homepage .pricing-cards:where(:has(.cards-pricing)) .default-content-wrappe
   overflow-wrap: anywhere;
 }
 
+body.homepage main > .section.cards-pricing-container:has(.cards-pricing) {
+  padding-top: 0;
+  padding-bottom: 20px;
+}
+
+body.brokerage .section:has(.cards-pricing) .default-content-wrapper > h2 {
+  max-width: 680px;
+}
+
 .cards-pricing[hidden] {
   display: none;
 }
@@ -126,7 +135,7 @@ body.homepage .pricing-cards:where(:has(.cards-pricing)) .default-content-wrappe
 
 @media (width >= 768px) {
   .cards-pricing .cards-pricing-body h3.cards-pricing-compact-title {
-    font-size: 20px;
+    font-size: 28px;
     line-height: 32px;
   }
 }

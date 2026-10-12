@@ -18,7 +18,7 @@ body.homepage .awards-section:where(:has(.cards-award)) h2 {
   flex-direction: column;
   align-items: flex-start;
   min-width: 0;
-  gap: 16px;
+  gap: 24px;
   color: #242424;
   font-size: 15px;
   line-height: 22px;
@@ -27,14 +27,14 @@ body.homepage .awards-section:where(:has(.cards-award)) h2 {
 
 .cards-award .cards-award-image :is(img, svg, .icon) {
   display: block;
-  width: 48px;
-  height: 48px;
+  width: 72px;
+  height: 72px;
 }
 
 .cards-award .cards-award-body h3 {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   color: inherit;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
   line-height: 28px;
 }
@@ -46,6 +46,20 @@ body.homepage .awards-section:where(:has(.cards-award)) h2 {
 @media (width >= 768px) {
   .cards-award > ul {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 32px;
+    gap: 20px;
+  }
+}
+
+body.homepage .section:has(.cards-award) .default-content-wrapper > h2 {
+  margin-bottom: 40px;
+  font-size: 28px;
+  line-height: 32px;
+  text-align: center;
+}
+
+@media (width >= 768px) {
+  body.homepage .section:has(.cards-award) .default-content-wrapper > h2 {
+    font-size: 36px;
+    line-height: 40px;
   }
 }

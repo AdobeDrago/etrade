@@ -58,6 +58,11 @@
   height: auto;
 }
 
+.cards-article .cards-article-image img {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
 @media (width >= 600px) {
   .cards-article > ul {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -85,20 +90,32 @@
 }
 
 .cards-article.promo .cards-article-body {
-  padding: 24px 24px 0;
+  margin: 12px 12px 0;
+  padding: 16px 16px 0;
 }
 
 .cards-article.promo .cards-article-heading {
-  font-size: 22px;
+  font-size: 20px;
   line-height: 24px;
 }
 
 .cards-article.promo .cards-article-actions {
-  padding: 0 24px 24px;
+  padding: 0 28px 28px;
 }
 
-@media (width >= 1200px) {
+@media (width >= 900px) {
   .cards-article.four-up > ul {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+body.why-etrade .section:has(.cards-article.promo) .default-content-wrapper {
+  max-width: 820px;
+  text-align: center;
+}
+
+@media (width >= 768px) {
+  body.why-etrade .section:has(.cards-article.promo) .default-content-wrapper {
+    max-width: 800px;
+  }
 }
 }
