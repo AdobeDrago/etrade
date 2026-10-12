@@ -6,11 +6,12 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { parseHTML } from 'linkedom';
 
-const fixture = JSON.parse(await readFile(new URL('./fixtures/market-data.json', import.meta.url), 'utf8'));
+const fixture = JSON.parse(await readFile(new URL('../data/market-data.json', import.meta.url), 'utf8'));
 const flush = () => new Promise((resolve) => { setTimeout(resolve, 0); });
 
-async function harness(name, markup = '', route = null) {
-  const { document, window } = parseHTML(`<html><head></head><body><main><div class="${name}">${markup}</div></main></body></html>`);
+async function harness(name, markup = '', route = null, mode = 'live') {
+  const metadata = mode ? `<meta name="market-data-mode" content="${mode}">` : '';
+  const { document, window } = parseHTML(`<html><head>${metadata}</head><body><main><div class="${name}">${markup}</div></main></body></html>`);
   window.location = new URL('https://et-dynamic--etrade--adobedrago.aem.page/home/welcome-back');
   window.origin = window.location.origin;
   window.SAMPLE_PAGEVIEWS_AT_RATE = 'off';
@@ -43,6 +44,7 @@ async function harness(name, markup = '', route = null) {
       if (route) return route(url, init);
       let data;
       const path = new URL(url).pathname.split('/').pop();
+      if (path === 'market-data.json') data = fixture;
       if (path === 'quote') data = fixture.quote;
       if (path === 'chart') data = fixture.charts[JSON.parse(init.body).indexes];
       if (fixture.topFive[path]) data = fixture.topFive[path];
@@ -121,6 +123,23 @@ test('Welcome Back campaign icons survive DA as named text rather than relative 
   assert.ok(block.querySelector('.cards-icon-glyph-ira-selector'));
   assert.ok(block.querySelector('.cards-icon-glyph-idea'));
   assert.equal(block.querySelectorAll('a[href]').length, 2);
+});
+
+test('unconfigured DA market blocks render bundled JSON with visible sample labels', async () => {
+  const ticker = await harness('market-ticker', '', null, null);
+  const overview = await harness('market-overview', '', null, null);
+  const top = await harness('market-top-five', '', null, null);
+  [ticker, overview, top].forEach(({ block, requests }) => {
+    assert.equal(block.dataset.marketState, 'sample');
+    assert.match(block.textContent, /Sample data for review only/);
+    assert.equal(requests.length, 1);
+    assert.equal(new URL(requests[0].url).pathname, '/data/market-data.json');
+    assert.equal(requests[0].init.credentials, 'omit');
+  });
+  assert.equal(ticker.block.querySelectorAll('li').length, 4);
+  assert.equal(overview.block.querySelectorAll('tbody tr').length, 12);
+  assert.equal(top.block.querySelectorAll('.market-top-five-card').length, 5);
+  assert.equal(top.block.querySelectorAll('svg').length, 5);
 });
 
 test('a failed ticker clears values and Refresh can recover', async () => {

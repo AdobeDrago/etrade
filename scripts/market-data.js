@@ -1,5 +1,6 @@
 /* eslint-env es2021 */
 const LIVE_BASE = 'https://us.etrade.com/phx/pros/apicontent/market/';
+export const LOCAL_MARKET_DATA = '/data/market-data.json';
 const requests = new Map();
 export const MARKET_INDICES = [
   {
@@ -40,7 +41,11 @@ export function marketDate(value) {
 
 export function marketSettings(doc = document) {
   const meta = (name) => doc.querySelector(`meta[name="${name}"]`)?.content.trim();
-  return { base: meta('market-data-base') || LIVE_BASE, sample: meta('market-data-sample') || '' };
+  const live = meta('market-data-mode')?.toLowerCase() === 'live';
+  return {
+    base: meta('market-data-base') || LIVE_BASE,
+    sample: live ? '' : meta('market-data-sample') || LOCAL_MARKET_DATA,
+  };
 }
 
 /** Allow the observed public service or an explicitly configured same-origin proxy. */
@@ -98,9 +103,12 @@ export async function loadMarket(path, body, { fresh = false, settings = marketS
   if (settings.sample) {
     const origin = new URL(globalThis.location.href);
     const sample = new URL(settings.sample, origin);
-    if (!['localhost', '127.0.0.1', '[::1]'].includes(origin.hostname)
-      || sample.origin !== origin.origin || !sample.pathname.startsWith('/test/fixtures/')
-      || !sample.pathname.endsWith('.json') || sample.search || sample.hash) {
+    const localFixture = ['localhost', '127.0.0.1', '[::1]'].includes(origin.hostname)
+      && sample.pathname.startsWith('/test/fixtures/') && sample.pathname.endsWith('.json');
+    const bundledData = sample.pathname === LOCAL_MARKET_DATA;
+    if (sample.origin !== origin.origin || !['http:', 'https:'].includes(sample.protocol)
+      || sample.username || sample.password || sample.search || sample.hash
+      || (!bundledData && !localFixture)) {
       throw new MarketDataError('invalid-sample');
     }
     const data = await marketJSON(sample.href, {}, fresh);

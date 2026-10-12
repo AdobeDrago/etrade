@@ -3,12 +3,13 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import {
-  marketNumber, marketDate, marketRequest, marketJSON, loadMarket,
+  marketNumber, marketDate, marketRequest, marketJSON, loadMarket, marketSettings,
+  LOCAL_MARKET_DATA,
   normalizeQuotes, normalizePoints, normalizeChart, normalizeTopFive, quoteURL,
 } from '../scripts/market-data.js';
 
 const base = 'https://et-dynamic--etrade--adobedrago.aem.page/home/welcome-back';
-const sample = JSON.parse(await readFile(new URL('./fixtures/market-data.json', import.meta.url), 'utf8'));
+const sample = JSON.parse(await readFile(new URL('../data/market-data.json', import.meta.url), 'utf8'));
 
 test('numbers reject blanks, missing values, units and non-finite values; zero survives', () => {
   [null, undefined, '', ' ', '2%', true, {}, NaN, Infinity, 'Infinity', '1e3'].forEach((value) => {
@@ -127,6 +128,55 @@ test('sample feeds are local-only and never become live fallbacks', async () => 
     assert.equal(normalizeChart(result.payload, 'DJIND').length, 12);
     await assert.rejects(loadMarket('chart', {}, { settings: { sample: 'https://example.test/sample.json' } }), { code: 'invalid-sample' });
     await assert.rejects(loadMarket('chart', {}, { settings: { sample: '/docs/sample.json' } }), { code: 'invalid-sample' });
+  } finally {
+    globalThis.location = originalLocation;
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('bundled JSON is the default even when DA still has live base metadata', async () => {
+  const doc = (mode) => ({
+    querySelector: (selector) => {
+      if (selector.includes('market-data-base')) return { content: 'https://us.etrade.com/phx/pros/apicontent/market/' };
+      if (selector.includes('market-data-mode') && mode) return { content: mode };
+      return null;
+    },
+  });
+  const settings = marketSettings(doc());
+  assert.equal(settings.sample, LOCAL_MARKET_DATA);
+  assert.equal(marketSettings(doc('live')).sample, '');
+  const originalLocation = globalThis.location;
+  const originalFetch = globalThis.fetch;
+  const calls = [];
+  try {
+    globalThis.location = new URL('https://demo--etrade--adobedrago.aem.page/home/welcome-back');
+    globalThis.fetch = async (url, init) => {
+      calls.push({ url, init });
+      return new Response(JSON.stringify(sample));
+    };
+    const quote = await loadMarket('quote', { symbol: 'DJIND,COMP.IDX,SPX,TNX' }, { settings });
+    assert.equal(quote.sample, true);
+    assert.equal(normalizeQuotes(quote.payload).length, 4);
+    const charts = await Promise.all(['DJIND', 'COMPIDX', 'SPX', 'TNX'].map((indexes) => loadMarket('chart', { indexes }, { settings })));
+    assert.ok(charts.every((result) => result.sample));
+    charts.forEach((result, index) => assert.equal(normalizeChart(result.payload, ['DJIND', 'COMPIDX', 'SPX', 'TNX'][index]).length, 12));
+    const groups = ['TopDivYieldStocks', 'MostSearchedMFs', 'TopETFs'];
+    const lists = await Promise.all(groups.map((group) => loadMarket(`top5/${group}`, undefined, { settings })));
+    lists.forEach((result, index) => {
+      assert.equal(normalizeTopFive(result.payload, groups[index]).length, 5);
+    });
+    const lookup = await loadMarket('lookup', { searchString: 'Nike' }, { settings });
+    assert.ok(lookup.payload.data.some((item) => item.symbol === 'NKE'));
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].url, `https://demo--etrade--adobedrago.aem.page${LOCAL_MARKET_DATA}`);
+    assert.equal(calls[0].init.credentials, 'omit');
+    globalThis.fetch = async (url) => {
+      calls.push({ url });
+      return new Response('{}', { status: 503 });
+    };
+    await assert.rejects(loadMarket('chart', { indexes: 'DJIND' }, { settings, fresh: true }), { code: 'http-503' });
+    assert.equal(calls.length, 2);
+    assert.ok(calls.every((call) => call.url.endsWith(LOCAL_MARKET_DATA)));
   } finally {
     globalThis.location = originalLocation;
     globalThis.fetch = originalFetch;

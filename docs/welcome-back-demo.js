@@ -13,11 +13,9 @@ metadata.remove();
 const mode = new URLSearchParams(window.location.search).get('data');
 if (mode === 'unavailable') {
   document.querySelector('meta[name="market-data-base"]').content = '/test/fixtures/unavailable/';
-} else if (mode !== 'live') {
-  const sample = document.createElement('meta');
-  sample.name = 'market-data-sample';
-  sample.content = '/test/fixtures/market-data.json';
-  document.head.append(sample);
+  document.querySelector('meta[name="market-data-mode"]').content = 'live';
+} else if (mode === 'live') {
+  document.querySelector('meta[name="market-data-mode"]').content = 'live';
 }
 let notice = 'Local review: fabricated sample market data and existing E*TRADE sign-in. ';
 if (mode === 'live') notice = 'Local review: testing live E*TRADE services. ';

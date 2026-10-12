@@ -188,7 +188,13 @@ for (let i = 0; i < paths.length; i += 1) {
   });
   const metadata = [['Title', titles[i]], ['Description', `E*TRADE ${titles[i]} page.`], ['Header Theme', [0, 3, 4, 5].includes(i) ? 'dark' : 'light'], ['Nav Link Base', 'https://us.etrade.com'], ['Disclosures', `/disclosures/sets/${ids[i]}-current`]];
   if (i === 0) metadata.push(['Template', 'homepage']);
-  if (i === 1) metadata.push(['Market Data Base', 'https://us.etrade.com/phx/pros/apicontent/market/']);
+  if (i === 1) {
+    metadata.push(
+      ['Market Data Base', 'https://us.etrade.com/phx/pros/apicontent/market/'],
+      ['Market Data Mode', 'local'],
+      ['Market Data Sample', '/data/market-data.json'],
+    );
+  }
   if (i === 4) metadata.push(['Template', 'planning']);
   const assetDoc = parseHTML(sections.map((s) => s.html + s.blocks.map((b) => table(b.name, b.rows)).join('')).join('')).document;
   const assets = [...assetDoc.querySelectorAll('img')].map((e) => ({ src: e.getAttribute('src'), alt: e.getAttribute('alt') }));

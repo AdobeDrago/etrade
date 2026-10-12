@@ -31,7 +31,7 @@
   <section>
     <h2>Current delivery state</h2>
     <p>Four custom blocks are implemented: Welcome Hero, Market Ticker, Market Overview, and Market Top Five. The campaign cards reuse Cards Icon with the Welcome Back variant. The existing global header and footer load normally.</p>
-    <p class="note">The live page is not yet authored or published in DA. The sample review uses fabricated prices and rankings, clearly labeled in every market region. Live API access from preview still needs verification. Login currently navigates to E*TRADE's existing sign-in; the embedded login form requires a supported identity integration.</p>
+    <p class="note">The demo branch uses bundled sample prices and rankings from <code>/data/market-data.json</code>, clearly labeled in every market region. Already-previewed DA pages use this file without another content edit. Live API access remains a future integration. Login currently navigates to E*TRADE's existing sign-in; the embedded login form requires a supported identity integration.</p>
     <p>The October 9 local browser check failed to fetch quote, chart and Top Five data from the live endpoints (<code>network-or-response</code>). The local failure does not establish whether preview-domain CORS, network filtering, or gateway rules are responsible. Verify access from the deployed preview and obtain the approved service route if direct requests are unavailable.</p>
     <p>Campaign copy and disclosures below were captured from the public reference on October 9. Confirm the campaign and disclosure content with the content owner before publishing.</p>
   </section>
@@ -47,8 +47,9 @@
     <button id="copy-page" type="button">Copy complete page</button><output id="copy-status" role="status"></output>
   </section>
   <section>
-    <h2>Connect the market service</h2>
-    <p><strong>Market Data Base</strong> defaults to <code>https://us.etrade.com/phx/pros/apicontent/market/</code>. The implementation uses the direct PHX requests observed in the existing site's scripts, with credentials omitted. The existing site also batches its initial requests through <code>/phx/pros/aggregate</code>; this implementation uses the direct service endpoints.</p>
+    <h2>Current demo data and later service connection</h2>
+    <p>The current default is local JSON. Edit <code>data/market-data.json</code> in the repository to change index charts, ticker quotes, lookup results and Top Five cards. The copy pack includes <strong>Market Data Mode</strong> = <code>local</code> and <strong>Market Data Sample</strong> = <code>/data/market-data.json</code>. To switch later, set <strong>Market Data Mode</strong> to <code>live</code>.</p>
+    <p>In live mode, <strong>Market Data Base</strong> defaults to <code>https://us.etrade.com/phx/pros/apicontent/market/</code>. The implementation uses the direct PHX requests observed in the existing site's scripts, with credentials omitted. The existing site also batches its initial requests through <code>/phx/pros/aggregate</code>; this implementation uses the direct service endpoints.</p>
     <table><tr><th>Operation</th><th>Request</th><th>Response contract</th></tr>
       <tr><td>Index / recent quotes</td><td>POST <code>quote</code>: <code>{symbol:"DJIND,COMP.IDX,SPX,TNX",detailFlag:"INTRADAY"}</code></td><td><code>quoteData[].product.symbol</code> and <code>intraday.lastTrade/changeClose/changeClosePercentage/dateTime</code>. Timestamp availability must be confirmed from a live response.</td></tr>
       <tr><td>Chart</td><td>POST <code>chart</code>: <code>{indexes:"DJIND"}</code>; also COMPIDX, SPX, TNX</td><td><code>data[0].dataPoints[].stockDate/highValue</code></td></tr>
@@ -67,7 +68,7 @@
       <li><strong>Before Monday review:</strong> verify desktop and mobile layouts, keyboard index tabs, chart slider and data table, company lookup, recent quote links, all three Top Five categories and matching disclaimers, unavailable states, and retries using live data.</li>
       <li><strong>Monday:</strong> review the branch preview, merge reviewed code, and publish approved content separately. Merging main ships code. Include the branch preview link in the PR.</li>
     </ol>
-    <p>Do not add the local sample metadata to the DA delivery page. It is restricted to localhost and will refuse to load on preview/live. This guide, the seed, and fixtures are excluded from Edge Delivery by the existing <code>.hlxignore</code>.</p>
+    <p>The bundled <code>/data/market-data.json</code> is served on the demo branch and allowed as same-origin sample metadata in DA. This guide, the seed, and test fixtures remain excluded from Edge Delivery by <code>.hlxignore</code>.</p>
     <p>Local run: start the AEM server on port 3000, then <code>node test/dynamic-rates-server.mjs</code>. Open this guide or the sample page on <code>http://127.0.0.1:3020</code>. Run market checks with <code>node --experimental-vm-modules --test test/market-data.test.js test/welcome-back.test.js</code>.</p>
   </section>
   <section><h2>Copy-ready page content</h2><div id="page-content"></div></section>

@@ -654,6 +654,14 @@
       [
         "Market Data Base",
         "https://us.etrade.com/phx/pros/apicontent/market/"
+      ],
+      [
+        "Market Data Mode",
+        "local"
+      ],
+      [
+        "Market Data Sample",
+        "/data/market-data.json"
       ]
     ],
     "assets": [
