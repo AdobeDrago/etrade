@@ -77,11 +77,11 @@ async function harness(name, markup = '', route = null, mode = 'live') {
 test('welcome hero preserves rich copy, inline recovery links and extra value cells', async () => {
   const { block } = await harness('welcome-hero', '<div><div>Login</div><div><h1>Welcome</h1><p><a href="https://us.etrade.com/etx/pxy/login">Log on</a></p><p>Forgot <a href="/recover">User ID</a>?</p></div><div><p>Extra copy</p></div></div><div><div>Campaign</div><div><h2>Campaign</h2><p>Keep <strong>rich text</strong></p></div></div><div><div>Image</div></div>');
   assert.equal(block.querySelector('.welcome-hero-primary').textContent, 'Log on');
-  assert.equal(block.querySelector('.welcome-hero-primary').closest('p').className, 'etrade-actions');
+  assert.equal(block.querySelector('.welcome-hero-primary').closest('form').action, 'https://us.etrade.com/etx/pxy/login');
   assert.equal(block.querySelector('a[href="/recover"]').className, '');
   assert.ok(block.textContent.includes('Extra copy'));
   assert.equal(block.querySelector('strong').textContent, 'rich text');
-  assert.equal(block.querySelector('[data-login-slot]').querySelectorAll('input').length, 0);
+  assert.equal(block.querySelector('[data-login-slot]').querySelectorAll('input[name]').length, 0);
 });
 
 test('empty authored tables and missing cells remain usable', async () => {
@@ -110,7 +110,40 @@ test('current Welcome Back puts one hero image behind the campaign and login sib
   assert.equal(block.querySelector('.welcome-hero-login h2').textContent, 'Log on');
   assert.equal(block.querySelector('img').loading, 'eager');
   assert.equal(block.querySelector('img').getAttribute('fetchpriority'), 'high');
-  assert.ok(block.querySelector('[data-login-slot] a[href="https://us.etrade.com/etx/pxy/login"]'));
+  assert.equal(block.querySelector('[data-login-slot] form').action, 'https://us.etrade.com/etx/pxy/login');
+});
+
+test('login controls toggle accessibly and hand off without sending credentials', async () => {
+  const destination = 'https://us.etrade.com/etx/pxy/login?source=welcome';
+  const { block, window } = await harness('welcome-hero', `<div><div>Login</div><div><h1>Welcome back</h1><p>Log on to access your E*TRADE accounts.</p><p><a href="${destination}">Log on</a></p></div></div>`);
+  const form = block.querySelector('form');
+  const user = form.querySelector('input[type="text"]');
+  const password = form.querySelector('input[type="password"]');
+  const show = form.querySelector('.welcome-hero-show-password');
+  user.value = 'review-user';
+  password.value = 'review-password';
+  show.dispatchEvent(new window.Event('click'));
+  assert.equal(password.type, 'text');
+  assert.equal(show.textContent, 'Hide');
+  assert.equal(show.getAttribute('aria-pressed'), 'true');
+  show.dispatchEvent(new window.Event('click'));
+  assert.equal(password.type, 'password');
+  assert.equal(show.textContent, 'Show');
+  const info = form.querySelector('.welcome-hero-security-info');
+  info.dispatchEvent(new window.Event('click'));
+  assert.equal(info.getAttribute('aria-expanded'), 'true');
+  assert.equal(form.querySelector('.welcome-hero-security-help').hidden, false);
+  let navigated;
+  window.location.assign = (url) => { navigated = url; };
+  const submit = new window.Event('submit', { cancelable: true });
+  form.dispatchEvent(submit);
+  assert.equal(submit.defaultPrevented, true);
+  assert.equal(navigated, destination);
+  assert.equal(user.value, '');
+  assert.equal(password.value, '');
+  assert.equal(form.querySelectorAll('[name]').length, 0);
+  assert.equal(block.querySelector('h1').textContent, 'Log on');
+  assert.doesNotMatch(block.textContent, /Log on to access your/);
 });
 
 test('Welcome Back campaign icons survive DA as named text rather than relative images', async () => {
