@@ -62,6 +62,14 @@ test('older pages get their layout without removing authored theme classes; unre
   assert.equal(other.document.body.className, '');
 });
 
+test('empty imported image placeholders leave link copy and valid authored media intact', async () => {
+  const { document, layout } = await harness('/home', '<p><a href="/faq">See all FAQs</a><img src="about:error" alt=""></p><img src="/real.jpg" alt="Authored image">');
+  layout.default();
+  assert.equal(document.querySelectorAll('img').length, 1);
+  assert.equal(document.querySelector('img').getAttribute('src'), '/real.jpg');
+  assert.equal(document.querySelector('p').textContent, 'See all FAQs');
+});
+
 test('missing hero and audience transitions render once, while authored separators retain their settings', async () => {
   const { document, layout, sections } = await harness('/why-etrade', `
     <div class="section"><div><div class="hero-dark split"></div></div></div>

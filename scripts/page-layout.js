@@ -11,7 +11,10 @@ const pages = new Map([
 export default function decoratePageLayout() {
   const path = window.location.pathname.replace(/\.html$/, '').replace(/\/$/, '');
   const page = pages.get(path);
-  if (page) document.body.classList.add('etrade-page', page);
+  if (!page) return;
+  document.body.classList.add('etrade-page', page);
+  // Empty importer placeholders otherwise break standalone action grouping.
+  document.querySelectorAll('main img[src="about:error"][alt=""]').forEach((image) => image.remove());
 }
 
 /** Keep navigation between implemented pages on the current EDS environment. */
