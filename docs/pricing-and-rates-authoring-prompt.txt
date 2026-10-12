@@ -1,0 +1,27 @@
+Update the existing Pricing and Rates page at /what-we-offer/pricing-and-rates in DA using https://us.etrade.com/what-we-offer/pricing-and-rates as the live reference. Preserve valid authored assets, links, tracking parameters, rich text and stable disclosure IDs. Save and preview the result for review.
+
+Use page-specific supported styling variants. For Detailed pricing, the exact supported table header is Accordion FAQ (Pricing). Its implementation supplies flat white rows, thin dividers, purple right-side plus/minus controls and responsive fee tables. The unmodified Accordion FAQ table supplies the rounded homepage FAQ treatment. Do not guess alternative block names.
+
+Keep Heading 2 Detailed pricing immediately before the accordion and preserve its detailed-pricing anchor. Author one two-cell row per category: the plain-text category label, followed by the complete rich-text answer. Match this live order:
+1. Stock and options trades
+2. Exchange-traded funds (ETFs)
+3. Bonds and CDs
+4. Futures
+5. Mutual funds
+6. Cryptocurrency
+7. Margin rates
+8. Managed Portfolios
+9. Premium Savings Account
+10. Max-Rate Checking
+11. Certificates of Deposit (CD)
+12. Other fees
+
+The current preview has nine simplified answers. Restore Mutual funds, Cryptocurrency and Other fees, use the correct Bonds and CDs label, and move Margin rates before Managed Portfolios. Restore all fee schedules and explanatory copy, including the stock/options trade tiers, exercise/assignment and Dime Buyback rows, bond pricing, margin debit-balance tiers, portfolio fees and every table under Other fees. Keep native semantic tables INSIDE the answer cell, with actual th headers, scope attributes and merged cells. Do not turn table headings such as Pricing, Debit balance or Paper statement fee into standalone EDS blocks. After previewing, inspect .plain.html to verify nested tables remain tables inside the accordion answer rather than imported block divs.
+
+Do not author a separate Expand all button or icon glyphs; the block supplies those controls. All panels initially collapse; opening one closes the others, and Expand all opens every panel. Verify closed, individually expanded and Expand all states. Confirm Enter/Space operation, correct aria-expanded states, exclusion of collapsed links from keyboard navigation, and keyboard scrolling of wide fee tables on mobile.
+
+Preserve Metadata > Disclosures = /disclosures/sets/pricing-and-rates and the existing stable sup IDs. Match each ID to its real disclosure fragment; the set order supplies the rendered number. Do not copy displayed numeric footnotes into authored sup markers. Keep bank rates on their supported rate bindings or verified Bank Rates Sheet links. Trading commissions and margin rates must not use the bank-rate endpoint, and bare {{rate}} placeholders must not survive in the preview.
+
+Elsewhere on this page, retain the existing Hero, Cards Pricing and two Banner Offer tables while completing their live comparison. The live trading summary contains five items (stocks/options/mutual funds/ETFs, options contracts, futures contracts, Bonds and CDs, Crypto), followed by three bank items. The current preview has only three trading items. The live value section after Detailed pricing is also absent from the current preview. Restore that content and confirm its supported block treatment before declaring the whole page visually complete. Review current campaign terms and true rich-text strikethrough in both offer banners.
+
+Preview with the updated branch code. Compare desktop and mobile spacing, typography, rows, fee-table columns, missing categories, links and disclosure anchors against the live page. The local accordion reference is /docs/pricing-accordion-review.html; it is a dated visual fixture, not a source of current dynamic bank rates. Report any fee table that DA serializes incorrectly instead of replacing it with an incomplete bullet summary.

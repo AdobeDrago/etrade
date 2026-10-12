@@ -42,8 +42,9 @@
     "tabs_block_name": "Tabs Accounts",
     "numbered_cards": "Author one row per reason; JavaScript supplies the ordinal.",
     "disclosure_numbering": "Authors write stable IDs in sup markers. Footer-set array order determines numbers and matching anchors.",
-    "pricing_dependency": "No dedicated detailed-pricing/table renderer exists for the imported fee-table block names; styling needs an agreed code/layout solution.",
-    "background_hero_block_name": "Hero"
+    "pricing_dependency": "Accordion FAQ (Pricing) now supports native semantic fee tables inside answer cells, flat white rows and right-side plus/minus controls. Imported fee-table headings must not become standalone block names.",
+    "background_hero_block_name": "Hero",
+    "block_variants": "Match each section to the exact supported block variant in its live reference and block README. Do not apply a generic block treatment across all pages; Pricing and Rates uses Accordion FAQ (Pricing), while rounded FAQ sections use Accordion FAQ."
   },
   "pages": [
     {
@@ -913,28 +914,22 @@
       "title": "Pricing and Rates",
       "path": "/what-we-offer/pricing-and-rates",
       "preview_url": "https://demo--etrade--AdobeDrago.aem.page/what-we-offer/pricing-and-rates",
-      "inspected_url": "http://127.0.0.1:3001/what-we-offer/pricing-and-rates",
+      "inspected_url": "http://127.0.0.1:3000/what-we-offer/pricing-and-rates.plain.html",
       "live_reference_url": "https://us.etrade.com/what-we-offer/pricing-and-rates",
-      "assessment": "current_preview_markup_only",
+      "assessment": "pricing_accordion_live_comparison_completed_other_sections_pending",
       "preview_http_status": 200,
       "observed": {
         "disclosures_metadata": null,
-        "broken_image_count": 3,
+        "broken_image_count": 0,
         "authored_block_names": [
-          "hero-dark",
-          "pricing",
-          "u-s-treasury-auction",
-          "futures-contract-commission",
-          "no-load-no-transaction-fee-funds",
-          "cryptocurrency-commissions",
-          "debit-balance",
-          "account-market-value",
-          "underlying-symbol",
-          "finra-trading-activity-fee taf",
-          "check-returned-for-insufficient-funds",
-          "paper-statement-fee",
-          "overnight-mail"
-        ]
+          "hero",
+          "cards-pricing",
+          "banner-offer",
+          "accordion-faq"
+        ],
+        "accordion_category_count": 9,
+        "accordion_variant": "default",
+        "live_accordion_category_count": 12
       },
       "disclosure_set": {
         "name": "pricing-and-rates",
@@ -1016,10 +1011,10 @@
         {
           "id": "pricing-summary",
           "status": "pending_preview_or_edit",
-          "action": "Re-author the trading-fee summary as Cards Pricing rather than the current Hero Dark table.",
+          "action": "Complete the already-authored Cards Pricing summary against the live reference.",
           "block": "cards-pricing",
           "table_name": "Cards Pricing",
-          "observed": "Hero Dark currently contains Trading fees and commissions and pricing values.",
+          "observed": "Current preview has three trading items; the live page has five, including Bonds and CDs and Crypto, plus a separate three-item bank summary. Its complete layout still needs review.",
           "row_cells": [
             "Amount paragraph, H3 fee label, supporting copy/disclosure marker and optional standalone link"
           ]
@@ -1027,30 +1022,50 @@
         {
           "id": "pricing-offers",
           "status": "pending_preview_or_edit",
-          "action": "Replace loose offer groups with Banner Offer tables and repair literal <del> text.",
+          "action": "Verify both existing Banner Offer tables against the current campaign.",
           "block": "banner-offer",
           "table_name": "Banner Offer",
           "instructions": [
-            "Verify the current campaign amount, dates, promo code, links and matching disclosure fragment."
+            "Both banners are already authored. Preserve real rich-text strikethrough, matching disclosure IDs, current campaign amounts, dates, promo code and tracking links."
           ]
         },
         {
           "id": "pricing-details",
           "status": "pending_preview_or_edit",
-          "action": "Reconstruct detailed-pricing categories with structured questions/answers and semantic fee tables.",
+          "action": "Apply the supported pricing accordion variant and restore all 12 live categories with their complete fee tables and rich-text answers.",
           "block": "accordion-faq",
-          "table_name": "Accordion FAQ",
+          "table_name": "Accordion FAQ (Pricing)",
           "row_cells": [
             "Pricing category label",
             "Rich-text explanation and correctly headed semantic table"
           ],
-          "observed": "The import creates unimplemented block names such as pricing, u-s-treasury-auction, debit-balance and paper-statement-fee from fee-table headings.",
-          "code_dependency": "The repository has no renderer for those generated names. Agree and verify the semantic-table styling inside Accordion FAQ, or implement a dedicated pricing-table block; authoring alone does not establish that styling.",
+          "observed": "Fresh preview already uses Accordion FAQ but has the rounded default treatment and nine simplified categories. Mutual funds, Cryptocurrency and Other fees are missing. Bonds and fixed income differs from the live Bonds and CDs label; Margin rates appears in the wrong position.",
+          "code_dependency": "The pricing variant is implemented locally. Preview the page with this code before visual verification; content remains a separate authoring change.",
           "instructions": [
-            "Preserve every fee row, column heading, explanatory paragraph and legal marker.",
-            "Do not keep fee headings as block names.",
-            "Validate the complete fee content against the intended live page."
-          ]
+            "Use the literal table header Accordion FAQ (Pricing); do not invent pricing-accordion or other block names.",
+            "Keep Heading 2 Detailed pricing immediately before the table, preserving the detailed-pricing anchor.",
+            "Restore complete native tables inside the answer cell with real th headers, scope attributes, merged cells, all fee rows, explanatory paragraphs, URLs and legal markers.",
+            "Do not keep fee headings as standalone block names or replace complete fee schedules with short bullet summaries.",
+            "Retain the block-generated Expand all / Collapse all control; remove separately authored plus/minus or expand text.",
+            "Validate each current fee, rate and destination against the live reference; bank data and disclosure IDs use their existing supported sources.",
+            "Check closed, individually expanded and Expand all states on desktop and mobile, including keyboard access to wide tables."
+          ],
+          "required_category_order": [
+            "Stock and options trades",
+            "Exchange-traded funds (ETFs)",
+            "Bonds and CDs",
+            "Futures",
+            "Mutual funds",
+            "Cryptocurrency",
+            "Margin rates",
+            "Managed Portfolios",
+            "Premium Savings Account",
+            "Max-Rate Checking",
+            "Certificates of Deposit (CD)",
+            "Other fees"
+          ],
+          "authoring_prompt": "docs/pricing-and-rates-authoring-prompt.txt",
+          "local_review": "docs/pricing-accordion-review.html"
         },
         {
           "id": "pricing-bank-links",
@@ -1070,17 +1085,15 @@
         {
           "id": "pricing-live-audit",
           "status": "pending_preview_or_edit",
-          "action": "Perform a complete live content and visual comparison after restructuring; this authoring pass inspected preview markup only.",
-          "change_type": "verify"
+          "action": "Verify the pricing accordion with the new variant after authoring, then complete the remaining page content and visual comparison.",
+          "change_type": "verify",
+          "observed": "Only the Detailed pricing accordion has been compared visually in this pass. The hero, fee summaries, bank summary and value cards still need their page-specific layout review."
         },
         {
           "id": "pricing-and-rates-disclosure-markers",
           "status": "pending_preview_or_edit",
-          "action": "Replace numeric disclosure references with the matching stable IDs from the migrated set.",
-          "observed_numeric_markers": [
-            "2",
-            "1"
-          ],
+          "action": "Verify the already-authored stable disclosure IDs resolve to matching footer numbers and anchors.",
+          "observed_numeric_markers": [],
           "examples": [
             "<sup>a</sup>",
             "<sup>a,b</sup>"
@@ -1089,9 +1102,36 @@
             "Match the claim to its actual disclosure fragment; do not derive IDs from current displayed positions after reordering.",
             "Keep trademark superscripts such as TM unchanged.",
             "The footer converts IDs to matching numbers and anchor links only when the footer items exist."
+          ],
+          "observed_stable_markers": [
+            "a",
+            "b",
+            "c",
+            "d",
+            "e",
+            "f",
+            "g",
+            "h"
           ]
         }
-      ]
+      ],
+      "pricing_accordion_validation": {
+        "checked_on": "2026-10-12",
+        "source": "https://us.etrade.com/what-we-offer/pricing-and-rates",
+        "local_code": "verified",
+        "content_authoring": "pending",
+        "categories_in_local_review": 12,
+        "semantic_tables_in_local_review": 13,
+        "desktop_block_width_px": 780,
+        "mobile_viewport_px": 390,
+        "mobile_content_width_px": 375,
+        "mobile_document_scroll_width_px": 375,
+        "keyboard_table_scroll": "verified",
+        "keyboard_expand_collapse_all": "verified_12_panels",
+        "tests": "21_passed",
+        "lint": "passed",
+        "screenshot": "docs/pricing-accordion-review.jpg"
+      }
     },
     {
       "id": "our-accounts",
