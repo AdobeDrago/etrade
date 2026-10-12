@@ -5,6 +5,7 @@
   "description": "Starter project for Adobe Helix",
   "scripts": {
     "test:disclosures": "node --experimental-vm-modules --test test/disclosures.test.js",
+    "test:disclosure-manager": "node --experimental-vm-modules --test test/disclosure-manager.test.js",
     "test:rates": "node --test test/bank-rates.test.js",
     "demo:rates": "node test/dynamic-rates-server.mjs",
     "test:hero": "node --experimental-vm-modules --test test/hero.test.js",
