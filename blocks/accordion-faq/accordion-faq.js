@@ -4,9 +4,12 @@ function takeAdjacentContent(block) {
   const wrapper = block.closest('.accordion-faq-wrapper');
   const previous = wrapper?.previousElementSibling;
   const next = wrapper?.nextElementSibling;
-  const heading = previous?.matches('.default-content-wrapper')
-    ? previous.lastElementChild : null;
-  const paragraph = next?.matches('.default-content-wrapper') ? next.firstElementChild : null;
+  const before = previous?.matches('.default-content-wrapper') ? [...previous.children] : [];
+  const heading = before.findLast((node) => node.matches('h1, h2, h3, h4, h5, h6'));
+  const trailing = heading && before.slice(before.indexOf(heading) + 1);
+  // DA may place the shared action before or after the FAQ table.
+  let paragraph = next?.matches('.default-content-wrapper') ? next.firstElementChild : null;
+  if (trailing?.length === 1 && trailing[0].matches('p')) [paragraph] = trailing;
   const link = paragraph?.matches('p') ? paragraph.querySelector('a[href]') : null;
   let action;
   let auxiliary;
@@ -26,13 +29,19 @@ function takeAdjacentContent(block) {
       auxiliary.setAttribute('aria-hidden', 'true');
       auxiliary.remove();
     } else paragraph.remove();
-    if (!next.children.length) next.remove();
+    if (next && !next.children.length) next.remove();
   }
   if (heading?.matches('h1, h2, h3, h4, h5, h6')) {
+    const introduction = document.createElement('div');
+    introduction.className = 'accordion-faq-introduction';
+    trailing.filter((node) => node.parentElement === previous)
+      .forEach((node) => introduction.append(node));
     heading.classList.add('accordion-faq-heading');
     heading.remove();
     if (!previous.children.length) previous.remove();
-    return { heading, action, auxiliary };
+    return {
+      heading, introduction, action, auxiliary,
+    };
   }
   return { action, auxiliary };
 }
@@ -86,7 +95,9 @@ export default function decorate(block) {
   const prefix = `accordion-faq-${accordionCount}`;
   const rows = [...block.children];
   const pricing = block.classList.contains('pricing');
-  const { heading, action, auxiliary } = takeAdjacentContent(block);
+  const {
+    heading, introduction, action, auxiliary,
+  } = takeAdjacentContent(block);
   const level = heading ? Math.min(Number(heading.tagName.slice(1)) + 1, 6) : 3;
   const items = [];
   const group = document.createElement('div');
@@ -161,6 +172,7 @@ export default function decorate(block) {
 
   block.replaceChildren();
   if (heading) block.append(heading);
+  if (introduction?.children.length) block.append(introduction);
   if (items.length) {
     toggle.setAttribute('aria-controls', items.map(({ panel }) => panel.id).join(' '));
     toggle.addEventListener('click', () => {

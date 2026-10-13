@@ -60,6 +60,10 @@
   outline-offset: 4px;
 }
 
+.market-ticker[data-market-state='loaded'] :is(.market-ticker-status, .market-ticker-refresh) {
+  display: none;
+}
+
 @media (width >= 768px) {
   .market-ticker {
     padding-right: 10px;

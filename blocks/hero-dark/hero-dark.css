@@ -337,6 +337,10 @@ main .hero-dark.split .hero-dark-heading {
   margin-top: 30px;
 }
 
+.hero-dark.split .hero-dark-action {
+  margin-bottom: 0;
+}
+
 .hero-dark.split .hero-dark-media {
   margin: 0;
 }

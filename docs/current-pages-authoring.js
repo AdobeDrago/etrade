@@ -1,6 +1,7 @@
 import {
-  decorateSections, decorateBlocks, decorateIcons, loadBlock,
+  decorateSections, decorateBlocks, decorateIcons, loadBlock, loadHeader, loadFooter,
 } from '../scripts/aem.js';
+import { decoratePricingIntroductions, decoratePageActions } from '../scripts/page-layout.js';
 import decorateSectionBoundaries from '../scripts/section-layout.js';
 import decorateDisclosureReferences from '../scripts/disclosure-references.js';
 
@@ -10,13 +11,15 @@ const main = document.querySelector('main');
 const panel = document.querySelector('#authoring-panel');
 const status = document.querySelector('#copy-status');
 const notes = [
-  'Home: savings-rate hero and MP4, savings banner, brokerage feature, all ten calculator tiers, five pricing tiles, three product cards, banking, three awards and six FAQs. The live calculator headline advertises $1,500 while its upper tiers reach $10,000; all captured tiers are preserved.',
+  'Home: savings-rate hero and MP4, savings banner, brokerage feature, all ten calculator tiers, five pricing tiles plus the offer card, two bank product cards, banking, three awards and six FAQs. Keep the banking disclaimer after the product cards. The live calculator headline advertises $1,500 while its upper tiers reach $10,000; all captured tiers are preserved.',
   'Welcome Back: full-width AI cybersecurity image, campaign on the left, white login panel on the right, two current campaign cards using DA-safe named icons, market ticker, overview and Top Five. Market regions currently read /data/market-data.json and show sample-data labels. The sign-in link works; embedded authentication remains a separate integration.',
   'Our Accounts: seven tabs with 6 / 3 / 6 / 2 / 4 / 4 / 1 accounts, including Cryptocurrency, and five FAQs. Bank order differs from Investment Choices. Checking uses a named API binding; this local review uses sample JSON. Its saved page metadata uses the live API default, which still requires a working connection or verified proxy. Savings and CD promotional rates remain authored campaign terms. The prepared semantic IDs correct the savings banner and managed intro disclosure references.',
   'Brokerage: split product hero and offer, six pricing tiles, offer banner, three reasons, Power E*TRADE Pro, NerdWallet recognition, four current articles and seven FAQs. The struck-through $1,000 is preserved beside $1,500.',
   'Planning: full live structure with six life-event/offer cards, readiness calculator, four retirement tools, tax feature, three action cards and nine FAQs. The live retirement tile still says 06/30/26 while its disclosure says 10/31/26. The captured tile is retained and must be corrected to the content owner’s intended campaign before publishing. The source tax FAQ’s unmatched d1 marker binds to its existing tax-advice disclaimer.',
   'Why E*TRADE: current split hero, all seven dated story cards (1982–2025), six audience cards and three promo cards. Replace the shortened generic preview body with this full structure.',
 ];
+const siteReview = new URL(window.location.href).searchParams.get('view') === 'site';
+document.documentElement.classList.toggle('site-review', siteReview);
 let pageHtml = '';
 let revision = 0;
 
@@ -98,7 +101,7 @@ async function show() {
   pageHtml = new DOMParser().parseFromString(html, 'text/html').body.innerHTML;
   panel.innerHTML = `<h2>${page.title}: copyable page body</h2>${pageHtml}`;
   legalPanel(page);
-  document.body.className = page.id === 'homepage' ? 'homepage' : page.id;
+  document.body.className = `etrade-page ${page.id}`;
   const theme = document.querySelector('meta[name="header-theme"]') || document.head.appendChild(document.createElement('meta'));
   theme.name = 'header-theme';
   const [, headerTheme] = page.metadata.find(([key]) => key === 'Header Theme');
@@ -118,6 +121,7 @@ async function show() {
     const node = document.createElement('div');
     node.innerHTML = section.html;
     section.blocks.forEach((b) => node.append(blockMarkup(b)));
+    if (section.afterHtml) node.insertAdjacentHTML('beforeend', section.afterHtml);
     if (section.style) node.classList.add(section.style);
     main.append(node);
   });
@@ -131,6 +135,12 @@ async function show() {
   document.querySelector('#page-file').href = `./${page.id}-current-authoring.html`;
   await Promise.all([...main.querySelectorAll('.block')].map(loadBlock));
   if (current !== revision) return;
+  decoratePricingIntroductions(main);
+  decoratePageActions(main);
+  if (siteReview) {
+    await loadHeader(document.querySelector('body > header'));
+    await loadFooter(document.querySelector('body > footer'));
+  }
   main.querySelectorAll('.section').forEach((s) => { s.dataset.sectionStatus = 'loaded'; s.style.display = ''; });
   document.querySelector('body > .disclosures')?.remove();
   const legal = document.createElement('div');

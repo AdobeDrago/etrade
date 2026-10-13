@@ -59,6 +59,10 @@ export default function buildCards(block, { icon = false, numbered = false, acti
       card.append(ordinal);
     }
     const heading = body.querySelector('h1, h2, h3, h4, h5, h6');
+    // Pasted rich headings can contain block wrappers; keep their phrasing and links.
+    heading?.querySelectorAll(':scope > p, :scope > div').forEach((wrapper) => {
+      wrapper.replaceWith(...wrapper.childNodes);
+    });
     heading?.classList.add(`${name}-heading`);
     const first = body.firstElementChild;
     if (heading && first?.tagName === 'P' && first !== heading) {

@@ -5,23 +5,26 @@
 }
 
 .market-overview .market-overview-heading {
-  margin: 0 0 24px;
-  font-size: 28px;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
 }
 
 .market-overview .market-overview-tabs {
   display: flex;
-  border-bottom: 1px solid #bbb;
+  width: fit-content;
 }
 
 .market-overview .market-overview-tab {
-  flex: 1;
-  padding: 12px 8px;
+  padding: 9px 10px;
   border: 0;
-  border-bottom: 4px solid transparent;
+  border-bottom: 3px solid transparent;
   background: transparent;
   color: #595959;
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 18px;
   cursor: pointer;
 }
 
@@ -32,8 +35,8 @@
 }
 
 .market-overview .market-overview-panel {
-  min-height: 360px;
-  padding-top: 16px;
+  min-height: 350px;
+  padding-top: 40px;
 }
 
 .market-overview svg {
@@ -49,10 +52,12 @@
   font-size: 13px;
 }
 
-.market-overview .market-overview-readout {
-  display: block;
-  font-size: 15px;
-  font-weight: 500;
+.market-overview .market-overview-search-status:empty {
+  display: none;
+}
+
+.market-overview .market-overview-status {
+  margin: 16px 0 0;
 }
 
 .market-overview .market-overview-scrubber {
@@ -62,13 +67,44 @@
 }
 
 .market-overview .market-overview-data {
-  margin-bottom: 16px;
+  margin: 0;
 }
 
 .market-overview summary {
   color: var(--brand-link);
   cursor: pointer;
 }
+
+
+.market-overview .market-overview-data:not(:focus-within) > summary {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.market-overview .market-overview-plot {
+  position: relative;
+}
+
+.market-overview .market-overview-readout {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  border: 1px solid #ddd;
+  padding: 4px 8px;
+  background: #fff;
+  opacity: 0;
+}
+
+.market-overview .market-overview-plot:is(:hover, :focus-within) .market-overview-readout {
+  opacity: 1;
+}
+
 
 .market-overview table {
   width: 100%;
@@ -95,22 +131,30 @@
 
 .market-overview .market-overview-form {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 12px;
+  grid-template-columns: 24px minmax(0, 1fr);
+  border: 1px solid #e2e2e2;
+  padding: 0 8px;
+  align-items: center;
+  gap: 0;
 }
 
 .market-overview .market-overview-form label {
-  grid-column: 1 / -1;
-  font-size: 24px;
-  font-weight: 600;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
 }
 
 .market-overview input[type='search'] {
   min-width: 0;
   width: 100%;
   box-sizing: border-box;
-  padding: 12px;
-  border: 1px solid #888;
+  height: 40px;
+  grid-column: 2;
+  grid-row: 1;
+  padding: 8px 0;
+  border: 0;
   border-radius: 0;
   background: #fff;
 }
@@ -133,17 +177,23 @@
 }
 
 .market-overview .market-overview-search h3 {
-  margin: 24px 0 16px;
-  font-size: 18px;
+  margin: 20px 0;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e2e2e2;
+  font-size: 15px;
+  line-height: 21px;
 }
 
 .market-overview .market-overview-recent li {
   display: flex;
-  justify-content: space-between;
   gap: 16px;
-  padding: 12px 0;
-  border-bottom: 1px solid #ddd;
-  font-size: 14px;
+  min-height: 140px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border: 1px solid #e2e2e2;
+  font-size: 13px;
 }
 
 .market-overview .up {
@@ -159,12 +209,54 @@
   outline-offset: 4px;
 }
 
-@media (width >= 900px) {
+@media (width >= 768px) {
   .market-overview {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .market-overview .market-overview-chart {
+    grid-column: span 8;
   }
 
   .market-overview .market-overview-search {
-    padding-top: 60px;
+    grid-column: span 4;
   }
+}
+
+.market-overview .market-overview-form button {
+  grid-column: 1;
+  grid-row: 1;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  padding: 0;
+  color: #666;
+  font-size: 0;
+}
+
+.market-overview .market-overview-form button::before {
+  position: absolute;
+  top: 5px;
+  left: 3px;
+  width: 7px;
+  height: 7px;
+  border: 1.5px solid currentcolor;
+  border-radius: 50%;
+  content: '';
+}
+
+.market-overview .market-overview-form button::after {
+  position: absolute;
+  top: 14px;
+  left: 11px;
+  width: 6px;
+  border-top: 1.5px solid currentcolor;
+  transform: rotate(45deg);
+  content: '';
+}
+
+.market-overview[data-market-state='loaded'] .market-overview-refresh {
+  display: none;
 }

@@ -50,6 +50,15 @@ main .banner-offer .banner-offer-copy p {
   width: 100%;
 }
 
+.banner-offer sup a:any-link {
+  color: inherit;
+}
+
+
+.banner-offer a:any-link:not(.etrade-action) {
+  color: var(--action-link-color);
+}
+
 main .banner-offer.light sup a:any-link {
   color: inherit;
 }
@@ -101,6 +110,12 @@ main .banner-offer.light sup a:any-link {
 .banner-offer .banner-offer-copy p + p {
   margin-top: 16px;
 }
+
+.banner-offer.compact .banner-offer-heading {
+  font-size: 24px;
+  line-height: 28px;
+}
+
 
 .banner-offer.centered {
   border-radius: 0;
@@ -168,5 +183,43 @@ main .section.banner-offer-container:has(.banner-offer.centered) > div {
 }
 
 .banner-offer.compact {
-  background: #1c1a1e;
+  background: #121213;
+  padding: 24px;
+}
+
+/* Slim content banners keep headline and description together beside the thumbnail. */
+@media (width >= 768px) {
+  .banner-offer.compact {
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    gap: 0 32px;
+  }
+
+  .banner-offer.compact .banner-offer-media {
+    grid-area: 1 / 1 / span 2;
+  }
+
+  .banner-offer.compact .banner-offer-media img {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  main .banner-offer.compact .banner-offer-heading {
+    grid-area: 1 / 2;
+    align-self: end;
+    margin: 0 0 10px;
+    font-size: 24px;
+    line-height: 28px;
+  }
+
+  .banner-offer.compact .banner-offer-copy {
+    grid-area: 2 / 2;
+    align-self: start;
+  }
+
+  .banner-offer.compact .banner-offer-actions {
+    grid-area: 1 / 3 / span 2;
+  }
+
 }

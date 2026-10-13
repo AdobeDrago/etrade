@@ -1,5 +1,5 @@
 import decorateCardRates from '../../scripts/card-rates.js';
-import { decorateAction, standaloneAction } from '../../scripts/actions.js';
+import { decorateAction, standaloneAction, groupActions } from '../../scripts/actions.js';
 import { mergeCells } from '../../scripts/media-cards.js';
 
 let instance = 0;
@@ -47,6 +47,14 @@ function decorateCards(panel) {
     });
     if (actions.children.length) card.append(actions);
   });
+  const trailing = [...panel.children].slice([...panel.children].indexOf(grid) + 1);
+  if (trailing.some((node) => node.querySelector('a[href*="/promo/"]'))) {
+    const offer = document.createElement('div');
+    offer.className = 'tabs-accounts-offer';
+    offer.append(...trailing);
+    groupActions(offer, 'tabs-accounts-offer');
+    panel.append(offer);
+  }
 }
 
 export default async function decorate(block) {
@@ -58,7 +66,10 @@ export default async function decorate(block) {
   tablist.setAttribute('aria-label', 'Account categories');
   const mobile = document.createElement('label');
   mobile.className = 'tabs-accounts-mobile';
-  mobile.textContent = 'Account category';
+  const mobileLabel = document.createElement('span');
+  mobileLabel.className = 'tabs-accounts-mobile-label';
+  mobileLabel.textContent = 'Account category';
+  mobile.append(mobileLabel);
   const select = document.createElement('select');
   select.setAttribute('aria-label', 'Account category');
   mobile.append(select);

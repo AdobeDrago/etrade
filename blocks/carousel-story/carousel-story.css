@@ -24,47 +24,57 @@
   display: flex;
   flex: 0 0 100%;
   flex-direction: column;
+  gap: 16px;
   min-width: 0;
-  padding: 24px;
-  border: 1px solid #e4e4e4;
+  padding: 16px;
+  border: 1px solid #e2e2e2;
   border-radius: 16px;
   background: #fff;
   color: #242424;
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: -0.21px;
   scroll-snap-align: start;
 }
 
 .carousel-story .carousel-story-image {
-  margin-bottom: 24px;
+  margin: 0;
 }
 
 .carousel-story .carousel-story-image :is(picture, img) {
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 16px 16px 0 0;
+  border-radius: 10px;
 }
 
 .carousel-story .carousel-story-body {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .carousel-story .carousel-story-body p {
-  margin: 0 0 16px;
+  margin: 0;
+  color: #666;
   font-size: 16px;
   line-height: 20px;
 }
 
 .carousel-story .carousel-story-body .carousel-story-eyebrow {
-  margin-bottom: 10px;
+  margin: 0;
+  color: #242424;
   font-size: 14px;
-  line-height: 16px;
+  line-height: 18px;
+  letter-spacing: 0.14px;
+  font-family: 'Chivo Mono', monospace;
 }
 
 .carousel-story .carousel-story-heading {
   margin: 0 0 10px;
   font-size: 28px;
   line-height: 32px;
-  letter-spacing: -0.4px;
+  letter-spacing: -0.25px;
 }
 
 .carousel-story .carousel-story-nav {
@@ -82,7 +92,7 @@
   border: 1px solid #e4e4e4;
   border-radius: 16px 0 0 16px;
   background: white;
-  color: #5627d8;
+  color: #242424;
   cursor: pointer;
 }
 
@@ -107,14 +117,18 @@
 .carousel-story .carousel-story-dots {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  margin-top: 20px;
+  gap: 6.4px;
+  width: fit-content;
+  margin: 24px auto 0;
+  border-radius: 1000px;
+  padding: 12px 16px;
+  background: #fff;
 }
 
 .carousel-story .carousel-story-dots button {
   position: relative;
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   margin: 0;
   padding: 0;
   border: 0;
@@ -124,18 +138,24 @@
 
 .carousel-story .carousel-story-dots button::before {
   position: absolute;
-  inset: 7px;
+  inset: 5px;
   border-radius: 50%;
-  background: #ccc;
+  background: #242424;
   content: '';
 }
 
 .carousel-story .carousel-story-dots button[aria-current='true']::before {
-  background: #5627d8;
+  background: #451fad;
+}
+
+.carousel-story .carousel-story-dots button[aria-current='true'] {
+  outline: 1px solid #451fad;
+  border-radius: 50%;
 }
 
 .carousel-story .carousel-story-nav button:disabled {
-  color: #aaa;
+  color: #666;
+  background: #ccc;
   cursor: default;
 }
 
@@ -157,10 +177,16 @@
   outline-offset: 2px;
 }
 
-@media (width >= 900px) {
+@media (width >= 768px) {
   .carousel-story .carousel-story-card {
   flex-basis: calc((100% - 16px) / 2);
 }
+}
+
+@media (width >= 768px) {
+  .carousel-story .carousel-story-card {
+    padding: 24px;
+  }
 }
 
 body.why-etrade .section:has(.carousel-story) .default-content-wrapper {

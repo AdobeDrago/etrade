@@ -1,0 +1,357 @@
+{
+  "date": "2026-10-13",
+  "desktop": [
+    {
+      "blocks": [
+        {
+          "name": "hero-dark",
+          "status": "loaded"
+        },
+        {
+          "name": "banner-offer",
+          "status": "loaded"
+        },
+        {
+          "name": "separator",
+          "status": "loaded"
+        },
+        {
+          "name": "columns-feature",
+          "status": "loaded"
+        },
+        {
+          "name": "widget-calculator",
+          "status": "loaded"
+        },
+        {
+          "name": "separator",
+          "status": "loaded"
+        },
+        {
+          "name": "cards-pricing",
+          "status": "loaded"
+        },
+        {
+          "name": "cards-product",
+          "status": "loaded"
+        },
+        {
+          "name": "columns-feature",
+          "status": "loaded"
+        },
+        {
+          "name": "separator",
+          "status": "loaded"
+        },
+        {
+          "name": "cards-award",
+          "status": "loaded"
+        },
+        {
+          "name": "separator",
+          "status": "loaded"
+        },
+        {
+          "name": "accordion-faq",
+          "status": "loaded"
+        },
+        {
+          "name": "floating-dock",
+          "status": "loaded"
+        }
+      ],
+      "brokenImages": [],
+      "overflow": false,
+      "page": "homepage",
+      "unresolved": [],
+      "width": 1800
+    },
+    {
+      "blocks": [
+        {
+          "name": "welcome-hero",
+          "status": "loaded"
+        },
+        {
+          "name": "market-ticker",
+          "status": "loaded"
+        },
+        {
+          "name": "cards-icon",
+          "status": "loaded"
+        },
+        {
+          "name": "market-overview",
+          "status": "loaded"
+        },
+        {
+          "name": "market-top-five",
+          "status": "loaded"
+        }
+      ],
+      "brokenImages": [],
+      "overflow": false,
+      "page": "welcome-back",
+      "unresolved": [],
+      "width": 1800
+    },
+    {
+      "blocks": [
+        {
+          "name": "hero-light",
+          "status": "loaded"
+        },
+        {
+          "name": "tabs-accounts",
+          "status": "loaded"
+        },
+        {
+          "name": "accordion-faq",
+          "status": "loaded"
+        }
+      ],
+      "brokenImages": [],
+      "overflow": false,
+      "page": "our-accounts",
+      "unresolved": [],
+      "width": 1800
+    },
+    {
+      "blocks": [
+        {
+          "name": "hero-product",
+          "status": "loaded"
+        },
+        {
+          "name": "separator",
+          "status": "loaded"
+        },
+        {
+          "name": "cards-pricing",
+          "status": "loaded"
+        },
+        {
+          "name": "banner-offer",
+          "status": "loaded"
+        },
+        {
+          "name": "cards-numbered",
+          "status": "loaded"
+        },
+        {
+          "name": "columns-feature",
+          "status": "loaded"
+        },
+        {
+          "name": "columns-feature",
+          "status": "loaded"
+        },
+        {
+          "name": "cards-article",
+          "status": "loaded"
+        },
+        {
+          "name": "separator",
+          "status": "loaded"
+        },
+        {
+          "name": "accordion-faq",
+          "status": "loaded"
+        },
+        {
+          "name": "floating-dock",
+          "status": "loaded"
+        }
+      ],
+      "brokenImages": [],
+      "overflow": false,
+      "page": "brokerage",
+      "unresolved": [],
+      "width": 1800
+    },
+    {
+      "blocks": [
+        {
+          "name": "hero-dark",
+          "status": "loaded"
+        },
+        {
+          "name": "separator",
+          "status": "loaded"
+        },
+        {
+          "name": "cards-icon",
+          "status": "loaded"
+        },
+        {
+          "name": "separator",
+          "status": "loaded"
+        },
+        {
+          "name": "columns-feature",
+          "status": "loaded"
+        },
+        {
+          "name": "cards-icon",
+          "status": "loaded"
+        },
+        {
+          "name": "banner-offer",
+          "status": "loaded"
+        },
+        {
+          "name": "cards-article",
+          "status": "loaded"
+        },
+        {
+          "name": "separator",
+          "status": "loaded"
+        },
+        {
+          "name": "accordion-faq",
+          "status": "loaded"
+        },
+        {
+          "name": "floating-dock",
+          "status": "loaded"
+        }
+      ],
+      "brokenImages": [],
+      "overflow": false,
+      "page": "planning",
+      "unresolved": [],
+      "width": 1800
+    },
+    {
+      "blocks": [
+        {
+          "name": "hero-dark",
+          "status": "loaded"
+        },
+        {
+          "name": "separator",
+          "status": "loaded"
+        },
+        {
+          "name": "carousel-story",
+          "status": "loaded"
+        },
+        {
+          "name": "cards-icon",
+          "status": "loaded"
+        },
+        {
+          "name": "separator",
+          "status": "loaded"
+        },
+        {
+          "name": "cards-article",
+          "status": "loaded"
+        },
+        {
+          "name": "floating-dock",
+          "status": "loaded"
+        }
+      ],
+      "brokenImages": [],
+      "overflow": false,
+      "page": "why-etrade",
+      "unresolved": [],
+      "width": 1800
+    }
+  ],
+  "mobile": [
+    {
+      "brokenImages": [],
+      "loaded": true,
+      "overflow": false,
+      "page": "homepage",
+      "width": 390
+    },
+    {
+      "brokenImages": [],
+      "loaded": true,
+      "overflow": false,
+      "page": "welcome-back",
+      "width": 390
+    },
+    {
+      "brokenImages": [],
+      "loaded": true,
+      "overflow": false,
+      "page": "our-accounts",
+      "width": 390
+    },
+    {
+      "brokenImages": [],
+      "loaded": true,
+      "overflow": false,
+      "page": "brokerage",
+      "width": 390
+    },
+    {
+      "brokenImages": [],
+      "loaded": true,
+      "overflow": false,
+      "page": "planning",
+      "width": 390
+    },
+    {
+      "brokenImages": [],
+      "loaded": true,
+      "overflow": false,
+      "page": "why-etrade",
+      "width": 390
+    }
+  ],
+  "tablet": [
+    {
+      "brokenImages": [],
+      "loaded": true,
+      "overflow": false,
+      "page": "homepage",
+      "width": 768
+    },
+    {
+      "brokenImages": [],
+      "loaded": true,
+      "overflow": false,
+      "page": "welcome-back",
+      "width": 768
+    },
+    {
+      "brokenImages": [],
+      "loaded": true,
+      "overflow": false,
+      "page": "our-accounts",
+      "width": 768
+    },
+    {
+      "brokenImages": [],
+      "loaded": true,
+      "overflow": false,
+      "page": "brokerage",
+      "width": 768
+    },
+    {
+      "brokenImages": [],
+      "loaded": true,
+      "overflow": false,
+      "page": "planning",
+      "width": 768
+    },
+    {
+      "brokenImages": [],
+      "loaded": true,
+      "overflow": false,
+      "page": "why-etrade",
+      "width": 768
+    }
+  ],
+  "tests": {
+    "passed": 75,
+    "failed": 0
+  },
+  "lint": "passed",
+  "scope": "Prepared local content with current local block code; no DA save or publication."
+}

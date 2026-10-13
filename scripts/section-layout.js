@@ -3,11 +3,33 @@ import { buildBlock } from './aem.js';
 /** Keep decorative transitions separate from EDS content section grouping. */
 export default function decorateSectionBoundaries(main) {
   const first = main.querySelector(':scope > .section');
-  const transitions = first?.querySelector('.hero-dark.split') ? [first] : [];
+  const transitions = first?.querySelector('.hero-dark.split, .hero-product')
+    ? [{ previous: first, firstColor: 'dark', bend: '35%' }] : [];
   if (document.body.classList.contains('why-etrade')) {
-    transitions.push(...main.querySelectorAll(':scope > .section.dark:has(.cards-icon)'));
+    main.querySelectorAll(':scope > .section.dark:has(.cards-icon)').forEach((previous) => {
+      transitions.push({ previous, firstColor: '#1c1a1e', bend: '50%' });
+    });
   }
-  transitions.forEach((previous) => {
+  const outlines = new Map([
+    ['planning', '.cards-icon.planning, .cards-article'],
+    ['brokerage', '.cards-article'],
+    ['homepage', '.widget-calculator, .cards-award'],
+  ]).get([...document.body.classList].find((name) => ['planning', 'brokerage', 'homepage'].includes(name)));
+  if (outlines) {
+    main.querySelectorAll(':scope > .section').forEach((previous) => {
+      if (previous.querySelector(outlines)) {
+        transitions.push({
+          previous, firstColor: 'light', bend: document.body.classList.contains('planning') ? '65%' : '50%',
+        });
+      }
+    });
+  }
+  if (document.body.classList.contains('homepage')) {
+    main.querySelectorAll(':scope > .section:has(.columns-feature.band)').forEach((previous) => {
+      transitions.push({ previous, firstColor: '#1c1a1e', bend: '75%' });
+    });
+  }
+  transitions.forEach(({ previous, firstColor, bend }) => {
     const next = previous.nextElementSibling;
     if (!document.body.classList.contains('etrade-page') || !next
       || next.querySelector('.separator')) return;
@@ -15,8 +37,8 @@ export default function decorateSectionBoundaries(main) {
     section.className = 'section separator-container';
     const wrapper = document.createElement('div');
     wrapper.append(buildBlock('separator', [
-      ['First section color', 'dark'], ['Second section color', 'light'],
-      ['Line break location', '35%'], ['Height', '81px'], ['Mobile height', '45px'],
+      ['First section color', firstColor], ['Second section color', 'light'],
+      ['Line break location', bend], ['Height', '81px'], ['Mobile height', '45px'],
     ]));
     section.append(wrapper);
     previous.after(section);

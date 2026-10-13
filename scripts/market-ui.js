@@ -76,34 +76,75 @@ export function lineChart(points, {
   const span = high - low || 1;
   const first = points[0].time;
   const duration = points[points.length - 1].time - first || 1;
-  const width = 640;
-  const height = compact ? 80 : 240;
-  const inset = compact ? 5 : 24;
-  const coordinates = points.map((point) => [
-    inset + ((point.time - first) / duration) * (width - 2 * inset),
-    height - inset - ((point.value - low) / span) * (height - 2 * inset),
-  ]);
+  const height = compact ? 60 : 300;
+  let coordinates = [];
+  let update;
   const ns = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(ns, 'svg');
-  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
   svg.setAttribute('role', 'img');
   svg.setAttribute('aria-label', `${label}: ${points.length} observations, low ${numberText(low)}, high ${numberText(high)}. ${timeText(first)} to ${timeText(points[points.length - 1].time)}.`);
-  if (!compact) {
-    [inset, height / 2, height - inset].forEach((y) => {
-      const grid = document.createElementNS(ns, 'path');
-      grid.setAttribute('d', `M${inset},${y} H${width - inset}`);
-      grid.setAttribute('stroke', '#ddd');
-      svg.append(grid);
-    });
-  }
+  const axes = document.createElementNS(ns, 'g');
   const path = document.createElementNS(ns, 'path');
-  path.setAttribute('d', coordinates.map(([x, y], index) => `${index ? 'L' : 'M'}${x.toFixed(2)},${y.toFixed(2)}`).join(' '));
   path.setAttribute('fill', 'none');
   path.setAttribute('stroke', color);
-  path.setAttribute('stroke-width', compact ? '2' : '3');
+  path.setAttribute('stroke-width', '1.5');
   path.setAttribute('vector-effect', 'non-scaling-stroke');
-  svg.append(path);
+  svg.append(axes, path);
+  const draw = () => {
+    const width = wrapper.getBoundingClientRect?.().width || 640;
+    const left = compact ? 0 : 8;
+    const right = width - (compact ? 0 : 60);
+    const top = compact ? 2 : 12;
+    const bottom = height - (compact ? 2 : 32);
+    const magnitude = 10 ** Math.floor(Math.log10(span / 4));
+    const step = Math.ceil((span / 4) / magnitude) * magnitude;
+    const floor = compact ? low : Math.floor(low / step) * step;
+    const ceiling = compact ? high : Math.ceil(high / step) * step;
+    const clock = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York', hour: 'numeric', minute: 'numeric', hourCycle: 'h23',
+    }).formatToParts(first);
+    const minutes = Number(clock.find((p) => p.type === 'hour').value) * 60
+      + Number(clock.find((p) => p.type === 'minute').value);
+    const midnight = first - minutes * 60000;
+    const start = compact ? first : midnight + 570 * 60000;
+    const end = compact ? first + duration : midnight + 960 * 60000;
+    coordinates = points.map((point) => [
+      left + ((point.time - start) / (end - start)) * (right - left),
+      bottom - ((point.value - floor) / (ceiling - floor || 1)) * (bottom - top),
+    ]);
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    axes.replaceChildren();
+    const text = (value, x, y, anchor = 'start') => {
+      const node = document.createElementNS(ns, 'text');
+      node.textContent = value;
+      node.setAttribute('x', x);
+      node.setAttribute('y', y);
+      node.setAttribute('text-anchor', anchor);
+      node.setAttribute('fill', '#999');
+      node.setAttribute('font-family', 'Arial, sans-serif');
+      node.setAttribute('font-size', '12');
+      axes.append(node);
+    };
+    if (!compact) {
+      for (let value = floor; value <= ceiling + step / 2; value += step) {
+        const y = bottom - ((value - floor) / (ceiling - floor || 1)) * (bottom - top);
+        const grid = document.createElementNS(ns, 'path');
+        grid.setAttribute('d', `M${left},${y} H${right}`);
+        grid.setAttribute('stroke', '#e6e6e6');
+        axes.append(grid);
+        text(new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(value), right + 6, y + 4);
+      }
+      for (let hour = 10; hour <= 16; hour += 1) {
+        const time = midnight + hour * 3600000;
+        const x = left + ((time - start) / (end - start)) * (right - left);
+        text(`${hour > 12 ? hour - 12 : hour} ${hour < 12 ? 'AM' : 'PM'}`, x, height - 5, 'middle');
+      }
+    }
+    path.setAttribute('d', coordinates.map(([x, y], index) => `${index ? 'L' : 'M'}${x.toFixed(2)},${y.toFixed(2)}`).join(' '));
+    update?.();
+  };
   wrapper.append(svg);
+  draw();
   if (!compact) {
     const range = element('p', `${prefix}-range`, `Low ${numberText(low)} · High ${numberText(high)}`);
     const output = element('output', `${prefix}-readout`);
@@ -117,7 +158,7 @@ export function lineChart(points, {
     cursor.setAttribute('r', '5');
     cursor.setAttribute('fill', color);
     svg.append(cursor);
-    const update = () => {
+    update = () => {
       const index = Number(slider.value);
       const point = points[index];
       cursor.setAttribute('cx', coordinates[index][0]);
@@ -127,7 +168,7 @@ export function lineChart(points, {
     };
     slider.addEventListener('input', update);
     update();
-    wrapper.append(range, output, slider);
+    wrapper.append(output);
     const details = element('details', `${prefix}-data`);
     details.append(element('summary', '', 'View chart data'));
     const table = element('table');
@@ -147,9 +188,10 @@ export function lineChart(points, {
       body.append(tr);
     });
     table.append(caption, head, body);
-    details.append(table);
+    details.append(range, slider, table);
     wrapper.append(details);
   }
+  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(draw).observe(wrapper);
   return wrapper;
 }
 

@@ -3,20 +3,25 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 16px;
+  justify-content: center;
 }
 
 .market-top-five label {
-  font-size: 28px;
-  font-weight: 600;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 36px;
 }
 
 .market-top-five select {
   max-width: 100%;
   min-width: 0;
-  padding: 10px 36px 10px 12px;
-  border: 1px solid #888;
+  padding: 4px 36px 4px 12px;
+  border: 0;
+  border-bottom: 1px solid #5627d8;
   background: #fff;
   color: #242424;
+  font-size: 32px;
+  line-height: 36px;
 }
 
 .market-top-five button {
@@ -36,17 +41,16 @@
 .market-top-five .market-top-five-cards {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 16px;
-  margin: 24px 0;
+  gap: 20px;
+  margin: 40px 0;
   padding: 0;
   list-style: none;
 }
 
 .market-top-five .market-top-five-card {
   min-width: 0;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-top: 4px solid #5627d8;
+  padding: 0;
+  border: 0;
 }
 
 .market-top-five .market-top-five-card-heading {
@@ -57,42 +61,50 @@
 }
 
 .market-top-five .market-top-five-symbol {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 36px;
 }
 
 .market-top-five .market-top-five-price {
-  font-size: 16px;
+  font-size: 13px;
+  line-height: 18px;
 }
 
 .market-top-five .market-top-five-name {
-  min-height: 2.8em;
-  margin: 8px 0 12px;
-  font-size: 13px;
-  color: #595959;
+  display: none;
 }
 
 .market-top-five .market-top-five-change {
-  font-size: 16px;
-  font-weight: 500;
+  display: block;
+  margin: 20px 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 28px;
+}
+
+.market-top-five .market-top-five-change-amount {
+  font-size: 22px;
 }
 
 .market-top-five .up {
-  color: #157347;
+  color: #008a00;
 }
 
 .market-top-five .down {
-  color: #b02a50;
+  color: #c00;
 }
 
 .market-top-five .market-top-five-asof {
-  font-size: 11px;
-  color: #595959;
+  margin: 0;
+  font-size: 13px;
+  color: #242424;
 }
 
 .market-top-five svg {
   display: block;
   width: 100%;
+  height: 60px;
 }
 
 .market-top-five .market-top-five-disclosures {
@@ -113,14 +125,25 @@
   outline-offset: 4px;
 }
 
-@media (width >= 600px) {
+@media (width >= 768px) {
   .market-top-five .market-top-five-cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1.25%;
+  }
+
+  .market-top-five .market-top-five-card:not(:last-child) {
+    padding-right: 20px;
+    border-right: 1px solid #ddd;
   }
 }
 
-@media (width >= 1100px) {
-  .market-top-five .market-top-five-cards {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
+.market-top-five[data-market-state='loaded'] .market-top-five-status,
+.market-top-five[data-market-state='loaded'] .market-top-five-controls > button {
+  display: none;
+}
+
+.market-top-five {
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: -0.21px;
 }

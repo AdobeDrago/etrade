@@ -12,16 +12,22 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  gap: 16px;
   min-width: 0;
-  padding: 24px;
-  border: 1px solid #e4e4e4;
+  padding: 16px;
+  border: 1px solid #e2e2e2;
   border-radius: 16px;
   background: #fff;
   color: #242424;
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: -0.21px;
 }
 
 .cards-article .cards-article-body {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   min-width: 0;
 }
 
@@ -30,11 +36,12 @@
   color: inherit;
   font-size: 24px;
   line-height: 28px;
-  letter-spacing: -0.4px;
+  letter-spacing: -0.25px;
 }
 
 .cards-article .cards-article-body p {
-  margin: 0 0 16px;
+  margin: 0;
+  color: #666;
   font-size: 16px;
   line-height: 20px;
 }
@@ -45,11 +52,13 @@
 }
 
 .cards-article .cards-article-actions {
-  margin-top: 8px;
+  margin-top: auto;
 }
 
 .cards-article .cards-article-image {
-  margin-bottom: 20px;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 10px;
 }
 
 .cards-article .cards-article-image :is(picture, img) {
@@ -63,13 +72,7 @@
   object-fit: cover;
 }
 
-@media (width >= 600px) {
-  .cards-article > ul {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (width >= 900px) {
+@media (width >= 768px) {
   .cards-article > ul {
     grid-template-columns: repeat(var(--card-count, 3), minmax(0, 1fr));
   }
@@ -80,18 +83,50 @@
   }
 }
 
+@media (width >= 768px) {
+  .cards-article .cards-article-card {
+    padding: 24px;
+  }
+}
+
 .cards-article.promo .cards-article-card {
   padding: 0;
   overflow: hidden;
+  min-height: 382px;
+  border: 0;
 }
 
 .cards-article.promo .cards-article-image {
   margin: 0;
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+}
+
+.cards-article.promo .cards-article-image :is(picture, img) {
+  height: 100%;
+}
+
+.cards-article.promo .cards-article-content {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fff;
 }
 
 .cards-article.promo .cards-article-body {
-  margin: 12px 12px 0;
-  padding: 16px 16px 0;
+  margin: 0;
+  padding: 0;
+}
+
+.cards-article.promo .cards-article-eyebrow {
+  color: #6e3df5;
 }
 
 .cards-article.promo .cards-article-heading {
@@ -100,10 +135,23 @@
 }
 
 .cards-article.promo .cards-article-actions {
-  padding: 0 28px 28px;
+  padding: 0;
 }
 
-@media (width >= 900px) {
+.cards-article.four-up .cards-article-heading {
+  font-size: 18px;
+  line-height: 22px;
+}
+
+body.brokerage .section:has(.cards-article) .default-content-wrapper > h2 {
+  margin-bottom: 30px;
+}
+
+body.brokerage .section:has(.cards-article) .default-content-wrapper > p:first-child {
+  margin-bottom: 16px;
+}
+
+@media (width >= 768px) {
   .cards-article.four-up > ul {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }

@@ -291,6 +291,36 @@
   outline-offset: 4px;
 }
 
+@media (width < 768px) {
+  .welcome-hero {
+    grid-template-rows: auto auto;
+    gap: 0;
+    padding: 0;
+    background: #fff;
+  }
+
+  .welcome-hero .welcome-hero-login {
+    grid-row: 1;
+    max-width: none;
+  }
+
+  .welcome-hero .welcome-hero-campaign {
+    grid-row: 2;
+    padding: 60px 20px;
+  }
+
+  .welcome-hero > .welcome-hero-image,
+  .welcome-hero.has-image::after {
+    grid-row: 2;
+    grid-column: 1;
+  }
+
+  .welcome-hero .welcome-hero-copy p {
+    font-size: 22px;
+    line-height: 28px;
+  }
+}
+
 @media (width >= 768px) {
   .welcome-hero {
     grid-template-columns: minmax(0, 1fr) minmax(350px, 400px);

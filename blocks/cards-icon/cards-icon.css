@@ -12,16 +12,22 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  gap: 16px;
   min-width: 0;
   padding: 16px;
-  border: 1px solid #e4e4e4;
+  border: 1px solid #e2e2e2;
   border-radius: 16px;
   background: #fff;
   color: #242424;
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: -0.21px;
 }
 
 .cards-icon .cards-icon-body {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   min-width: 0;
 }
 
@@ -30,11 +36,12 @@
   color: inherit;
   font-size: 24px;
   line-height: 28px;
-  letter-spacing: -0.4px;
+  letter-spacing: -0.25px;
 }
 
 .cards-icon .cards-icon-body p {
-  margin: 0 0 16px;
+  margin: 0;
+  color: #666;
   font-size: 16px;
   line-height: 20px;
 }
@@ -50,11 +57,11 @@ main .section.dark .cards-icon .cards-icon-card :is(h1, h2, h3, h4, h5, h6, p) {
 }
 
 .cards-icon .cards-icon-actions {
-  margin-top: 8px;
+  margin-top: auto;
 }
 
 .cards-icon .cards-icon-image {
-  margin-bottom: 20px;
+  margin: 0;
 }
 
 .cards-icon .cards-icon-image :is(picture, img) {
@@ -63,13 +70,7 @@ main .section.dark .cards-icon .cards-icon-card :is(h1, h2, h3, h4, h5, h6, p) {
   height: auto;
 }
 
-@media (width >= 600px) {
-  .cards-icon > ul {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (width >= 900px) {
+@media (width >= 768px) {
   .cards-icon > ul {
     grid-template-columns: repeat(var(--card-count, 3), minmax(0, 1fr));
   }
@@ -93,7 +94,7 @@ main .section.dark .cards-icon .cards-icon-card :is(h1, h2, h3, h4, h5, h6, p) {
 }
 
 .cards-icon .cards-icon-icon {
-  margin-bottom: 17px;
+  margin: 0;
   height: 72px;
 }
 
@@ -166,24 +167,29 @@ main .section.dark .cards-icon .cards-icon-card :is(h1, h2, h3, h4, h5, h6, p) {
   color: inherit;
 }
 
+.cards-icon .cards-icon-offer .cards-icon-body p {
+  color: #c5c5c5;
+}
+
+
 .cards-icon .cards-icon-offer .etrade-action-secondary {
   border: 1px solid #ab80ff;
   padding: 10px 15px;
 }
 
 .cards-icon.tools .cards-icon-heading {
-  font-size: 24px;
+  font-size: 20px;
   line-height: 28px;
 }
 
 .cards-icon.tools .cards-icon-body p {
-  font-size: 15px;
-  line-height: 21px;
+  font-size: 16px;
+  line-height: 20px;
 }
 
-@media (width >= 900px) {
+@media (width >= 768px) {
   .cards-icon.tools .cards-icon-heading {
-    font-size: 28px;
+    font-size: 20px;
     line-height: 32px;
   }
 
@@ -198,11 +204,17 @@ main .section.dark .cards-icon .cards-icon-card :is(h1, h2, h3, h4, h5, h6, p) {
 
 .cards-icon.welcome-back .cards-icon-card {
   border-top: 4px solid #5627d8;
+  border-radius: 0;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 16px 24px;
 }
 
 .cards-icon.welcome-back .cards-icon-icon {
   flex: 0 0 48px;
   height: 48px;
+  grid-row: span 2;
+  place-self: center center;
 }
 
 .cards-icon.welcome-back .cards-icon-icon img {
@@ -212,30 +224,53 @@ main .section.dark .cards-icon .cards-icon-card :is(h1, h2, h3, h4, h5, h6, p) {
 
 .cards-icon.welcome-back .cards-icon-heading {
   font-size: 22px;
+  line-height: 28px;
 }
 
 .cards-icon.welcome-back .cards-icon-body p {
   font-size: 14px;
+  line-height: 18px;
+  color: #242424;
 }
 
-@media (width >= 900px) {
+.cards-icon.welcome-back .cards-icon-body {
+  gap: 0;
+}
+
+.cards-icon.welcome-back .cards-icon-actions {
+  grid-column: 2;
+}
+
+.cards-icon.welcome-back .cards-icon-actions .etrade-action {
+  border: 1px solid #5627d8;
+  border-radius: 0;
+  padding: 5px 10px;
+  font-size: 13px;
+  line-height: 18px;
+  min-height: 28px;
+}
+
+.cards-icon.welcome-back .etrade-action-icon {
+  display: none;
+}
+
+@media (width >= 768px) {
+  .cards-icon.welcome-back {
+    width: calc(100% + 20px);
+    margin-left: -10px;
+  }
+
   .cards-icon.welcome-back > ul {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 60px;
 }
 
-  .cards-icon.welcome-back .cards-icon-card {
-  flex-flow: row wrap;
-  gap: 24px;
-}
-
-  .cards-icon.welcome-back .cards-icon-actions {
-  width: 100%;
-}
 }
 
 body.planning .section:has(.cards-icon.planning) .default-content-wrapper > h2 {
   font-size: 32px;
   line-height: 36px;
+  text-align: center;
 }
 
 body.planning .section:where(:has(.cards-icon.tools)) .default-content-wrapper {
@@ -264,5 +299,21 @@ body.why-etrade .section:has(.cards-icon) .default-content-wrapper > p {
 
   body.why-etrade .section:has(.cards-icon) .default-content-wrapper {
     max-width: 1000px;
+  }
+}
+
+body.planning .section:has(.cards-icon.planning) > .default-content-wrapper:last-child {
+  margin-top: 20px;
+}
+
+body.planning .section:has(.cards-icon.planning) .page-intro-actions {
+  justify-content: center;
+}
+
+@media (width >= 768px) {
+  body.planning .section:has(.cards-icon.planning) .page-intro-actions .etrade-action {
+    min-height: 43px;
+    padding: 12px 15px;
+    line-height: 17px;
   }
 }

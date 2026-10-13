@@ -22,15 +22,6 @@ body.homepage .pricing-cards:where(:has(.cards-pricing)) .default-content-wrappe
   overflow-wrap: anywhere;
 }
 
-body.homepage main > .section.cards-pricing-container:has(.cards-pricing) {
-  padding-top: 0;
-  padding-bottom: 20px;
-}
-
-body.brokerage .section:has(.cards-pricing) .default-content-wrapper > h2 {
-  max-width: 680px;
-}
-
 .cards-pricing[hidden] {
   display: none;
 }
@@ -65,12 +56,12 @@ body.brokerage .section:has(.cards-pricing) .default-content-wrapper > h2 {
   font-size: 24px;
   font-weight: 600;
   line-height: 28px;
-  letter-spacing: -0.4px;
+  letter-spacing: -0.25px;
 }
 
 .cards-pricing .cards-pricing-body p {
-  margin: 0 0 10px;
-  color: inherit;
+  margin: 0 0 9.1px;
+  color: #666;
 }
 
 .cards-pricing .cards-pricing-body .cards-pricing-value {
@@ -79,7 +70,8 @@ body.brokerage .section:has(.cards-pricing) .default-content-wrapper > h2 {
   font-size: 48px;
   font-weight: 600;
   line-height: 52px;
-  letter-spacing: -1px;
+  letter-spacing: -0.8px;
+  color: #242424;
 }
 
 .cards-pricing .cards-pricing-has-value h3 {
@@ -139,6 +131,49 @@ body.brokerage .section:has(.cards-pricing) .default-content-wrapper > h2 {
     line-height: 32px;
   }
 }
+
+main .section:has(.cards-pricing) > .default-content-wrapper.pricing-intro {
+  margin-bottom: 40px;
+  text-align: left;
+}
+
+main .section:has(.cards-pricing) .pricing-intro > h2 {
+  margin: 0 0 30px;
+  font-size: 32px;
+  line-height: 36px;
+  letter-spacing: -0.4px;
+}
+
+main .section:has(.cards-pricing) .pricing-intro-copy p {
+  margin: 0 0 30px;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+@media (width >= 768px) {
+  main .section:has(.cards-pricing) > .default-content-wrapper.pricing-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 20px;
+    align-items: center;
+  }
+
+  main .section:has(.cards-pricing) .pricing-intro > h2 {
+    margin: 0;
+    font-size: 44px;
+    line-height: 48px;
+  }
+}
+
+body.homepage main > .section.cards-pricing-container:has(.cards-pricing) {
+  padding-top: 0;
+  padding-bottom: 20px;
+}
+
+body.brokerage .section:has(.cards-pricing) .default-content-wrapper > h2 {
+  max-width: 680px;
+}
+
 
 /* The authored Band variant owns its heading and shared pricing action. */
 main .section:has(.cards-pricing.band) {

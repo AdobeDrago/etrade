@@ -1,3 +1,5 @@
+import { groupActions } from './actions.js';
+
 const pages = new Map([
   ['/home', 'homepage'],
   ['/home/welcome-back', 'welcome-back'],
@@ -27,5 +29,30 @@ export function localizePageLinks(root) {
     if (url.hostname === 'us.etrade.com' && pages.has(path)) {
       link.href = `${path}${url.search}${url.hash}`;
     }
+  });
+}
+
+/** The live pricing introduction shares a row with its copy and authored actions. */
+export function decoratePricingIntroductions(main) {
+  main.querySelectorAll('.section:has(.cards-pricing) > .default-content-wrapper').forEach((intro) => {
+    const heading = intro.querySelector(':scope > h2');
+    if (!heading || intro.classList.contains('pricing-intro')) return;
+    const copy = document.createElement('div');
+    copy.className = 'pricing-intro-copy';
+    [...intro.childNodes].filter((node) => node !== heading).forEach((node) => copy.append(node));
+    groupActions(copy, 'pricing-intro');
+    intro.classList.add('pricing-intro');
+    intro.append(copy);
+  });
+}
+
+/** Normalize shared section actions after block decorators have claimed their own content. */
+export function decoratePageActions(main) {
+  main.querySelectorAll('.default-content-wrapper').forEach((content) => {
+    const section = content.closest('.section');
+    let kind = 'primary';
+    if (section?.querySelector('.cards-award')) kind = 'secondary';
+    if (section?.querySelector('.cards-icon.planning')) kind = 'outline';
+    groupActions(content, 'page-intro', kind);
   });
 }

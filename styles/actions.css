@@ -21,6 +21,7 @@
   font-weight: 500;
   line-height: 18px;
   text-decoration: none;
+  letter-spacing: normal;
   overflow-wrap: anywhere;
   text-align: center;
 }
@@ -67,11 +68,21 @@
   fill: currentcolor;
 }
 
+.etrade-actions .etrade-action-lock {
+  width: 14px;
+  height: 14px;
+  fill: currentcolor;
+}
+
 @media (width >= 768px) {
   .etrade-actions .etrade-action:any-link {
     min-height: 33px;
     padding: 8px 15px;
     font-size: 15px;
     line-height: 15px;
+  }
+
+  .etrade-actions .etrade-action.etrade-action-secondary:any-link {
+    padding: 6px 0;
   }
 }

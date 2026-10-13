@@ -5,7 +5,7 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { parseHTML } from 'linkedom';
 
-async function render(name, rows, variants = '', hash = '') {
+async function render(name, rows, variants = '', hash = '', visibleCards = 1) {
   const { document, window } = parseHTML(`<html><body><main><div class="section"><div class="${name} ${variants}">${rows}</div></div></main></body></html>`);
   Object.defineProperty(window.HTMLSelectElement.prototype, 'value', {
     configurable: true,
@@ -28,7 +28,7 @@ async function render(name, rows, variants = '', hash = '') {
 
       observe(node) {
         Object.defineProperties(node, {
-          clientWidth: { value: 200 },
+          clientWidth: { value: 200 * visibleCards },
           scrollWidth: { get: () => node.children.length * 200 },
         });
         [...node.children].forEach((card, i) => {
@@ -89,6 +89,25 @@ test('icons support named glyphs, icons inside paragraphs, and omitted media', a
   assert.equal(block.querySelector('.cards-icon-glyph-book').getAttribute('aria-hidden'), 'true');
   assert.equal(block.querySelector('.cards-icon-icon svg').tagName, 'SVG');
   assert.equal(block.querySelectorAll('.cards-icon-actions').length, 3);
+});
+
+test('columns decorate imported bare formatted links without changing inline links', async () => {
+  const { block } = await render('columns', row('<h2>Pricing</h2><p>Read <a href="/terms">terms</a>.</p>', '<strong><a href="/open?track=1">Open an account</a></strong><br><a href="/pricing?track=2">View pricing</a>'));
+  assert.equal(block.querySelector('.etrade-action-primary').getAttribute('href'), '/open?track=1');
+  assert.equal(block.querySelector('.etrade-action-secondary').getAttribute('href'), '/pricing?track=2');
+  assert.equal(block.querySelectorAll('.etrade-action').length, 2);
+  assert.equal(block.querySelector('p a').getAttribute('href'), '/terms');
+  const empty = await render('columns', '');
+  assert.equal(empty.block.classList.contains('columns-0-cols'), true);
+});
+
+test('last story selection stays selected when two desktop cards share the final scroll position', async () => {
+  const { block } = await render('carousel-story', Array(3).fill(row(image, copy)).join(''), '', '', 2);
+  const dots = [...block.querySelectorAll('.carousel-story-dots button')];
+  dots[2].click();
+  assert.equal(dots[2].getAttribute('aria-current'), 'true');
+  assert.equal(block.querySelector('.carousel-story-next').disabled, true);
+  assert.equal(block.querySelector('.carousel-story-status').textContent, 'Stories 2–3 of 3');
 });
 
 test('compact investment cards preserve native links with the text action treatment', async () => {
@@ -325,7 +344,7 @@ test('current six-page pack has complete account panels, FAQs, and bound legal r
   };
   pages.forEach((page) => {
     const blocks = page.sections.flatMap((section) => section.blocks);
-    const faq = blocks.find((item) => item.name === 'Accordion FAQ');
+    const faq = blocks.find((item) => item.name.startsWith('Accordion FAQ'));
     if (counts[page.id]) assert.equal(faq.rows.length, counts[page.id], page.id);
     const { document } = parseHTML(`<div>${page.sections.map((section) => section.html + section.blocks.flatMap((item) => item.rows.flat()).join('')).join('')}</div>`);
     const ids = new Set(page.legal.disclosures.map((item) => item.id));

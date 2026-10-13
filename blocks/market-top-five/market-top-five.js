@@ -4,7 +4,7 @@ import {
 } from '../../scripts/market-ui.js';
 
 let sequence = 0;
-const labels = ['Top Dividend Yielding Stocks', 'Most Searched Mutual Funds', 'Top Performing ETFs'];
+const labels = ['dividend yielding stocks', 'searched mutual funds', 'performing ETFs'];
 
 export default function decorate(block) {
   const rows = authoredRows(block);
@@ -58,7 +58,11 @@ export default function decorate(block) {
         top.append(quoteLink(quote.symbol, 'market-top-five'), element('span', 'market-top-five-price', numberText(quote.price, false, 3)));
         card.append(top);
         if (quote.name) card.append(element('p', 'market-top-five-name', quote.name));
-        card.append(changeNode(quote, 'market-top-five'));
+        const change = changeNode(quote, 'market-top-five');
+        const amount = element('span', 'market-top-five-change-amount', numberText(quote.change));
+        const percent = element('span', 'market-top-five-change-percent', ` (${numberText(quote.percent, true)}%)`);
+        change.replaceChildren(amount, percent);
+        card.append(change);
         card.append(element('p', 'market-top-five-asof', `As of ${timeText(quote.asOf)}`));
         let color = '#777';
         if (quote.change < 0) color = '#bf315d';

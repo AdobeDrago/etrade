@@ -41,4 +41,6 @@ Run `npm run demo:rates` with the AEM proxy on port 3000, then open http://127.0
 
 The [Our Accounts rate and content audit](docs/our-accounts-rate-setup.html) documents named rate settings, corrected disclosure references, and the remaining live-service connection work.
 
+The October 13 [development and authoring handoff](docs/six-page-development-handoff.html) records the visual block changes, exact page variants and content order, remaining service dependencies, and desktop/mobile screenshots. Add `&view=site` to a selected page's local review URL to include the shared header/footer and hide authoring controls. The prepared tables include the live floating docks for Home, Brokerage, Planning and Why E*TRADE.
+
 Captured local reviews: [six-page authoring](docs/current-pages-demo.png), [Welcome Back hero](docs/welcome-back-corrected-demo.png), and [Welcome Back sample market charts](docs/welcome-back-json-charts.png). These screenshots record earlier review states; use the rendered authoring pack for the current content and the branch preview for the shared layout.

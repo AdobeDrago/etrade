@@ -6,6 +6,7 @@
   background: #121213;
   color: #fff;
   text-align: center;
+  letter-spacing: -0.21px;
 }
 
 .hero-product > div {
@@ -31,7 +32,7 @@
   color: inherit;
   font-size: 36px;
   line-height: 39.6px;
-  letter-spacing: -1px;
+  letter-spacing: -0.4px;
 }
 
 .hero-product .hero-product-actions {
@@ -48,9 +49,11 @@
 
 .hero-product .hero-product-media img {
   aspect-ratio: 680 / 376;
-  object-fit: contain;
-  background: #092860;
-  object-position: center 35%;
+  object-fit: cover;
+}
+
+.hero-product .hero-product-offer a:any-link:not(.etrade-action) {
+  color: #ab80ff;
 }
 
 .hero-product .hero-product-offer {
@@ -81,7 +84,7 @@ body.brokerage main > .section.hero-product-container {
   color: #fff;
 }
 
-@media (width >= 900px) {
+@media (width >= 768px) {
   .hero-product {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     gap: 20px;

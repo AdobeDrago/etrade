@@ -70,6 +70,23 @@ test('empty imported image placeholders leave link copy and valid authored media
   assert.equal(document.querySelector('p').textContent, 'See all FAQs');
 });
 
+test('pricing introductions preserve rich copy and group only standalone actions once', async () => {
+  const { document, layout } = await harness('/home', `
+    <div class="section"><div class="default-content-wrapper">
+      <h2>Pricing</h2><p>Rates include <a href="/fees">other fees</a>.</p>
+      <p><a href="/pricing">See all pricing</a></p>
+    </div><div><div class="cards-pricing"></div></div></div>`);
+  const main = document.querySelector('main');
+  layout.decoratePricingIntroductions(main);
+  layout.decoratePricingIntroductions(main);
+  const intro = main.querySelector('.pricing-intro');
+  assert.equal(intro.firstElementChild.tagName, 'H2');
+  assert.equal(intro.querySelectorAll('.pricing-intro-copy').length, 1);
+  assert.equal(intro.querySelector('.pricing-intro-copy > p a').getAttribute('href'), '/fees');
+  assert.equal(intro.querySelectorAll('.etrade-actions a').length, 1);
+  assert.equal(intro.querySelector('.etrade-actions a').getAttribute('href'), '/pricing');
+});
+
 test('missing hero and audience transitions render once, while authored separators retain their settings', async () => {
   const { document, layout, sections } = await harness('/why-etrade', `
     <div class="section"><div><div class="hero-dark split"></div></div></div>

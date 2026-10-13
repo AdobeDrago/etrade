@@ -33,6 +33,16 @@
   text-rendering: optimizelegibility;
 }
 
+.accordion-faq .accordion-faq-introduction {
+  margin-bottom: 9px;
+  text-align: center;
+}
+
+.accordion-faq .accordion-faq-introduction p {
+  margin: 0 0 9px;
+}
+
+
 .accordion-faq .accordion-faq-expand-all {
   display: block;
   margin: 0 15px 0 auto;
@@ -414,7 +424,8 @@ body.our-accounts .accordion-faq.pricing {
 }
 
 body.our-accounts .accordion-faq.pricing .accordion-faq-heading {
-  text-align: left;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 @media (width >= 768px) {

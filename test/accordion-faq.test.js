@@ -78,6 +78,18 @@ test('omitted and empty cells are skipped while multiple native tables survive i
   assert.equal(block.querySelectorAll('.accordion-faq-table table').length, 2);
 });
 
+test('FAQ preserves heading and introductory copy before the table and moves a standalone action below answers', async () => {
+  const { block, document } = await render(row('Question', '<p>Answer.</p>'), '', '<div class="default-content-wrapper"><h2 id="faq-title">FAQs</h2><p><a href="/all?track=1">See all FAQs</a></p></div>');
+  assert.equal(block.querySelector('.accordion-faq-heading').id, 'faq-title');
+  assert.equal(block.lastElementChild.className, 'accordion-faq-action');
+  assert.equal(block.lastElementChild.querySelector('a').getAttribute('href'), '/all?track=1');
+  assert.equal(document.querySelector('.default-content-wrapper'), null);
+  const intro = await render(row('Question', '<p>Answer.</p>'), 'pricing', '<div class="default-content-wrapper"><h2>FAQs</h2><p>Read our <a href="/fees">fee details</a>.</p></div>');
+  assert.equal(intro.block.firstElementChild.textContent, 'FAQs');
+  assert.equal(intro.block.children[1].textContent, 'Read our fee details.');
+  assert.equal(intro.block.querySelector('.accordion-faq-action'), null);
+});
+
 test('default FAQ retains its existing chevron and unwrapped answer tables', async () => {
   const { block } = await render(row('Question', fees));
   assert.equal(block.querySelector('.accordion-faq-icon-vertical'), null);

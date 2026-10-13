@@ -26,7 +26,7 @@ export default function decorate(block) {
   const refresh = element('button', 'market-overview-refresh', 'Refresh');
   refresh.type = 'button';
   refresh.setAttribute('aria-label', 'Refresh market chart');
-  panel.append(status, plot, refresh);
+  panel.append(plot, status, refresh);
   let version = 0;
   let active = 0;
   const updateChart = async (index = active, fresh = false) => {
@@ -101,10 +101,11 @@ export default function decorate(block) {
   input.autocomplete = 'off';
   input.maxLength = 80;
   input.required = true;
-  input.placeholder = 'Symbol or company name';
+  input.placeholder = 'Get Quotes';
   label.htmlFor = input.id;
   const submit = element('button', '', 'Get quote');
   submit.type = 'submit';
+  submit.setAttribute('aria-label', 'Get quote');
   form.append(label, input, submit);
   const searchStatus = element('p', 'market-overview-search-status');
   searchStatus.id = `${id}-search-status`;

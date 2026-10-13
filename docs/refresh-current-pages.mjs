@@ -38,6 +38,7 @@ function clean(node) {
     if (!href || /^javascript:/i.test(href)) return children;
     return `<a href="${escape(new URL(href, 'https://us.etrade.com').href)}">${children}</a>`;
   }
+  if (tag === 'p' && node.classList.contains('text-bold')) return `<p><strong>${children}</strong></p>`;
   if (blocks.has(tag) || inline.has(tag)) {
     const span = ['th', 'td'].includes(tag) && node.getAttribute('colspan') ? ` colspan="${escape(node.getAttribute('colspan'))}"` : '';
     const id = /^h[1-6]$/.test(tag) ? node.id || node.querySelector('a[id]')?.id : '';
@@ -186,6 +187,27 @@ for (let i = 0; i < paths.length; i += 1) {
     s.html = migrate(s.html);
     s.blocks.forEach((b) => { b.rows = b.rows.map((r) => r.map(migrate)); });
   });
+  if (i === 0) {
+    const pricing = sections.find((s) => s.blocks.some((b) => b.name === 'Cards Pricing'));
+    const productCards = pricing.blocks.find((b) => b.name.startsWith('Cards Product'));
+    const offer = productCards.rows.findIndex((row) => row.some((html) => html.includes('Get up to')));
+    if (offer >= 0) pricing.blocks[0].rows.push(productCards.rows.splice(offer, 1)[0]);
+    productCards.name = 'Cards Product';
+    const bank = pricing.html.match(/<p>Bank accounts offered[\s\S]*?<\/p>/)?.[0];
+    if (bank) {
+      pricing.html = pricing.html.replace(bank, '');
+      pricing.afterHtml = bank;
+    }
+  }
+  if (i === 2) {
+    sections.flatMap((s) => s.blocks).filter((b) => b.name === 'Accordion FAQ')
+      .forEach((b) => { b.name = 'Accordion FAQ (Pricing)'; });
+  }
+  if (i === 4) {
+    const more = [...at(1).querySelectorAll('.richTextEditor a')]
+      .find((a) => a.getAttribute('href')?.includes('/knowledge/life-stage-planning'));
+    if (more) sections[1].afterHtml = `<p>${clean(more)}</p>`;
+  }
   if (i === 2) {
     const bank = sections.flatMap((s) => s.blocks).find((b) => b.name === 'Tabs Accounts')
       .rows.find((r) => r[0] === 'Bank');
@@ -193,6 +215,17 @@ for (let i = 0; i < paths.length; i += 1) {
     bank[1] = original.replace(/up to \d+\.\d+% Annual Percentage Yield/, 'up to {{rate:checking-rate}}% Annual Percentage Yield');
     if (bank[1] === original) throw new Error('The checking APY claim needs review before adding its rate binding.');
     bank.push('<p>Rate settings</p><p>Name: checking-rate</p><p>Mode: api</p><p>Product: 4240</p><p>Field: advertisedAPY</p><p>Balance: 10000</p><p>Fallback: -.--</p>');
+  }
+  if ([0, 3, 4, 5].includes(i)) {
+    const dock = [...document.querySelectorAll('a[href]')]
+      .filter((a) => /stickyCTA[-_]/.test(a.getAttribute('href')));
+    const rows = dock.map((a) => {
+      const href = a.getAttribute('href');
+      const type = /stickyCTA[-_]LTO/.test(href) ? 'offer' : /stickyCTA[-_]logon/.test(href) ? 'login' : 'primary';
+      const label = { offer: 'Limited time offer', login: 'Log on', primary: 'Open an account' }[type];
+      return [type, `<p><a href="${escape(new URL(href, 'https://us.etrade.com').href)}">${label}</a></p>`];
+    });
+    if (rows.length) sections.push(section('', [block('Floating Dock', rows)]));
   }
   const metadata = [['Title', titles[i]], ['Description', `E*TRADE ${titles[i]} page.`], ['Header Theme', [0, 3, 4, 5].includes(i) ? 'dark' : 'light'], ['Nav Link Base', 'https://us.etrade.com'], ['Disclosures', `/disclosures/sets/${ids[i]}-current`]];
   if (i === 0) metadata.push(['Template', 'homepage']);
@@ -215,7 +248,7 @@ for (let i = 0; i < paths.length; i += 1) {
   const page = {
     disclosureSet, fragments, id: ids[i], title: titles[i], path: paths[i], source: `https://us.etrade.com${paths[i]}`, checkedOn: '2026-10-12', sections, metadata, assets, legal: { introduction, disclosures, closing },
   };
-  const pageHtml = sections.map((s) => s.html + s.blocks.map((b) => table(b.name, b.rows)).join('') + (s.style ? table('Section Metadata', [['Style', s.style]]) : '')).join('<hr>') + table('Metadata', metadata);
+  const pageHtml = sections.map((s) => s.html + s.blocks.map((b) => table(b.name, b.rows)).join('') + (s.afterHtml || '') + (s.style ? table('Section Metadata', [['Style', s.style]]) : '')).join('<hr>') + table('Metadata', metadata);
   await writeFile(new URL(`./${ids[i]}-current-authoring.html`, import.meta.url), `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${titles[i]} — DA content captured October 12, 2026</title></head><body>${pageHtml}</body></html>\n`);
   all.push(page);
 }

@@ -279,7 +279,7 @@
         "style": "light"
       },
       {
-        "html": "<h2>Nothing to hide here, just transparent pricing and rates you can count on.</h2><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-category?icid=et-prospecthp_pricingbanner_openaccount\">Open an account</a></p><p><a href=\"https://us.etrade.com/what-we-offer/pricing-and-rates?icid=et-prospecthp_pricingbanner_viewpricing\">View all pricing and rates</a></p><p>Bank accounts offered by Morgan Stanley Private Bank, National Association, Member FDIC. Other fees may apply. For more information about pricing, visit <a href=\"https://us.etrade.com/what-we-offer/pricing-and-rates?dirid=et-prospecthp_pricing_moreinfo\">etrade.com/pricing</a>.</p>",
+        "html": "<h2>Nothing to hide here, just transparent pricing and rates you can count on.</h2><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-category?icid=et-prospecthp_pricingbanner_openaccount\">Open an account</a></p><p><a href=\"https://us.etrade.com/what-we-offer/pricing-and-rates?icid=et-prospecthp_pricingbanner_viewpricing\">View all pricing and rates</a></p>",
         "blocks": [
           {
             "name": "Cards Pricing",
@@ -298,15 +298,15 @@
               ],
               [
                 "<p>0.50%</p><h3>Crypto commissions</h3> <p>On the dollar value of each trade</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/crypto?dirid=et-prospecthp_pricing_crypto_learnmore\">Learn more</a></p>"
+              ],
+              [
+                "<h3>Get up to $1,500 for a limited time<sup>brokerageoffer</sup></h3> <p>Open and fund a new eligible brokerage account with a qualifying deposit by 10/31/26. Terms apply.</p> <p>Use promo code: <b>OFFER26</b></p><p><a href=\"https://us.etrade.com/promo/brokerage?icid=et-prospecthp-pricing-offer-learnhow\">Learn how</a></p>"
               ]
             ]
           },
           {
-            "name": "Cards Product (Three Columns)",
+            "name": "Cards Product",
             "rows": [
-              [
-                "<h3>Get up to $1,500 for a limited time<sup>brokerageoffer</sup></h3> <p>Open and fund a new eligible brokerage account with a qualifying deposit by 10/31/26. Terms apply.</p> <p>Use promo code: <b>OFFER26</b></p><p><a href=\"https://us.etrade.com/promo/brokerage?icid=et-prospecthp-pricing-offer-learnhow\">Learn how</a></p>"
-              ],
               [
                 "<h3>Premium Savings Account</h3> <h4>4.25% Annual Percentage Yield<sup>savingsboost</sup></h4> <p>Limited-time boosted APY for six months. After that, you earn the base rate of 3.75% APY.<sup>savingsbase</sup></p><p><a href=\"https://us.etrade.com/bank/premium-savings-account?dirid=et-prospecthp_pricing_savings_learnmore\">Learn more</a></p>"
               ],
@@ -316,7 +316,8 @@
             ]
           }
         ],
-        "style": "light"
+        "style": "light",
+        "afterHtml": "<p>Bank accounts offered by Morgan Stanley Private Bank, National Association, Member FDIC. Other fees may apply. For more information about pricing, visit <a href=\"https://us.etrade.com/what-we-offer/pricing-and-rates?dirid=et-prospecthp_pricing_moreinfo\">etrade.com/pricing</a>.</p>"
       },
       {
         "html": "",
@@ -390,6 +391,29 @@
           }
         ],
         "style": "light"
+      },
+      {
+        "html": "",
+        "blocks": [
+          {
+            "name": "Floating Dock",
+            "rows": [
+              [
+                "offer",
+                "<p><a href=\"https://us.etrade.com/promo/savings?icid=et-prospecthp_stickyCTA_LTO\">Limited time offer</a></p>"
+              ],
+              [
+                "login",
+                "<p><a href=\"https://us.etrade.com/etx/pxy/login?icid=et-prospecthp_stickyCTA_logon\">Log on</a></p>"
+              ],
+              [
+                "primary",
+                "<p><a href=\"https://express.etrade.com/etx/rtao/ma/account-category?icid=et-prospecthp_stickyCTA_openaccount\">Open an account</a></p>"
+              ]
+            ]
+          }
+        ],
+        "style": ""
       }
     ],
     "metadata": [
@@ -859,32 +883,32 @@
             "rows": [
               [
                 "Most Popular",
-                "<h2>Most Popular</h2> <p>Invest, trade, and save for your future with our more popular accounts.</p><ul><li><h3>Brokerage account</h3> <p>Investing and trading account</p> <p>Buy and sell stocks, ETFs, mutual funds, options, bonds, and more.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/brokerage-account?icid=et-global-brokeragecard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/brokerage?icid=et-global-brokeragecard-openanaccount\">Open an account</a></p></li><li><h3>Premium Savings Account</h3> <p>Boost your savings with a guaranteed 4.25% Annual Percentage Yield for 6 months<sup>savingsboost</sup></p> <p>With rates 11X the national average<sup>nationalaverage</sup> and FDIC-insured up to $500,000;<sup>depositcoverage</sup> certain conditions must be satisfied.</p> <p>Morgan Stanley Private Bank, Member FDIC.</p><p><a href=\"https://us.etrade.com/bank/premium-savings-account?icid=et-global-psacard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/premium-savings-account?tb=5000&amp;icid=et-global-psacard-openaccount\">Open an account</a></p></li><li><h3>Certificates of Deposit (CD)</h3> <p><b>Lock in 4.75% Annual Percentage Yield<sup>cdterms,cdrate</sup> for 12 months. Offer expires 10/19</b></p> <p>Secure a fixed rate when you open and fund a new Bank CD. Additional terms available from 6 Months to 60 Months.<sup>cdwithdrawals</sup></p> <p>Morgan Stanley Private Bank, Member FDIC.</p><p><a href=\"https://us.etrade.com/bank/certificate-of-deposit?icid=et-global-bankcdcard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/certificate-of-deposit?tb=5000&amp;icid=et-global-bankcdcard-openaccount&amp;cdTermLength=12months\">Open an account</a></p></li><li><h3>Rollover IRA</h3> <p>Consider rolling over your old 401(k) plan assets to an E*TRADE from Morgan Stanley IRA</p> <p>Consolidate assets from a former employer’s retirement plan.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/rollover-ira?icid=et-global-rolloveriracard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/retirement/rollover?icid=et-global-rolloveriracard-openanaccount\">Open an account</a></p></li><li><h3>Roth IRA<sup>rothdistribution</sup></h3> <p>Tax-free growth potential retirement investing</p> <p>Pay no income taxes or tax penalties on qualified distributions if you meet certain requirements.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/roth-ira?icid=et-global-rothiracard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/retirement/roth?icid=et-global-rothiracard-openanaccount\">Open an account</a></p></li><li><h3>Traditional IRA</h3> <p>You may be eligible to make income tax deductible contributions</p> <p>Earnings potentially grow tax-deferred until you withdraw them in retirement.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/traditional-ira?icid=et-global-traditionaliracard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/retirement/traditional?icid=et-global-traditionaliracard-openanaccount\">Open an account</a></p></li></ul>"
+                "<h2>Most Popular</h2> <p>Invest, trade, and save for your future with our more popular accounts.</p><ul><li><h3>Brokerage account</h3><p><strong>Investing and trading account</strong></p> <p>Buy and sell stocks, ETFs, mutual funds, options, bonds, and more.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/brokerage-account?icid=et-global-brokeragecard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/brokerage?icid=et-global-brokeragecard-openanaccount\">Open an account</a></p></li><li><h3>Premium Savings Account</h3><p><strong>Boost your savings with a guaranteed 4.25% Annual Percentage Yield for 6 months<sup>savingsboost</sup></strong></p> <p>With rates 11X the national average<sup>nationalaverage</sup> and FDIC-insured up to $500,000;<sup>depositcoverage</sup> certain conditions must be satisfied.</p> <p>Morgan Stanley Private Bank, Member FDIC.</p><p><a href=\"https://us.etrade.com/bank/premium-savings-account?icid=et-global-psacard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/premium-savings-account?tb=5000&amp;icid=et-global-psacard-openaccount\">Open an account</a></p></li><li><h3>Certificates of Deposit (CD)</h3><p><strong><b>Lock in 4.75% Annual Percentage Yield<sup>cdterms,cdrate</sup> for 12 months. Offer expires 10/19</b></strong></p> <p>Secure a fixed rate when you open and fund a new Bank CD. Additional terms available from 6 Months to 60 Months.<sup>cdwithdrawals</sup></p> <p>Morgan Stanley Private Bank, Member FDIC.</p><p><a href=\"https://us.etrade.com/bank/certificate-of-deposit?icid=et-global-bankcdcard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/certificate-of-deposit?tb=5000&amp;icid=et-global-bankcdcard-openaccount&amp;cdTermLength=12months\">Open an account</a></p></li><li><h3>Rollover IRA</h3><p><strong>Consider rolling over your old 401(k) plan assets to an E*TRADE from Morgan Stanley IRA</strong></p> <p>Consolidate assets from a former employer’s retirement plan.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/rollover-ira?icid=et-global-rolloveriracard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/retirement/rollover?icid=et-global-rolloveriracard-openanaccount\">Open an account</a></p></li><li><h3>Roth IRA<sup>rothdistribution</sup></h3><p><strong>Tax-free growth potential retirement investing</strong></p> <p>Pay no income taxes or tax penalties on qualified distributions if you meet certain requirements.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/roth-ira?icid=et-global-rothiracard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/retirement/roth?icid=et-global-rothiracard-openanaccount\">Open an account</a></p></li><li><h3>Traditional IRA</h3><p><strong>You may be eligible to make income tax deductible contributions</strong></p> <p>Earnings potentially grow tax-deferred until you withdraw them in retirement.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/traditional-ira?icid=et-global-traditionaliracard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/retirement/traditional?icid=et-global-traditionaliracard-openanaccount\">Open an account</a></p></li></ul>"
               ],
               [
                 "Brokerage",
-                "<h2>Brokerage</h2> <p>Build your portfolio, with full access to our tools and info.</p><ul><li><h3>Brokerage account</h3> <p>Investing and trading account</p> <p>Buy and sell stocks, ETFs, mutual funds, options, bonds, and more.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/brokerage-account?icid=et-global-brokeragecard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/brokerage?icid=et-global-brokeragecard-openanaccount\">Open an account</a></p></li><li><h3>Coverdell ESA</h3> <p>Save on a tax-deferred basis for a child’s education</p> <p>Tax-free withdrawals for qualified educational expenses, such as tuition and books.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/coverdell-education-savings-account?icid=et-global-coverdellesacard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/speedbump/education-mssb-agreement?target=https://na3.docusign.net/Member/PowerFormSigning.aspx%3fPowerFormId=cb7a7343-5d4a-4661-9cc0-1bbd3c2c28a0&amp;env=na3&amp;acct=b84afcca-6edf-4712-bded-5017d67b751f&amp;v=2&amp;icid=et-global-coverdellesacard-openanaccount\">Open an account</a></p></li><li><h3>Custodial Account</h3> <p>Brokerage account for a minor</p> <p>Managed by a parent or other designated custodian until either the minor reaches the statutory age of termination or custodianship is otherwise terminated.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/custodial-account?icid=et-global-custodialcard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/brokerage/custodial?icid=et-global-custodialcard-openanaccount\">Open an account</a></p></li></ul>"
+                "<h2>Brokerage</h2> <p>Build your portfolio, with full access to our tools and info.</p><ul><li><h3>Brokerage account</h3><p><strong>Investing and trading account</strong></p> <p>Buy and sell stocks, ETFs, mutual funds, options, bonds, and more.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/brokerage-account?icid=et-global-brokeragecard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/brokerage?icid=et-global-brokeragecard-openanaccount\">Open an account</a></p></li><li><h3>Coverdell ESA</h3><p><strong>Save on a tax-deferred basis for a child’s education</strong></p> <p>Tax-free withdrawals for qualified educational expenses, such as tuition and books.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/coverdell-education-savings-account?icid=et-global-coverdellesacard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/speedbump/education-mssb-agreement?target=https://na3.docusign.net/Member/PowerFormSigning.aspx%3fPowerFormId=cb7a7343-5d4a-4661-9cc0-1bbd3c2c28a0&amp;env=na3&amp;acct=b84afcca-6edf-4712-bded-5017d67b751f&amp;v=2&amp;icid=et-global-coverdellesacard-openanaccount\">Open an account</a></p></li><li><h3>Custodial Account</h3><p><strong>Brokerage account for a minor</strong></p> <p>Managed by a parent or other designated custodian until either the minor reaches the statutory age of termination or custodianship is otherwise terminated.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/custodial-account?icid=et-global-custodialcard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/brokerage/custodial?icid=et-global-custodialcard-openanaccount\">Open an account</a></p></li></ul>"
               ],
               [
                 "Retirement",
-                "<h2>Retirement</h2> <p>Invest in the future, with retirement accounts from E*TRADE from Morgan Stanley.</p> <p>Whether you are exploring a Roth or Traditional IRA, or are considering what to do with a <a href=\"https://us.etrade.com/knowledge/library/retirement-planning/four-things-you-should-consider-before-rolling-over-your-401k\">401(k) from a former employer</a>, you’ve got choices.</p><ul><li><h3>Rollover IRA</h3> <p>Consider rolling over your old 401(k) plan assets to an E*TRADE from Morgan Stanley IRA</p> <p>Consolidate assets from a former employer’s retirement plan.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/rollover-ira?icid=et-global-rolloveriracard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/retirement/rollover?icid=et-global-rolloveriracard-openanaccount\">Open an account</a></p></li><li><h3>Roth IRA<sup>rothdistribution</sup></h3> <p>Tax-free growth potential retirement investing</p> <p>Pay no income taxes or tax penalties on qualified distributions if you meet certain requirements.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/roth-ira?icid=et-global-rothiracard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/retirement/roth?icid=et-global-rothiracard-openanaccount\">Open an account</a></p></li><li><h3>Traditional IRA</h3> <p>You may be eligible to make income tax deductible contributions</p> <p>Earnings potentially grow tax-deferred until you withdraw them in retirement.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/traditional-ira?icid=et-global-traditionaliracard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/retirement/traditional?icid=et-global-traditionaliracard-openanaccount\">Open an account</a></p></li><li><h3>Inherited (Beneficiary) IRA</h3> <p>For inherited retirement accounts</p> <p>Keep inherited retirement assets tax-deferred while investing for the future.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/beneficiary-ira?icid=et-global-beneficiaryiracard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/speedbump/retirement-mssb-agreement?target=https://na3.docusign.net/Member/PowerFormSigning.aspx%3fPowerFormId=8281578d-c91d-4e80-bb8f-6ae20a2d1dd1&amp;env=na3&amp;acct=b84afcca-6edf-4712-bded-5017d67b751f&amp;v=2&amp;icid=et-global-beneficiaryiracard-openanaccount\">Open an account</a></p></li><li><h3>E*TRADE Complete<sup>TM</sup> IRA</h3> <p>For retirement investors over age 59½</p> <p>Upgrade your account for flexible access to cash with free checking, online bill pay, and ATM/debit cards.<sup>irawithdrawals,debiteligibility</sup></p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/complete-ira?icid=et-global-completeiracard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/etx/pxy/complete-ira/get-started?neo.skin=mininav?icid=et-global-completeiracard-openanaccount\">Apply now</a></p></li><li><h3>IRA for Minors</h3> <p>For children with earned income</p> <p>A retirement account managed by an adult for the benefit of a minor under age 18.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/ira-for-minors?icid=et-global-iraforminorscard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/speedbump/retirement-mssb-agreement?target=https://na3.docusign.net/Member/PowerFormSigning.aspx%3fPowerFormId=72170a31-bcc3-4cec-9760-98ee66166955&amp;env=na3&amp;acct=b84afcca-6edf-4712-bded-5017d67b751f&amp;v=2&amp;icid=et-global-iraforminorscard-openanaccount\">Open an account</a></p></li></ul>"
+                "<h2>Retirement</h2> <p>Invest in the future, with retirement accounts from E*TRADE from Morgan Stanley.</p> <p>Whether you are exploring a Roth or Traditional IRA, or are considering what to do with a <a href=\"https://us.etrade.com/knowledge/library/retirement-planning/four-things-you-should-consider-before-rolling-over-your-401k\">401(k) from a former employer</a>, you’ve got choices.</p><ul><li><h3>Rollover IRA</h3><p><strong>Consider rolling over your old 401(k) plan assets to an E*TRADE from Morgan Stanley IRA</strong></p> <p>Consolidate assets from a former employer’s retirement plan.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/rollover-ira?icid=et-global-rolloveriracard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/retirement/rollover?icid=et-global-rolloveriracard-openanaccount\">Open an account</a></p></li><li><h3>Roth IRA<sup>rothdistribution</sup></h3><p><strong>Tax-free growth potential retirement investing</strong></p> <p>Pay no income taxes or tax penalties on qualified distributions if you meet certain requirements.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/roth-ira?icid=et-global-rothiracard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/retirement/roth?icid=et-global-rothiracard-openanaccount\">Open an account</a></p></li><li><h3>Traditional IRA</h3><p><strong>You may be eligible to make income tax deductible contributions</strong></p> <p>Earnings potentially grow tax-deferred until you withdraw them in retirement.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/traditional-ira?icid=et-global-traditionaliracard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/retirement/traditional?icid=et-global-traditionaliracard-openanaccount\">Open an account</a></p></li><li><h3>Inherited (Beneficiary) IRA</h3><p><strong>For inherited retirement accounts</strong></p> <p>Keep inherited retirement assets tax-deferred while investing for the future.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/beneficiary-ira?icid=et-global-beneficiaryiracard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/speedbump/retirement-mssb-agreement?target=https://na3.docusign.net/Member/PowerFormSigning.aspx%3fPowerFormId=8281578d-c91d-4e80-bb8f-6ae20a2d1dd1&amp;env=na3&amp;acct=b84afcca-6edf-4712-bded-5017d67b751f&amp;v=2&amp;icid=et-global-beneficiaryiracard-openanaccount\">Open an account</a></p></li><li><h3>E*TRADE Complete<sup>TM</sup> IRA</h3><p><strong>For retirement investors over age 59½</strong></p> <p>Upgrade your account for flexible access to cash with free checking, online bill pay, and ATM/debit cards.<sup>irawithdrawals,debiteligibility</sup></p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/complete-ira?icid=et-global-completeiracard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/etx/pxy/complete-ira/get-started?neo.skin=mininav?icid=et-global-completeiracard-openanaccount\">Apply now</a></p></li><li><h3>IRA for Minors</h3><p><strong>For children with earned income</strong></p> <p>A retirement account managed by an adult for the benefit of a minor under age 18.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/ira-for-minors?icid=et-global-iraforminorscard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/speedbump/retirement-mssb-agreement?target=https://na3.docusign.net/Member/PowerFormSigning.aspx%3fPowerFormId=72170a31-bcc3-4cec-9760-98ee66166955&amp;env=na3&amp;acct=b84afcca-6edf-4712-bded-5017d67b751f&amp;v=2&amp;icid=et-global-iraforminorscard-openanaccount\">Open an account</a></p></li></ul>"
               ],
               [
                 "Managed Portfolios",
-                "<h2>Managed portfolios</h2> <p>A range of managed portfolios to help meet your needs—choose from our fully managed accounts or our automated investment portfolios.<sup>managedportfolios</sup></p><ul><li><h3>Core Portfolios</h3> <p>Automated investment management</p> <p>Get a diversified portfolio that’s monitored and managed for a low annual advisory fee of 0.30% and $500 minimum.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/core-portfolios?icid=et-global-coreportfolioscard-learnmore\">Learn more</a></p></li><li><h3>Morgan Stanley Financial Advisors</h3> <p><b>Bring your future into focus</b></p> <p>Eligible clients can get a goals-based plan and investing guidance from a Morgan Stanley Financial Advisor.</p><p><a href=\"https://us.etrade.com/c/s/what-we-offer/msfa?campaignCode=MSSignal-MSVA-Site-ManagedPortfoliosMSOrganic&amp;icid=et-global-msadvisorscard-learnmore\">Learn more (login required)</a></p></li></ul>"
+                "<h2>Managed portfolios</h2> <p>A range of managed portfolios to help meet your needs—choose from our fully managed accounts or our automated investment portfolios.<sup>managedportfolios</sup></p><ul><li><h3>Core Portfolios</h3><p><strong>Automated investment management</strong></p> <p>Get a diversified portfolio that’s monitored and managed for a low annual advisory fee of 0.30% and $500 minimum.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/core-portfolios?icid=et-global-coreportfolioscard-learnmore\">Learn more</a></p></li><li><h3>Morgan Stanley Financial Advisors</h3><p><strong><b>Bring your future into focus</b></strong></p> <p>Eligible clients can get a goals-based plan and investing guidance from a Morgan Stanley Financial Advisor.</p><p><a href=\"https://us.etrade.com/c/s/what-we-offer/msfa?campaignCode=MSSignal-MSVA-Site-ManagedPortfoliosMSOrganic&amp;icid=et-global-msadvisorscard-learnmore\">Learn more (login required)</a></p></li></ul>"
               ],
               [
                 "Small Business Retirement",
-                "<h2>Small business retirement</h2> <p>Offer retirement benefits to employees. Use the <a href=\"https://us.etrade.com/e/t/plan/retirement/gethelpchoosing\">Small Business Selector</a> to find a plan.</p> <p>Retirement plans offered by E*TRADE from Morgan Stanley.</p><ul><li><h3>Traditional and Roth Individual 401(k)</h3> <p>Retirement plan for the self-employed</p> <p>Retirement plan for business owners and their spouses that is simpler to administer than a typical 401(k).</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/individual-401k?icid=et-global-individualiracard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/speedbump/qrp-mssb-agreement?target=https://content.etrade.com/etrade/mssb/pdf/Qualified_Retirement_Plan_App.pdf?icid=et-global-individualiracard-openanaccount\">Open an account</a></p></li><li><h3>SIMPLE IRA</h3> <p>For businesses with fewer than 100 employees</p> <p>Retirement plan with deductible employer and employee contributions.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/simple-ira?icid=et-global-simpleiracard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/speedbump/retirement-mssb-agreement?target=https://na3.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=a11fb16c-94f1-4027-8bd3-2349e447b112&amp;env=na3&amp;acct=b84afcca-6edf-4712-bded-5017d67b751f&amp;v=2&amp;icid=et-global-simpleiracard-openanaccount\">Open an account</a></p></li><li><h3>SEP IRA</h3> <p>For the self-employed and small businesses</p> <p>Flexible annual contributions from 0% to 25% of earned income (subject to certain limits).</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/sep-ira?icid=et-global-sepiracard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/retirement/sep?icid=et-global-sepiracard-openanaccount\">Open an account</a></p></li><li><h3>Investment-Only Account</h3> <p>For businesses with existing retirement plans</p> <p>Expand the range of available investment options without changing plan custodians.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/investment-only-non-custodial?icid=et-global-investmentonlycard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/speedbump/investment-mssb-agreement?target=https%3A%2F%2Fcontent.etrade.com/etrade/mssb/pdf/noncustodialaccountapplication.pdf?icid=et-global-investmentonlycard-openanaccount\">Get application</a></p></li></ul>"
+                "<h2>Small business retirement</h2> <p>Offer retirement benefits to employees. Use the <a href=\"https://us.etrade.com/e/t/plan/retirement/gethelpchoosing\">Small Business Selector</a> to find a plan.</p> <p>Retirement plans offered by E*TRADE from Morgan Stanley.</p><ul><li><h3>Traditional and Roth Individual 401(k)</h3><p><strong>Retirement plan for the self-employed</strong></p> <p>Retirement plan for business owners and their spouses that is simpler to administer than a typical 401(k).</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/individual-401k?icid=et-global-individualiracard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/speedbump/qrp-mssb-agreement?target=https://content.etrade.com/etrade/mssb/pdf/Qualified_Retirement_Plan_App.pdf?icid=et-global-individualiracard-openanaccount\">Open an account</a></p></li><li><h3>SIMPLE IRA</h3><p><strong>For businesses with fewer than 100 employees</strong></p> <p>Retirement plan with deductible employer and employee contributions.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/simple-ira?icid=et-global-simpleiracard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/speedbump/retirement-mssb-agreement?target=https://na3.docusign.net/Member/PowerFormSigning.aspx?PowerFormId=a11fb16c-94f1-4027-8bd3-2349e447b112&amp;env=na3&amp;acct=b84afcca-6edf-4712-bded-5017d67b751f&amp;v=2&amp;icid=et-global-simpleiracard-openanaccount\">Open an account</a></p></li><li><h3>SEP IRA</h3><p><strong>For the self-employed and small businesses</strong></p> <p>Flexible annual contributions from 0% to 25% of earned income (subject to certain limits).</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/sep-ira?icid=et-global-sepiracard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/retirement/sep?icid=et-global-sepiracard-openanaccount\">Open an account</a></p></li><li><h3>Investment-Only Account</h3><p><strong>For businesses with existing retirement plans</strong></p> <p>Expand the range of available investment options without changing plan custodians.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/investment-only-non-custodial?icid=et-global-investmentonlycard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/speedbump/investment-mssb-agreement?target=https%3A%2F%2Fcontent.etrade.com/etrade/mssb/pdf/noncustodialaccountapplication.pdf?icid=et-global-investmentonlycard-openanaccount\">Get application</a></p></li></ul>"
               ],
               [
                 "Bank",
-                "<h2>Morgan Stanley Private Bank</h2> <p>Make the most of your cash with a suite of integrated high-yield banking and lending solutions.</p> <p>Learn more about <a href=\"https://us.etrade.com/bank\">Morgan Stanley Private Bank accounts</a>.<br></p><ul><li><h3>Premium Savings Account</h3> <p>Boost your savings with a guaranteed 4.25% Annual Percentage Yield for 6 months<sup>savingsboost</sup></p> <p>With rates 11X the national average<sup>nationalaverage</sup> and FDIC-insured up to $500,000;<sup>depositcoverage</sup> certain conditions must be satisfied.</p> <p>Morgan Stanley Private Bank, Member FDIC.</p><p><a href=\"https://us.etrade.com/bank/premium-savings-account?icid=et-global-psacard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/premium-savings-account?tb=5000&amp;icid=et-global-psacard-openaccount\">Open an account</a></p></li><li><h3>Certificates of Deposit (CD)</h3> <p><b>Lock in 4.75% Annual Percentage Yield<sup>cdterms,cdrate</sup> for 12 months. Offer expires 10/19</b></p> <p>Secure a fixed rate when you open and fund a new Bank CD. Additional terms available from 6 Months to 60 Months.<sup>cdwithdrawals</sup></p> <p>Morgan Stanley Private Bank, Member FDIC.</p><p><a href=\"https://us.etrade.com/bank/certificate-of-deposit?icid=et-global-bankcdcard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/certificate-of-deposit?tb=5000&amp;icid=et-global-bankcdcard-openaccount&amp;cdTermLength=12months\">Open an account</a></p></li><li><h3>Max-Rate Checking</h3> <p>A fee-free checking account, built to do more</p> <p>Seamless money movement, up to {{rate:checking-rate}}% Annual Percentage Yield,<sup>checkingrate</sup> and ATM fee refunds worldwide.<sup>atmrefunds,foreigntransactions</sup></p> <p>Morgan Stanley Private Bank, Member FDIC.</p><p><a href=\"https://us.etrade.com/bank/max-rate-checking?icid=et-global-maxratecard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/max-rate-checking?tb=5000&amp;icid=et-global-maxratecard-openaccount\">Open an account</a></p></li><li><h3>Line of Credit</h3> <p>Flexible financing to help meet your goals<sup>lendingrisk</sup></p> <p>Unlock the power of your portfolio for cash when you need it most.</p> <p>This product is not FDIC Insured</p><p><a href=\"https://us.etrade.com/bank/line-of-credit?icid=et-global-loccard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/etx/mm/lineofcredit?icid=et-global-loccard-openaccount\">Get started</a></p></li></ul><h3>Earn 4.25% APY for 6 months,<sup>savingsboost</sup> plus up to $800<sup>savingsbonus</sup></h3> <p>Open and fund a Premium Savings Account with qualifying deposits by January 10, 2027.</p> <p>Use promo code: <b>SAVE800</b></p> <p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/premium-savings-account?tb=5000&amp;icid=et-ouraccounts-savingsoffer-openaccount\">Open a savings account</a></p> <p><a href=\"https://us.etrade.com/promo/savings?icid=et-ouraccounts-savingsoffer-learnhow\">Learn how</a></p>",
+                "<h2>Morgan Stanley Private Bank</h2> <p>Make the most of your cash with a suite of integrated high-yield banking and lending solutions.</p> <p>Learn more about <a href=\"https://us.etrade.com/bank\">Morgan Stanley Private Bank accounts</a>.<br></p><ul><li><h3>Premium Savings Account</h3><p><strong>Boost your savings with a guaranteed 4.25% Annual Percentage Yield for 6 months<sup>savingsboost</sup></strong></p> <p>With rates 11X the national average<sup>nationalaverage</sup> and FDIC-insured up to $500,000;<sup>depositcoverage</sup> certain conditions must be satisfied.</p> <p>Morgan Stanley Private Bank, Member FDIC.</p><p><a href=\"https://us.etrade.com/bank/premium-savings-account?icid=et-global-psacard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/premium-savings-account?tb=5000&amp;icid=et-global-psacard-openaccount\">Open an account</a></p></li><li><h3>Certificates of Deposit (CD)</h3><p><strong><b>Lock in 4.75% Annual Percentage Yield<sup>cdterms,cdrate</sup> for 12 months. Offer expires 10/19</b></strong></p> <p>Secure a fixed rate when you open and fund a new Bank CD. Additional terms available from 6 Months to 60 Months.<sup>cdwithdrawals</sup></p> <p>Morgan Stanley Private Bank, Member FDIC.</p><p><a href=\"https://us.etrade.com/bank/certificate-of-deposit?icid=et-global-bankcdcard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/certificate-of-deposit?tb=5000&amp;icid=et-global-bankcdcard-openaccount&amp;cdTermLength=12months\">Open an account</a></p></li><li><h3>Max-Rate Checking</h3><p><strong>A fee-free checking account, built to do more</strong></p> <p>Seamless money movement, up to {{rate:checking-rate}}% Annual Percentage Yield,<sup>checkingrate</sup> and ATM fee refunds worldwide.<sup>atmrefunds,foreigntransactions</sup></p> <p>Morgan Stanley Private Bank, Member FDIC.</p><p><a href=\"https://us.etrade.com/bank/max-rate-checking?icid=et-global-maxratecard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/max-rate-checking?tb=5000&amp;icid=et-global-maxratecard-openaccount\">Open an account</a></p></li><li><h3>Line of Credit</h3><p><strong>Flexible financing to help meet your goals<sup>lendingrisk</sup></strong></p> <p>Unlock the power of your portfolio for cash when you need it most.</p> <p>This product is not FDIC Insured</p><p><a href=\"https://us.etrade.com/bank/line-of-credit?icid=et-global-loccard-learnmore\">Learn more</a></p><p><a href=\"https://us.etrade.com/etx/mm/lineofcredit?icid=et-global-loccard-openaccount\">Get started</a></p></li></ul><h3>Earn 4.25% APY for 6 months,<sup>savingsboost</sup> plus up to $800<sup>savingsbonus</sup></h3><p><strong>Open and fund a Premium Savings Account with qualifying deposits by January 10, 2027.</strong></p> <p>Use promo code: <b>SAVE800</b></p> <p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/bank/individual/premium-savings-account?tb=5000&amp;icid=et-ouraccounts-savingsoffer-openaccount\">Open a savings account</a></p> <p><a href=\"https://us.etrade.com/promo/savings?icid=et-ouraccounts-savingsoffer-learnhow\">Learn how</a></p>",
                 "<p>Rate settings</p><p>Name: checking-rate</p><p>Mode: api</p><p>Product: 4240</p><p>Field: advertisedAPY</p><p>Balance: 10000</p><p>Fallback: -.--</p>"
               ],
               [
                 "Cryptocurrency",
-                "<h2>Cryptocurrency</h2> <p>Explore ways to diversify your portfolio with digital assets.</p><ul><li><h3>Crypto account</h3> <p>Powered by zerohash</p> <p>Buy, sell, and hold Bitcoin, Ethereum, and Solana in a zerohash crypto account with a linked individual E*TRADE brokerage account.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/crypto?icid=et-global-cryptocard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/brokerage?icid=et-global-crypto-openanaccount\">Open an account</a></p></li></ul>"
+                "<h2>Cryptocurrency</h2> <p>Explore ways to diversify your portfolio with digital assets.</p><ul><li><h3>Crypto account</h3><p><strong>Powered by zerohash</strong></p> <p>Buy, sell, and hold Bitcoin, Ethereum, and Solana in a zerohash crypto account with a linked individual E*TRADE brokerage account.</p><p><a href=\"https://us.etrade.com/what-we-offer/our-accounts/crypto?icid=et-global-cryptocard-learnmore\">Learn more</a></p><p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/brokerage?icid=et-global-crypto-openanaccount\">Open an account</a></p></li></ul>"
               ]
             ]
           }
@@ -895,7 +919,7 @@
         "html": "<h2>Account FAQs</h2> <p><a href=\"https://us.etrade.com/frequently-asked-questions/open-an-account\">See all FAQs<br></a></p>",
         "blocks": [
           {
-            "name": "Accordion FAQ",
+            "name": "Accordion FAQ (Pricing)",
             "rows": [
               [
                 "<h3>How do I open an account?</h3>",
@@ -1313,6 +1337,29 @@
           }
         ],
         "style": ""
+      },
+      {
+        "html": "",
+        "blocks": [
+          {
+            "name": "Floating Dock",
+            "rows": [
+              [
+                "offer",
+                "<p><a href=\"https://us.etrade.com/promo/brokerage?icid=et-brokerage_stickyCTA_LTO\">Limited time offer</a></p>"
+              ],
+              [
+                "login",
+                "<p><a href=\"https://us.etrade.com/etx/pxy/login?icid=et-brokerage_stickyCTA_logon\">Log on</a></p>"
+              ],
+              [
+                "primary",
+                "<p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/brokerage?icid=et-brokerage_stickyCTA_openaccount\">Open an account</a></p>"
+              ]
+            ]
+          }
+        ],
+        "style": ""
       }
     ],
     "metadata": [
@@ -1522,7 +1569,8 @@
             ]
           }
         ],
-        "style": "light"
+        "style": "light",
+        "afterHtml": "<p><a href=\"https://us.etrade.com/knowledge/life-stage-planning?icid=et-planning-preparecards-readmore\">Read more</a></p>"
       },
       {
         "html": "",
@@ -1644,6 +1692,29 @@
           }
         ],
         "style": "light"
+      },
+      {
+        "html": "",
+        "blocks": [
+          {
+            "name": "Floating Dock",
+            "rows": [
+              [
+                "offer",
+                "<p><a href=\"https://us.etrade.com/promo/retirement?icid=et-retirement-stickyCTA-LTO\">Limited time offer</a></p>"
+              ],
+              [
+                "login",
+                "<p><a href=\"https://us.etrade.com/etx/pxy/login?icid=et-retirement-stickyCTA-logon\">Log on</a></p>"
+              ],
+              [
+                "primary",
+                "<p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/retirement/traditional?icid=et-retirement-stickyCTA-openaccount\">Open an account</a></p>"
+              ]
+            ]
+          }
+        ],
+        "style": ""
       }
     ],
     "metadata": [
@@ -1892,6 +1963,29 @@
           }
         ],
         "style": "light"
+      },
+      {
+        "html": "",
+        "blocks": [
+          {
+            "name": "Floating Dock",
+            "rows": [
+              [
+                "offer",
+                "<p><a href=\"https://us.etrade.com/promo/brokerage?icid=et-brokerage_stickyCTA_LTO\">Limited time offer</a></p>"
+              ],
+              [
+                "login",
+                "<p><a href=\"https://us.etrade.com/etx/pxy/login?icid=et-brokerage_stickyCTA_logon\">Log on</a></p>"
+              ],
+              [
+                "primary",
+                "<p><a href=\"https://express.etrade.com/etx/rtao/ma/account-types/brokerage?icid=et-brokerage_stickyCTA_openaccount\">Open an account</a></p>"
+              ]
+            ]
+          }
+        ],
+        "style": ""
       }
     ],
     "metadata": [

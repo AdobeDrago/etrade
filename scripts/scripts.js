@@ -1,7 +1,9 @@
 import { groupActions } from './actions.js';
 import decorateSectionBoundaries from './section-layout.js';
 import decorateDisclosureReferences from './disclosure-references.js';
-import decoratePageLayout, { localizePageLinks } from './page-layout.js';
+import decoratePageLayout, {
+  localizePageLinks, decoratePricingIntroductions, decoratePageActions,
+} from './page-layout.js';
 import {
   loadHeader,
   loadFooter,
@@ -215,6 +217,8 @@ async function loadLazy(doc) {
 
   const main = doc.querySelector('main');
   await loadSections(main);
+  decoratePricingIntroductions(main);
+  if (doc.body.classList.contains('etrade-page')) decoratePageActions(main);
   if (doc.body.classList.contains('homepage')) {
     main.querySelectorAll('.default-content-wrapper').forEach((content) => {
       const secondary = content.closest('.awards-section')
@@ -268,4 +272,5 @@ async function loadPage() {
   loadDelayed();
 }
 
-loadPage();
+// Standalone block reviews own their lifecycle; fragments can still use decorateMain.
+if (!document.documentElement.hasAttribute('data-block-review')) loadPage();

@@ -29,10 +29,12 @@ export default function decorate(block) {
   status.className = 'carousel-story-status';
   status.setAttribute('role', 'status');
   let current = 0;
+  let requested;
   const offset = (index) => cards[index].offsetLeft - cards[0].offsetLeft;
   const maxScroll = () => Math.max(0, slides.scrollWidth - slides.clientWidth);
   const go = (index) => {
     const target = Math.max(0, Math.min(cards.length - 1, index));
+    requested = target;
     slides.scrollTo({
       left: Math.min(maxScroll(), offset(target)),
       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
@@ -50,9 +52,13 @@ export default function decorate(block) {
     const left = slides.scrollLeft;
     current = cards.reduce((nearest, card, i) => (Math.abs(offset(i) - left)
       < Math.abs(offset(nearest) - left) ? i : nearest), 0);
+    const requestedOffset = requested === undefined
+      ? null : Math.min(maxScroll(), offset(requested));
+    const selected = requestedOffset !== null && Math.abs(requestedOffset - left) <= 1
+      ? requested : current;
     previous.disabled = left <= 1;
     next.disabled = left >= maxScroll() - 1;
-    [...dots.children].forEach((dot, index) => dot.setAttribute('aria-current', index === current ? 'true' : 'false'));
+    [...dots.children].forEach((dot, index) => dot.setAttribute('aria-current', index === selected ? 'true' : 'false'));
     const lastVisible = cards.reduce((last, card, i) => (
       offset(i) < left + slides.clientWidth - 1 ? i : last), current);
     status.textContent = `Stories ${current + 1}${lastVisible > current ? `–${lastVisible + 1}` : ''} of ${cards.length}`;

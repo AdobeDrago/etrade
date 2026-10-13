@@ -34,6 +34,7 @@ export function decorateAction(link, kind, prefix) {
   link.removeAttribute('role');
   if (link.target === '_blank') link.rel = [...new Set([...link.relList, 'noopener', 'noreferrer'])].join(' ');
   link.querySelectorAll('.etrade-action-icon').forEach((icon) => icon.remove());
+  link.querySelectorAll('.etrade-action-lock').forEach((icon) => icon.remove());
   if (variant === 'secondary') {
     const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     icon.classList.add('etrade-action-icon');
@@ -45,10 +46,37 @@ export function decorateAction(link, kind, prefix) {
     icon.append(path);
     link.append(icon);
   }
+  if (/^https:\/\/us\.etrade\.com\/etx\/pxy\//.test(link.getAttribute('href'))
+    && /^calculate now$/i.test(link.textContent.trim())) {
+    const lock = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    lock.classList.add('etrade-action-lock');
+    lock.setAttribute('viewBox', '0 0 24 24');
+    lock.setAttribute('aria-hidden', 'true');
+    const path = document.createElementNS(lock.namespaceURI, 'path');
+    path.setAttribute('d', 'M18 8h-1V6a5 5 0 0 0-10 0v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2ZM9 6a3 3 0 0 1 6 0v2H9Zm4 10v2h-2v-2a2 2 0 1 1 2 0Z');
+    lock.append(path);
+    link.append(lock);
+  }
   return link;
 }
 
 export function groupActions(content, prefix, primaryKind = 'primary') {
+  // Imports may serialize standalone actions as bare anchors or formatted links.
+  [...content.children].forEach((node) => {
+    if (!node.matches('a, strong, b, em')) return;
+    const probe = document.createElement('p');
+    probe.append(node.cloneNode(true));
+    if (!standaloneAction(probe)) return;
+    const paragraph = document.createElement('p');
+    node.replaceWith(paragraph);
+    paragraph.append(node);
+  });
+  [...content.querySelectorAll(':scope > br')].forEach((br) => {
+    if (br.previousElementSibling?.matches('p') && br.nextElementSibling?.matches('p')
+      && standaloneAction(br.previousElementSibling) && standaloneAction(br.nextElementSibling)) {
+      br.remove();
+    }
+  });
   const actions = document.createElement('div');
   actions.className = `etrade-actions ${prefix}-actions`;
   [...content.querySelectorAll(':scope > p')].forEach((paragraph) => {

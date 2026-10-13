@@ -12,11 +12,12 @@ body.homepage main > .section.banking-feature:where(:has(.columns-feature)) {
 
   box-sizing: border-box;
   border-radius: 16px;
-  padding: 20px 20px 0;
+  padding: 20px;
   background: #fafafa;
   color: #242424;
   font-size: 16px;
   line-height: 20px;
+  letter-spacing: -0.21px;
   overflow-wrap: anywhere;
 }
 
@@ -71,8 +72,19 @@ body.homepage main > .section.banking-feature:where(:has(.columns-feature)) {
 }
 
 .columns-feature .columns-feature-copy h2 + p {
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
+
+.columns-feature .columns-feature-copy a:any-link:not(.etrade-action) {
+  color: var(--action-link-color);
+}
+
+.columns-feature.award .columns-feature-copy p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 26px;
+}
+
 
 .columns-feature .columns-feature-copy > p:first-child:has(+ h2) {
   font-size: 16px;
@@ -95,8 +107,59 @@ body.homepage main > .section.banking-feature:where(:has(.columns-feature)) {
 }
 
 .columns-feature.award .columns-feature-media img {
-  max-width: 200px;
+  max-width: 50px;
   margin: auto;
+}
+
+.columns-feature.award {
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.columns-feature.award .columns-feature-award-heading {
+  display: block;
+}
+
+.columns-feature.award .columns-feature-award-heading h3 {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.columns-feature.award .columns-feature-award-heading h2 {
+  margin: 0 0 50px;
+  font-size: 36px;
+  line-height: 40px;
+  letter-spacing: -0.4px;
+}
+
+.columns-feature.award > div:not(.columns-feature-award-heading, .columns-feature-actions) {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+.columns-feature.award .columns-feature-copy {
+  order: 0;
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.columns-feature.award .columns-feature-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 30px;
+}
+
+@media (width >= 768px) {
+  .columns-feature.award .columns-feature-award-heading h2 {
+    font-size: 48px;
+    line-height: 52px;
+  }
 }
 
 @media (width >= 768px) {

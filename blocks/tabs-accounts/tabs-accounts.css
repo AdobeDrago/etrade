@@ -1,7 +1,7 @@
 /* Surrounding section styles require this block to be present. */
 main .section.tabs-accounts-container {
   margin: 0;
-  padding: 30px 0 0;
+  padding: 0;
   background: #fff;
 }
 
@@ -34,6 +34,7 @@ main .section.tabs-accounts-container > .tabs-accounts-wrapper {
 
 .tabs-accounts {
   background: #f6f6f6;
+  letter-spacing: -0.21px;
 }
 
 .tabs-accounts .tabs-accounts-list {
@@ -47,20 +48,59 @@ main .section.tabs-accounts-container > .tabs-accounts-wrapper {
 }
 
 .tabs-accounts .tabs-accounts-mobile {
+  position: relative;
   display: grid;
   gap: 8px;
   padding: 20px;
   font-size: 14px;
 }
 
+.tabs-accounts .tabs-accounts-mobile-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
 .tabs-accounts .tabs-accounts-mobile select {
-  width: 100%;
-  padding: 16px;
-  border: 1px solid #ccc;
+  appearance: none;
+  width: 90%;
+  height: 45px;
+  margin: 0 auto;
+  padding: 8px 16px;
+  border: 1px solid #e2e2e2;
   border-radius: 2px;
   background: white;
   color: #5627d8;
   font: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.tabs-accounts .tabs-accounts-mobile::before {
+  position: absolute;
+  top: 25px;
+  right: calc(5% + 80px);
+  height: 35px;
+  border-left: 1px solid #e2e2e2;
+  content: '';
+  pointer-events: none;
+}
+
+.tabs-accounts .tabs-accounts-mobile::after {
+  position: absolute;
+  top: 37px;
+  right: calc(5% + 48px);
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #9566ff;
+  border-bottom: 2px solid #9566ff;
+  transform: rotate(45deg);
+  content: '';
+  pointer-events: none;
 }
 
 .tabs-accounts .tabs-accounts-tab {
@@ -96,7 +136,7 @@ main .section.tabs-accounts-container > .tabs-accounts-wrapper {
   box-sizing: border-box;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 30px 20px 60px;
+  padding: 20px 20px 60px;
 }
 
 .tabs-accounts .tabs-accounts-panel[hidden] {
@@ -109,15 +149,15 @@ main .section.tabs-accounts-container > .tabs-accounts-wrapper {
 
 .tabs-accounts .tabs-accounts-panel > h2 {
   margin: 0 0 10px;
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 500;
-  line-height: 36px;
+  line-height: 28px;
 }
 
 .tabs-accounts .tabs-accounts-panel > p {
   margin: 0 0 9px;
   font-size: 13px;
-  line-height: 18px;
+  line-height: 22px;
 }
 
 .tabs-accounts .tabs-accounts-cards {
@@ -142,19 +182,55 @@ main .section.tabs-accounts-container > .tabs-accounts-wrapper {
 
 .tabs-accounts .tabs-accounts-card h3 {
   margin: 0 0 10px;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 500;
-  line-height: 28px;
+  line-height: 26px;
+  letter-spacing: -0.25px;
 }
 
 .tabs-accounts .tabs-accounts-card p {
   margin: 0 0 9px;
   font-size: 13px;
-  line-height: 18px;
+  line-height: 22px;
 }
 
 .tabs-accounts .tabs-accounts-card :is(strong, b) {
+  font-weight: 600;
+}
+
+.tabs-accounts .tabs-accounts-offer {
+  margin-top: 30px;
+  padding: 30px 24px;
+  background: #24134b;
+  color: #fff;
+  text-align: center;
+}
+
+.tabs-accounts .tabs-accounts-offer :is(h2, h3) {
+  margin: 0 0 20px;
+  color: inherit;
+  font-size: 24px;
   font-weight: 500;
+  line-height: 28px;
+}
+
+.tabs-accounts .tabs-accounts-offer p {
+  margin: 0 0 10px;
+  font-size: 15px;
+  line-height: 21px;
+}
+
+.tabs-accounts .tabs-accounts-card p:not(:has(strong, b)) {
+  text-align: justify;
+}
+
+.tabs-accounts .tabs-accounts-offer a:any-link:not(.etrade-action) {
+  color: #ab80ff;
+}
+
+.tabs-accounts .tabs-accounts-offer-actions {
+  justify-content: center;
+  margin-top: 20px;
 }
 
 .tabs-accounts .tabs-accounts-actions {
@@ -182,13 +258,17 @@ main .section.tabs-accounts-container > .tabs-accounts-wrapper {
   outline-offset: 3px;
 }
 
-@media (width >= 600px) {
+@media (width >= 768px) {
   .tabs-accounts .tabs-accounts-cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (width >= 768px) {
+  main .section.tabs-accounts-container {
+    padding-top: 30px;
+  }
+
   main .section.tabs-accounts-container > .default-content-wrapper {
     padding: 0 10px;
   }
@@ -199,12 +279,28 @@ main .section.tabs-accounts-container > .tabs-accounts-wrapper {
   }
 
   .tabs-accounts .tabs-accounts-panel {
+    padding-top: 30px;
     padding-right: 10px;
     padding-left: 10px;
   }
+
+  .tabs-accounts .tabs-accounts-panel > h2 {
+    font-size: 32px;
+    line-height: 36px;
+  }
+
+  .tabs-accounts .tabs-accounts-card h3 {
+    font-size: 22px;
+    line-height: 28px;
+  }
+
+  .tabs-accounts .tabs-accounts-card p,
+  .tabs-accounts .tabs-accounts-panel > p {
+    line-height: 18px;
+  }
 }
 
-@media (width >= 900px) {
+@media (width >= 992px) {
   .tabs-accounts .tabs-accounts-list {
     display: flex;
   }
