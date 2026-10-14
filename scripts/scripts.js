@@ -194,9 +194,10 @@ async function loadEager(doc) {
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
-    document.body.classList.add('appear');
-    await loadSection(main.querySelector('.section'), waitForFirstImage);
+    const firstSection = main.querySelector('.section');
+    if (firstSection) await loadSection(firstSection, waitForFirstImage);
   }
+  document.body.classList.add('appear');
 
   try {
     /* if desktop (proxy for fast connection) or fonts already loaded, load fonts.css */

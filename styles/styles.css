@@ -40,7 +40,7 @@
   --heading-font-size-xs: 18px;
 
   /* nav height */
-  --nav-height: 64px;
+  --nav-height: 88px;
 }
 
 @media (width >= 900px) {
@@ -83,8 +83,10 @@ header {
   height: auto;
 }
 
-header:has(.header[data-block-status="loaded"]) {
-  min-height: 0;
+@media (width >= 1085px) {
+  :root {
+    --nav-height: 110.1875px;
+  }
 }
 
 header .header,

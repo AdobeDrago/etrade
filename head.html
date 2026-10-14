@@ -4,11 +4,16 @@
   move-to-http-header="true"
 />
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<style>
+  /* Keep authored markup hidden while the first section's layout is prepared. */
+  body:not(.appear) { display: none; }
+</style>
 <script nonce="aem">
   // Run during parsing: deferred block decoration is too late to prioritize this request.
   (() => {
     const observer = new MutationObserver(() => {
-      const image = document.querySelector('main > div')?.querySelector('.hero-dark img');
+      const image = document.querySelector('main > div')
+        ?.querySelector('.hero-dark img, .hero-product img, .hero img, .welcome-hero img');
       if (!image?.getAttribute('src')) return;
       const sources = [...(image.closest('picture')?.querySelectorAll('source') || [])];
       const source = sources.find((candidate) => candidate.srcset

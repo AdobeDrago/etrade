@@ -99,6 +99,10 @@ test('missing hero and audience transitions render once, while authored separato
   sections(main);
   assert.equal(main.querySelectorAll('.separator').length, 2);
   assert.equal(main.querySelectorAll('[data-section-kind="separator"]').length, 2);
+  main.querySelectorAll('[data-section-kind="separator"]').forEach((section) => {
+    assert.equal(section.dataset.sectionStatus, 'initialized');
+    assert.equal(section.style.display, 'none');
+  });
   assert.equal(main.firstElementChild.dataset.separatorAfter, 'true');
   const existing = await harness('/planning', `
     <div class="section"><div><div class="hero-dark split"></div></div></div>

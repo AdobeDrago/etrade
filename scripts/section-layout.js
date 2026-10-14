@@ -35,6 +35,8 @@ export default function decorateSectionBoundaries(main) {
       || next.querySelector('.separator')) return;
     const section = document.createElement('div');
     section.className = 'section separator-container';
+    section.dataset.sectionStatus = 'initialized';
+    section.style.display = 'none';
     const wrapper = document.createElement('div');
     wrapper.append(buildBlock('separator', [
       ['First section color', firstColor], ['Second section color', 'light'],
