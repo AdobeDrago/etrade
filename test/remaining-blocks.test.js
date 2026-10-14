@@ -234,7 +234,7 @@ test('tab panels retain the existing authored dynamic-rate settings mechanism', 
 });
 
 test('all live-content authoring examples survive decoration', async () => {
-  const examples = JSON.parse(await readFile(new URL('../docs/remaining-block-examples.json', import.meta.url), 'utf8'));
+  const examples = JSON.parse(await readFile(new URL('./fixtures/remaining-block-examples.json', import.meta.url), 'utf8'));
   await Promise.all(examples.map(async (example) => {
     const { document } = parseHTML(example.table);
     const rows = [...document.querySelectorAll('tbody > tr')].map((tr) => row(...[...tr.children].map((td) => td.innerHTML))).join('');
@@ -320,7 +320,7 @@ test('importers preserve icon names, promo eyebrows, hero offers and unique bann
 });
 
 test('current Planning cards keep nine named icons, an independent offer, and tool actions', async () => {
-  const pages = JSON.parse(await readFile(new URL('../docs/current-pages.json', import.meta.url), 'utf8'));
+  const pages = JSON.parse(await readFile(new URL('./fixtures/current-pages.json', import.meta.url), 'utf8'));
   const planning = pages.find((page) => page.id === 'planning');
   const icons = planning.sections.flatMap((section) => section.blocks).filter((item) => item.name.startsWith('Cards Icon'));
   const { block: events } = await render('cards-icon', icons[0].rows.map((cells) => row(...cells)).join(''), 'planning');
@@ -338,7 +338,7 @@ test('current Planning cards keep nine named icons, an independent offer, and to
 });
 
 test('current six-page pack has complete account panels, FAQs, and bound legal references', async () => {
-  const pages = JSON.parse(await readFile(new URL('../docs/current-pages.json', import.meta.url), 'utf8'));
+  const pages = JSON.parse(await readFile(new URL('./fixtures/current-pages.json', import.meta.url), 'utf8'));
   const counts = {
     homepage: 6, 'our-accounts': 5, brokerage: 7, planning: 9,
   };

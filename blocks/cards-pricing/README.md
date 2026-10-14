@@ -16,7 +16,7 @@ the live summary. The ordinary Cards Pricing treatment remains available.
 
 ## Optional dynamic bank rates
 
-The shared rate binding supports `{{rate}}` or named markers plus a separate **Rate settings** cell. API, manual and hybrid modes are documented in the [authoring guide](../../docs/dynamic-rates-authoring.html). Keep units and disclosure superscripts authored. Commission amounts and ordinary pricing remain authored unless explicitly configured; the bank-rate endpoint does not supply trading fees. Review: https://et-dynamic--etrade--AdobeDrago.aem.page/home.
+The shared rate binding supports `{{rate}}` or named markers plus a separate **Rate settings** cell. API, manual and hybrid modes are documented in the [shared rate settings](../cards-product/README.md#optional-dynamic-rates). Keep units and disclosure superscripts authored. Commission amounts and ordinary pricing remain authored unless explicitly configured; the bank-rate endpoint does not supply trading fees. Review: https://et-dynamic--etrade--AdobeDrago.aem.page/home.
 
 ## Migration review
 

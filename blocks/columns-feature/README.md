@@ -26,4 +26,4 @@ The block stylesheet owns both the component and its feature-specific surroundin
 used by the current homepage brokerage feature and Planning retirement feature.
 Combine it with Dark or Outline as needed. The default reading/layout order is
 unchanged. **Award** limits logo media to 200px for the brokerage recognition
-section. Updated copyable page examples: `docs/current-pages-authoring.html`.
+section.

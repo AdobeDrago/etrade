@@ -8,7 +8,21 @@ Rates, offer dates, legal references, CTA labels, and destinations belong in DA.
 
 Replace only a selected numeric rate with `{{rate}}` (or `{{rate:base}}`) and add a separate **Rate settings** cell in the same row. Settings select API, manual or hybrid mode, the product/field, balance or CD term, and an optional approved fallback. Unconfigured cards keep their authored values. A manual or populated hybrid override does not request rates. Keep `%`, APY labels, promotional copy and disclosure references authored; the base-rate API does not supply boosted promotional APYs.
 
-See the [copy-and-paste authoring guide](../../docs/dynamic-rates-authoring.html). Review dynamic bindings at https://et-dynamic--etrade--AdobeDrago.aem.page/home after authoring the markers and settings in preview content.
+For `{{rate:base}}% APY`, add a separate cell in the same card row. Start with a **Rate settings** paragraph and put each setting in its own paragraph:
+
+```text
+Rate settings
+Name: base
+Mode: api
+Product: 3100
+Field: advertisedAPY
+Balance: 0
+Fallback: -.--
+```
+
+Supported products are savings (`3100`), checking (`4240`) and CDs (`3500`). Savings/checking use an explicit Balance and `advertisedAPY`, `disclosureAPY` or `finalRate`. CDs use a Term such as `12M` with `disclosureAPY` or `finalRate`, or `minDisclosureAPY`/`maxDisclosureAPY` without Term or Balance. A name identifies only the matching markers in that card row.
+
+For a fixed rate, use `Mode: manual` with a numeric `Override`. `Mode: hybrid` uses a populated Override first and otherwise requests the configured API rate. A numeric zero is valid. Page metadata **Bank rates source** selects `direct` (default) or `aggregate`; **Bank rates endpoint** may select a same-origin service route. Without an endpoint, the approved E*TRADE service is used. Sample JSON under `/phx/pros` is for demonstration; verify live service access before delivery. Review authored bindings at https://demo--etrade--AdobeDrago.aem.page/home.
 
 Use `Fallback: -.--` to display that placeholder while a rate loads or cannot be resolved. The placeholder does not prevent valid API or hybrid lookups. With authored `{{rate}}% APY`, it displays as `-.--% APY`; screen readers receive an unavailable-rate label. Numeric fallbacks, including zero, remain supported. Overrides must still be numeric.
 
@@ -26,5 +40,4 @@ Authored content is transferred separately. Existing sandbox integration and cam
 
 **Cards Product (Three Columns)** displays the three current homepage product
 cards in one row from 900px. The ordinary variant retains its two-column layout.
-Use the fresh six-page authoring pack in `docs/current-pages-authoring.html` for
-current campaign copy; prior dated examples are component demonstrations.
+Maintain campaign copy and its matching disclosures in DA.

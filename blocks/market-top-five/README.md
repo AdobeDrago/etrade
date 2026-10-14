@@ -19,4 +19,4 @@ The demo selects quotes and sparkline histories from same-origin `data/market-da
 
 At most five unique valid quotes are shown; a shorter valid list remains usable. Missing charts are labeled unavailable. Requests and disclosures track the current selector; late older responses cannot overwrite it. Refresh retries failures. Prices are never authored or fabricated as a production fallback. Quote links hand off to E*TRADE's existing research destination.
 
-Layout: one column on narrow screens, two from 600px, five from 1100px. Data timestamps, delay notice, signed changes and accessible chart summaries are visible. Copyable page metadata, market blocks and category disclaimers are available in `docs/current-pages-authoring.html?page=welcome-back`.
+Layout: one column on narrow screens, two from 600px, five from 1100px. Data timestamps, delay notice, signed changes and accessible chart summaries are visible. Author category disclaimers and page metadata in DA using the keys above.

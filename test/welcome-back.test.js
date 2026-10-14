@@ -96,7 +96,7 @@ test('empty authored tables and missing cells remain usable', async () => {
 });
 
 test('current Welcome Back puts one hero image behind the campaign and login siblings', async () => {
-  const pages = JSON.parse(await readFile(new URL('../docs/current-pages.json', import.meta.url), 'utf8'));
+  const pages = JSON.parse(await readFile(new URL('./fixtures/current-pages.json', import.meta.url), 'utf8'));
   const welcome = pages.find((page) => page.id === 'welcome-back');
   const hero = welcome.sections[0].blocks[0];
   const markup = hero.rows.map((cells) => `<div>${cells.map((cell) => `<div>${cell}</div>`).join('')}</div>`).join('');
@@ -147,7 +147,7 @@ test('login controls toggle accessibly and hand off without sending credentials'
 });
 
 test('Welcome Back campaign icons survive DA as named text rather than relative images', async () => {
-  const pages = JSON.parse(await readFile(new URL('../docs/current-pages.json', import.meta.url), 'utf8'));
+  const pages = JSON.parse(await readFile(new URL('./fixtures/current-pages.json', import.meta.url), 'utf8'));
   const cards = pages.find((page) => page.id === 'welcome-back').sections[1].blocks[0];
   const markup = cards.rows.map((cells) => `<div>${cells.map((cell) => `<div>${cell}</div>`).join('')}</div>`).join('');
   const { block } = await harness('cards-icon', markup);

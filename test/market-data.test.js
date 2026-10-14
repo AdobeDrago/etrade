@@ -121,7 +121,7 @@ test('sample feeds are local-only and never become live fallbacks', async () => 
   try {
     globalThis.location = new URL(base);
     await assert.rejects(loadMarket('chart', { indexes: 'DJIND' }, { settings }), { code: 'invalid-sample' });
-    globalThis.location = new URL('http://127.0.0.1:3020/docs/current-pages-authoring.html?page=welcome-back');
+    globalThis.location = new URL('http://127.0.0.1:3020/home/welcome-back');
     globalThis.fetch = async () => new Response(JSON.stringify(sample));
     const result = await loadMarket('chart', { indexes: 'DJIND' }, { settings });
     assert.equal(result.sample, true);

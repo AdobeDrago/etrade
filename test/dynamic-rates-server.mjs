@@ -88,18 +88,8 @@ const server = createServer(async (request, response) => {
         return;
       }
       const contentType = upstream.headers.get('content-type') || 'text/html';
-      let content;
-      if (contentType.includes('text/html')) {
-        content = await upstream.text();
-        if (upstream.ok && !pathname.endsWith('.plain.html')) {
-          const nonce = content.match(/<script[^>]*\snonce="([^"]+)"/i)?.[1];
-          const nonceAttribute = nonce ? ` nonce="${nonce}"` : '';
-          const inspector = `<script${nonceAttribute} type="module" src="/docs/dynamic-rates-inspector.js"></script>`;
-          content = content.replace(/<\/body>/i, `${inspector}</body>`);
-        }
-      } else {
-        content = Buffer.from(await upstream.arrayBuffer());
-      }
+      const content = contentType.includes('text/html')
+        ? await upstream.text() : Buffer.from(await upstream.arrayBuffer());
       response.writeHead(upstream.status, { 'Content-Type': contentType, 'Cache-Control': 'no-store' });
       response.end(content);
     } catch {
@@ -109,5 +99,5 @@ const server = createServer(async (request, response) => {
 });
 server.listen(port, '127.0.0.1', () => {
   // eslint-disable-next-line no-console
-  console.log(`Rate demo: http://127.0.0.1:${port}/docs/dynamic-rates-demo.html`);
+  console.log(`Rate regression checks: http://127.0.0.1:${port}/test/card-rates.html`);
 });

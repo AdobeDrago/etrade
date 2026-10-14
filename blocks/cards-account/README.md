@@ -12,7 +12,7 @@ Single block table, one row per account card. Put its heading, copy and CTA link
 
 Replace a selected numeric value with `{{rate}}` or a named marker such as `{{rate:base}}`, keeping `%`, APY labels and rich text authored. Add a separate **Rate settings** cell to the same row to choose API, manual or hybrid mode, product/field, balance or CD term, override and approved fallback. Settings cells are consumed before decoration; ordinary additional content cells are preserved. Manual and populated hybrid overrides do not request the API.
 
-See the [copy-and-paste authoring guide](../../docs/dynamic-rates-authoring.html). Preview: https://et-dynamic--etrade--AdobeDrago.aem.page/what-we-offer/our-accounts. Existing flattened Our Accounts content must be authored as cards before these bindings apply.
+See the [shared rate settings](../cards-product/README.md#optional-dynamic-rates). Preview: https://et-dynamic--etrade--AdobeDrago.aem.page/what-we-offer/our-accounts. Existing flattened Our Accounts content must be authored as cards before these bindings apply.
 
 ## Supported variations
 

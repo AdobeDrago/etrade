@@ -116,7 +116,7 @@ test('an unavailable API removes raw placeholders and shares the request failure
 });
 
 test('corrected authoring binds the variable checking APY and keeps fixed promotions independent', async () => {
-  const pages = JSON.parse(await readFile(new URL('../docs/current-pages.json', import.meta.url)));
+  const pages = JSON.parse(await readFile(new URL('./fixtures/current-pages.json', import.meta.url)));
   const page = pages.find((entry) => entry.id === 'our-accounts');
   const tabs = page.sections.flatMap((section) => section.blocks).find((block) => block.name === 'Tabs Accounts');
   const { block, requests } = await render(tabs.rows.map((cells) => row(...cells)).join(''));
@@ -129,13 +129,8 @@ test('corrected authoring binds the variable checking APY and keeps fixed promot
   assert.match(bank.querySelectorAll('li')[0].textContent, /guaranteed 4\.25% Annual Percentage Yield for 6 months/);
   const coverage = [...bank.querySelectorAll('li')[0].querySelectorAll('p')].find((p) => p.textContent.includes('FDIC-insured'));
   assert.equal(coverage.querySelectorAll('sup')[1].textContent, 'depositcoverage');
-  assert.equal(bank.querySelector(':scope > h3 sup').textContent, 'savingsboost');
+  assert.equal(bank.querySelector('.tabs-accounts-offer h3 sup').textContent, 'savingsboost');
   assert.match(bank.querySelectorAll('li')[1].textContent, /Lock in 4\.75% Annual Percentage Yield/);
   assert.equal(requests.length, 1);
   assert.equal(page.metadata.some(([name]) => name.toLowerCase() === 'bank rates endpoint'), false);
-  const { document } = parseHTML(await readFile(new URL('../docs/our-accounts-current-authoring.html', import.meta.url), 'utf8'));
-  const tables = [...document.querySelectorAll('table')];
-  const metadata = tables.find((table) => table.querySelector('th').textContent === 'Metadata');
-  assert.equal(metadata.textContent.includes('bankRates.json'), false);
-  assert.equal(tables.find((table) => table.querySelector('th').textContent === 'Tabs Accounts').textContent.match(/\{\{rate:checking-rate\}\}/g).length, 1);
 });

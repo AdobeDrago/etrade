@@ -15,7 +15,7 @@ purple top border, and account cards use slate accents and compact typography.
 
 Rate markers and extra `Rate Settings` cells use the existing `/scripts/card-rates.js`
 mechanism. Name each rate independently when a panel needs multiple rates; see
-`docs/dynamic-rates-demo.html` for settings. Do not bake live bank rates into code.
+the [shared rate settings](../cards-product/README.md#optional-dynamic-rates). Do not bake live bank rates into code.
 Prefer `{{rate:psa-rate}}` with `Name: psa-rate`. Existing shorthand such as
 `{{psa-rate}}` also resolves when that name has a Rate Settings cell in the same
 panel row. Unconfigured shorthand remains authored text.
@@ -33,12 +33,8 @@ Learn more links render as plain text actions. Application links such as Open an
 account, Apply now and Get started render as outlines, including cards with only
 one action. Include the panel H2 and both links where the live page has them.
 
-Review actual live-content examples at `http://127.0.0.1:3030/docs/remaining-blocks.html`
-after `npm run demo:blocks`. Copyable tables are local review artifacts; content
-changes must be saved and previewed separately in DA.
-
 The October 12, 2026 **Our Accounts** reference has seven categories, ending in
 Cryptocurrency. Its account counts are 6, 3, 6, 2, 4, 4, 1. This page's Bank order
 is Premium Savings Account, Certificates of Deposit, Max-Rate Checking, Line of
 Credit. Do not reuse the Investment Choices page's six-category snapshot or Bank
-order. Copyable current panels: `docs/current-pages-authoring.html`.
+order. Maintain the account panels in DA.

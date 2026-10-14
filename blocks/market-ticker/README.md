@@ -10,4 +10,4 @@ The block requests `POST quote` with `symbol: DJIND,COMP.IDX,SPX,TNX` and `detai
 
 Data delay and service timestamps remain visible. The PHX quote timestamp field needs verification with a live response; absent timestamps show “Time unavailable”. Direction has signed text and accessible names as well as color.
 
-The bundled sample file is allowed on the same origin on localhost, preview and live delivery. Additional `/test/fixtures/*.json` remain localhost-only. Failure in either selected mode stays unavailable and does not switch sources. Copyable page metadata and market blocks are available in `docs/current-pages-authoring.html?page=welcome-back`.
+The bundled sample file is allowed on the same origin on localhost, preview and live delivery. Additional `/test/fixtures/*.json` remain localhost-only. Failure in either selected mode stays unavailable and does not switch sources.
