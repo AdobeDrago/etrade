@@ -14,6 +14,6 @@ Missing rows/cells are allowed. Extra value cells are combined. A standalone **L
 
 The presentation form still hands off to the authored E*TRADE login URL. It does not authenticate, send or store entered credentials, remember user IDs, or apply the destination/security-code choices; those require the identity integration. Inputs deliberately have no submission names, and entered values are cleared before navigation. An identity integration can listen for the bubbling `welcome:login-ready` event and replace `event.detail.slot` (`[data-login-slot]`). The form, event, and language link do not implement authentication.
 
-Full page seed and review: `docs/welcome-back-authoring.html`, `docs/welcome-back-demo.html`. Content target: `/home/welcome-back`. Preview after code push and content preview: https://demo--etrade--AdobeDrago.aem.page/home/welcome-back
+Full-page authoring and preview: `docs/current-pages-authoring.html?page=welcome-back`. Content target: `/home/welcome-back`. Preview after code push and content preview: https://demo--etrade--AdobeDrago.aem.page/home/welcome-back
 
 Use the current six-page copy pack at `docs/current-pages-authoring.html?page=welcome-back`. Campaign card icons are named `ira-selector` and `idea` in the first cell; do not paste relative SVG images into DA.

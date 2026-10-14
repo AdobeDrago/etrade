@@ -44,7 +44,7 @@ The live page checked on October 12, 2026 has these 12 categories in order:
 
 The current preview has nine simplified answers. Besides applying the variant, restore missing categories and full fee tables from the live reference. Keep bank-rate bindings and stable disclosure IDs; do not replace them with guessed rates or displayed footnote numbers. Expand all, exclusive individual opening, native buttons and accessibility behavior are shared by both variants.
 
-Authoring prompt: [Pricing and Rates](../../docs/pricing-and-rates-authoring-prompt.txt). Local visual review: `/docs/pricing-accordion-review.html`.
+Review the variant after saving and previewing content: https://demo--etrade--AdobeDrago.aem.page/what-we-offer/pricing-and-rates#detailed-pricing
 
 ## Behavior and accessibility
 

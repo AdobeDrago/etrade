@@ -35,12 +35,12 @@ npm run lint
 
 ## Current six-page authoring
 
-The October 12, 2026 [authoring pack](docs/current-pages-authoring.html) supersedes the older page examples for Home, Welcome Back, Our Accounts, Brokerage, Planning and Why E*TRADE. It includes rendered local reviews, copyable DA tables, current assets, page-specific disclosure sets and fragments, and save/preview instructions. Content is prepared locally; DA save and preview are separate.
+The [authoring pack](docs/current-pages-authoring.html) provides copyable DA tables and rendered previews for Home, Welcome Back, Our Accounts, Brokerage, Planning and Why E*TRADE. It includes source assets, page-specific disclosure sets and fragments, and save/preview instructions. Content is prepared locally; DA save and preview are separate.
 
 Run `npm run demo:rates` with the AEM proxy on port 3000, then open http://127.0.0.1:3020/docs/current-pages-authoring.html. This review renders page bodies and disclosures with the local blocks; verify the shared header/footer in the branch preview after saving content.
 
-The [Our Accounts rate and content audit](docs/our-accounts-rate-setup.html) documents named rate settings, corrected disclosure references, and the remaining live-service connection work.
+Add `&view=site` to a selected page's local review URL to include the shared header/footer and hide authoring controls. The prepared tables include floating docks for Home, Brokerage, Planning and Why E*TRADE.
 
-The October 13 [development and authoring handoff](docs/six-page-development-handoff.html) records the visual block changes, exact page variants and content order, remaining service dependencies, and desktop/mobile screenshots. Add `&view=site` to a selected page's local review URL to include the shared header/footer and hide authoring controls. The prepared tables include the live floating docks for Home, Brokerage, Planning and Why E*TRADE.
+Use the [authoring tools index](docs/index.html) for reusable rate examples, block examples, Investment Choices tables, footer content and homepage disclosures. Tests also use the page and block example data in `docs/`. The folder is excluded from Edge Delivery by `.hlxignore`.
 
-Captured local reviews: [six-page authoring](docs/current-pages-demo.png), [Welcome Back hero](docs/welcome-back-corrected-demo.png), and [Welcome Back sample market charts](docs/welcome-back-json-charts.png). These screenshots record earlier review states; use the rendered authoring pack for the current content and the branch preview for the shared layout.
+Our Accounts checking uses a named API rate; the local authoring preview supplies sample JSON. Use the [dynamic-rate setup guide](docs/dynamic-rates-authoring.html) for bindings and live connection checks. Savings and CD promotions remain authored campaign terms. Update campaign claims and their disclosures together before publishing.
