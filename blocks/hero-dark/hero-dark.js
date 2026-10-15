@@ -8,7 +8,101 @@ function container(className) {
   return node;
 }
 
+/** Split heroes accept named rows and the existing imported image/copy cells. */
+function decorateSplit(block) {
+  const content = container('content');
+  const media = container('media');
+  const offer = container('offer');
+  const eyebrow = container('eyebrow');
+  const title = container('title');
+  const copy = container('copy');
+  const parts = new Map([
+    ['eyebrow', eyebrow], ['heading', title], ['content', copy],
+    ['image', media], ['offer', offer],
+  ]);
+  const cells = [];
+  [...block.children].forEach((row) => {
+    const [key, ...values] = row.children;
+    const part = values.length && parts.get(key?.textContent.trim().toLowerCase());
+    if (part) values.forEach((cell) => part.append(...cell.childNodes));
+    else cells.push(...row.children);
+  });
+
+  const loose = container('loose');
+  cells.forEach((cell) => loose.append(...cell.childNodes));
+  const headings = [...loose.querySelectorAll('h1, h2, h3')];
+  // Imported account heroes use an H1 eyebrow followed by an H2 headline.
+  if (!title.textContent.trim() && !eyebrow.textContent.trim() && headings.length > 1
+    && headings[0].matches('h1') && headings[1].matches('h2')) {
+    eyebrow.append(headings[0]);
+    title.append(headings[1]);
+  } else if (!title.textContent.trim() && headings[0]) title.append(headings[0]);
+
+  const image = media.querySelector('picture, img') || loose.querySelector('picture, img');
+  if (image) {
+    const imageParent = image.parentElement;
+    const img = image.matches('img') ? image : image.querySelector('img');
+    media.prepend(image);
+    if (imageParent?.matches('p') && !imageParent.textContent.trim()
+      && !imageParent.querySelector('img, picture')) imageParent.remove();
+    if (img && block.closest('.section') === document.querySelector('main > .section')) {
+      img.loading = 'eager';
+      img.setAttribute('fetchpriority', 'high');
+    }
+  } else block.classList.add('no-image');
+
+  [...loose.childNodes].forEach((node) => {
+    if (node.textContent.trim() || node.querySelector?.('img, picture')) copy.append(node);
+  });
+  const heading = title.querySelector('h1, h2, h3');
+  if (heading) heading.classList.add('hero-dark-heading');
+  else block.classList.add('no-heading');
+
+  const actions = container('actions');
+  actions.classList.add('etrade-actions');
+  [...copy.querySelectorAll('p')].forEach((paragraph) => {
+    const link = standaloneAction(paragraph);
+    if (!link) return;
+    decorateAction(link, actions.children.length ? 'secondary' : 'primary', 'hero-dark');
+    const action = container('action');
+    action.append(link);
+    actions.append(action);
+    paragraph.remove();
+  });
+  if (actions.children.length) copy.append(actions);
+  [eyebrow, title, copy].forEach((part) => {
+    if (part.textContent.trim() || part.querySelector('img, picture')) content.append(part);
+  });
+
+  if (offer.textContent.trim()) {
+    const offerHeading = offer.querySelector('h1, h2, h3, h4');
+    if (offerHeading) offerHeading.classList.add('hero-dark-offer-heading');
+    const offerActions = container('offer-actions');
+    offerActions.classList.add('etrade-actions');
+    [...offer.querySelectorAll('p')].forEach((paragraph) => {
+      const link = standaloneAction(paragraph);
+      if (!link) return;
+      decorateAction(link, 'secondary', 'hero-dark');
+      offerActions.append(link);
+      paragraph.remove();
+    });
+    if (offerActions.children.length) offer.append(offerActions);
+    media.append(offer);
+    block.classList.add('has-offer');
+  }
+
+  // Content precedes image and offer in the DOM and on narrow screens.
+  block.replaceChildren();
+  if (content.childNodes.length) block.append(content);
+  else block.classList.add('no-content');
+  if (media.textContent.trim() || media.querySelector('img, picture')) block.append(media);
+}
+
 export default function decorate(block) {
+  if (block.classList.contains('split')) {
+    decorateSplit(block);
+    return;
+  }
   const previous = block.parentElement.previousElementSibling;
   if (previous?.matches('.default-content-wrapper') && previous.children.length === 1
     && previous.firstElementChild.matches('p') && previous.textContent.trim() === 'Home'

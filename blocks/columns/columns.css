@@ -3,6 +3,36 @@
   flex-direction: column;
 }
 
+body.homepage .pricing-intro .columns h2 {
+  margin: 0 0 40px;
+  font-size: 28px;
+  line-height: 32px;
+  letter-spacing: -0.4px;
+}
+
+@media (width >= 768px) {
+  body.homepage .pricing-intro .columns > div {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: center;
+    gap: 20px;
+  }
+
+  body.homepage .pricing-intro .columns > div > div:first-child {
+    grid-column: span 7;
+  }
+
+  body.homepage .pricing-intro .columns > div > div:last-child {
+    grid-column: span 5;
+  }
+
+  body.homepage .pricing-intro .columns h2 {
+    margin-bottom: 0;
+    font-size: 40px;
+    line-height: 44px;
+  }
+}
+
 .columns img {
   width: 100%;
 }

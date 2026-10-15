@@ -18,34 +18,56 @@ body.homepage .awards-section:where(:has(.cards-award)) h2 {
   flex-direction: column;
   align-items: flex-start;
   min-width: 0;
-  gap: 16px;
+  gap: 24px;
   color: #242424;
-  font-size: 15px;
-  line-height: 22px;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: -0.21px;
   overflow-wrap: anywhere;
 }
 
 .cards-award .cards-award-image :is(img, svg, .icon) {
   display: block;
-  width: 48px;
-  height: 48px;
+  width: 72px;
+  height: 72px;
 }
 
 .cards-award .cards-award-body h3 {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   color: inherit;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
-  line-height: 28px;
+  line-height: 26px;
+  letter-spacing: -0.4px;
 }
 
 .cards-award .cards-award-body p {
-  margin: 0 0 10px;
+  margin: 0 0 20px;
 }
 
 @media (width >= 768px) {
   .cards-award > ul {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 32px;
+    gap: 20px;
+  }
+}
+
+body.homepage .section:has(.cards-award) .default-content-wrapper > h2 {
+  margin-bottom: 40px;
+  font-size: 28px;
+  line-height: 32px;
+  text-align: left;
+  letter-spacing: -0.25px;
+}
+
+body.homepage .section:has(.cards-award) .page-intro-actions {
+  justify-content: center;
+  margin-top: 40px;
+}
+
+@media (width >= 768px) {
+  body.homepage .section:has(.cards-award) .default-content-wrapper > h2 {
+    font-size: 36px;
+    line-height: 40px;
   }
 }

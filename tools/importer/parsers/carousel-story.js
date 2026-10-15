@@ -30,7 +30,11 @@ export default function parse(element, { document }) {
     const textCell = [];
     if (eyebrow) textCell.push(eyebrow);
     if (heading) textCell.push(heading);
-    if (description) textCell.push(description);
+    if (description) {
+      const p = document.createElement('p');
+      p.append(...description.childNodes);
+      textCell.push(p);
+    }
     textCell.push(...links);
 
     // Skip empty placeholder slides (no image and no text content).

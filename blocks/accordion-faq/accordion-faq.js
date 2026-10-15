@@ -4,9 +4,12 @@ function takeAdjacentContent(block) {
   const wrapper = block.closest('.accordion-faq-wrapper');
   const previous = wrapper?.previousElementSibling;
   const next = wrapper?.nextElementSibling;
-  const heading = previous?.matches('.default-content-wrapper')
-    ? previous.lastElementChild : null;
-  const paragraph = next?.matches('.default-content-wrapper') ? next.firstElementChild : null;
+  const before = previous?.matches('.default-content-wrapper') ? [...previous.children] : [];
+  const heading = before.findLast((node) => node.matches('h1, h2, h3, h4, h5, h6'));
+  const trailing = heading && before.slice(before.indexOf(heading) + 1);
+  // DA may place the shared action before or after the FAQ table.
+  let paragraph = next?.matches('.default-content-wrapper') ? next.firstElementChild : null;
+  if (trailing?.length === 1 && trailing[0].matches('p')) [paragraph] = trailing;
   const link = paragraph?.matches('p') ? paragraph.querySelector('a[href]') : null;
   let action;
   let auxiliary;
@@ -26,13 +29,19 @@ function takeAdjacentContent(block) {
       auxiliary.setAttribute('aria-hidden', 'true');
       auxiliary.remove();
     } else paragraph.remove();
-    if (!next.children.length) next.remove();
+    if (next && !next.children.length) next.remove();
   }
   if (heading?.matches('h1, h2, h3, h4, h5, h6')) {
+    const introduction = document.createElement('div');
+    introduction.className = 'accordion-faq-introduction';
+    trailing.filter((node) => node.parentElement === previous)
+      .forEach((node) => introduction.append(node));
     heading.classList.add('accordion-faq-heading');
     heading.remove();
     if (!previous.children.length) previous.remove();
-    return { heading, action, auxiliary };
+    return {
+      heading, introduction, action, auxiliary,
+    };
   }
   return { action, auxiliary };
 }
@@ -62,15 +71,21 @@ function answerContent(cells) {
   return content;
 }
 
-function chevron() {
+function disclosureIcon(pricing) {
   const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   icon.classList.add('accordion-faq-item-icon');
   icon.setAttribute('viewBox', '0 0 24 24');
   icon.setAttribute('aria-hidden', 'true');
   icon.setAttribute('focusable', 'false');
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('d', 'M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z');
+  path.setAttribute('d', pricing ? 'M5 11h14v2H5z' : 'M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z');
   icon.append(path);
+  if (pricing) {
+    const vertical = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    vertical.classList.add('accordion-faq-icon-vertical');
+    vertical.setAttribute('d', 'M11 5h2v14h-2z');
+    icon.append(vertical);
+  }
   return icon;
 }
 
@@ -79,7 +94,10 @@ export default function decorate(block) {
   accordionCount += 1;
   const prefix = `accordion-faq-${accordionCount}`;
   const rows = [...block.children];
-  const { heading, action, auxiliary } = takeAdjacentContent(block);
+  const pricing = block.classList.contains('pricing');
+  const {
+    heading, introduction, action, auxiliary,
+  } = takeAdjacentContent(block);
   const level = heading ? Math.min(Number(heading.tagName.slice(1)) + 1, 6) : 3;
   const items = [];
   const group = document.createElement('div');
@@ -107,6 +125,17 @@ export default function decorate(block) {
     if (!title || !answers.length) return;
     const content = answerContent(answers);
     if (!content.textContent.trim() && !content.querySelector('img, picture, video, audio, iframe')) return;
+    if (pricing) {
+      content.querySelectorAll('table').forEach((table) => {
+        const scroll = document.createElement('div');
+        scroll.className = 'accordion-faq-table';
+        scroll.tabIndex = 0;
+        scroll.setAttribute('role', 'region');
+        scroll.setAttribute('aria-label', `${title} fee table`);
+        table.replaceWith(scroll);
+        scroll.append(table);
+      });
+    }
     const index = items.length + 1;
     const element = document.createElement('div');
     element.className = 'accordion-faq-item';
@@ -120,7 +149,7 @@ export default function decorate(block) {
     const text = document.createElement('span');
     text.className = 'accordion-faq-item-text';
     text.textContent = title;
-    button.append(chevron(), text);
+    button.append(disclosureIcon(pricing), text);
     label.append(button);
     const panel = document.createElement('div');
     panel.className = 'accordion-faq-item-body';
@@ -143,6 +172,7 @@ export default function decorate(block) {
 
   block.replaceChildren();
   if (heading) block.append(heading);
+  if (introduction?.children.length) block.append(introduction);
   if (items.length) {
     toggle.setAttribute('aria-controls', items.map(({ panel }) => panel.id).join(' '));
     toggle.addEventListener('click', () => {

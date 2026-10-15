@@ -57,7 +57,22 @@ export default function parse(element, { document }) {
     const richText = panel.querySelector('.richTextEditor');
     if (richText) contentCell.push(richText);
     const cards = [...panel.querySelectorAll('.card')];
-    contentCell.push(...cards);
+    if (cards.length) {
+      const list = document.createElement('ul');
+      cards.forEach((card) => {
+        const item = document.createElement('li');
+        const body = card.querySelector('.card-body');
+        if (body) item.append(...body.childNodes);
+        else item.append(...card.childNodes);
+        card.querySelectorAll('.card-footer a').forEach((link) => {
+          const p = document.createElement('p');
+          p.append(link);
+          item.append(p);
+        });
+        list.append(item);
+      });
+      contentCell.push(list);
+    }
 
     cells.push([label, contentCell.length ? contentCell : panel]);
   });

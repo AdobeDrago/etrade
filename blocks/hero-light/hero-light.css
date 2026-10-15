@@ -1,53 +1,103 @@
-/* hero-light — structural layout only; brand styling applied in design pass. */
-
-.hero-light-container .hero-light-wrapper {
-  max-width: unset;
-}
-
 .hero-light {
-  padding: 32px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: flex-start;
+  --action-link-color: var(--brand-link, #5627d8);
+
+  padding: 32px 0 48px;
+  color: var(--brand-text, #242424);
+  font-family: var(--brand-font-family);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 21px;
+  letter-spacing: -0.21px;
   text-align: left;
+  overflow-wrap: anywhere;
 }
 
-.hero-light h1,
-.hero-light h2,
-.hero-light p {
-  margin: 0;
+.hero-light .hero-light-content {
+  min-width: 0;
+}
+
+main .hero-light :is(h1, h2, h3) {
+  margin: 0 0 20px;
+  color: inherit;
+  font-size: 46px;
+  font-weight: 500;
+  line-height: 52px;
+  letter-spacing: -1.2px;
+}
+
+main .hero-light p {
   max-width: 800px;
-  color: #444;
-  font-size: var(--body-font-size-m);
+  margin: 0 0 25px;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
 }
 
-.hero-light-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  align-items: center;
-  margin-top: 4px;
+.hero-light .hero-light-actions {
+  margin-top: 24px;
 }
 
-.hero-light-actions p {
-  margin: 0;
+.hero-light a:any-link {
+  color: var(--brand-link, #5627d8);
 }
 
-@media (width >= 900px) {
+.hero-light a:focus-visible {
+  outline: 2px solid var(--brand-link, #5627d8);
+  outline-offset: 3px;
+}
+
+.hero-light sup {
+  position: relative;
+  top: -0.5em;
+  font-size: 65%;
+  line-height: 0;
+  vertical-align: baseline;
+}
+
+@media (width >= 768px) {
   .hero-light {
-    padding: 48px 0;
+    padding: 40px 0 60px;
+  }
+
+  main .hero-light :is(h1, h2, h3) {
+    font-size: 72px;
+    line-height: 76px;
   }
 }
 
-/* --- E*TRADE brand styling --- */
-.hero-light h1, .hero-light h2 {
-  font-family: var(--brand-font-family);
-  color: var(--brand-text);
-  font-weight: 600;
+body.our-accounts main > .section.hero-light-container {
+  margin: 0;
+  padding: 0;
+  background: #fafafa;
 }
 
-.hero-light-actions a:any-link {
-  color: var(--brand-link);
-  font-weight: 500;
+body.our-accounts .hero-light {
+  padding: 30px 0 60px;
+}
+
+body.our-accounts .hero-light-content {
+  max-width: 780px;
+}
+
+@media (width < 768px) {
+  .hero-light {
+    text-align: center;
+  }
+
+  body.our-accounts .hero-light {
+    padding-bottom: 50px;
+  }
+
+  main .hero-light :is(h1, h2, h3) {
+    margin-bottom: 10px;
+  }
+
+  main .hero-light p {
+    font-size: 17px;
+    line-height: 24px;
+  }
+
+  .hero-light .hero-light-actions {
+    justify-content: center;
+  }
 }

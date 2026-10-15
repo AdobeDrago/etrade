@@ -22,8 +22,14 @@ export default function parse(element, { document }) {
     const link = card.querySelector('.card-btn-group a, a.btn-link, a');
 
     const bodyCell = [];
+    const eyebrow = card.querySelector('.eyebrow');
+    if (eyebrow) bodyCell.push(eyebrow);
     if (heading) bodyCell.push(heading);
-    if (description) bodyCell.push(description);
+    if (description) {
+      const p = document.createElement('p');
+      p.append(...description.childNodes);
+      bodyCell.push(p);
+    }
     if (link) bodyCell.push(link);
 
     if (image || bodyCell.length) {
@@ -37,6 +43,6 @@ export default function parse(element, { document }) {
     return;
   }
 
-  const block = WebImporter.Blocks.createBlock(document, { name: 'cards-article', cells });
+  const block = WebImporter.Blocks.createBlock(document, { name: cards.some((card) => card.matches('.promo-card') || card.querySelector('.eyebrow')) ? 'cards-article (promo)' : 'cards-article', cells });
   element.replaceWith(block);
 }
