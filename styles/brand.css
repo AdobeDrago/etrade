@@ -150,6 +150,14 @@
   --space-80: 5rem;
   --space-96: 6rem;
 
+  /* Author-facing spacing names follow the Author Kit scale. */
+  --spacing-xs: var(--space-4);
+  --spacing-s: var(--space-8);
+  --spacing-m: var(--space-12);
+  --spacing-l: var(--space-24);
+  --spacing-xl: var(--space-32);
+  --spacing-xxl: var(--space-48);
+
   /* Layout. Physical widths preserve the existing page grid and header reserve. */
   --layout-container-max: 1200px;
   --layout-content-max: 1180px;
