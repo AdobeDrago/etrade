@@ -1,6 +1,9 @@
 /*
- * E*TRADE brand tokens — extracted from us.etrade.com (clientlib-site/site.css).
- * Font: GraphikETRADE. Accent: #5627d8. Dark surfaces: near-black #121213 / header bar #1c1a1e.
+ * Shared E*TRADE design tokens. Loaded globally through styles.css.
+ * Brand reference: https://adobedrago.github.io/etrade/#brand
+ * Palette values come from the reference and existing production-matched styles.
+ * Use semantic tokens in components; keep component layout in its block stylesheet.
+ * Font loading stays in place during the token migration.
  */
 
 @font-face {
@@ -28,30 +31,208 @@
 }
 
 :root {
-  /* fonts */
-  --brand-font-family: graphiketrade, 'Helvetica Neue', helvetica, arial, sans-serif;
+  /* Palette. Numbered shades run from light to dark. */
+  --palette-white: #fff;
+  --palette-neutral-50: #fafafa;
+  --palette-neutral-100: #f5f5f5;
+  --palette-neutral-200: #e2e2e2;
+  --palette-neutral-300: #ccc;
+  --palette-neutral-400: #c5c5c5;
+  --palette-neutral-600: #666;
+  --palette-neutral-800: #242424;
+  --palette-neutral-900: #1c1a1e;
+  --palette-neutral-950: #121213;
+  --palette-purple-300: #ab80ff;
+  --palette-purple-500: #7852e0;
+  --palette-purple-600: #5627d8;
+  --palette-purple-700: #451fad;
+  --palette-blue-50: #e9f2f9;
 
-  /* brand colors */
-  --brand-text: #242424;
-  --brand-background: #fff;
-  --brand-link: #5627d8;
-  --brand-link-hover: #451fad;
-  --brand-accent: #5627d8;
-  --brand-accent-hover: #7852e0;
-  --brand-accent-active: #451fad;
+  /* Existing market status colors; these extend the documented brand palette. */
+  --palette-green-300: #9be5b2;
+  --palette-green-700: #157347;
+  --palette-red-300: #ffb7cb;
+  --palette-red-700: #b02a50;
 
-  /* link color when placed on a dark surface (hero/dark sections, header) */
-  --brand-link-on-dark: #ab80ff;
+  /* Semantic colors. Inverse roles are intended for dark surfaces. */
+  --color-text-primary: var(--palette-neutral-800);
+  --color-text-secondary: var(--palette-neutral-600);
+  --color-text-inverse: var(--palette-white);
+  --color-text-inverse-secondary: var(--palette-neutral-400);
+  --color-surface-default: var(--palette-white);
+  --color-surface-page: var(--palette-neutral-50);
+  --color-surface-subtle: var(--palette-neutral-100);
+  --color-surface-inverse: var(--palette-neutral-950);
+  --color-surface-inverse-raised: var(--palette-neutral-900);
+  --color-surface-highlight: var(--palette-blue-50);
+  --color-border-default: var(--palette-neutral-200);
+  --color-border-strong: var(--palette-neutral-300);
+  --color-link: var(--palette-purple-600);
+  --color-link-hover: var(--palette-purple-700);
+  --color-link-inverse: var(--palette-purple-300);
+  --color-action-primary: var(--palette-purple-600);
 
-  /* dark surfaces — extracted from us.etrade.com computed styles:
-     section/hero background rgb(18, 18, 19); header/nav bar rgb(28, 26, 30) */
-  --brand-dark-bg: #121213;
-  --brand-dark-bg-alt: #1c1a1e;
-  --brand-text-on-dark: #fff;
+  /* Preserve the existing button hover, distinct from the reference's link hover. */
+  --color-action-primary-hover: var(--palette-purple-500);
+  --color-action-primary-active: var(--palette-purple-700);
+  --color-action-primary-text: var(--palette-white);
+  --color-focus: var(--palette-purple-600);
+  --color-focus-inverse: var(--palette-purple-300);
+  --color-disabled-surface: var(--palette-neutral-50);
+  --color-disabled-text: var(--palette-neutral-950);
+  --color-status-positive: var(--palette-green-700);
+  --color-status-negative: var(--palette-red-700);
+  --color-status-positive-inverse: var(--palette-green-300);
+  --color-status-negative-inverse: var(--palette-red-300);
 
-  /* light surface — extracted from us.etrade.com computed styles:
-     primary light section background rgb(250, 250, 250) */
-  --brand-light-bg: #fafafa;
-  --brand-light-bg-alt: #f5f5f5;
-  --brand-highlight-bg: #e9f2f9;
+  /* Typography. Size suffixes give pixel equivalents at a 16px browser default.
+     Keep the root font size unset so rem values respect browser preferences. */
+  --font-family-body: graphiketrade, 'Helvetica Neue', helvetica, arial, sans-serif;
+  --font-family-heading: var(--font-family-body);
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-size-12: 0.75rem;
+  --font-size-13: 0.8125rem;
+  --font-size-14: 0.875rem;
+  --font-size-15: 0.9375rem;
+  --font-size-16: 1rem;
+  --font-size-18: 1.125rem;
+  --font-size-20: 1.25rem;
+  --font-size-22: 1.375rem;
+  --font-size-24: 1.5rem;
+  --font-size-28: 1.75rem;
+  --font-size-32: 2rem;
+  --font-size-36: 2.25rem;
+  --font-size-40: 2.5rem;
+  --font-size-44: 2.75rem;
+  --font-size-48: 3rem;
+  --font-size-64: 4rem;
+  --font-size-72: 4.5rem;
+  --line-height-body: 1.6;
+  --line-height-copy: 1.25;
+  --line-height-heading: 1.25;
+  --line-height-display: 1.0833;
+  --tracking-normal: normal;
+  --tracking-tight: calc(-1rem / 64);
+  --tracking-display: -0.0625rem;
+
+  /* Text roles. Section headings and HTML heading defaults have separate scales. */
+  --text-body-size: var(--font-size-16);
+  --text-supporting-size: var(--font-size-13);
+  --text-label-size: var(--font-size-14);
+  --text-card-heading-size: var(--font-size-24);
+  --text-section-heading-size: var(--font-size-28);
+  --text-heading-1-size: var(--font-size-36);
+  --text-heading-2-size: var(--font-size-28);
+  --text-heading-3-size: var(--font-size-24);
+  --text-heading-4-size: var(--font-size-22);
+  --text-heading-5-size: var(--font-size-20);
+  --text-heading-6-size: var(--font-size-18);
+
+  /* Spacing. Suffixes use the same 16px-default convention as font sizes. */
+  --space-0: 0;
+  --space-2: 0.125rem;
+  --space-4: 0.25rem;
+  --space-8: 0.5rem;
+  --space-10: 0.625rem;
+  --space-12: 0.75rem;
+  --space-16: 1rem;
+  --space-20: 1.25rem;
+  --space-24: 1.5rem;
+  --space-30: 1.875rem;
+  --space-32: 2rem;
+  --space-40: 2.5rem;
+  --space-48: 3rem;
+  --space-60: 3.75rem;
+  --space-64: 4rem;
+  --space-80: 5rem;
+  --space-96: 6rem;
+
+  /* Layout. Physical widths preserve the existing page grid and header reserve. */
+  --layout-container-max: 1200px;
+  --layout-content-max: 1180px;
+  --layout-copy-max: 800px;
+  --layout-gutter: var(--space-20);
+  --layout-grid-gap: var(--space-20);
+  --layout-section-space: var(--space-40);
+  --layout-section-space-large: var(--space-60);
+  --layout-header-height: 88px;
+
+  /* Shapes, borders, and focus treatments. Thin strokes stay in physical pixels. */
+  --radius-control: 2px;
+  --radius-small: 4px;
+  --radius-medium: 8px;
+  --radius-card: 16px;
+  --radius-round: 50%;
+  --border-width-thin: 1px;
+  --border-width-strong: 2px;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 3px;
+  --shadow-popover: 0 1px 3px rgb(36 36 36 / 10%), 0 6px 12px rgb(36 36 36 / 8%);
+  --shadow-floating: 0 4px 20px rgb(18 18 19 / 20%);
+
+  /* Motion and layers. Local artwork can retain its own internal stacking order. */
+  --motion-duration-fast: 150ms;
+  --motion-duration-normal: 300ms;
+  --motion-duration-slow: 400ms;
+  --motion-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --layer-content: 1;
+  --layer-popover: 10;
+  --layer-dock: 99;
+  --layer-header: 100;
+  --layer-demo: 110;
+
+  /* Compatibility aliases keep existing blocks on their current brand values. */
+  --brand-font-family: var(--font-family-body);
+  --brand-text: var(--color-text-primary);
+  --brand-background: var(--color-surface-default);
+  --brand-link: var(--color-link);
+  --brand-link-hover: var(--color-link-hover);
+  --brand-accent: var(--color-action-primary);
+  --brand-accent-hover: var(--color-action-primary-hover);
+  --brand-accent-active: var(--color-action-primary-active);
+  --brand-link-on-dark: var(--color-link-inverse);
+  --brand-dark-bg: var(--color-surface-inverse);
+  --brand-dark-bg-alt: var(--color-surface-inverse-raised);
+  --brand-text-on-dark: var(--color-text-inverse);
+  --brand-light-bg: var(--color-surface-page);
+  --brand-light-bg-alt: var(--color-surface-subtle);
+  --brand-highlight-bg: var(--color-surface-highlight);
+}
+
+/* Native CSS variables cannot be used in media conditions. Retain the current
+   breakpoints: 768px shared layout, 900px HTML headings, 1085px header chrome.
+   Block-specific breakpoints remain with their layouts until those blocks migrate. */
+@media (width >= 768px) {
+  :root {
+    --layout-gutter: var(--space-10);
+    --text-card-heading-size: var(--font-size-28);
+    --text-section-heading-size: var(--font-size-40);
+  }
+}
+
+@media (width >= 900px) {
+  :root {
+    --text-heading-1-size: var(--font-size-48);
+    --text-heading-2-size: var(--font-size-40);
+    --text-heading-3-size: var(--font-size-32);
+    --text-heading-4-size: var(--font-size-28);
+    --text-heading-5-size: var(--font-size-24);
+    --text-heading-6-size: var(--font-size-20);
+  }
+}
+
+@media (width >= 1085px) {
+  :root {
+    --layout-header-height: 110.1875px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-fast: 0s;
+    --motion-duration-normal: 0s;
+    --motion-duration-slow: 0s;
+  }
 }
