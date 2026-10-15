@@ -70,11 +70,21 @@ Flat uses the shared primary text, border and action colors in place of its form
 
 The local `--accordion-faq-*` spacing variables preserve the reference's question padding, answer padding, paragraph rhythm and action separation. Remaining uncommon rem values are component measurements, not additions to the global spacing scale. The existing `--faq-gutter-offset` hook and layout breakpoints remain supported. Expand/collapse behavior and authored content are preserved.
 
+## Authored section controls
+
+Both variants support the shared Section Metadata controls. In an authored section, the accordion fills its wrapper or grid cell, and its light surface stays within the block. Its legacy full-width background effect and Flat section resets apply only to sections without the new controls. The section's selected container, background and responsive grid remain in control of the outer layout.
+
+When **Spacing** is specified, section padding supplies the outer top and bottom space, including `none`; the accordion removes its own outer vertical padding. Question padding, answer spacing and all interaction styling remain local to the block. A section **Gap** separates whole blocks in a grid and keeps the accordion's internal row spacing intact.
+
+In a section **Grid**, the authored section heading, introduction and standalone action stay outside individual accordions so they can span all columns. Question headings remain one level below the nearest preceding section heading. Outside grids, the existing behavior of moving the adjacent heading and action into the accordion is preserved.
+
+Both variants retain their own light surface, primary text and purple links inside dark, colored, gradient or image sections. They also use a light native color scheme for controls and table scroll regions. The section's theme continues to control surrounding default content.
+
 ## Validation
 
 Run `npm run test:accordion` for semantic-table preservation, omitted cells, panel controls and default FAQ regression checks. Run `npm run lint` before committing.
 
-In a browser, review both variants below and above 768px and 900px, including expanded answers, keyboard focus, a dark surrounding section, long labels and 200% text sizing. Flat answer tables should scroll within their labeled region without widening the page. Confirm exclusive opening, Expand all / Collapse all, plus/minus or chevron states and reduced-motion behavior.
+In a browser, review both variants below and above 768px and 900px, including expanded answers, keyboard focus, a dark surrounding section, long labels and 200% text sizing. Also review narrow/full containers, section backgrounds, `Spacing: none` and multi-block grids with shared headings and actions. Flat answer tables should scroll within their labeled region without widening the page. Confirm exclusive opening, Expand all / Collapse all, plus/minus or chevron states and reduced-motion behavior.
 
 ## Migration review
 

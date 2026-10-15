@@ -5,6 +5,12 @@
   --accordion-faq-paragraph-spacing: calc(10.5rem / 16);
   --accordion-faq-action-spacing: calc(35.5rem / 16);
 
+  /* This block owns a light surface, including inherited links and native controls. */
+  --text-color: var(--color-text-primary);
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --action-link-color: var(--color-link);
+
   position: relative;
   left: 50%;
   box-sizing: border-box;
@@ -15,6 +21,7 @@
   box-shadow: 0 0 0 100vmax var(--color-surface-page);
   clip-path: inset(calc(-1 * var(--space-40)) -100vmax);
   color: var(--color-text-primary);
+  color-scheme: light;
   font-family: var(--font-family-body);
   font-feature-settings: "kern", "liga";
   font-synthesis: none;
@@ -275,14 +282,14 @@
 }
 
 /* The flat variant uses divided rows, plus/minus controls and scrollable tables. */
-main .section:has(.accordion-faq.flat) {
+main .section:not([data-section-layout="authored"]):has(.accordion-faq.flat) {
   margin: 0;
   padding: 0;
   background: var(--color-surface-default);
   color: var(--color-text-primary);
 }
 
-main .section > .accordion-faq-wrapper:has(.accordion-faq.flat) {
+main .section:not([data-section-layout="authored"]) > .accordion-faq-wrapper:has(.accordion-faq.flat) {
   box-sizing: border-box;
   max-width: var(--layout-container-max);
   padding: 0 var(--layout-gutter);
@@ -435,4 +442,17 @@ main .section.dark .accordion-faq a:any-link:not(.button, .etrade-action) {
 
 main .section.dark .accordion-faq .accordion-faq-action a:any-link:hover {
   color: var(--color-action-primary-text);
+}
+
+/* Authored sections own the outer layout and background. Keep the FAQ in its cell. */
+main .section[data-section-layout="authored"] .accordion-faq {
+  left: auto;
+  width: 100%;
+  transform: none;
+  box-shadow: none;
+  clip-path: none;
+}
+
+main .section[data-section-spacing] .accordion-faq {
+  padding-block: 0;
 }

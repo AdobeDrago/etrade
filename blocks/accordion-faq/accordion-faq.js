@@ -2,6 +2,14 @@ let accordionCount = 0;
 
 function takeAdjacentContent(block) {
   const wrapper = block.closest('.accordion-faq-wrapper');
+  const section = wrapper?.parentElement;
+  if (section?.hasAttribute('data-section-grid')) {
+    const siblings = [...section.children];
+    const preceding = siblings.slice(0, siblings.indexOf(wrapper));
+    const sectionHeading = preceding.flatMap((node) => (node.matches('.default-content-wrapper')
+      ? [...node.children] : [])).findLast((node) => node.matches('h1, h2, h3, h4, h5, h6'));
+    return { sectionHeading };
+  }
   const previous = wrapper?.previousElementSibling;
   const next = wrapper?.nextElementSibling;
   const before = previous?.matches('.default-content-wrapper') ? [...previous.children] : [];
@@ -98,9 +106,10 @@ export default function decorate(block) {
   if (block.classList.contains('pricing')) block.classList.add('flat');
   const flat = block.classList.contains('flat');
   const {
-    heading, introduction, action, auxiliary,
+    heading, sectionHeading, introduction, action, auxiliary,
   } = takeAdjacentContent(block);
-  const level = heading ? Math.min(Number(heading.tagName.slice(1)) + 1, 6) : 3;
+  const labelHeading = heading || sectionHeading;
+  const level = labelHeading ? Math.min(Number(labelHeading.tagName.slice(1)) + 1, 6) : 3;
   const items = [];
   const group = document.createElement('div');
   group.className = 'accordion-faq-items';
