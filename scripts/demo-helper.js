@@ -1,5 +1,9 @@
 import { rateDecimal, createBankRateRequest } from './bank-rates.js';
 import { DEMO_BALANCE_KEY, readDemoBalance } from './demo-balance.js';
+import isDemoHelperHost from './demo-host.js';
+import mountPerformanceControls from './demo-performance-controls.js';
+
+export { default as isDemoHelperHost } from './demo-host.js';
 
 const OPEN_KEY = 'etrade:demo-helper-open';
 const SOURCE_LABELS = {
@@ -10,12 +14,6 @@ const SOURCE_LABELS = {
   unavailable: 'Unavailable',
   loading: 'Loading',
 };
-
-/** This presentation tool belongs to demo, never a production or other feature host. */
-export function isDemoHelperHost(hostname = '') {
-  return ['localhost', '127.0.0.1', '[::1]', 'demo--etrade--adobedrago.aem.page']
-    .includes(hostname.toLowerCase());
-}
 
 function node(doc, tag, className, text) {
   const element = doc.createElement(tag);
@@ -161,7 +159,14 @@ export default function mountDemoHelper(doc = document, win = window) {
   features.append(featureList);
   const refresh = button(doc, 'Reload page');
   const footer = node(doc, 'p', 'muted', 'Demo values are local to this browser and origin. The balance is never sent to the rate service.');
-  content.append(balanceSection, rates, features, refresh, footer);
+  content.append(
+    mountPerformanceControls(doc, win),
+    balanceSection,
+    rates,
+    features,
+    refresh,
+    footer,
+  );
   panel.append(header, badge, content);
   const highlight = node(doc, 'div', 'highlight');
   highlight.hidden = true;
@@ -274,7 +279,10 @@ export default function mountDemoHelper(doc = document, win = window) {
 
   toggle.addEventListener('click', () => {
     setExpanded(!expanded);
-    if (expanded) { render(); input.focus(); }
+    if (expanded) {
+      render();
+      panel.querySelector('input, select')?.focus();
+    }
   });
   close.addEventListener('click', () => setExpanded(false, true));
   root.addEventListener('keydown', (event) => {

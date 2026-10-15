@@ -4,6 +4,7 @@ import decorateDisclosureReferences from './disclosure-references.js';
 import decoratePageLayout, {
   localizePageLinks, decoratePricingIntroductions, decoratePageActions,
 } from './page-layout.js';
+import isDemoHelperHost from './demo-host.js';
 import {
   loadHeader,
   loadFooter,
@@ -259,17 +260,27 @@ async function loadLazy(doc) {
 function loadDelayed() {
   import('./consent-check.js');
   // This helper exists only on demo; its host guard also prevents accidental exposure.
-  import('./demo-helper.js').then(async ({ default: mountDemoHelper, isDemoHelperHost }) => {
-    if (!isDemoHelperHost(window.location.hostname)) return;
-    await loadCSS(`${window.hlx.codeBasePath}/styles/demo-helper.css`);
-    mountDemoHelper();
-  });
+  if (isDemoHelperHost(window.location.hostname)) {
+    import('./demo-helper.js').then(async ({ default: mountDemoHelper }) => {
+      await loadCSS(`${window.hlx.codeBasePath}/styles/demo-helper.css`);
+      mountDemoHelper();
+    });
+  }
   // load anything that can be postponed to the latest here
 }
 
 async function loadPage() {
+  let performanceDemo;
+  if (isDemoHelperHost(window.location.hostname)
+    && new URLSearchParams(window.location.search).has('perf')) {
+    const { default: startPerformanceDemo } = await import('./demo-performance.js');
+    performanceDemo = startPerformanceDemo(document, window);
+    // Only the observed blocking bootstrap stage delays EDS decoration.
+    await performanceDemo?.ready;
+  }
   await loadEager(document);
   await loadLazy(document);
+  performanceDemo?.afterContent();
   loadDelayed();
 }
 

@@ -190,6 +190,26 @@
   box-shadow: 0 0 0 3px #fff;
 }
 
+.demo-helper .demo-helper-metrics {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 12px;
+  margin: 12px 0;
+  font-size: 12px;
+}
+
+.demo-helper .demo-helper-metric-value {
+  max-width: 160px;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.demo-helper button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 @media print {
   .demo-helper {
     display: none;

@@ -101,7 +101,7 @@ test('expand and Escape maintain disclosure semantics and return focus to the tr
   toggle.dispatchEvent(new window.Event('click'));
   assert.equal(toggle.getAttribute('aria-expanded'), 'true');
   assert.equal(panel.hidden, false);
-  assert.equal(document.activeElement.id, 'demo-helper-balance');
+  assert.equal(document.activeElement.id, 'demo-helper-performance-profile');
   const escape = new window.Event('keydown', { bubbles: true, cancelable: true });
   escape.key = 'Escape';
   document.activeElement.dispatchEvent(escape);
