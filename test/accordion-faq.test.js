@@ -22,23 +22,27 @@ async function render(rows, variant = '', adjacent = '') {
 
 const fees = '<table><thead><tr><th scope="col">Pricing</th><th scope="col">0–29 trades</th><th scope="col">30+ trades</th></tr></thead><tbody><tr><th scope="row">Options contract</th><td>$0.65</td><td>$0.50</td></tr><tr><th scope="row">Dime buyback</th><td colspan="2">$0 contract fee</td></tr></tbody></table><p>Read <a href="/terms?track=1">terms</a>.<sup>b</sup></p>';
 
-test('pricing answers preserve semantic headers, merged cells, disclosures and extra answer cells', async () => {
-  const { block } = await render(row('Stock and options trades', fees, '<p>Additional fee explanation.</p>'), 'pricing');
-  assert.equal(block.querySelectorAll('table').length, 1);
-  assert.equal(block.querySelector('thead th').getAttribute('scope'), 'col');
-  assert.equal(block.querySelector('tbody th').getAttribute('scope'), 'row');
-  assert.equal(block.querySelector('td[colspan]').getAttribute('colspan'), '2');
-  assert.equal(block.querySelector('a').getAttribute('href'), '/terms?track=1');
-  assert.equal(block.querySelector('sup').textContent, 'b');
-  assert.match(block.textContent, /Additional fee explanation/);
-  const region = block.querySelector('.accordion-faq-table');
-  assert.equal(region.getAttribute('role'), 'region');
-  assert.equal(region.getAttribute('aria-label'), 'Stock and options trades fee table');
-  assert.equal(region.getAttribute('tabindex'), '0');
+['flat', 'pricing'].forEach((variant) => {
+  test(`${variant} answers preserve semantic headers, merged cells, disclosures and extra answer cells`, async () => {
+    const { block } = await render(row('Stock and options trades', fees, '<p>Additional fee explanation.</p>'), variant);
+    assert.ok(block.classList.contains('flat'));
+    assert.ok(block.querySelector('.accordion-faq-icon-vertical'));
+    assert.equal(block.querySelectorAll('table').length, 1);
+    assert.equal(block.querySelector('thead th').getAttribute('scope'), 'col');
+    assert.equal(block.querySelector('tbody th').getAttribute('scope'), 'row');
+    assert.equal(block.querySelector('td[colspan]').getAttribute('colspan'), '2');
+    assert.equal(block.querySelector('a').getAttribute('href'), '/terms?track=1');
+    assert.equal(block.querySelector('sup').textContent, 'b');
+    assert.match(block.textContent, /Additional fee explanation/);
+    const region = block.querySelector('.accordion-faq-table');
+    assert.equal(region.getAttribute('role'), 'region');
+    assert.equal(region.getAttribute('aria-label'), 'Stock and options trades table');
+    assert.equal(region.getAttribute('tabindex'), '0');
+  });
 });
 
 test('opening a category closes other panels and updates all-toggle and accessibility states', async () => {
-  const { block } = await render(row('Stock trades', fees) + row('Futures', '<p>Fees</p>'), 'pricing');
+  const { block } = await render(row('Stock trades', fees) + row('Futures', '<p>Fees</p>'), 'flat');
   const buttons = [...block.querySelectorAll('.accordion-faq-item-label')];
   const panels = [...block.querySelectorAll('.accordion-faq-item-body')];
   const all = block.querySelector('.accordion-faq-expand-all');
@@ -62,8 +66,8 @@ test('opening a category closes other panels and updates all-toggle and accessib
   assert.equal(all.getAttribute('aria-expanded'), 'false');
 });
 
-test('pricing moves its authored adjacent heading with its deep-link ID and correct label level', async () => {
-  const { block } = await render(row('Futures', '<p>Fee</p>'), 'pricing', '<div class="default-content-wrapper"><h2 id="detailed-pricing">Detailed pricing</h2></div>');
+test('flat variant moves its authored adjacent heading with its deep-link ID and correct label level', async () => {
+  const { block } = await render(row('Futures', '<p>Fee</p>'), 'flat', '<div class="default-content-wrapper"><h2 id="detailed-pricing">Detailed pricing</h2></div>');
   assert.equal(block.querySelector('.accordion-faq-heading').id, 'detailed-pricing');
   assert.equal(block.querySelector('.accordion-faq-item-heading').tagName, 'H3');
   const button = block.querySelector('.accordion-faq-item-label');
@@ -73,7 +77,7 @@ test('pricing moves its authored adjacent heading with its deep-link ID and corr
 });
 
 test('omitted and empty cells are skipped while multiple native tables survive in an answer', async () => {
-  const { block } = await render(row('') + row('No answer') + row('', '<p>Copy</p>') + row('Empty', '') + row('Other fees', fees + fees), 'pricing');
+  const { block } = await render(row('') + row('No answer') + row('', '<p>Copy</p>') + row('Empty', '') + row('Other fees', fees + fees), 'flat');
   assert.equal(block.querySelectorAll('.accordion-faq-item').length, 1);
   assert.equal(block.querySelectorAll('.accordion-faq-table table').length, 2);
 });
@@ -84,7 +88,7 @@ test('FAQ preserves heading and introductory copy before the table and moves a s
   assert.equal(block.lastElementChild.className, 'accordion-faq-action');
   assert.equal(block.lastElementChild.querySelector('a').getAttribute('href'), '/all?track=1');
   assert.equal(document.querySelector('.default-content-wrapper'), null);
-  const intro = await render(row('Question', '<p>Answer.</p>'), 'pricing', '<div class="default-content-wrapper"><h2>FAQs</h2><p>Read our <a href="/fees">fee details</a>.</p></div>');
+  const intro = await render(row('Question', '<p>Answer.</p>'), 'flat', '<div class="default-content-wrapper"><h2>FAQs</h2><p>Read our <a href="/fees">fee details</a>.</p></div>');
   assert.equal(intro.block.firstElementChild.textContent, 'FAQs');
   assert.equal(intro.block.children[1].textContent, 'Read our fee details.');
   assert.equal(intro.block.querySelector('.accordion-faq-action'), null);

@@ -19,13 +19,17 @@ For the complete homepage treatment, author in its own section:
 2. The Accordion FAQ table.
 3. An optional paragraph immediately after the table containing one standalone link, such as the authored See all FAQs link.
 
-The decorator moves that adjacent heading and link into the component to style them. Heading text, heading ID, link text, URL, and tracking parameters remain authored. Unrelated paragraphs and images stay outside the component. The imported homepage's explicit 1×1 tracking images alongside its action are retained in a decorative element without affecting layout. The component's surface and spacing are scoped to `.accordion-faq`; no global styles or vendored scripts are modified.
+The decorator moves that adjacent heading and link into the component to style them. Heading text, heading ID, link text, URL, and tracking parameters remain authored. Unrelated paragraphs and images stay outside the component. The imported homepage's explicit 1×1 tracking images alongside its action are retained in a decorative element without affecting layout. The component's surface and spacing are scoped to `.accordion-faq`; shared design values come from `styles/brand.css`.
 
-## Pricing and Rates variant
+## Flat variant
 
-Use **Accordion FAQ (Pricing)** for Detailed pricing. This supported variant matches the live Pricing and Rates treatment: a white surface, a centered 32px heading, flat rows with thin bottom dividers, 20px medium-weight category labels, and purple plus/minus controls on the right. The default **Accordion FAQ** keeps the homepage's rounded gray rows and left chevrons. Choose the table variant from the actual reference section; the shared block name alone does not establish the visual treatment.
+Use **Accordion FAQ (Flat)** for the divided-row layout: a white surface, a centered 2rem heading (32px at the default root size), flat rows with thin bottom dividers, 1.25rem medium-weight question labels, and purple plus/minus controls on the right. The default **Accordion FAQ** keeps the homepage's rounded gray rows and left chevrons. Choose the variant from the reference layout. Flat supports rich-text answers and native HTML tables for any subject. Tables retain their semantics and get a labeled, keyboard-focusable horizontal scroll region for narrow screens.
 
-Place Heading 2 **Detailed pricing** immediately before the block, preserving its `detailed-pricing` anchor. Author one category per row, with its complete rich-text answer in the second cell. Keep fee tables inside the answer as native HTML tables with column/row headers, `scope`, merged cells and all explanatory copy. Do not promote fee-table headings such as Pricing, Debit balance or Paper statement fee into separate block names. Tables retain their semantics and get a labeled, keyboard-focusable horizontal scroll region for narrow screens.
+Content authored as **Accordion FAQ (Pricing)** remains supported as a legacy alias. The decorator adds the `flat` class so existing content uses the same styles and behavior. Use **Flat** for new or updated content.
+
+### Pricing and Rates example
+
+Place Heading 2 **Detailed pricing** immediately before the block, preserving its `detailed-pricing` anchor. Author one category per row, with its complete rich-text answer in the second cell. Keep fee tables inside the answer as native HTML tables with column/row headers, `scope`, merged cells and all explanatory copy. Do not promote fee-table headings such as Pricing, Debit balance or Paper statement fee into separate block names.
 
 The live page checked on October 12, 2026 has these 12 categories in order:
 
@@ -52,15 +56,25 @@ Review the variant after saving and previewing content: https://demo--etrade--Ad
 - Expand all opens every answer; Collapse all closes them. The all-control label and `aria-expanded` update after individual interactions too. Mixed states show Expand all.
 - Native buttons support Enter and Space. Questions are headings one level below the section heading (Heading 3 when no section heading is present).
 - Each button controls a uniquely identified answer region. Closed answers are immediately `inert` and `aria-hidden`, so their links are excluded from keyboard navigation and screen-reader output during the closing animation.
-- The 300ms grid reveal and fade follow production timing. The default FAQ rotates its chevron; Pricing switches between plus and minus. Reduced-motion preferences remove these transitions.
-- Below 768px, the default FAQ uses tighter row spacing and mobile type sizes. Pricing retains its flat rows and scrolls wide fee tables inside the answer. Long labels wrap without displacing their icon.
+- Shared motion tokens retain the 300ms grid reveal and existing fade timing by default. The default FAQ rotates its chevron; Flat switches between plus and minus. Reduced-motion preferences remove these transitions.
+- Below 768px, the default FAQ uses tighter row spacing and mobile type sizes. Flat retains its flat rows and scrolls wide tables inside the answer. Long labels wrap without displacing their icon.
 - Visible focus outlines and underlined answer links on hover/focus support keyboard use.
 
 Content publishes separately from code.
 
+## Shared design tokens
+
+Both variants consume the shared semantic colors, font sizes and weights, spacing, container widths, radii, focus and motion tokens. Text sizes and content spacing scale with the browser's root font size, and unitless line heights keep pace with the text. The default heading follows the responsive section-heading role; Flat retains its distinct 2rem heading. Small negative letter spacing uses `--tracking-tight`, equivalent to -0.25px at the default 16px root size.
+
+Flat uses the shared primary text, border and action colors in place of its former separate gray and purple values. The block retains its own light surface and readable headings, paragraphs and ordinary links when placed inside a dark section. Its CTA keeps white text on hover.
+
+The local `--accordion-faq-*` spacing variables preserve the reference's question padding, answer padding, paragraph rhythm and action separation. Remaining uncommon rem values are component measurements, not additions to the global spacing scale. The existing `--faq-gutter-offset` hook and layout breakpoints remain supported. Expand/collapse behavior and authored content are preserved.
+
 ## Validation
 
 Run `npm run test:accordion` for semantic-table preservation, omitted cells, panel controls and default FAQ regression checks. Run `npm run lint` before committing.
+
+In a browser, review both variants below and above 768px and 900px, including expanded answers, keyboard focus, a dark surrounding section, long labels and 200% text sizing. Flat answer tables should scroll within their labeled region without widening the page. Confirm exclusive opening, Expand all / Collapse all, plus/minus or chevron states and reduced-motion behavior.
 
 ## Migration review
 
