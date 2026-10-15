@@ -33,6 +33,7 @@ async function harness(body, loadSection) {
     './aem.js': helpers,
     './actions.js': { groupActions: noop },
     './section-layout.js': { default: noop },
+    './section-authoring.js': { default: noop },
     './disclosure-references.js': { default: noop },
     './page-layout.js': {
       default: noop,

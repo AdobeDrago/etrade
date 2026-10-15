@@ -47,7 +47,8 @@ export default function decorateSectionBoundaries(main) {
   });
   const sections = [...main.querySelectorAll(':scope > .section')].filter((section) => {
     // Backend metadata can leave an empty trailing section with no authored style.
-    if (!section.children.length && !section.textContent.trim() && section.classList.length === 1) {
+    if (!section.children.length && !section.textContent.trim() && section.classList.length === 1
+      && !section.hasAttribute('data-section-layout') && !section.id) {
       section.remove();
       return false;
     }

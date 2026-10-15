@@ -9,6 +9,7 @@
     "test:rates": "node --experimental-vm-modules --test test/bank-rates.test.js test/card-rates.test.js",
     "demo:rates": "node test/dynamic-rates-server.mjs",
     "test:accordion": "node --experimental-vm-modules --test test/accordion-faq.test.js",
+    "test:sections": "node --experimental-vm-modules --test test/section-authoring.test.js test/page-layout.test.js test/page-loading.test.js",
     "test:hero": "node --experimental-vm-modules --test test/hero.test.js",
     "test:demo-helper": "node --experimental-vm-modules --test test/demo-helper.test.js",
     "lint:js": "eslint .",
