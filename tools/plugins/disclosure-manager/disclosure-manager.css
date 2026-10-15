@@ -1,0 +1,224 @@
+.disclosure-manager {
+  margin: 0;
+  background: #f6f5fa;
+  color: #242035;
+  font: 14px/1.5 Arial, sans-serif;
+}
+
+.disclosure-manager * {
+  box-sizing: border-box;
+}
+
+.disclosure-manager .toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #dedbe8;
+  padding: 20px;
+  background: #fff;
+}
+
+.disclosure-manager h1 {
+  margin: 0;
+  font-size: 21px;
+  line-height: 1.3;
+}
+
+.disclosure-manager .eyebrow {
+  margin: 0 0 4px;
+  color: #5627d8;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.disclosure-manager main {
+  max-width: 880px;
+  margin: auto;
+  padding: 16px 20px 32px;
+}
+
+.disclosure-manager button {
+  border: 1px solid #bcb5ce;
+  border-radius: 6px;
+  padding: 8px 12px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.disclosure-manager button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.disclosure-manager .move-actions button {
+  padding: 5px 8px;
+}
+
+.disclosure-manager button:hover:not(:disabled) {
+  border-color: #5627d8;
+  background: #eee8ff;
+}
+
+.disclosure-manager :is(button, input, a):focus-visible {
+  outline: 2px solid #5627d8;
+  outline-offset: 3px;
+}
+
+.disclosure-manager .primary {
+  border-color: #5627d8;
+  background: #5627d8;
+  color: #fff;
+}
+
+.disclosure-manager .primary:hover:not(:disabled) {
+  background: #42209e;
+  color: #fff;
+}
+
+.disclosure-manager a {
+  color: #5627d8;
+}
+
+.disclosure-manager .status {
+  border-left: 3px solid #5627d8;
+  border-radius: 4px;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  background: #eee8ff;
+}
+
+.disclosure-manager .status.error {
+  border-color: #a51e32;
+  background: #fff0f1;
+}
+
+.disclosure-manager .source {
+  margin: 0 0 20px;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+
+.disclosure-manager .tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.disclosure-manager .tabs [aria-pressed="true"] {
+  border-color: #5627d8;
+  color: #5627d8;
+}
+
+.disclosure-manager .hint {
+  color: #5d566d;
+  font-size: 12px;
+}
+
+.disclosure-manager .disclosure-list,
+.disclosure-manager .audit-output {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.disclosure-manager .disclosure-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #dedbe8;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+.disclosure-manager .disclosure-item.drag-over {
+  border-color: #5627d8;
+  background: #eee8ff;
+}
+
+.disclosure-manager .drag-handle {
+  color: #7a728a;
+  cursor: grab;
+}
+
+.disclosure-manager .number {
+  display: grid;
+  flex: 0 0 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 50%;
+  background: #eee8ff;
+  color: #5627d8;
+  font-weight: 700;
+}
+
+.disclosure-manager .entry-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.disclosure-manager .entry-id {
+  display: block;
+  font-weight: 700;
+}
+
+.disclosure-manager .entry-path {
+  display: block;
+  color: #6e647e;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+}
+
+.disclosure-manager .move-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.disclosure-manager .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.disclosure-manager .audit-item,
+.disclosure-manager .example {
+  border-left: 3px solid #35754a;
+  border-radius: 4px;
+  padding: 10px 12px;
+  background: #eaf5ee;
+  overflow-wrap: anywhere;
+}
+
+.disclosure-manager .audit-item.warn {
+  border-color: #966200;
+  background: #fff7e3;
+}
+
+.disclosure-manager .audit-item.error {
+  border-color: #a51e32;
+  background: #fff0f1;
+}
+
+.disclosure-manager [hidden] {
+  display: none;
+}
+
+@media (width < 400px) {
+  .disclosure-manager main,
+  .disclosure-manager .toolbar {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .disclosure-manager .disclosure-item {
+    gap: 6px;
+    padding: 10px 8px;
+  }
+}

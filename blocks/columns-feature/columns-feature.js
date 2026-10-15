@@ -1,34 +1,41 @@
-/**
- * columns-feature — two-column product feature: a product image beside an
- * eyebrow/heading/paragraph and CTA links, on a dark background.
- *
- * Expected authored structure (1 row, 2 columns):
- *   [ image | heading, paragraph(s), link(s) ]   (image left, default)
- * The `image-right` option flips the image to the trailing column.
- */
-export default function decorate(block) {
-  const cols = [...block.firstElementChild.children];
-  block.classList.add(`columns-feature-${cols.length}-cols`);
+import { groupActions } from '../../scripts/actions.js';
 
-  // Tag image columns so CSS can size them.
+export default function decorate(block) {
+  const section = block.closest('.section');
+  // Explicit block options override section metadata. A neutral section uses light.
+  if (!block.classList.contains('light') && !block.classList.contains('dark')) {
+    block.classList.add(section?.classList.contains('dark') ? 'dark' : 'light');
+  }
   [...block.children].forEach((row) => {
-    [...row.children].forEach((col) => {
-      const pic = col.querySelector('picture');
-      if (pic) {
-        const picWrapper = pic.closest('div');
-        if (picWrapper && picWrapper.children.length === 1) {
-          picWrapper.classList.add('columns-feature-img-col');
+    [...row.children].forEach((cell) => {
+      const picture = cell.querySelector('picture, img');
+      const onlyMedia = picture && !cell.querySelector('h1, h2, h3, h4, h5, h6, a[href]');
+      cell.classList.add(onlyMedia ? 'columns-feature-media' : 'columns-feature-copy');
+      if (onlyMedia) {
+        const paragraph = picture.closest('p');
+        if (paragraph && !paragraph.textContent.trim() && paragraph.children.length === 1) {
+          paragraph.replaceWith(picture);
         }
       }
-
-      // Group CTA links into an actions row.
-      const ctaParagraphs = [...col.querySelectorAll(':scope > p')].filter((p) => p.querySelector('a'));
-      if (ctaParagraphs.length) {
-        const actions = document.createElement('div');
-        actions.className = 'columns-feature-actions';
-        ctaParagraphs[0].before(actions);
-        ctaParagraphs.forEach((p) => actions.append(p));
+      if (!onlyMedia) {
+        let kind = block.classList.contains('outline') ? 'outline' : 'primary';
+        if (block.classList.contains('award')) kind = 'secondary';
+        groupActions(cell, 'columns-feature', kind);
       }
     });
   });
+  if (block.classList.contains('award')) {
+    const copy = block.querySelector('.columns-feature-copy');
+    const title = copy?.querySelector('h2');
+    if (title) {
+      const heading = document.createElement('div');
+      heading.className = 'columns-feature-award-heading';
+      const eyebrow = copy.querySelector('h3');
+      if (eyebrow) heading.append(eyebrow);
+      heading.append(title);
+      block.prepend(heading);
+    }
+    const actions = copy?.querySelector('.columns-feature-actions');
+    if (actions) block.append(actions);
+  }
 }

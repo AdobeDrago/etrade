@@ -13,18 +13,24 @@ export default function parse(element, { document }) {
   const heading = element.querySelector('h2.header-large, h2[class*="header"], h2');
 
   // Terms paragraph(s), including the one with promo code OFFER26.
-  const paragraphs = Array.from(element.querySelectorAll('p.text-default, p'));
+  const paragraphs = Array.from(element.querySelectorAll('p')).filter((p) => !p.querySelector('img'));
+  const image = element.querySelector('img');
 
   // Primary CTA button + secondary "Learn how" text link.
   // Mutually exclusive: primary buttons vs. non-button links.
   const ctaLinks = Array.from(element.querySelectorAll('a.btn-primary, a.btn.btn-primary'));
   const textLinks = Array.from(element.querySelectorAll('a:not(.btn)'));
+  const looseLinks = [...ctaLinks, ...textLinks].filter((link) => !paragraphs.some((p) => p.contains(link)));
 
   const contentCell = [];
+  if (image) contentCell.push(image);
   if (heading) contentCell.push(heading);
   contentCell.push(...paragraphs);
-  contentCell.push(...ctaLinks);
-  contentCell.push(...textLinks);
+  looseLinks.forEach((link) => {
+    const p = document.createElement('p');
+    p.append(link);
+    contentCell.push(p);
+  });
 
   if (!heading && !contentCell.length) {
     element.replaceWith(...element.childNodes);

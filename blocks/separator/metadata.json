@@ -1,0 +1,10 @@
+{
+  "variantName": "separator",
+  "baseBlock": "separator",
+  "canonicalModel": "standalone",
+  "visualCharacteristics": "Full-width decorative stepped divider with two 16px rounded corners, authored surface colors, bend position, and height.",
+  "contentPattern": "Two-column configuration rows for First section color, Second section color, Line break location, and Height. Optional Mobile height and Line color.",
+  "options": [],
+  "memberVariantIds": ["separator"],
+  "usageDescription": "Author in its own section between content sections. Responsive inline SVG remains hidden from assistive technology."
+}

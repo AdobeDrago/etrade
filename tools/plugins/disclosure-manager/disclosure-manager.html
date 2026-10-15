@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Disclosure Manager</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="./disclosure-manager.css">
+    <script type="module" src="./disclosure-manager.js"></script>
+  </head>
+  <body class="disclosure-manager">
+    <header class="toolbar">
+      <div><p class="eyebrow">E*TRADE · Authoring</p><h1>Disclosure Manager</h1></div>
+      <button id="refresh" type="button" disabled>Refresh</button>
+    </header>
+    <main>
+      <p id="status" class="status" role="status" aria-live="polite">Open this tool from the DA Library. <a href="?demo=1">Try the local demo</a>.</p>
+      <p id="source" class="source"></p>
+      <nav class="tabs" aria-label="Manager views">
+        <button type="button" data-panel="manage" aria-pressed="true" aria-controls="manage">Manage</button>
+        <button type="button" data-panel="audit" aria-pressed="false" aria-controls="audit">Audit</button>
+      </nav>
+      <section id="manage" aria-label="Manage disclosures">
+        <p class="hint">Drag to reorder, or use the arrow buttons. Select disclosures to insert a reference at the editor’s cursor.</p>
+        <ol id="disclosure-list" class="disclosure-list"></ol>
+        <div class="actions">
+          <button id="insert" class="primary" type="button" disabled>Insert reference</button>
+          <button id="save" type="button" disabled>Save order</button>
+          <button id="reset" type="button" disabled>Reset order</button>
+        </div>
+        <p class="hint">Saving updates the disclosure set. Preview or publish the set in DA to make the new numbers visible on the site.</p>
+        <p id="demo-reference" class="example" hidden></p>
+      </section>
+      <section id="audit" aria-label="Audit disclosures" hidden>
+        <p class="hint">Checks the saved page and disclosure fragments. References inside separately loaded page content are outside this audit.</p>
+        <p id="audit-summary"></p>
+        <ul id="audit-output" class="audit-output"></ul>
+      </section>
+    </main>
+  </body>
+</html>

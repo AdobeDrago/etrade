@@ -1,0 +1,16 @@
+{
+  "source": "https://us.etrade.com/home",
+  "verifiedOn": "2026-10-05",
+  "tiers": [
+    { "funding": 1000, "credit": 50 },
+    { "funding": 5000, "credit": 150 },
+    { "funding": 20000, "credit": 300 },
+    { "funding": 100000, "credit": 600 },
+    { "funding": 200000, "credit": 1000 },
+    { "funding": 500000, "credit": 1500 },
+    { "funding": 1000000, "credit": 3000 },
+    { "funding": 1500000, "credit": 5000 },
+    { "funding": 2000000, "credit": 6000 },
+    { "funding": 5000000, "credit": 10000 }
+  ]
+}

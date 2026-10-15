@@ -40,7 +40,7 @@
   --heading-font-size-xs: 18px;
 
   /* nav height */
-  --nav-height: 64px;
+  --nav-height: 88px;
 }
 
 @media (width >= 900px) {
@@ -68,6 +68,10 @@ body {
   font-family: var(--body-font-family);
   font-size: var(--body-font-size-m);
   line-height: 1.6;
+
+  /* Match the live site's Graphik rendering. */
+  text-rendering: optimizelegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 body.appear {
@@ -75,7 +79,14 @@ body.appear {
 }
 
 header {
-  height: var(--nav-height);
+  min-height: var(--nav-height);
+  height: auto;
+}
+
+@media (width >= 1085px) {
+  :root {
+    --nav-height: 110.1875px;
+  }
 }
 
 header .header,
@@ -298,18 +309,19 @@ main > .section {
 }
 
 main > .section > div {
+  box-sizing: border-box;
   max-width: 1200px;
   margin: auto;
-  padding: 0 24px;
+  padding: 0 20px;
 }
 
 main > .section:first-of-type {
   margin-top: 0;
 }
 
-@media (width >= 900px) {
+@media (width >= 768px) {
   main > .section > div {
-    padding: 0 32px;
+    padding: 0 10px;
   }
 }
 
@@ -348,7 +360,50 @@ main .section.dark a.button:any-link {
   color: #fff;
 }
 
-/* Homepage layout is selected through authored Template metadata. */
+main .section.hero-dark-container {
+  margin: 0;
+  padding: 20px 0 40px;
+  background: var(--brand-dark-bg, #121213);
+}
+
+/* The imported homepage includes a plain-text breadcrumb before its hero. */
+.hero-dark-container > .hero-dark-breadcrumb {
+  display: none;
+}
+
+main .section > .hero-dark-wrapper,
+main .section > .hero-light-wrapper {
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Welcome Back has a full-width hero followed immediately by its market ticker. */
+main > .section.welcome-hero-container {
+  margin: 0;
+  padding: 0;
+}
+
+main > .section > .welcome-hero-wrapper,
+main > .section > .market-ticker-wrapper {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (width >= 768px) {
+  main .section > .hero-dark-wrapper,
+  main .section > .hero-light-wrapper {
+    padding: 0 10px;
+  }
+}
+
+.hero-light-container > .hero-light-breadcrumb {
+  display: none;
+}
+
+/* Shared homepage section layout, selected through authored Template metadata. */
 body.homepage {
   background: #fafafa;
 
@@ -386,7 +441,11 @@ main > .section[data-separator-after] {
   margin-bottom: 0;
 }
 
-body.homepage main sup {
+body.homepage main > .section.hero-dark-container:has(.hero-dark.has-video) {
+  padding-top: 20px;
+}
+
+main sup {
   position: relative;
   top: -0.5em;
   font-size: 65%;
@@ -400,5 +459,50 @@ body.homepage main sup {
     max-width: 1200px;
     padding-right: 10px;
     padding-left: 10px;
+  }
+}
+
+body.homepage .hero-dark-container > .banner-offer-wrapper {
+  margin-top: 40px;
+}
+
+/* The six migrated pages share the production 1200px grid, including gutters. */
+body.etrade-page {
+  background: #fafafa;
+
+  --faq-gutter-offset: 0px;
+}
+
+body.etrade-page:not(.homepage, .welcome-back) main > .section:where(:not([data-section-kind], .hero-dark-container, .hero-product-container, .hero-light-container, .tabs-accounts-container)) {
+  margin: 0;
+  padding: 60px 0;
+}
+
+body.etrade-page .default-content-wrapper {
+  font-size: 16px;
+  line-height: 20px;
+}
+
+body.etrade-page .default-content-wrapper > :is(h2, h3) {
+  margin: 0 0 40px;
+  font-size: 28px;
+  line-height: 32px;
+  letter-spacing: -0.4px;
+}
+
+body.etrade-page .default-content-wrapper > p {
+  margin: 0 0 20px;
+}
+
+@media (width >= 768px) {
+  body.etrade-page .default-content-wrapper > :is(h2, h3) {
+    font-size: 40px;
+    line-height: 44px;
+  }
+}
+
+@media (width < 768px) {
+  body.homepage .hero-dark-container > .banner-offer-wrapper {
+    margin-top: 60px;
   }
 }

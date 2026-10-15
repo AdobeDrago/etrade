@@ -2,9 +2,9 @@
   "variantName": "widget-calculator",
   "baseBlock": "widget",
   "canonicalModel": "standalone",
-  "visualCharacteristics": "Interactive funding calculator card with an intro heading, a range slider for the funding amount, and a live-updating projected bonus value.",
-  "contentPattern": "Optional intro row(s) of heading/copy, followed by one row per tier with two numeric cells: funding amount and corresponding bonus amount.",
-  "usage": "Lets a visitor drag a slider across funding amounts and see the projected bonus update in real time.",
+  "visualCharacteristics": "Paired white promo and dark cash-credit cards, with a desktop funding slider and custom mobile funding-range dropdown.",
+  "contentPattern": "Optional named rows for heading, description, promo code, CTAs, labels, and disclaimer; numeric rows contain funding thresholds and cash credits. Supports the imported home-page table and adjacent authored promo copy.",
+  "usage": "Displays the cash credit for an authored funding tier, with a native slider, an accessible mobile combobox, and a local fallback for empty credit cells.",
   "options": [],
   "memberVariantIds": ["widget-calculator"]
 }

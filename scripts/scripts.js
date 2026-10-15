@@ -1,5 +1,9 @@
 import { groupActions } from './actions.js';
-import { decorateSectionBoundaries } from './section-layout.js';
+import decorateSectionBoundaries from './section-layout.js';
+import decorateDisclosureReferences from './disclosure-references.js';
+import decoratePageLayout, {
+  localizePageLinks, decoratePricingIntroductions, decoratePageActions,
+} from './page-layout.js';
 import {
   loadHeader,
   loadFooter,
@@ -12,6 +16,9 @@ import {
   loadSections,
   loadCSS,
   buildBlock,
+  decorateBlock,
+  loadBlock,
+  getMetadata,
 } from './aem.js';
 
 if (window.trustedTypes && window.trustedTypes.createPolicy) {
@@ -75,12 +82,28 @@ function buildWidgetAutoBlocks(main) {
   });
 }
 
+/** Converts the imported sticky CTA paragraphs into an authored floating dock. */
+function buildFloatingDockAutoBlock(main) {
+  main.querySelectorAll('a[href*="stickyCTA_LTO"]').forEach((offer) => {
+    const links = offer.closest('p');
+    if (offer.closest('.floating-dock') || !links) return;
+    const primary = links.nextElementSibling;
+    if (!primary?.matches('p') || !primary.querySelector('a[href*="stickyCTA_openaccount"]')) return;
+    const toggle = primary.nextElementSibling;
+    const dock = buildBlock('floating-dock', { elems: [...links.querySelectorAll('a'), ...primary.querySelectorAll('a')] });
+    links.replaceWith(dock);
+    primary.remove();
+    if (toggle?.matches('p') && /^\[\s*\]\s*add$/.test(toggle.textContent.trim())) toggle.remove();
+  });
+}
+
 /**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
 function buildAutoBlocks(main) {
   try {
+    buildFloatingDockAutoBlock(main);
     // auto load `*/fragments/*` references
     const fragments = [...main.querySelectorAll('a[href*="/fragments/"]')].filter((f) => !f.closest('.fragment'));
     if (fragments.length > 0) {
@@ -91,6 +114,7 @@ function buildAutoBlocks(main) {
             const { pathname } = new URL(fragment.href);
             const frag = await loadFragment(pathname);
             fragment.parentElement.replaceWith(...frag.children);
+            decorateDisclosureReferences(main);
           } catch (error) {
             // eslint-disable-next-line no-console
             console.error('Fragment loading failed', error);
@@ -99,6 +123,7 @@ function buildAutoBlocks(main) {
       });
     }
     buildWidgetAutoBlocks(main);
+    decorateDisclosureReferences(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -165,12 +190,14 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  decoratePageLayout();
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
-    document.body.classList.add('appear');
-    await loadSection(main.querySelector('.section'), waitForFirstImage);
+    const firstSection = main.querySelector('.section');
+    if (firstSection) await loadSection(firstSection, waitForFirstImage);
   }
+  document.body.classList.add('appear');
 
   try {
     /* if desktop (proxy for fast connection) or fonts already loaded, load fonts.css */
@@ -191,6 +218,8 @@ async function loadLazy(doc) {
 
   const main = doc.querySelector('main');
   await loadSections(main);
+  decoratePricingIntroductions(main);
+  if (doc.body.classList.contains('etrade-page')) decoratePageActions(main);
   if (doc.body.classList.contains('homepage')) {
     main.querySelectorAll('.default-content-wrapper').forEach((content) => {
       const secondary = content.closest('.awards-section')
@@ -203,7 +232,21 @@ async function loadLazy(doc) {
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
 
-  loadFooter(doc.querySelector('body > footer'));
+  await loadFooter(doc.querySelector('body > footer'));
+  localizePageLinks(doc);
+  const disclosurePath = getMetadata('disclosures');
+  if (disclosurePath && !doc.querySelector('.disclosures')) {
+    const link = document.createElement('a');
+    link.href = disclosurePath;
+    const disclosures = buildBlock('disclosures', { elems: [link] });
+    const region = document.createElement('aside');
+    region.setAttribute('aria-label', 'Important disclosures');
+    region.append(disclosures);
+    doc.querySelector('body > footer').after(region);
+    decorateBlock(disclosures);
+    await loadBlock(disclosures);
+  }
+  if (hash) doc.getElementById(hash.substring(1))?.scrollIntoView();
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
@@ -215,6 +258,12 @@ async function loadLazy(doc) {
  */
 function loadDelayed() {
   import('./consent-check.js');
+  // This helper exists only on demo; its host guard also prevents accidental exposure.
+  import('./demo-helper.js').then(async ({ default: mountDemoHelper, isDemoHelperHost }) => {
+    if (!isDemoHelperHost(window.location.hostname)) return;
+    await loadCSS(`${window.hlx.codeBasePath}/styles/demo-helper.css`);
+    mountDemoHelper();
+  });
   // load anything that can be postponed to the latest here
 }
 
@@ -224,4 +273,5 @@ async function loadPage() {
   loadDelayed();
 }
 
-loadPage();
+// Standalone block reviews own their lifecycle; fragments can still use decorateMain.
+if (!document.documentElement.hasAttribute('data-block-review')) loadPage();

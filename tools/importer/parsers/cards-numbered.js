@@ -23,7 +23,11 @@ export default function parse(element, { document }) {
 
     const contentCell = [];
     if (heading) contentCell.push(heading);
-    if (description) contentCell.push(description);
+    if (description) {
+      const p = document.createElement('p');
+      p.append(...description.childNodes);
+      contentCell.push(p);
+    }
     if (link) contentCell.push(link);
 
     if (contentCell.length) cells.push([contentCell]);

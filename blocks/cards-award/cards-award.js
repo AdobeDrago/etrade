@@ -1,23 +1,23 @@
-/**
- * cards-award — row of centered award items, each with a badge/icon image, a
- * title and a short description.
- *
- * Expected authored structure (one row per award):
- *   [ image | heading, paragraph(s) ]
- */
-import { createOptimizedPicture } from '../../scripts/aem.js';
-
 export default function decorate(block) {
-  const ul = document.createElement('ul');
+  const list = document.createElement('ul');
   [...block.children].forEach((row) => {
-    const li = document.createElement('li');
-    while (row.firstElementChild) li.append(row.firstElementChild);
-    [...li.children].forEach((div) => {
-      if (div.children.length === 1 && div.querySelector('picture')) div.className = 'cards-award-image';
-      else div.className = 'cards-award-body';
+    const item = document.createElement('li');
+    [...row.children].forEach((cell) => {
+      if (!cell.textContent.trim() && !cell.querySelector('picture, img, .icon, svg')) return;
+      const image = cell.querySelector('picture, img, .icon, svg');
+      cell.classList.add(image && !cell.querySelector('h1, h2, h3, h4, h5, h6')
+        ? 'cards-award-image' : 'cards-award-body');
+      const heading = cell.querySelector('h1, h2, h3, h4, h5, h6');
+      if (heading && heading.tagName !== 'H3') {
+        const replacement = document.createElement('h3');
+        [...heading.attributes].forEach(({ name, value }) => replacement.setAttribute(name, value));
+        replacement.append(...heading.childNodes);
+        heading.replaceWith(replacement);
+      }
+      item.append(cell);
     });
-    ul.append(li);
+    if (item.children.length) list.append(item);
   });
-  ul.querySelectorAll('picture > img').forEach((img) => img.closest('picture').replaceWith(createOptimizedPicture(img.src, img.alt, false, [{ width: '400' }])));
-  block.replaceChildren(ul);
+  block.replaceChildren(list);
+  block.hidden = !list.children.length;
 }

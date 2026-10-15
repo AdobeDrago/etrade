@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="bank-rates-source" content="direct">
+    <meta name="bank-rates-endpoint" content="/test/fixtures/bank-rates.json">
+    <title>Dynamic card regression checks</title>
+    <script type="module" src="./card-rates.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Dynamic card regression checks</h1>
+      <p>Local tests using sample data and the production card decorators.</p>
+      <p id="summary" role="status">Running…</p>
+      <ol id="results"></ol>
+      <div id="cards"></div>
+    </main>
+  </body>
+</html>

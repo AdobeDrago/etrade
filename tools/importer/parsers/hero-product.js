@@ -21,20 +21,34 @@ export default function parse(element, { document }) {
   // Foreground product screenshot (iPhone/app visual).
   const image = element.querySelector('img.rounded-corner-image, img.responsive-imageET, img');
 
-  const contentCell = [];
-  if (eyebrow) contentCell.push(eyebrow);
-  if (heading) contentCell.push(heading);
-  if (paragraph) contentCell.push(paragraph);
-  contentCell.push(...ctaLinks);
-  if (image) contentCell.push(image);
-
-  if (!heading && !contentCell.length) {
+  const cells = [];
+  if (eyebrow) cells.push(['Eyebrow', eyebrow]);
+  if (heading) cells.push(['Heading', heading]);
+  const content = [];
+  if (paragraph) content.push(paragraph);
+  ctaLinks.forEach((link) => {
+    const p = document.createElement('p');
+    p.append(link);
+    content.push(p);
+  });
+  if (content.length) cells.push(['Content', content]);
+  if (image) cells.push(['Image', image]);
+  const offerHeading = element.querySelector('h2.subhead-medium, h2.subhead-large, h3.subhead-large');
+  if (offerHeading) {
+    const offer = [offerHeading];
+    const area = offerHeading.closest('.row-flex, .row') || offerHeading.parentElement.parentElement;
+    const terms = [...area.querySelectorAll('p')];
+    offer.push(...terms);
+    [...area.querySelectorAll('a')].filter((link) => !terms.some((p) => p.contains(link))).forEach((link) => {
+      const p = document.createElement('p');
+      p.append(link);
+      offer.push(p);
+    });
+    cells.push(['Offer', offer]);
+  }
+  if (!cells.length) {
     element.replaceWith(...element.childNodes);
     return;
   }
-
-  // hero-product is 1 column: one row, one cell holding every element (image included so it is preserved).
-  const cells = [[contentCell]];
-  const block = WebImporter.Blocks.createBlock(document, { name: 'hero-product', cells });
-  element.replaceWith(block);
+  element.replaceWith(WebImporter.Blocks.createBlock(document, { name: 'hero-product', cells }));
 }

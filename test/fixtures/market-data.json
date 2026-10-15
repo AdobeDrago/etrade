@@ -1,0 +1,1453 @@
+{
+  "_notice": "FABRICATED LOCAL TEST DATA. Not actual prices, performance or market rankings.",
+  "quote": {
+    "quoteData": [
+      {
+        "product": {
+          "symbol": "DJIND"
+        },
+        "intraday": {
+          "lastTrade": 42800,
+          "changeClose": 128,
+          "changeClosePercentage": 0.3,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "COMP.IDX"
+        },
+        "intraday": {
+          "lastTrade": 18500,
+          "changeClose": -37,
+          "changeClosePercentage": -0.2,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "SPX"
+        },
+        "intraday": {
+          "lastTrade": 5700,
+          "changeClose": 0,
+          "changeClosePercentage": 0,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "TNX"
+        },
+        "intraday": {
+          "lastTrade": 42,
+          "changeClose": 0.1,
+          "changeClosePercentage": 0.24,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "NKE"
+        },
+        "intraday": {
+          "lastTrade": 73.25,
+          "changeClose": -0.5,
+          "changeClosePercentage": -0.68,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "CVX"
+        },
+        "intraday": {
+          "lastTrade": 151.8,
+          "changeClose": 0.4,
+          "changeClosePercentage": 0.26,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "MCD"
+        },
+        "intraday": {
+          "lastTrade": 290.1,
+          "changeClose": 0,
+          "changeClosePercentage": 0,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "HD"
+        },
+        "intraday": {
+          "lastTrade": 370.5,
+          "changeClose": -1.2,
+          "changeClosePercentage": -0.32,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "IBM"
+        },
+        "intraday": {
+          "lastTrade": 218.8,
+          "changeClose": 0.8,
+          "changeClosePercentage": 0.37,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "VFIAX"
+        },
+        "intraday": {
+          "lastTrade": 510.5,
+          "changeClose": 0.3,
+          "changeClosePercentage": 0.06,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "FXAIX"
+        },
+        "intraday": {
+          "lastTrade": 190.4,
+          "changeClose": -0.2,
+          "changeClosePercentage": -0.11,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "VTSAX"
+        },
+        "intraday": {
+          "lastTrade": 130.2,
+          "changeClose": 0.5,
+          "changeClosePercentage": 0.38,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "SWPPX"
+        },
+        "intraday": {
+          "lastTrade": 91.3,
+          "changeClose": 0,
+          "changeClosePercentage": 0,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "VIGAX"
+        },
+        "intraday": {
+          "lastTrade": 180.8,
+          "changeClose": 0.4,
+          "changeClosePercentage": 0.22,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "VOO"
+        },
+        "intraday": {
+          "lastTrade": 520.8,
+          "changeClose": 0.3,
+          "changeClosePercentage": 0.06,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "VTI"
+        },
+        "intraday": {
+          "lastTrade": 280.4,
+          "changeClose": -0.2,
+          "changeClosePercentage": -0.07,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "QQQ"
+        },
+        "intraday": {
+          "lastTrade": 490.7,
+          "changeClose": 0.5,
+          "changeClosePercentage": 0.1,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "SCHD"
+        },
+        "intraday": {
+          "lastTrade": 29.2,
+          "changeClose": 0,
+          "changeClosePercentage": 0,
+          "dateTime": 1791555900000
+        }
+      },
+      {
+        "product": {
+          "symbol": "DIA"
+        },
+        "intraday": {
+          "lastTrade": 420.5,
+          "changeClose": 0.4,
+          "changeClosePercentage": 0.1,
+          "dateTime": 1791555900000
+        }
+      }
+    ]
+  },
+  "charts": {
+    "DJIND": {
+      "data": [
+        {
+          "dataPoints": [
+            {
+              "stockDate": 1791552600000,
+              "highValue": 42800
+            },
+            {
+              "stockDate": 1791552900000,
+              "highValue": 42864.2
+            },
+            {
+              "stockDate": 1791553200000,
+              "highValue": 42832.1
+            },
+            {
+              "stockDate": 1791553500000,
+              "highValue": 42917.7
+            },
+            {
+              "stockDate": 1791553800000,
+              "highValue": 42889.88
+            },
+            {
+              "stockDate": 1791554100000,
+              "highValue": 42949.8
+            },
+            {
+              "stockDate": 1791554400000,
+              "highValue": 42896.3
+            },
+            {
+              "stockDate": 1791554700000,
+              "highValue": 42874.9
+            },
+            {
+              "stockDate": 1791555000000,
+              "highValue": 42934.82
+            },
+            {
+              "stockDate": 1791555300000,
+              "highValue": 42971.2
+            },
+            {
+              "stockDate": 1791555600000,
+              "highValue": 42928.4
+            },
+            {
+              "stockDate": 1791555900000,
+              "highValue": 43003.3
+            }
+          ]
+        }
+      ]
+    },
+    "COMPIDX": {
+      "data": [
+        {
+          "dataPoints": [
+            {
+              "stockDate": 1791552600000,
+              "highValue": 18500
+            },
+            {
+              "stockDate": 1791552900000,
+              "highValue": 18472.25
+            },
+            {
+              "stockDate": 1791553200000,
+              "highValue": 18486.125
+            },
+            {
+              "stockDate": 1791553500000,
+              "highValue": 18449.125
+            },
+            {
+              "stockDate": 1791553800000,
+              "highValue": 18461.15
+            },
+            {
+              "stockDate": 1791554100000,
+              "highValue": 18435.25
+            },
+            {
+              "stockDate": 1791554400000,
+              "highValue": 18458.375
+            },
+            {
+              "stockDate": 1791554700000,
+              "highValue": 18467.625
+            },
+            {
+              "stockDate": 1791555000000,
+              "highValue": 18441.725
+            },
+            {
+              "stockDate": 1791555300000,
+              "highValue": 18426
+            },
+            {
+              "stockDate": 1791555600000,
+              "highValue": 18444.5
+            },
+            {
+              "stockDate": 1791555900000,
+              "highValue": 18412.125
+            }
+          ]
+        }
+      ]
+    },
+    "SPX": {
+      "data": [
+        {
+          "dataPoints": [
+            {
+              "stockDate": 1791552600000,
+              "highValue": 5700
+            },
+            {
+              "stockDate": 1791552900000,
+              "highValue": 5708.55
+            },
+            {
+              "stockDate": 1791553200000,
+              "highValue": 5704.275
+            },
+            {
+              "stockDate": 1791553500000,
+              "highValue": 5715.675
+            },
+            {
+              "stockDate": 1791553800000,
+              "highValue": 5711.97
+            },
+            {
+              "stockDate": 1791554100000,
+              "highValue": 5719.95
+            },
+            {
+              "stockDate": 1791554400000,
+              "highValue": 5712.825
+            },
+            {
+              "stockDate": 1791554700000,
+              "highValue": 5709.975
+            },
+            {
+              "stockDate": 1791555000000,
+              "highValue": 5717.955
+            },
+            {
+              "stockDate": 1791555300000,
+              "highValue": 5722.8
+            },
+            {
+              "stockDate": 1791555600000,
+              "highValue": 5717.1
+            },
+            {
+              "stockDate": 1791555900000,
+              "highValue": 5727.075
+            }
+          ]
+        }
+      ]
+    },
+    "TNX": {
+      "data": [
+        {
+          "dataPoints": [
+            {
+              "stockDate": 1791552600000,
+              "highValue": 42
+            },
+            {
+              "stockDate": 1791552900000,
+              "highValue": 42.063
+            },
+            {
+              "stockDate": 1791553200000,
+              "highValue": 42.0315
+            },
+            {
+              "stockDate": 1791553500000,
+              "highValue": 42.1155
+            },
+            {
+              "stockDate": 1791553800000,
+              "highValue": 42.0882
+            },
+            {
+              "stockDate": 1791554100000,
+              "highValue": 42.147
+            },
+            {
+              "stockDate": 1791554400000,
+              "highValue": 42.0945
+            },
+            {
+              "stockDate": 1791554700000,
+              "highValue": 42.0735
+            },
+            {
+              "stockDate": 1791555000000,
+              "highValue": 42.1323
+            },
+            {
+              "stockDate": 1791555300000,
+              "highValue": 42.168
+            },
+            {
+              "stockDate": 1791555600000,
+              "highValue": 42.126
+            },
+            {
+              "stockDate": 1791555900000,
+              "highValue": 42.1995
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "lookup": {
+    "data": [
+      {
+        "symbol": "NKE",
+        "description": "Nike"
+      },
+      {
+        "symbol": "CVX",
+        "description": "Chevron"
+      },
+      {
+        "symbol": "MCD",
+        "description": "McDonald's"
+      },
+      {
+        "symbol": "HD",
+        "description": "Home Depot"
+      },
+      {
+        "symbol": "IBM",
+        "description": "IBM"
+      },
+      {
+        "symbol": "VFIAX",
+        "description": "Vanguard 500 Index Fund"
+      },
+      {
+        "symbol": "FXAIX",
+        "description": "Fidelity 500 Index Fund"
+      },
+      {
+        "symbol": "VTSAX",
+        "description": "Vanguard Total Stock Market"
+      },
+      {
+        "symbol": "SWPPX",
+        "description": "Schwab S&P 500 Index"
+      },
+      {
+        "symbol": "VIGAX",
+        "description": "Vanguard Growth Index"
+      },
+      {
+        "symbol": "VOO",
+        "description": "Vanguard S&P 500 ETF"
+      },
+      {
+        "symbol": "VTI",
+        "description": "Vanguard Total Stock Market ETF"
+      },
+      {
+        "symbol": "QQQ",
+        "description": "Invesco QQQ Trust"
+      },
+      {
+        "symbol": "SCHD",
+        "description": "Schwab US Dividend Equity ETF"
+      },
+      {
+        "symbol": "DIA",
+        "description": "SPDR Dow Jones Industrial Average ETF"
+      }
+    ]
+  },
+  "topFive": {
+    "TopDivYieldStocks": {
+      "top5Response": {
+        "data": [
+          {
+            "symbol": "NKE",
+            "companyName": "Nike",
+            "fundName": "Nike",
+            "priceLast": 73.25,
+            "priceChange": -0.5,
+            "priceChangePercent": -0.68,
+            "asOfDate": 1791555900000
+          },
+          {
+            "symbol": "CVX",
+            "companyName": "Chevron",
+            "fundName": "Chevron",
+            "priceLast": 151.8,
+            "priceChange": 0.4,
+            "priceChangePercent": 0.26,
+            "asOfDate": 1791555900000
+          },
+          {
+            "symbol": "MCD",
+            "companyName": "McDonald's",
+            "fundName": "McDonald's",
+            "priceLast": 290.1,
+            "priceChange": 0,
+            "priceChangePercent": 0,
+            "asOfDate": 1791555900000
+          },
+          {
+            "symbol": "HD",
+            "companyName": "Home Depot",
+            "fundName": "Home Depot",
+            "priceLast": 370.5,
+            "priceChange": -1.2,
+            "priceChangePercent": -0.32,
+            "asOfDate": 1791555900000
+          },
+          {
+            "symbol": "IBM",
+            "companyName": "IBM",
+            "fundName": "IBM",
+            "priceLast": 218.8,
+            "priceChange": 0.8,
+            "priceChangePercent": 0.37,
+            "asOfDate": 1791555900000
+          }
+        ]
+      },
+      "chartResponse": {
+        "data": [
+          {
+            "dataPoints": [
+              {
+                "stockDate": 1791552600000,
+                "highValue": 73.25
+              },
+              {
+                "stockDate": 1791552900000,
+                "highValue": 73.1401
+              },
+              {
+                "stockDate": 1791553200000,
+                "highValue": 73.1951
+              },
+              {
+                "stockDate": 1791553500000,
+                "highValue": 73.0486
+              },
+              {
+                "stockDate": 1791553800000,
+                "highValue": 73.0962
+              },
+              {
+                "stockDate": 1791554100000,
+                "highValue": 72.9936
+              },
+              {
+                "stockDate": 1791554400000,
+                "highValue": 73.0852
+              },
+              {
+                "stockDate": 1791554700000,
+                "highValue": 73.1218
+              },
+              {
+                "stockDate": 1791555000000,
+                "highValue": 73.0193
+              },
+              {
+                "stockDate": 1791555300000,
+                "highValue": 72.957
+              },
+              {
+                "stockDate": 1791555600000,
+                "highValue": 73.0302
+              },
+              {
+                "stockDate": 1791555900000,
+                "highValue": 72.9021
+              }
+            ]
+          },
+          {
+            "dataPoints": [
+              {
+                "stockDate": 1791552600000,
+                "highValue": 151.8
+              },
+              {
+                "stockDate": 1791552900000,
+                "highValue": 152.0277
+              },
+              {
+                "stockDate": 1791553200000,
+                "highValue": 151.9139
+              },
+              {
+                "stockDate": 1791553500000,
+                "highValue": 152.2175
+              },
+              {
+                "stockDate": 1791553800000,
+                "highValue": 152.1188
+              },
+              {
+                "stockDate": 1791554100000,
+                "highValue": 152.3313
+              },
+              {
+                "stockDate": 1791554400000,
+                "highValue": 152.1416
+              },
+              {
+                "stockDate": 1791554700000,
+                "highValue": 152.0657
+              },
+              {
+                "stockDate": 1791555000000,
+                "highValue": 152.2782
+              },
+              {
+                "stockDate": 1791555300000,
+                "highValue": 152.4072
+              },
+              {
+                "stockDate": 1791555600000,
+                "highValue": 152.2554
+              },
+              {
+                "stockDate": 1791555900000,
+                "highValue": 152.5211
+              }
+            ]
+          },
+          {
+            "dataPoints": [
+              {
+                "stockDate": 1791552600000,
+                "highValue": 290.1
+              },
+              {
+                "stockDate": 1791552900000,
+                "highValue": 290.5352
+              },
+              {
+                "stockDate": 1791553200000,
+                "highValue": 290.3176
+              },
+              {
+                "stockDate": 1791553500000,
+                "highValue": 290.8978
+              },
+              {
+                "stockDate": 1791553800000,
+                "highValue": 290.7092
+              },
+              {
+                "stockDate": 1791554100000,
+                "highValue": 291.1154
+              },
+              {
+                "stockDate": 1791554400000,
+                "highValue": 290.7527
+              },
+              {
+                "stockDate": 1791554700000,
+                "highValue": 290.6077
+              },
+              {
+                "stockDate": 1791555000000,
+                "highValue": 291.0138
+              },
+              {
+                "stockDate": 1791555300000,
+                "highValue": 291.2604
+              },
+              {
+                "stockDate": 1791555600000,
+                "highValue": 290.9703
+              },
+              {
+                "stockDate": 1791555900000,
+                "highValue": 291.478
+              }
+            ]
+          },
+          {
+            "dataPoints": [
+              {
+                "stockDate": 1791552600000,
+                "highValue": 370.5
+              },
+              {
+                "stockDate": 1791552900000,
+                "highValue": 369.9443
+              },
+              {
+                "stockDate": 1791553200000,
+                "highValue": 370.2221
+              },
+              {
+                "stockDate": 1791553500000,
+                "highValue": 369.4811
+              },
+              {
+                "stockDate": 1791553800000,
+                "highValue": 369.7219
+              },
+              {
+                "stockDate": 1791554100000,
+                "highValue": 369.2033
+              },
+              {
+                "stockDate": 1791554400000,
+                "highValue": 369.6664
+              },
+              {
+                "stockDate": 1791554700000,
+                "highValue": 369.8516
+              },
+              {
+                "stockDate": 1791555000000,
+                "highValue": 369.3329
+              },
+              {
+                "stockDate": 1791555300000,
+                "highValue": 369.018
+              },
+              {
+                "stockDate": 1791555600000,
+                "highValue": 369.3885
+              },
+              {
+                "stockDate": 1791555900000,
+                "highValue": 368.7401
+              }
+            ]
+          },
+          {
+            "dataPoints": [
+              {
+                "stockDate": 1791552600000,
+                "highValue": 218.8
+              },
+              {
+                "stockDate": 1791552900000,
+                "highValue": 219.1282
+              },
+              {
+                "stockDate": 1791553200000,
+                "highValue": 218.9641
+              },
+              {
+                "stockDate": 1791553500000,
+                "highValue": 219.4017
+              },
+              {
+                "stockDate": 1791553800000,
+                "highValue": 219.2595
+              },
+              {
+                "stockDate": 1791554100000,
+                "highValue": 219.5658
+              },
+              {
+                "stockDate": 1791554400000,
+                "highValue": 219.2923
+              },
+              {
+                "stockDate": 1791554700000,
+                "highValue": 219.1829
+              },
+              {
+                "stockDate": 1791555000000,
+                "highValue": 219.4892
+              },
+              {
+                "stockDate": 1791555300000,
+                "highValue": 219.6752
+              },
+              {
+                "stockDate": 1791555600000,
+                "highValue": 219.4564
+              },
+              {
+                "stockDate": 1791555900000,
+                "highValue": 219.8393
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "MostSearchedMFs": {
+      "top5Response": {
+        "data": [
+          {
+            "symbol": "VFIAX",
+            "companyName": "Vanguard 500 Index Fund",
+            "fundName": "Vanguard 500 Index Fund",
+            "priceLast": 510.5,
+            "priceChange": 0.3,
+            "priceChangePercent": 0.06,
+            "asOfDate": 1791555900000
+          },
+          {
+            "symbol": "FXAIX",
+            "companyName": "Fidelity 500 Index Fund",
+            "fundName": "Fidelity 500 Index Fund",
+            "priceLast": 190.4,
+            "priceChange": -0.2,
+            "priceChangePercent": -0.11,
+            "asOfDate": 1791555900000
+          },
+          {
+            "symbol": "VTSAX",
+            "companyName": "Vanguard Total Stock Market",
+            "fundName": "Vanguard Total Stock Market",
+            "priceLast": 130.2,
+            "priceChange": 0.5,
+            "priceChangePercent": 0.38,
+            "asOfDate": 1791555900000
+          },
+          {
+            "symbol": "SWPPX",
+            "companyName": "Schwab S&P 500 Index",
+            "fundName": "Schwab S&P 500 Index",
+            "priceLast": 91.3,
+            "priceChange": 0,
+            "priceChangePercent": 0,
+            "asOfDate": 1791555900000
+          },
+          {
+            "symbol": "VIGAX",
+            "companyName": "Vanguard Growth Index",
+            "fundName": "Vanguard Growth Index",
+            "priceLast": 180.8,
+            "priceChange": 0.4,
+            "priceChangePercent": 0.22,
+            "asOfDate": 1791555900000
+          }
+        ]
+      },
+      "chartResponse": {
+        "data": [
+          {
+            "dataPoints": [
+              {
+                "stockDate": 1760040000000,
+                "highValue": 510.5
+              },
+              {
+                "stockDate": 1762632000000,
+                "highValue": 511.2658
+              },
+              {
+                "stockDate": 1765224000000,
+                "highValue": 510.8829
+              },
+              {
+                "stockDate": 1767816000000,
+                "highValue": 511.9039
+              },
+              {
+                "stockDate": 1770408000000,
+                "highValue": 511.572
+              },
+              {
+                "stockDate": 1773000000000,
+                "highValue": 512.2867
+              },
+              {
+                "stockDate": 1775592000000,
+                "highValue": 511.6486
+              },
+              {
+                "stockDate": 1778184000000,
+                "highValue": 511.3934
+              },
+              {
+                "stockDate": 1780776000000,
+                "highValue": 512.1081
+              },
+              {
+                "stockDate": 1783368000000,
+                "highValue": 512.542
+              },
+              {
+                "stockDate": 1785960000000,
+                "highValue": 512.0315
+              },
+              {
+                "stockDate": 1788552000000,
+                "highValue": 512.9249
+              }
+            ]
+          },
+          {
+            "dataPoints": [
+              {
+                "stockDate": 1760040000000,
+                "highValue": 190.4
+              },
+              {
+                "stockDate": 1762632000000,
+                "highValue": 190.1144
+              },
+              {
+                "stockDate": 1765224000000,
+                "highValue": 190.2572
+              },
+              {
+                "stockDate": 1767816000000,
+                "highValue": 189.8764
+              },
+              {
+                "stockDate": 1770408000000,
+                "highValue": 190.0002
+              },
+              {
+                "stockDate": 1773000000000,
+                "highValue": 189.7336
+              },
+              {
+                "stockDate": 1775592000000,
+                "highValue": 189.9716
+              },
+              {
+                "stockDate": 1778184000000,
+                "highValue": 190.0668
+              },
+              {
+                "stockDate": 1780776000000,
+                "highValue": 189.8002
+              },
+              {
+                "stockDate": 1783368000000,
+                "highValue": 189.6384
+              },
+              {
+                "stockDate": 1785960000000,
+                "highValue": 189.8288
+              },
+              {
+                "stockDate": 1788552000000,
+                "highValue": 189.4956
+              }
+            ]
+          },
+          {
+            "dataPoints": [
+              {
+                "stockDate": 1760040000000,
+                "highValue": 130.2
+              },
+              {
+                "stockDate": 1762632000000,
+                "highValue": 130.3953
+              },
+              {
+                "stockDate": 1765224000000,
+                "highValue": 130.2976
+              },
+              {
+                "stockDate": 1767816000000,
+                "highValue": 130.558
+              },
+              {
+                "stockDate": 1770408000000,
+                "highValue": 130.4734
+              },
+              {
+                "stockDate": 1773000000000,
+                "highValue": 130.6557
+              },
+              {
+                "stockDate": 1775592000000,
+                "highValue": 130.4929
+              },
+              {
+                "stockDate": 1778184000000,
+                "highValue": 130.4278
+              },
+              {
+                "stockDate": 1780776000000,
+                "highValue": 130.6101
+              },
+              {
+                "stockDate": 1783368000000,
+                "highValue": 130.7208
+              },
+              {
+                "stockDate": 1785960000000,
+                "highValue": 130.5906
+              },
+              {
+                "stockDate": 1788552000000,
+                "highValue": 130.8184
+              }
+            ]
+          },
+          {
+            "dataPoints": [
+              {
+                "stockDate": 1760040000000,
+                "highValue": 91.3
+              },
+              {
+                "stockDate": 1762632000000,
+                "highValue": 91.4369
+              },
+              {
+                "stockDate": 1765224000000,
+                "highValue": 91.3685
+              },
+              {
+                "stockDate": 1767816000000,
+                "highValue": 91.5511
+              },
+              {
+                "stockDate": 1770408000000,
+                "highValue": 91.4917
+              },
+              {
+                "stockDate": 1773000000000,
+                "highValue": 91.6196
+              },
+              {
+                "stockDate": 1775592000000,
+                "highValue": 91.5054
+              },
+              {
+                "stockDate": 1778184000000,
+                "highValue": 91.4598
+              },
+              {
+                "stockDate": 1780776000000,
+                "highValue": 91.5876
+              },
+              {
+                "stockDate": 1783368000000,
+                "highValue": 91.6652
+              },
+              {
+                "stockDate": 1785960000000,
+                "highValue": 91.5739
+              },
+              {
+                "stockDate": 1788552000000,
+                "highValue": 91.7337
+              }
+            ]
+          },
+          {
+            "dataPoints": [
+              {
+                "stockDate": 1760040000000,
+                "highValue": 180.8
+              },
+              {
+                "stockDate": 1762632000000,
+                "highValue": 181.0712
+              },
+              {
+                "stockDate": 1765224000000,
+                "highValue": 180.9356
+              },
+              {
+                "stockDate": 1767816000000,
+                "highValue": 181.2972
+              },
+              {
+                "stockDate": 1770408000000,
+                "highValue": 181.1797
+              },
+              {
+                "stockDate": 1773000000000,
+                "highValue": 181.4328
+              },
+              {
+                "stockDate": 1775592000000,
+                "highValue": 181.2068
+              },
+              {
+                "stockDate": 1778184000000,
+                "highValue": 181.1164
+              },
+              {
+                "stockDate": 1780776000000,
+                "highValue": 181.3695
+              },
+              {
+                "stockDate": 1783368000000,
+                "highValue": 181.5232
+              },
+              {
+                "stockDate": 1785960000000,
+                "highValue": 181.3424
+              },
+              {
+                "stockDate": 1788552000000,
+                "highValue": 181.6588
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "TopETFs": {
+      "top5Response": {
+        "data": [
+          {
+            "symbol": "VOO",
+            "companyName": "Vanguard S&P 500 ETF",
+            "fundName": "Vanguard S&P 500 ETF",
+            "priceLast": 520.8,
+            "priceChange": 0.3,
+            "priceChangePercent": 0.06,
+            "asOfDate": 1791555900000
+          },
+          {
+            "symbol": "VTI",
+            "companyName": "Vanguard Total Stock Market ETF",
+            "fundName": "Vanguard Total Stock Market ETF",
+            "priceLast": 280.4,
+            "priceChange": -0.2,
+            "priceChangePercent": -0.07,
+            "asOfDate": 1791555900000
+          },
+          {
+            "symbol": "QQQ",
+            "companyName": "Invesco QQQ Trust",
+            "fundName": "Invesco QQQ Trust",
+            "priceLast": 490.7,
+            "priceChange": 0.5,
+            "priceChangePercent": 0.1,
+            "asOfDate": 1791555900000
+          },
+          {
+            "symbol": "SCHD",
+            "companyName": "Schwab US Dividend Equity ETF",
+            "fundName": "Schwab US Dividend Equity ETF",
+            "priceLast": 29.2,
+            "priceChange": 0,
+            "priceChangePercent": 0,
+            "asOfDate": 1791555900000
+          },
+          {
+            "symbol": "DIA",
+            "companyName": "SPDR Dow Jones Industrial Average ETF",
+            "fundName": "SPDR Dow Jones Industrial Average ETF",
+            "priceLast": 420.5,
+            "priceChange": 0.4,
+            "priceChangePercent": 0.1,
+            "asOfDate": 1791555900000
+          }
+        ]
+      },
+      "chartResponse": {
+        "data": [
+          {
+            "dataPoints": [
+              {
+                "stockDate": 1791552600000,
+                "highValue": 520.8
+              },
+              {
+                "stockDate": 1791552900000,
+                "highValue": 521.5812
+              },
+              {
+                "stockDate": 1791553200000,
+                "highValue": 521.1906
+              },
+              {
+                "stockDate": 1791553500000,
+                "highValue": 522.2322
+              },
+              {
+                "stockDate": 1791553800000,
+                "highValue": 521.8937
+              },
+              {
+                "stockDate": 1791554100000,
+                "highValue": 522.6228
+              },
+              {
+                "stockDate": 1791554400000,
+                "highValue": 521.9718
+              },
+              {
+                "stockDate": 1791554700000,
+                "highValue": 521.7114
+              },
+              {
+                "stockDate": 1791555000000,
+                "highValue": 522.4405
+              },
+              {
+                "stockDate": 1791555300000,
+                "highValue": 522.8832
+              },
+              {
+                "stockDate": 1791555600000,
+                "highValue": 522.3624
+              },
+              {
+                "stockDate": 1791555900000,
+                "highValue": 523.2738
+              }
+            ]
+          },
+          {
+            "dataPoints": [
+              {
+                "stockDate": 1791552600000,
+                "highValue": 280.4
+              },
+              {
+                "stockDate": 1791552900000,
+                "highValue": 279.9794
+              },
+              {
+                "stockDate": 1791553200000,
+                "highValue": 280.1897
+              },
+              {
+                "stockDate": 1791553500000,
+                "highValue": 279.6289
+              },
+              {
+                "stockDate": 1791553800000,
+                "highValue": 279.8112
+              },
+              {
+                "stockDate": 1791554100000,
+                "highValue": 279.4186
+              },
+              {
+                "stockDate": 1791554400000,
+                "highValue": 279.7691
+              },
+              {
+                "stockDate": 1791554700000,
+                "highValue": 279.9093
+              },
+              {
+                "stockDate": 1791555000000,
+                "highValue": 279.5167
+              },
+              {
+                "stockDate": 1791555300000,
+                "highValue": 279.2784
+              },
+              {
+                "stockDate": 1791555600000,
+                "highValue": 279.5588
+              },
+              {
+                "stockDate": 1791555900000,
+                "highValue": 279.0681
+              }
+            ]
+          },
+          {
+            "dataPoints": [
+              {
+                "stockDate": 1791552600000,
+                "highValue": 490.7
+              },
+              {
+                "stockDate": 1791552900000,
+                "highValue": 491.436
+              },
+              {
+                "stockDate": 1791553200000,
+                "highValue": 491.068
+              },
+              {
+                "stockDate": 1791553500000,
+                "highValue": 492.0494
+              },
+              {
+                "stockDate": 1791553800000,
+                "highValue": 491.7305
+              },
+              {
+                "stockDate": 1791554100000,
+                "highValue": 492.4174
+              },
+              {
+                "stockDate": 1791554400000,
+                "highValue": 491.8041
+              },
+              {
+                "stockDate": 1791554700000,
+                "highValue": 491.5587
+              },
+              {
+                "stockDate": 1791555000000,
+                "highValue": 492.2457
+              },
+              {
+                "stockDate": 1791555300000,
+                "highValue": 492.6628
+              },
+              {
+                "stockDate": 1791555600000,
+                "highValue": 492.1721
+              },
+              {
+                "stockDate": 1791555900000,
+                "highValue": 493.0308
+              }
+            ]
+          },
+          {
+            "dataPoints": [
+              {
+                "stockDate": 1791552600000,
+                "highValue": 29.2
+              },
+              {
+                "stockDate": 1791552900000,
+                "highValue": 29.2438
+              },
+              {
+                "stockDate": 1791553200000,
+                "highValue": 29.2219
+              },
+              {
+                "stockDate": 1791553500000,
+                "highValue": 29.2803
+              },
+              {
+                "stockDate": 1791553800000,
+                "highValue": 29.2613
+              },
+              {
+                "stockDate": 1791554100000,
+                "highValue": 29.3022
+              },
+              {
+                "stockDate": 1791554400000,
+                "highValue": 29.2657
+              },
+              {
+                "stockDate": 1791554700000,
+                "highValue": 29.2511
+              },
+              {
+                "stockDate": 1791555000000,
+                "highValue": 29.292
+              },
+              {
+                "stockDate": 1791555300000,
+                "highValue": 29.3168
+              },
+              {
+                "stockDate": 1791555600000,
+                "highValue": 29.2876
+              },
+              {
+                "stockDate": 1791555900000,
+                "highValue": 29.3387
+              }
+            ]
+          },
+          {
+            "dataPoints": [
+              {
+                "stockDate": 1791552600000,
+                "highValue": 420.5
+              },
+              {
+                "stockDate": 1791552900000,
+                "highValue": 421.1307
+              },
+              {
+                "stockDate": 1791553200000,
+                "highValue": 420.8154
+              },
+              {
+                "stockDate": 1791553500000,
+                "highValue": 421.6564
+              },
+              {
+                "stockDate": 1791553800000,
+                "highValue": 421.3831
+              },
+              {
+                "stockDate": 1791554100000,
+                "highValue": 421.9717
+              },
+              {
+                "stockDate": 1791554400000,
+                "highValue": 421.4461
+              },
+              {
+                "stockDate": 1791554700000,
+                "highValue": 421.2359
+              },
+              {
+                "stockDate": 1791555000000,
+                "highValue": 421.8246
+              },
+              {
+                "stockDate": 1791555300000,
+                "highValue": 422.182
+              },
+              {
+                "stockDate": 1791555600000,
+                "highValue": 421.7615
+              },
+              {
+                "stockDate": 1791555900000,
+                "highValue": 422.4974
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
