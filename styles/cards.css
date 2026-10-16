@@ -67,7 +67,9 @@ main .section:is(.dark, [data-section-theme="dark"]) .cards-award {
   --card-copy-color: var(--color-text-inverse);
   --card-link-color: var(--color-link-inverse);
   --link-color: var(--color-link-inverse);
+  --link-hover-color: var(--color-link-inverse-hover);
   --action-link-color: var(--color-link-inverse);
+  --action-outline-hover-text: var(--color-text-primary);
 
   color-scheme: dark;
 }
