@@ -248,7 +248,16 @@ export default async function decorate(block) {
   let menuOpen = false;
   let searchOpen = false;
 
+  // Wrapping and enlarged text can make the bar taller than its original reserve.
+  function fitPanels() {
+    const rootSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const available = Math.max(0, window.innerHeight - bar.getBoundingClientRect().bottom
+      - rootSize * 1.5);
+    block.style.setProperty('--header-panel-space', `${available}px`);
+  }
+
   const setPanel = (panel, expanded) => {
+    if (expanded) fitPanels();
     // Desktop panels stay rendered to animate out, but closed links are inert immediately.
     panel.inert = !expanded;
     panel.setAttribute('aria-hidden', String(!expanded));
@@ -419,6 +428,10 @@ export default async function decorate(block) {
   // The global EDS header reserves 64px; this block supplies its measured height.
   const owner = block.closest('header');
   if (owner) owner.style.height = 'auto';
+
+  new ResizeObserver(fitPanels).observe(nav);
+  window.addEventListener('resize', fitPanels);
+  fitPanels();
 
   const setMenu = (expanded, restoreFocus = false) => {
     closeDisclosure();

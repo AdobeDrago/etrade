@@ -96,3 +96,7 @@ This component is migrated on `et-header`. Review its changes against `develop`;
 Preview: https://et-header--etrade--AdobeDrago.aem.page/home
 
 Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
+
+## Shared style system
+
+Both themes use shared color, typography, radius, focus, layer and motion tokens. The bar can wrap when text is enlarged; drawer and dropdown height is bounded by measured viewport space. Existing disclosure, search and focus-return behavior is preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.
