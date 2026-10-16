@@ -1,6 +1,12 @@
 .footer {
-  background: var(--color-surface-inverse-raised);
-  color: var(--color-text-inverse);
+  --text-color: var(--color-footer-text);
+  --link-color: var(--color-footer-link);
+  --link-hover-color: var(--color-footer-link-hover);
+  --action-link-color: var(--color-footer-link);
+
+  background: var(--color-footer-surface);
+  color: var(--color-footer-text);
+  color-scheme: var(--footer-color-scheme);
   font-family: var(--font-family-body);
   font-size: var(--font-size-15);
   line-height: calc(22 / 15);
@@ -65,22 +71,22 @@
 }
 
 .footer a:any-link {
-  color: var(--color-link-inverse-hover);
+  color: var(--color-footer-link);
   text-decoration: none;
 }
 
 .footer .footer-contact a:any-link {
-  color: var(--color-text-inverse);
+  color: var(--color-footer-text);
 }
 
 .footer a:any-link:hover,
 .footer a:any-link:focus-visible {
-  color: var(--color-link-inverse-hover);
+  color: var(--color-footer-link-hover);
   text-decoration: underline;
 }
 
 .footer a:any-link:focus-visible {
-  outline: var(--focus-ring-width) solid var(--color-link-inverse-hover);
+  outline: var(--focus-ring-width) solid var(--color-footer-link-hover);
   outline-offset: var(--focus-ring-offset);
 }
 
@@ -151,7 +157,7 @@
   box-sizing: border-box;
   width: var(--space-40);
   height: var(--space-40);
-  border: var(--border-width-thin) solid var(--color-text-inverse);
+  border: var(--border-width-thin) solid var(--color-footer-text);
   border-radius: var(--radius-round);
 }
 
@@ -183,7 +189,7 @@
 
 .footer .footer-social a.footer-social-icon:hover,
 .footer .footer-social a.footer-social-icon:focus-visible {
-  outline: var(--focus-ring-width) solid var(--color-text-inverse);
+  outline: var(--focus-ring-width) solid var(--color-footer-text);
   outline-offset: 0;
 }
 
