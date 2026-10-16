@@ -15,5 +15,6 @@
   --color-footer-link: var(--color-link);
   --color-footer-link-hover: var(--color-link-hover);
   --footer-color-scheme: light;
+  --footer-icon-filter: brightness(0);
   --radius-card: var(--radius-control);
 }

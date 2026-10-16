@@ -200,6 +200,11 @@
   vertical-align: -3px;
 }
 
+/* The bundled monochrome SVGs contain white fills; authored images keep their colors. */
+.footer :is(.icon-phone, .icon-social-facebook, .icon-social-twitter, .icon-social-linkedin, .icon-social-youtube, .icon-social-instagram) img {
+  filter: var(--footer-icon-filter, none);
+}
+
 .footer .footer-column a img {
   width: auto;
   max-width: 100%;
