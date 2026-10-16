@@ -1,6 +1,46 @@
-.hero-dark {
+main .section > .hero-dark-wrapper {
+  min-width: 0;
+  container: block-layout / inline-size;
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-20);
+}
+
+:where(.hero-dark) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
+body main .section.hero-dark-container:not([data-section-layout="authored"]) {
+  --action-outline-hover-text: var(--color-text-primary);
+  --text-color: var(--color-text-inverse);
+  --link-color: var(--color-link-inverse);
+  --link-hover-color: var(--color-link-inverse-hover);
   --action-link-color: var(--color-link-inverse);
 
+  margin: 0;
+  padding: var(--space-20) 0 var(--space-40);
+  background: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  color-scheme: dark;
+}
+
+.hero-dark-container > .hero-dark-breadcrumb {
+  display: none;
+}
+
+.hero-dark {
+  --text-color: var(--color-text-inverse);
+  --link-color: var(--color-link-inverse);
+  --link-hover-color: var(--color-link-inverse-hover);
+  --action-outline-hover-text: var(--color-text-primary);
+  --action-link-color: var(--color-link-inverse);
+
+  background: var(--color-surface-inverse);
+  color-scheme: dark;
+  min-width: 0;
+  overflow-wrap: anywhere;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 0;
@@ -405,8 +445,11 @@ main .hero-dark.split .hero-dark-offer p {
   }
 }
 
-
 body.homepage main > .section:not([data-section-layout="authored"]).hero-dark-container {
+  padding-top: var(--space-20);
+}
+
+body.homepage main > .section.hero-dark-container:not([data-section-layout="authored"]):has(.hero-dark.has-video) {
   padding-top: var(--space-20);
 }
 
@@ -414,5 +457,57 @@ body.homepage main > .section:not([data-section-layout="authored"]).hero-dark-co
   .hero-dark.split .hero-dark-offer {
     grid-template-columns: minmax(0, 5fr) minmax(0, 5fr) auto;
     gap: var(--space-20);
+  }
+}
+
+/* Adapt to the space provided by the section, including enlarged text. */
+@container block-layout (width < 38rem) {
+  main .section .hero-dark,
+main .section .hero-dark.split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  main .section .hero-dark :is(h1, h2, h3).hero-dark-heading,
+main .section .hero-dark .hero-dark-copy,
+main .section .hero-dark .hero-dark-media {
+    grid-area: auto;
+  }
+
+  main .section .hero-dark.split .hero-dark-content {
+    grid-area: auto;
+    width: 100%;
+    max-width: 100%;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  main .section .hero-dark.split .hero-dark-media {
+    grid-area: auto;
+  }
+
+  main .section .hero-dark.split .hero-dark-offer {
+    grid-area: auto;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  main .section .hero-dark .hero-dark-actions {
+    flex-flow: column wrap;
+    align-items: stretch;
+  }
+
+  main .section .hero-dark .hero-dark-action {
+    flex: auto;
+  }
+
+  main .section .hero-dark a.hero-dark-primary:any-link {
+    box-sizing: border-box;
+    padding-inline: min(var(--space-30), 8%);
+    flex-wrap: wrap;
+  }
+}
+
+@media (width >= 768px) {
+  main .section > .hero-dark-wrapper {
+    padding: 0 var(--space-10);
   }
 }
