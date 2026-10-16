@@ -11,3 +11,7 @@ The block requests `POST quote` with `symbol: DJIND,COMP.IDX,SPX,TNX` and `detai
 Data delay and service timestamps remain visible. The PHX quote timestamp field needs verification with a live response; absent timestamps show “Time unavailable”. Direction has signed text and accessible names as well as color.
 
 The bundled sample file is allowed on the same origin on localhost, preview and live delivery. Additional `/test/fixtures/*.json` remain localhost-only. Failure in either selected mode stays unavailable and does not switch sources.
+
+## Shared style system
+
+The ticker uses a shared campaign surface and inverse status roles. Its desktop grid reduces columns inside narrow section cells or with enlarged text. The quote source, loading labels, retry action and unavailable values are unchanged. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.
