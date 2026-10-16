@@ -1,4 +1,10 @@
+:where(body.homepage, body.etrade-page):has(.accordion-faq) {
+  --faq-gutter-offset: 0px;
+}
+
 .accordion-faq {
+  --action-outline-hover-text: var(--color-action-primary-text);
+
   /* Reference-specific spacing stays local and scales with the shared type. */
   --accordion-faq-question-padding: 1.9375rem;
   --accordion-faq-answer-padding: 1.5625rem;
@@ -54,7 +60,6 @@
 .accordion-faq .accordion-faq-introduction p {
   margin: 0 0 0.5625rem;
 }
-
 
 .accordion-faq .accordion-faq-expand-all {
   display: block;
