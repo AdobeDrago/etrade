@@ -1,9 +1,16 @@
+:where(.footer) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
 .footer {
+  --action-outline-hover-text: var(--color-text-primary);
   --text-color: var(--color-footer-text);
   --link-color: var(--color-footer-link);
   --link-hover-color: var(--color-footer-link-hover);
   --action-link-color: var(--color-footer-link);
 
+  min-width: 0;
   background: var(--color-footer-surface);
   color: var(--color-footer-text);
   color-scheme: var(--footer-color-scheme);
