@@ -73,6 +73,7 @@ body main .section[data-section-theme="light"] {
   --action-outline-hover-text: var(--color-action-primary-text);
   --section-text-color: var(--color-text-primary);
   --section-link-color: var(--color-link);
+  --section-link-hover-color: var(--color-link-hover);
   --section-surface-color: var(--color-surface-default);
 }
 
@@ -80,12 +81,14 @@ body main .section[data-section-theme="dark"] {
   --action-outline-hover-text: var(--color-text-primary);
   --section-text-color: var(--color-text-inverse);
   --section-link-color: var(--color-link-inverse);
+  --section-link-hover-color: var(--color-link-inverse-hover);
   --section-surface-color: var(--color-surface-inverse);
 }
 
 body main .section[data-section-layout][data-section-theme] {
   --text-color: var(--section-text-color);
   --link-color: var(--section-link-color);
+  --link-hover-color: var(--section-link-hover-color);
   --action-link-color: var(--section-link-color);
 
   background-color: var(--section-surface-color);
@@ -108,6 +111,10 @@ body main .section[data-section-layout][data-section-theme] > .default-content-w
 body main .section[data-section-layout][data-section-theme] > .default-content-wrapper a:any-link:focus-visible {
   outline: var(--focus-ring-width) solid var(--section-link-color);
   outline-offset: var(--focus-ring-offset);
+}
+
+body main .section[data-section-layout][data-section-theme] > .default-content-wrapper a:any-link:not(.button, .etrade-action):hover {
+  color: var(--section-link-hover-color);
 }
 
 body main .section[data-section-layout][data-section-background] {
