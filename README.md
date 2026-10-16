@@ -35,6 +35,8 @@ npm run lint
 
 ## Shared design tokens
 
+For the architecture, repository file map, DA examples, extension guidance, and validation workflow, see the [E*TRADE style system guide](docs/style-system.md).
+
 [`styles/brand.css`](styles/brand.css) is the global token source, loaded by [`styles/styles.css`](styles/styles.css). Its palette starts with the [brand reference](https://adobedrago.github.io/etrade/#brand) and preserves existing component colors. Link hover (`#451fad`) and primary-button hover (`#7852e0`) remain separate during migration; market status colors are existing component values, not additions to the official brand palette. Existing `--brand-*` and EDS variables remain available as compatibility aliases.
 
 | Token family | Purpose |
