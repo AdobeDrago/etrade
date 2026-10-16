@@ -1,3 +1,23 @@
+main .section > .columns-feature-wrapper {
+  min-width: 0;
+  container: block-layout / inline-size;
+}
+
+.columns-feature.light {
+  --text-color: var(--color-text-primary);
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --action-link-color: var(--color-link);
+  --action-outline-hover-text: var(--color-action-primary-text);
+
+  color-scheme: light;
+}
+
+:where(.columns-feature) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
 /* Section styling belongs to the block present in that section. */
 body.homepage main > .section:not([data-section-layout="authored"]).columns-feature-container:not([data-section-layout="authored"]):where(:has(.columns-feature)) {
   padding: var(--space-60) 0;
@@ -10,6 +30,7 @@ body.homepage main > .section:not([data-section-layout="authored"]).banking-feat
 .columns-feature {
   --action-link-color: var(--color-link);
 
+  min-width: 0;
   box-sizing: border-box;
   border-radius: var(--radius-card);
   padding: var(--space-20);
@@ -22,8 +43,13 @@ body.homepage main > .section:not([data-section-layout="authored"]).banking-feat
 }
 
 .columns-feature.dark {
+  --text-color: var(--color-text-inverse);
+  --link-color: var(--color-link-inverse);
+  --link-hover-color: var(--color-link-inverse-hover);
+  --action-outline-hover-text: var(--color-text-primary);
   --action-link-color: var(--color-link-inverse);
 
+  color-scheme: dark;
   background: var(--color-surface-inverse);
   color: var(--color-text-inverse);
 }
@@ -84,7 +110,6 @@ body.homepage main > .section:not([data-section-layout="authored"]).banking-feat
   font-size: var(--font-size-16);
   line-height: calc(26 / 16);
 }
-
 
 .columns-feature .columns-feature-copy > p:first-child:has(+ h2) {
   font-size: var(--font-size-16);
@@ -196,7 +221,6 @@ body.homepage main > .section:not([data-section-layout="authored"]).banking-feat
   background: var(--color-surface-page);
 }
 
-
 @media (width >= 768px) {
   .columns-feature .columns-feature-copy {
     box-sizing: border-box;
@@ -256,5 +280,25 @@ body.planning .columns-feature .columns-feature-copy h2 {
   body.planning .columns-feature .columns-feature-copy {
     max-width: 544px;
     margin: 0;
+  }
+}
+
+/* Adapt to the space provided by the section, including enlarged text. */
+@container block-layout (width < 38rem) {
+  main .section .columns-feature > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  main .section .columns-feature .columns-feature-copy {
+    width: 100%;
+    max-width: 100%;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+}
+
+@container block-layout (width < 22rem) {
+  main .section .columns-feature {
+    padding-inline: min(var(--space-20), 8%);
   }
 }
