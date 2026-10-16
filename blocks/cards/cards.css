@@ -1,17 +1,19 @@
 .cards {
+  --card-copy-color: var(--color-text-primary);
+  --card-min-width: 16.0625rem;
+
   font-size: var(--text-body-size);
   line-height: var(--line-height-copy);
 }
 
 .cards > ul {
+  --card-gap: var(--space-24);
+
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-min-width)), 1fr));
-
-  --card-gap: var(--space-24);
-
   gap: var(--card-gap);
 }
 
