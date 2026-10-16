@@ -16,6 +16,7 @@
     "lint:css": "stylelint \"blocks/**/*.css\" \"styles/*.css\"",
     "lint": "npm run lint:js && npm run lint:css",
     "lint:fix": "npm run lint:js -- --fix && npm run lint:css -- --fix",
+    "test:cards": "node --experimental-vm-modules --test test/card-blocks.test.js test/remaining-blocks.test.js test/bank-rates.test.js test/card-rates.test.js",
     "test:blocks": "node --experimental-vm-modules --test test/remaining-blocks.test.js"
   },
   "repository": {
