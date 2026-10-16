@@ -1,4 +1,34 @@
+main .section > .welcome-hero-wrapper {
+  min-width: 0;
+  container: block-layout / inline-size;
+}
+
+:where(.welcome-hero) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
+main > .section.welcome-hero-container {
+  margin: 0;
+  padding: 0;
+}
+
+main > .section > .welcome-hero-wrapper {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
 .welcome-hero {
+  --text-color: var(--color-text-inverse);
+  --link-color: var(--color-link-inverse);
+  --link-hover-color: var(--color-link-inverse-hover);
+  --action-link-color: var(--color-link-inverse);
+  --action-outline-hover-text: var(--color-text-primary);
+
+  color-scheme: dark;
+  min-width: 0;
+  overflow-wrap: anywhere;
   position: relative;
   box-sizing: border-box;
   display: grid;
@@ -10,6 +40,13 @@
 }
 
 .welcome-hero .welcome-hero-login {
+  --text-color: var(--color-text-primary);
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --action-link-color: var(--color-link);
+  --action-outline-hover-text: var(--color-action-primary-text);
+
+  color-scheme: light;
   z-index: 1;
   order: 0;
   box-sizing: border-box;
@@ -367,5 +404,48 @@
     width: 25rem;
     min-height: 29.0625rem;
     margin-right: -0.625rem;
+  }
+}
+
+/* Adapt to the space provided by the section, including enlarged text. */
+@container block-layout (width < 38rem) {
+  main .section .welcome-hero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    gap: 0;
+    padding: 0;
+  }
+
+  main .section .welcome-hero .welcome-hero-login {
+    grid-row: 1;
+    order: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-inline: 0;
+    padding-inline: min(2.1875rem, 8%);
+  }
+
+  main .section .welcome-hero .welcome-hero-campaign {
+    grid-row: 2;
+    order: 1;
+    padding: var(--space-40) min(var(--space-20), 8%);
+  }
+
+  main .section .welcome-hero > .welcome-hero-image,
+main .section .welcome-hero.has-image::after {
+    grid-row: 2;
+    grid-column: 1;
+  }
+
+  main .section .welcome-hero .welcome-hero-options,
+main .section .welcome-hero .welcome-hero-logon-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  main .section .welcome-hero .welcome-hero-password-label,
+main .section .welcome-hero .welcome-hero-login-footer {
+    flex-wrap: wrap;
+    gap: var(--space-8);
   }
 }
