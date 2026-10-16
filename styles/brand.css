@@ -38,21 +38,38 @@
   --palette-neutral-200: #e2e2e2;
   --palette-neutral-300: #ccc;
   --palette-neutral-400: #c5c5c5;
+  --palette-neutral-500: #707070;
   --palette-neutral-600: #666;
+  --palette-neutral-700: #4a4a4a;
   --palette-neutral-800: #242424;
+  --palette-neutral-850: #2c2931;
   --palette-neutral-900: #1c1a1e;
   --palette-neutral-950: #121213;
+  --palette-purple-50: #f3f0ff;
+  --palette-purple-200: #cdb3ff;
   --palette-purple-300: #ab80ff;
   --palette-purple-500: #7852e0;
   --palette-purple-600: #5627d8;
   --palette-purple-700: #451fad;
+  --palette-purple-950: #24134b;
   --palette-blue-50: #e9f2f9;
+
+  /* Existing pricing-band reference colors. */
+  --palette-blue-300: #6ccdf6;
+  --palette-blue-400: #8a99b8;
+  --palette-blue-900: #19223c;
 
   /* Existing market status colors; these extend the documented brand palette. */
   --palette-green-300: #9be5b2;
   --palette-green-700: #157347;
   --palette-red-300: #ffb7cb;
   --palette-red-700: #b02a50;
+
+  /* Existing chart-series colors, independent of the brand palette. */
+  --palette-blue-600: #0065e3;
+  --palette-teal-700: #007f85;
+  --palette-olive-700: #857700;
+  --palette-amber-700: #aa6000;
 
   /* Semantic colors. Inverse roles are intended for dark surfaces. */
   --color-text-primary: var(--palette-neutral-800);
@@ -65,11 +82,22 @@
   --color-surface-inverse: var(--palette-neutral-950);
   --color-surface-inverse-raised: var(--palette-neutral-900);
   --color-surface-highlight: var(--palette-blue-50);
+  --color-surface-feature: var(--palette-blue-900);
+  --color-surface-campaign: var(--palette-purple-950);
+  --color-surface-control: var(--palette-neutral-850);
+  --color-surface-hover: var(--palette-purple-50);
+  --color-surface-overlay: color-mix(in srgb, var(--color-surface-default) 90%, transparent);
+  --color-surface-overlay-inverse: color-mix(in srgb, var(--color-surface-inverse-raised) 90%, transparent);
+  --color-text-feature-accent: var(--palette-blue-300);
   --color-border-default: var(--palette-neutral-200);
   --color-border-strong: var(--palette-neutral-300);
+  --color-border-control: var(--palette-neutral-500);
+  --color-border-inverse: var(--palette-neutral-700);
+  --color-border-feature: var(--palette-blue-400);
   --color-link: var(--palette-purple-600);
   --color-link-hover: var(--palette-purple-700);
   --color-link-inverse: var(--palette-purple-300);
+  --color-link-inverse-hover: var(--palette-purple-200);
   --color-action-primary: var(--palette-purple-600);
 
   /* Preserve the existing button hover, distinct from the reference's link hover. */
@@ -84,14 +112,23 @@
   --color-status-negative: var(--palette-red-700);
   --color-status-positive-inverse: var(--palette-green-300);
   --color-status-negative-inverse: var(--palette-red-300);
+  --color-chart-index-1: var(--palette-blue-600);
+  --color-chart-index-2: var(--palette-teal-700);
+  --color-chart-index-3: var(--palette-olive-700);
+  --color-chart-index-4: var(--palette-amber-700);
 
   /* Typography. Size suffixes give pixel equivalents at a 16px browser default.
      Keep the root font size unset so rem values respect browser preferences. */
   --font-family-body: graphiketrade, 'Helvetica Neue', helvetica, arial, sans-serif;
   --font-family-heading: var(--font-family-body);
+  --font-family-ui: system-ui, sans-serif;
+  --font-family-mono: 'Chivo Mono', monospace;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-size-10: 0.625rem;
+  --font-size-11: 0.6875rem;
   --font-size-12: 0.75rem;
   --font-size-13: 0.8125rem;
   --font-size-14: 0.875rem;
@@ -105,8 +142,10 @@
   --font-size-28: 1.75rem;
   --font-size-32: 2rem;
   --font-size-36: 2.25rem;
+  --font-size-37: 2.3125rem;
   --font-size-40: 2.5rem;
   --font-size-44: 2.75rem;
+  --font-size-46: 2.875rem;
   --font-size-48: 3rem;
   --font-size-64: 4rem;
   --font-size-72: 4.5rem;
@@ -117,6 +156,8 @@
   --tracking-normal: normal;
   --tracking-tight: calc(-1rem / 64);
   --tracking-display: -0.0625rem;
+  --tracking-eyebrow: 0.0088rem;
+  --tracking-label: 0.0625rem;
 
   /* Text roles. Section headings and HTML heading defaults have separate scales. */
   --text-body-size: var(--font-size-16);
@@ -164,6 +205,7 @@
   --layout-copy-max: 800px;
   --layout-gutter: var(--space-20);
   --layout-grid-gap: var(--space-20);
+  --layout-card-min: 14rem;
   --layout-section-space: var(--space-40);
   --layout-section-space-large: var(--space-60);
   --layout-header-height: 88px;
@@ -174,12 +216,16 @@
   --radius-medium: 8px;
   --radius-card: 16px;
   --radius-round: 50%;
+  --radius-pill: 999px;
   --border-width-thin: 1px;
   --border-width-strong: 2px;
+  --border-width-accent: 4px;
   --focus-ring-width: 2px;
   --focus-ring-offset: 3px;
+  --control-touch-target: 44px;
   --shadow-popover: 0 1px 3px rgb(36 36 36 / 10%), 0 6px 12px rgb(36 36 36 / 8%);
   --shadow-floating: 0 4px 20px rgb(18 18 19 / 20%);
+  --shadow-tab: 0 -8px 18px rgb(18 18 19 / 12%);
 
   /* Motion and layers. Local artwork can retain its own internal stacking order. */
   --motion-duration-fast: 150ms;

@@ -1,0 +1,83 @@
+/* Shared card roles. Individual blocks own their surfaces, variants and content. */
+:where(.cards, .cards-account, .cards-article, .cards-award, .cards-icon, .cards-numbered, .cards-platform, .cards-pricing, .cards-product) {
+  --card-text-color: var(--color-text-primary);
+  --card-copy-color: var(--color-text-secondary);
+  --card-link-color: var(--color-link);
+  --card-surface-color: var(--color-surface-default);
+  --card-min-width: var(--layout-card-min);
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --action-link-color: var(--color-link);
+  --action-outline-hover-text: var(--color-action-primary-text);
+  --text-color: var(--color-text-primary);
+
+  min-width: 0;
+  color: var(--card-text-color);
+  color-scheme: light;
+  letter-spacing: var(--tracking-tight);
+  overflow-wrap: anywhere;
+}
+
+:where(.cards, .cards-award, .cards-platform) {
+  --card-copy-color: var(--color-text-primary);
+}
+
+/* Section introductions must wrap alongside their cards at enlarged text sizes. */
+main .section:has(:is(.cards, .cards-account, .cards-article, .cards-award, .cards-icon, .cards-numbered, .cards-platform, .cards-pricing, .cards-product)) > .default-content-wrapper {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.cards {
+  --card-min-width: 16.0625rem;
+}
+
+/* The cap preserves each variant's column count; the minimum lets narrow cells reflow. */
+:is(.cards, .cards-account, .cards-article, .cards-award, .cards-icon, .cards-numbered, .cards-platform, .cards-pricing, .cards-product) > :is(ul, ol) {
+  --card-gap: var(--layout-grid-gap);
+  --card-columns: 1;
+
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(var(--card-min-width), calc((100% - (var(--card-columns) - 1) * var(--card-gap)) / var(--card-columns)))), 1fr));
+}
+
+:is(.cards, .cards-account, .cards-article, .cards-award, .cards-icon, .cards-numbered, .cards-platform, .cards-pricing, .cards-product) a:any-link {
+  overflow-wrap: anywhere;
+}
+
+:is(.cards, .cards-account, .cards-article, .cards-award, .cards-icon, .cards-numbered, .cards-platform, .cards-pricing, .cards-product) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--card-link-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Legacy dark sections force descendant colors; each card keeps its own surface roles. */
+main .section.dark :is(.cards, .cards-account, .cards-article, .cards-award, .cards-icon, .cards-numbered, .cards-platform, .cards-pricing, .cards-product) :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--card-text-color);
+}
+
+main .section.dark :is(.cards, .cards-account, .cards-article, .cards-award, .cards-icon, .cards-numbered, .cards-platform, .cards-pricing, .cards-product) p {
+  color: var(--card-paragraph-color, var(--card-copy-color));
+}
+
+main .section.dark :is(.cards, .cards-account, .cards-article, .cards-award, .cards-icon, .cards-numbered, .cards-platform, .cards-pricing, .cards-product) a:any-link:not(.button, .etrade-action) {
+  color: var(--card-link-color);
+}
+
+main .section:is(.dark, [data-section-theme="dark"]) .cards-award {
+  --card-text-color: var(--color-text-inverse);
+  --card-copy-color: var(--color-text-inverse);
+  --card-link-color: var(--color-link-inverse);
+  --link-color: var(--color-link-inverse);
+  --action-link-color: var(--color-link-inverse);
+
+  color-scheme: dark;
+}
+
+:is(.cards, .cards-account, .cards-article, .cards-award, .cards-icon, .cards-numbered, .cards-platform, .cards-pricing, .cards-product) a.button {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+main .section.dark :is(.cards, .cards-account, .cards-article, .cards-award, .cards-icon, .cards-numbered, .cards-platform, .cards-pricing, .cards-product) a.button.secondary:any-link {
+  border-color: var(--card-link-color);
+  color: var(--card-link-color);
+}

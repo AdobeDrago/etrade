@@ -1,0 +1,233 @@
+/* Component layout adapts to the space provided by its section. */
+main .section > :is(.hero-wrapper, .hero-dark-wrapper, .hero-light-wrapper, .hero-product-wrapper, .welcome-hero-wrapper, .banner-offer-wrapper, .columns-wrapper, .columns-feature-wrapper, .tabs-accounts-wrapper, .carousel-story-wrapper, .market-overview-wrapper, .market-top-five-wrapper, .market-ticker-wrapper, .widget-calculator-wrapper) {
+  min-width: 0;
+  container: block-layout / inline-size;
+}
+
+:where(.hero, .hero-dark, .hero-light, .hero-product, .welcome-hero, .banner-offer, .columns, .columns-feature, .tabs-accounts, .carousel-story, .market-overview, .market-top-five, .market-ticker, .widget-calculator, .disclosures, .footer) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Owned surfaces reset inherited text, links and native controls together. */
+:where(.hero, .hero-dark, .hero-product, .welcome-hero, .banner-offer, .columns-feature.dark, .tabs-accounts-offer, .market-ticker, .widget-calculator-control, .footer) {
+  --text-color: var(--color-text-inverse);
+  --link-color: var(--color-link-inverse);
+  --link-hover-color: var(--color-link-inverse-hover);
+  --action-link-color: var(--color-link-inverse);
+  --action-outline-hover-text: var(--color-text-primary);
+
+  color-scheme: dark;
+}
+
+:where(.hero-dark) {
+  background: var(--color-surface-inverse);
+}
+
+:where(.banner-offer.light, .columns-feature.light, .welcome-hero-login, .widget-calculator-promo, .carousel-story-card, .tabs-accounts, .market-overview, .market-top-five, .disclosures, .accordion-faq) {
+  --text-color: var(--color-text-primary);
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --action-link-color: var(--color-link);
+  --action-outline-hover-text: var(--color-action-primary-text);
+
+  color-scheme: light;
+}
+
+:where(.market-overview, .market-top-five) {
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
+}
+
+:where(.hero, .hero-dark, .hero-light, .hero-product, .welcome-hero, .banner-offer, .columns, .columns-feature, .tabs-accounts, .carousel-story, .market-overview, .market-top-five, .market-ticker, .widget-calculator, .disclosures, .footer) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* These plots share roles while retaining distinct index-series colors. */
+:is(.market-overview, .market-top-five) svg text {
+  fill: var(--color-text-secondary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-12);
+}
+
+:is(.market-overview, .market-top-five) .market-chart-grid {
+  stroke: var(--color-border-default);
+}
+
+@container block-layout (width < 38rem) {
+  body main .section .hero-dark,
+  body main .section .hero-dark.split,
+  body main .section .hero-product,
+  body main .section .columns-feature > div,
+  body main .section .market-overview,
+  body main .section .widget-calculator .widget-calculator-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body main .section .hero-dark :is(h1, h2, h3).hero-dark-heading,
+  body main .section .hero-dark .hero-dark-copy,
+  body main .section .hero-dark .hero-dark-media,
+  body main .section .hero-dark.split .hero-dark-content,
+  body main .section .hero-dark.split .hero-dark-media,
+  body main .section .hero-dark.split .hero-dark-offer,
+  body main .section .hero-product .hero-product-content,
+  body main .section .hero-product .hero-product-media,
+  body main .section .hero-product .hero-product-offer,
+  body main .section .market-overview .market-overview-chart,
+  body main .section .market-overview .market-overview-search {
+    grid-area: auto;
+  }
+
+  body main .section .hero-dark.split .hero-dark-content,
+  body main .section .hero-product .hero-product-content,
+  body main .section .columns-feature .columns-feature-copy {
+    width: 100%;
+    max-width: 100%;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  body main .section .hero-dark.split .hero-dark-offer,
+  body main .section .hero-product .hero-product-offer,
+  body main .section .hero-product.copy-only-offer .hero-product-offer {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body main .section .widget-calculator .widget-calculator-control {
+    margin: 0;
+  }
+
+  body main .section .hero-dark .hero-dark-actions {
+    flex-flow: column wrap;
+    align-items: stretch;
+  }
+
+  body main .section .hero-dark .hero-dark-action {
+    flex: auto;
+  }
+
+  body main .section .hero-dark a.hero-dark-primary:any-link {
+    box-sizing: border-box;
+    padding-inline: min(var(--space-30), 8%);
+    flex-wrap: wrap;
+  }
+
+  body main .section .columns > div {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  body main .section .columns > div > div {
+    min-width: 0;
+  }
+
+  body main .section .banner-offer,
+  body main .section .banner-offer:is(.light, .compact),
+  body main .section .banner-offer:not(.light, .compact, .no-media) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-20);
+  }
+
+  body main .section .banner-offer > :is(div, h1, h2, h3, h4, h5, h6) {
+    grid-area: auto;
+  }
+
+  body main .section .banner-offer :is(.banner-offer-heading, .banner-offer-copy, .banner-offer-media, .banner-offer-actions) {
+    grid-area: auto;
+  }
+
+  body main .section .banner-offer.compact .banner-offer-media img {
+    width: min(3.5rem, 100%);
+    height: auto;
+  }
+
+  body main .section .welcome-hero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    gap: 0;
+    padding: 0;
+  }
+
+  body main .section .welcome-hero .welcome-hero-login {
+    grid-row: 1;
+    order: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-inline: 0;
+    padding-inline: min(2.1875rem, 8%);
+  }
+
+  body main .section .welcome-hero .welcome-hero-campaign {
+    grid-row: 2;
+    order: 1;
+    padding: var(--space-40) min(var(--space-20), 8%);
+  }
+
+  body main .section .welcome-hero > .welcome-hero-image,
+  body main .section .welcome-hero.has-image::after {
+    grid-row: 2;
+    grid-column: 1;
+  }
+
+  body main .section .welcome-hero .welcome-hero-options,
+  body main .section .welcome-hero .welcome-hero-logon-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body main .section .welcome-hero .welcome-hero-password-label,
+  body main .section .welcome-hero .welcome-hero-login-footer {
+    flex-wrap: wrap;
+    gap: var(--space-8);
+  }
+
+  body main .section .widget-calculator .widget-calculator-range {
+    display: none;
+  }
+
+  body main .section .widget-calculator .widget-calculator-selector {
+    display: block;
+  }
+
+  body main .section .widget-calculator .widget-calculator-stat {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  body main .section .widget-calculator .widget-calculator-promo + .widget-calculator-control::before {
+    top: -1rem;
+    left: calc(50% - 0.9375rem);
+    transform: rotate(135deg);
+  }
+}
+
+@container block-layout (width < 62rem) {
+  body main .section .tabs-accounts .tabs-accounts-list {
+    display: none;
+  }
+
+  body main .section .tabs-accounts .tabs-accounts-mobile {
+    display: grid;
+  }
+}
+
+@container block-layout (width < 22rem) {
+  body main .section :is(.banner-offer, .columns-feature) {
+    padding-inline: min(var(--space-20), 8%);
+  }
+
+  body main .section .market-ticker {
+    padding-inline: min(var(--space-10), 8%);
+  }
+
+  body main .section .carousel-story .carousel-story-card {
+    flex-basis: 100%;
+    padding-inline: min(var(--space-24), 8%);
+  }
+
+  body main .section .widget-calculator :is(.widget-calculator-control, .widget-calculator-promo) {
+    padding-inline: min(var(--space-24), 8%);
+  }
+}

@@ -70,12 +70,14 @@ body main .section[data-section-layout][data-section-spacing] {
 }
 
 body main .section[data-section-theme="light"] {
+  --action-outline-hover-text: var(--color-action-primary-text);
   --section-text-color: var(--color-text-primary);
   --section-link-color: var(--color-link);
   --section-surface-color: var(--color-surface-default);
 }
 
 body main .section[data-section-theme="dark"] {
+  --action-outline-hover-text: var(--color-text-primary);
   --section-text-color: var(--color-text-inverse);
   --section-link-color: var(--color-link-inverse);
   --section-surface-color: var(--color-surface-inverse);
