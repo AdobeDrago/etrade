@@ -1,3 +1,19 @@
+.cards-award {
+  --card-copy-color: var(--color-text-primary);
+}
+
+main .section:is(.dark, [data-section-theme="dark"]) .cards-award {
+  --card-text-color: var(--color-text-inverse);
+  --card-copy-color: var(--color-text-inverse);
+  --card-link-color: var(--color-link-inverse);
+  --link-color: var(--color-link-inverse);
+  --link-hover-color: var(--color-link-inverse-hover);
+  --action-link-color: var(--color-link-inverse);
+  --action-outline-hover-text: var(--color-text-primary);
+
+  color-scheme: dark;
+}
+
 /* Section styling belongs to the block present in that section. */
 body.homepage .awards-section:not([data-section-layout="authored"]):where(:has(.cards-award)) h2 {
   margin: 0 0 var(--space-32);
@@ -5,11 +21,10 @@ body.homepage .awards-section:not([data-section-layout="authored"]):where(:has(.
 }
 
 .cards-award > ul {
-  display: grid;
-
   --card-columns: 1;
   --card-gap: var(--space-40);
 
+  display: grid;
   gap: var(--card-gap);
   margin: 0;
   padding: 0;
