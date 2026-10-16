@@ -1,3 +1,23 @@
+main .section > .market-top-five-wrapper {
+  min-width: 0;
+  container: block-layout / inline-size;
+}
+
+:where(.market-top-five) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
+:is(.market-top-five) svg text {
+  fill: var(--color-text-secondary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-12);
+}
+
+:is(.market-top-five) .market-chart-grid {
+  stroke: var(--color-border-default);
+}
+
 .market-top-five .market-top-five-controls {
   display: flex;
   flex-wrap: wrap;
@@ -144,6 +164,17 @@
 }
 
 .market-top-five {
+  --text-color: var(--color-text-primary);
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --action-link-color: var(--color-link);
+  --action-outline-hover-text: var(--color-action-primary-text);
+
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
+  color-scheme: light;
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: var(--font-size-13);
   line-height: calc(18 / 13);
   letter-spacing: var(--tracking-tight);
