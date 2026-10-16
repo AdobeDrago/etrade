@@ -1,3 +1,7 @@
+body > header {
+  container: header-chrome / inline-size
+}
+
 .header {
   --header-background: var(--color-surface-inverse);
   --header-surface: var(--color-surface-inverse-raised);
@@ -845,11 +849,8 @@
     display: contents;
   }
 
-  .header .nav-search-open .nav-tools {
-    display: none;
-  }
-
-  .header .nav-search-open .nav-sections {
+  .header .nav-search-open .nav-tools,
+.header .nav-search-open .nav-sections {
     display: none;
   }
 
