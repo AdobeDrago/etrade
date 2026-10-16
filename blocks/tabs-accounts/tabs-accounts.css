@@ -1,5 +1,15 @@
+main .section > .tabs-accounts-wrapper {
+  min-width: 0;
+  container: block-layout / inline-size;
+}
+
+:where(.tabs-accounts) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
 /* Surrounding section styles require this block to be present. */
-main .section:not([data-section-layout="authored"]).tabs-accounts-container {
+body main .section:not([data-section-layout="authored"]).tabs-accounts-container {
   --text-color: var(--color-text-primary);
   --link-color: var(--color-link);
   --link-hover-color: var(--color-link-hover);
@@ -41,6 +51,15 @@ main .section:not([data-section-layout="authored"]).tabs-accounts-container > .t
 }
 
 .tabs-accounts {
+  --text-color: var(--color-text-primary);
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --action-link-color: var(--color-link);
+  --action-outline-hover-text: var(--color-action-primary-text);
+
+  color-scheme: light;
+  min-width: 0;
+  overflow-wrap: anywhere;
   background: var(--color-surface-subtle);
   color: var(--color-text-primary);
   letter-spacing: var(--tracking-tight);
@@ -208,6 +227,13 @@ main .section:not([data-section-layout="authored"]).tabs-accounts-container > .t
 }
 
 .tabs-accounts .tabs-accounts-offer {
+  --text-color: var(--color-text-inverse);
+  --link-color: var(--color-link-inverse);
+  --link-hover-color: var(--color-link-inverse-hover);
+  --action-link-color: var(--color-link-inverse);
+  --action-outline-hover-text: var(--color-text-primary);
+
+  color-scheme: dark;
   margin-top: var(--space-30);
   padding: var(--space-30) var(--space-24);
   background: var(--color-surface-campaign);
@@ -274,7 +300,7 @@ main .section:not([data-section-layout="authored"]).tabs-accounts-container > .t
 }
 
 @media (width >= 768px) {
-  main .section:not([data-section-layout="authored"]).tabs-accounts-container {
+  body main .section:not([data-section-layout="authored"]).tabs-accounts-container {
     padding-top: var(--space-30);
   }
 
@@ -320,5 +346,16 @@ main .section:not([data-section-layout="authored"]).tabs-accounts-container > .t
 
   .tabs-accounts .tabs-accounts-cards {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, max(var(--layout-card-min), calc((100% - 2 * var(--space-20)) / 3))), 1fr));
+  }
+}
+
+/* Adapt to the space provided by the section, including enlarged text. */
+@container block-layout (width < 62rem) {
+  main .section .tabs-accounts .tabs-accounts-list {
+    display: none;
+  }
+
+  main .section .tabs-accounts .tabs-accounts-mobile {
+    display: grid;
   }
 }
