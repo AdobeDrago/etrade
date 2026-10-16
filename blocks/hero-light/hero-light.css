@@ -1,6 +1,30 @@
+main .section > .hero-light-wrapper {
+  min-width: 0;
+  container: block-layout / inline-size;
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-20);
+}
+
+:where(.hero-light) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
+.hero-light-container > .hero-light-breadcrumb {
+  display: none;
+}
+
+body.etrade-page:where(:not(.homepage, .welcome-back, .our-accounts)) main > .section.hero-light-container:not([data-section-layout="authored"]) {
+  margin: var(--space-40) 0;
+  padding: 0;
+}
+
 .hero-light {
   --action-link-color: var(--link-color);
 
+  min-width: 0;
   padding: var(--space-32) 0 var(--space-48);
   color: var(--text-color);
   font-family: var(--font-family-body);
@@ -71,6 +95,10 @@ body.our-accounts main > .section:not([data-section-layout="authored"]).hero-lig
   background: var(--color-surface-page);
 }
 
+body.etrade-page:where(:not(.homepage, .welcome-back, .our-accounts)) main > .section.hero-light-container:not([data-section-layout="authored"]):first-of-type {
+  margin-top: 0;
+}
+
 body.our-accounts .hero-light {
   padding: var(--space-30) 0 var(--space-60);
 }
@@ -100,4 +128,22 @@ body.our-accounts .hero-light-content {
   .hero-light .hero-light-actions {
     justify-content: center;
   }
+}
+
+/* Adapt to the space provided by the section, including enlarged text. */
+@media (width >= 768px) {
+  main .section > .hero-light-wrapper {
+    padding: 0 var(--space-10);
+  }
+}
+
+
+body.etrade-page:where(:not(.homepage, .welcome-back, .our-accounts)) main > .section.hero-light-container:not([data-section-layout="authored"]):is(.light, .highlight) {
+  margin: 0;
+  padding: var(--space-40) 0;
+}
+
+body.etrade-page:where(:not(.homepage, .welcome-back, .our-accounts)) main > .section.hero-light-container:not([data-section-layout="authored"]).dark {
+  margin: 0;
+  padding: var(--space-48) 0;
 }
