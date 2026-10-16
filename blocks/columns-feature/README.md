@@ -27,3 +27,7 @@ used by the current homepage brokerage feature and Planning retirement feature.
 Combine it with Dark or Outline as needed. The default reading/layout order is
 unchanged. **Award** limits logo media to 200px for the brokerage recognition
 section.
+
+## Shared style system
+
+Explicit Light/Dark block options keep precedence. Otherwise the block reads both legacy dark sections and authored Color Scheme metadata. Band and Award keep a surface matching their selected theme. Narrow section cells stack media and copy, and Section Metadata owns the surrounding layout. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.
