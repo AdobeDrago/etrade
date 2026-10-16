@@ -1,3 +1,18 @@
+main .section > .columns-wrapper {
+  min-width: 0;
+  container: block-layout / inline-size;
+}
+
+.columns {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+:where(.columns) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
 .columns > div {
   display: flex;
   flex-direction: column;
@@ -59,5 +74,18 @@ body.homepage .pricing-intro .columns h2 {
   .columns > div > div {
     flex: 1;
     order: unset;
+  }
+}
+
+/* Adapt to the space provided by the section, including enlarged text. */
+@container block-layout (width < 38rem) {
+  main .section .columns > div {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  main .section .columns > div > div {
+    min-width: 0;
   }
 }
