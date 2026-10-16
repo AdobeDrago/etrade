@@ -1,7 +1,7 @@
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 function color(value, fallback) {
-  const tokens = { light: '#fafafa', dark: '#121213' };
+  const tokens = { light: 'var(--color-surface-page)', dark: 'var(--color-surface-inverse)' };
   const candidate = tokens[value?.toLowerCase()] || value;
   return candidate && CSS.supports('color', candidate) ? candidate : fallback;
 }
@@ -26,8 +26,8 @@ export default function decorate(block) {
     if (name) settings[name] = value.textContent.trim();
   });
 
-  block.style.setProperty('--separator-first-color', color(settings['first-section-color'], '#121213'));
-  block.style.setProperty('--separator-second-color', color(settings['second-section-color'], '#fafafa'));
+  block.style.setProperty('--separator-first-color', color(settings['first-section-color'], 'var(--color-surface-inverse)'));
+  block.style.setProperty('--separator-second-color', color(settings['second-section-color'], 'var(--color-surface-page)'));
   const desktopHeight = height(settings.height);
   const mobileHeight = height(settings['mobile-height']);
   if (desktopHeight) block.style.setProperty('--separator-height', desktopHeight);
@@ -69,7 +69,7 @@ export default function decorate(block) {
     line.setAttribute('d', path);
     // Equal surfaces need an outline to keep the production-style line visible.
     if (!lineColor) {
-      block.style.setProperty('--separator-line-color', sameColor ? '#ccc' : 'none');
+      block.style.setProperty('--separator-line-color', sameColor ? 'var(--color-border-strong)' : 'none');
     }
   };
   draw();

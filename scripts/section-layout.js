@@ -7,7 +7,7 @@ export default function decorateSectionBoundaries(main) {
     ? [{ previous: first, firstColor: 'dark', bend: '35%' }] : [];
   if (document.body.classList.contains('why-etrade')) {
     main.querySelectorAll(':scope > .section.dark:has(.cards-icon)').forEach((previous) => {
-      transitions.push({ previous, firstColor: '#1c1a1e', bend: '50%' });
+      transitions.push({ previous, firstColor: 'var(--color-surface-inverse-raised)', bend: '50%' });
     });
   }
   const outlines = new Map([
@@ -26,7 +26,7 @@ export default function decorateSectionBoundaries(main) {
   }
   if (document.body.classList.contains('homepage')) {
     main.querySelectorAll(':scope > .section:has(.columns-feature.band)').forEach((previous) => {
-      transitions.push({ previous, firstColor: '#1c1a1e', bend: '75%' });
+      transitions.push({ previous, firstColor: 'var(--color-surface-inverse-raised)', bend: '75%' });
     });
   }
   transitions.forEach(({ previous, firstColor, bend }) => {
