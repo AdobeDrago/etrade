@@ -1,3 +1,8 @@
+:where(.disclosures) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
 /* Inline disclosure references are auto-linked after the footer is available. */
 .disclosures-reference a:any-link {
   color: inherit;
@@ -10,6 +15,14 @@
 }
 
 .disclosures {
+  --text-color: var(--color-text-primary);
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --action-link-color: var(--color-link);
+  --action-outline-hover-text: var(--color-action-primary-text);
+
+  color-scheme: light;
+  min-width: 0;
   box-sizing: border-box;
   width: 100%;
   margin: 0 auto;
