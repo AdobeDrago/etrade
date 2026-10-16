@@ -1,6 +1,26 @@
+main .section > .banner-offer-wrapper {
+  min-width: 0;
+  container: block-layout / inline-size;
+}
+
+:where(.banner-offer) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
+body.homepage .hero-dark-container:not([data-section-layout="authored"]) > .banner-offer-wrapper {
+  margin-top: var(--space-40);
+}
+
 .banner-offer {
+  --text-color: var(--color-text-inverse);
+  --link-color: var(--color-link-inverse);
+  --link-hover-color: var(--color-link-inverse-hover);
+  --action-outline-hover-text: var(--color-text-primary);
   --action-link-color: var(--color-link-inverse);
 
+  color-scheme: dark;
+  min-width: 0;
   display: grid;
   box-sizing: border-box;
   border-radius: var(--radius-card);
@@ -14,8 +34,13 @@
 }
 
 .banner-offer.light {
+  --text-color: var(--color-text-primary);
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --action-outline-hover-text: var(--color-action-primary-text);
   --action-link-color: var(--color-link);
 
+  color-scheme: light;
   background: var(--color-surface-default);
   color: var(--color-text-primary);
 }
@@ -53,7 +78,6 @@ main .banner-offer .banner-offer-copy p {
 .banner-offer sup a:any-link {
   color: inherit;
 }
-
 
 .banner-offer a:any-link:not(.etrade-action) {
   color: var(--action-link-color);
@@ -115,7 +139,6 @@ main .banner-offer.light sup a:any-link {
   font-size: var(--font-size-24);
   line-height: calc(28 / 24);
 }
-
 
 .banner-offer.centered {
   border-radius: 0;
@@ -230,4 +253,36 @@ main .section:not([data-section-layout="authored"]).banner-offer-container:has(.
     grid-area: 1 / 3 / span 2;
   }
 
+}
+
+/* Adapt to the space provided by the section, including enlarged text. */
+@container block-layout (width < 38rem) {
+  main .section .banner-offer,
+main .section .banner-offer:is(.light, .compact),
+main .section .banner-offer:not(.light, .compact, .no-media) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-20);
+  }
+
+  main .section .banner-offer > :is(div, h1, h2, h3, h4, h5, h6),
+main .section .banner-offer :is(.banner-offer-heading, .banner-offer-copy, .banner-offer-media, .banner-offer-actions) {
+    grid-area: auto;
+  }
+
+  main .section .banner-offer.compact .banner-offer-media img {
+    width: min(3.5rem, 100%);
+    height: auto;
+  }
+}
+
+@container block-layout (width < 22rem) {
+  main .section .banner-offer {
+    padding-inline: min(var(--space-20), 8%);
+  }
+}
+
+@media (width < 768px) {
+  body.homepage .hero-dark-container:not([data-section-layout="authored"]) > .banner-offer-wrapper {
+    margin-top: var(--space-60);
+  }
 }
