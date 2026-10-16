@@ -1,5 +1,7 @@
 # Footer
 
+The page design family supplies the footer's surface, text, link, hover and native-control scheme: Purple uses a light footer and Charcoal retains the dark footer. Missing page themes retain the existing dark footer. Bundled phone and social icons adapt to the surface in code. Authored logos and custom artwork retain their colors and must suit the chosen surface; use page Metadata `Footer` to choose a separate fragment if its content differs by family. See [Page themes](../../README.md#page-themes) and the [authoring rollout](../../README.md#authoring-rollout).
+
 The global Footer loads an authored fragment at `/footer`. Set page Metadata `Footer` to another local path to use a different fragment. Place one **Footer** block in that document. Only that block is rendered; disclosure copy and other content outside it are not included.
 
 All headings, links, phone numbers, logos, social networks, icon choices, and destinations come from content. There is no default business copy or link list in JavaScript. Missing or empty authored content hides the block safely.
@@ -36,7 +38,7 @@ The production “Your Privacy Choices” control opens its consent manager. Aut
 
 ## Layout and accessibility
 
-- Dark surface, production typography, contact heading, circular social icons, and purple navigation links.
+- Theme-selected surface, production typography, contact heading, circular social icons, and purple navigation links.
 - Below 768px, all columns stack and remain expanded, matching production. Social links stay available.
 - From 768px, contact and navigation sit side by side. The three-column layout follows production's tablet and desktop proportions. Additional columns wrap into further rows.
 - Native links and headings, one navigation landmark, authored social labels, visible keyboard focus, and hover/focus underlines. Icons next to social labels are decorative to screen readers.

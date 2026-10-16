@@ -64,6 +64,48 @@ For example, a block can consume the foundation without importing another block'
 
 Keep layout and variants scoped to the owning block. Choose inverse text/link roles for dark surfaces and matching text roles for cards with their own surfaces. Component variables can refer to semantic tokens where a variant needs an override. Native custom properties cannot be used in media-query conditions; shared responsive tokens retain the current 768px, 900px and 1085px transitions, while other block breakpoints stay with their layouts. All visual blocks consume the shared foundation. Fragment is a content loader with no visual stylesheet, and Widget is a minimal host whose loaded widget owns its styles. Font loading is unchanged.
 
+## Page themes
+
+Set page Metadata **Theme** to `Purple` or `Charcoal` to select a design family. These are project names for the two reference treatments, independent of a section's light/dark color scheme.
+
+| Page Theme | Reference pages | Defaults |
+| --- | --- | --- |
+| `Purple` | [Platforms](https://us.etrade.com/platforms), [Pricing and Rates](https://us.etrade.com/what-we-offer/pricing-and-rates), [Welcome Back](https://us.etrade.com/home/welcome-back) | Light header, deep-purple inverse and campaign surfaces, light footer, small card corners |
+| `Charcoal` | [Home](https://us.etrade.com/home), [Bank](https://us.etrade.com/bank) | Dark header, charcoal inverse surfaces and footer, rounded cards; campaign artwork and variants retain their own treatment |
+
+[`styles/themes.css`](styles/themes.css) overrides semantic roles from the foundation. The deep purple (`#241056`) and light footer (`#eee`) are reference-page values. Shared typography, spacing, actions, focus and motion remain in `brand.css`; block layouts, artwork and responsive variants remain authored or block-owned. Selecting a family does not replace a block variant or campaign image, or guarantee a pixel match to every reference layout. Use artwork and logo assets appropriate to their surfaces.
+
+The page theme resolves on the document root before the first section loads, so derived tokens and compatibility aliases follow the selected values. No URL-based or operating-system theme detection is used. Missing or unsupported values retain the existing mixed page treatment. Values are case insensitive; `theme-purple` and `theme-charcoal` aliases are accepted. With comma-separated values, the first recognized design family wins.
+
+`Header Theme: light` or `dark` overrides the family default. Explicit Header block Light/Dark variants also retain precedence over the family default. Legacy `Theme: light` and `Theme: dark` continue to select the header scheme without selecting a page family. A legacy scheme combined with a family (for example, `Theme: Purple, dark`) overrides that family's default header scheme.
+
+Within either family, use Section Metadata **Color Scheme: light** or **dark** for matching text, normal/hover links and native controls. A dark section uses the selected family's inverse surface; an explicitly authored background still takes precedence. Cards with their own light surfaces keep dark text and purple links inside dark sections.
+
+Example page Metadata:
+
+| Metadata | |
+| --- | --- |
+| Theme | Purple |
+| Header Theme | dark |
+
+This selects the Purple family with an explicit dark header. Section schemes remain independently authored. Run `node --experimental-vm-modules --test test/page-theme.test.js test/page-loading.test.js` for selection, precedence, compatibility and eager-loading checks. Browser review must also cover both families, header overrides, section schemes, owned card surfaces, hover/focus, narrow containers and enlarged text.
+
+### Authoring rollout
+
+Code changes and authored content must be tracked together. Theme support is implemented in this branch; the following DA updates are pending, and must be saved and previewed separately from code.
+
+| Authoring update | When needed |
+| --- | --- |
+| Set page Metadata `Theme` to the family listed in the reference table above | Required to opt that page into the new theme system. Existing pages remain unchanged until selected. |
+| Review `Header Theme` and explicit Header Light/Dark variants | Keep deliberate exceptions. Remove an override when the header should follow the page family. When replacing legacy `Theme: light` or `dark`, move that scheme to `Header Theme` if it should remain an explicit exception. |
+| Supply matching Light/Dark brand images in `/nav` | Needed if a selected header scheme has no suitable authored logo. Use the existing Brand variants or `Header Logo Light` / `Header Logo Dark` metadata. Shared navigation changes affect every page using that fragment. |
+| Review Footer Brand images and custom social artwork | Needed when an authored image has colors suited only to the previous surface. The bundled phone and social icons adapt in code; other authored images retain their colors. Use the existing `Footer` metadata to select a separate fragment when the two page families need different footer content. |
+| Review campaign images, text baked into images, section backgrounds and explicit block variants | Change only content that conflicts with the intended family or needs a different layout. A page-theme change does not replace artwork or authored block variants. |
+
+Existing block tables, copy, action formatting, links and rate settings do not need to be rewritten for the token migration. Section Metadata changes are needed only when intentionally changing a section's scheme, background, spacing, container or grid. Retain disclosure references, link tracking and image alternatives while making content changes.
+
+The six saved-page fixtures currently contain header schemes but no Purple/Charcoal page-family selections. `/home` should opt into Charcoal and `/home/welcome-back` into Purple using the supplied references. Confirm the intended family for Our Accounts, Brokerage, Planning and Why E*TRADE before assigning it; header color alone does not identify a page family. These fixtures are saved examples, not confirmation of the current DA content. Re-preview the affected pages and shared fragments on the branch before publishing content.
+
 ## Shared component styles
 
 [`styles/components.css`](styles/components.css) connects section containers to block layouts, supplies owned surface roles and lets narrow blocks reflow independently of the viewport. The remaining block migration covers the following groups:
