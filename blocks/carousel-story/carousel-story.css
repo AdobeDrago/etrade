@@ -1,4 +1,16 @@
+main .section > .carousel-story-wrapper {
+  min-width: 0;
+  container: block-layout / inline-size;
+}
+
+:where(.carousel-story) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
 .carousel-story {
+  min-width: 0;
+  overflow-wrap: anywhere;
   max-width: 980px;
   margin: var(--space-12) auto 0;
 }
@@ -20,6 +32,13 @@
 }
 
 .carousel-story .carousel-story-card {
+  --text-color: var(--color-text-primary);
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --action-link-color: var(--color-link);
+  --action-outline-hover-text: var(--color-action-primary-text);
+
+  color-scheme: light;
   box-sizing: border-box;
   display: flex;
   flex: 0 0 100%;
@@ -218,7 +237,14 @@ body.why-etrade .section:not([data-section-layout="authored"]):has(.carousel-sto
   }
 }
 
-
 body.why-etrade main > .section:not([data-section-layout="authored"]):has(.carousel-story) {
   padding-bottom: 5.25rem;
+}
+
+/* Adapt to the space provided by the section, including enlarged text. */
+@container block-layout (width < 22rem) {
+  main .section .carousel-story .carousel-story-card {
+    flex-basis: 100%;
+    padding-inline: min(var(--space-24), 8%);
+  }
 }
