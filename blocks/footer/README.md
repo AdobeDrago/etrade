@@ -51,3 +51,7 @@ This component is migrated on `et-footer`. Review its changes against `develop`;
 Preview: https://et-footer--etrade--AdobeDrago.aem.page/home
 
 Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
+
+## Shared style system
+
+This block consumes the shared color, typography, spacing, border, focus and applicable motion tokens. Narrow section cells and enlarged text reflow within the block. Authored Section Metadata takes precedence over legacy surrounding section styles; content, links and existing interactions are preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.
