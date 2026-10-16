@@ -1,10 +1,13 @@
+.cards-platform {
+  --card-copy-color: var(--color-text-primary);
+}
+
 /* Layout selectors target only the card list, preserving authored nested lists. */
 .cards-platform > ul {
-  display: grid;
-
   --card-columns: 1;
   --card-gap: var(--space-20);
 
+  display: grid;
   gap: var(--card-gap);
   margin: 0;
   padding: 0;
