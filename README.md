@@ -104,11 +104,13 @@ Code changes and authored content must be tracked together. Theme support is imp
 
 Existing block tables, copy, action formatting, links and rate settings do not need to be rewritten for the token migration. Section Metadata changes are needed only when intentionally changing a section's scheme, background, spacing, container or grid. Retain disclosure references, link tracking and image alternatives while making content changes.
 
+Moving existing block layouts into their owning stylesheets requires no DA changes. Theme selection and asset reviews above remain separate authoring work.
+
 The six saved-page fixtures currently contain header schemes but no Purple/Charcoal page-family selections. `/home` should opt into Charcoal and `/home/welcome-back` into Purple using the supplied references. Confirm the intended family for Our Accounts, Brokerage, Planning and Why E*TRADE before assigning it; header color alone does not identify a page family. These fixtures are saved examples, not confirmation of the current DA content. Re-preview the affected pages and shared fragments on the branch before publishing content.
 
 ## Shared component styles
 
-[`styles/components.css`](styles/components.css) connects section containers to block layouts, supplies owned surface roles and lets narrow blocks reflow independently of the viewport. The remaining block migration covers the following groups:
+Each block's stylesheet owns its wrapper container, surface roles, layout, variants and container queries. A block can reflow independently of the viewport without a global stylesheet listing its internal selectors. The migrated groups are:
 
 | Group | Blocks |
 | --- | --- |
@@ -121,6 +123,16 @@ The six saved-page fixtures currently contain header schemes but no Purple/Charc
 Colors, font families, weights, rem text sizes, unitless line heights, small negative tracking, spacing, focus, common radii, layers and motion use shared tokens. Existing campaign, calculator, navigation-overlay and chart-series colors extend the foundation; they are preserved reference values or consolidated existing shades, not additions to the official palette. Thin strokes, physical container limits, chart coordinates and decorative artwork can retain local dimensions. Font-face descriptors and embedded SVG artwork remain asset definitions.
 
 Section wrappers establish an inline-size container. Below 38rem of available block width, multi-part heroes, feature columns, banners, market layouts and calculators stack; the calculator uses its existing dropdown. Tabs Accounts uses its existing category selector below 62rem of block width. Smaller containers also reduce card columns and bound inner padding. Viewport breakpoints still select the reference typography and other variant details. Container thresholds are rem based, so enlarged text reduces the number of side-by-side items. Carousel dots wrap; charts keep readable labels and scroll within their own plot when necessary, with the full observation table still available.
+
+| Stylesheet | Ownership |
+| --- | --- |
+| `styles/brand.css`, `styles/themes.css` | Shared tokens and page-family values |
+| `styles/styles.css` | Base elements, page composition, default section spacing and shared loading visibility |
+| `styles/sections.css` | Authored section containers, grids, spacing, backgrounds and schemes |
+| `styles/actions.css`, `styles/cards.css` | Common action controls and card-family roles, wrapping, focus and grid sizing |
+| `blocks/{name}/{name}.css` | That block's section exceptions, wrapper container, surfaces, variant layouts, artwork and responsive rules |
+
+Keep container queries beside their block's viewport rules. Establish the `block-layout` container on the block wrapper so the query can adapt the block itself. Scoped section exceptions belong in the owning block's stylesheet and must continue to defer to authored Section Metadata. Generic page spacing supplies defaults without enumerating blocks that have their own section layouts. Adding a block layout does not require a new entry in a global component stylesheet.
 
 Light and dark components own matching foreground, link, hover and native-control roles. Transparent text intros follow their section's scheme; explicitly themed feature bands and awards keep a matching surface. Legacy dark sections inherit text and link roles rather than forcing every nested paragraph white. Explicit Section Metadata controls take precedence over legacy component section styling, including the standard container and spacing on non-homepage templates. Header bars can wrap with enlarged text, and dropdown/drawer height is measured from the available viewport space.
 
