@@ -14,3 +14,7 @@ The demo reads `data/market-data.json` on the same origin. Set `Market Data Mode
 Search suggestions filter the bundled lookup data; live mode calls POST `lookup` after a 300ms debounce, rendering up to eight symbol/company matches. Enter navigates a valid typed symbol to the existing E*TRADE quote page; selecting a suggestion does the same. Escape clears suggestions, Arrow Down enters the list, and suggestion buttons support normal keyboard navigation. The latest five searched symbols are stored in sessionStorage; storage failure never prevents navigation. Returning in the same tab restores links and attempts delayed quote changes. This storage is independent of production E*TRADE's domain cookie.
 
 Service failures preserve navigation and show retryable states. Stale requests cannot overwrite newer search suggestions. No synthetic values replace failed market data. Shared local JSON and live-service configuration are documented in Market Ticker and the authoring guide.
+
+## Shared style system
+
+Series colors, axes, labels, controls and status roles use shared tokens. Chart geometry reserves room for enlarged labels. A narrow plot scrolls internally while its full observation table stays available; index selection, search and service behavior are unchanged. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.
