@@ -5,7 +5,7 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { parseHTML } from 'linkedom';
 
-async function harness(body, loadSection) {
+async function harness(body, loadSection, theme = '') {
   const { document, window } = parseHTML(`<html data-block-review><head></head><body>${body}</body></html>`);
   window.location = new URL('http://localhost:3000/home');
   window.innerWidth = 412;
@@ -27,7 +27,7 @@ async function harness(body, loadSection) {
     buildBlock: noop,
     decorateBlock: noop,
     loadBlock: noop,
-    getMetadata: noop,
+    getMetadata: (name) => (name === 'theme' ? theme : ''),
   };
   const dependencies = {
     './aem.js': helpers,
@@ -44,8 +44,10 @@ async function harness(body, loadSection) {
     './demo-host.js': { default: () => false },
   };
   const source = await readFile(new URL('../scripts/scripts.js', import.meta.url), 'utf8');
+  const themeModule = new vm.SourceTextModule(await readFile(new URL('../scripts/page-theme.js', import.meta.url), 'utf8'), { context });
   const module = new vm.SourceTextModule(`${source}\nexport { loadEager };`, { context });
   await module.link((specifier) => {
+    if (specifier === './page-theme.js') return themeModule;
     const values = dependencies[specifier];
     return new vm.SyntheticModule(Object.keys(values), function define() {
       Object.entries(values).forEach(([name, value]) => this.setExport(name, value));
@@ -75,6 +77,20 @@ test('an empty authored page can appear without a section to load', async () => 
   const page = await harness('<main></main>', () => assert.fail('No section should load'));
   await page.loadEager(page.document);
   assert.equal(page.document.body.classList.contains('appear'), true);
+});
+
+test('page family tokens resolve before the first section loads or the page appears', async () => {
+  await Promise.all(['Purple', 'Charcoal'].map(async (theme) => {
+    let rootTheme;
+    let visible;
+    const page = await harness('<main><div class="section"><p>Campaign</p></div></main>', (section) => {
+      rootTheme = section.ownerDocument.documentElement.dataset.pageTheme;
+      visible = section.ownerDocument.body.classList.contains('appear');
+    }, theme);
+    await page.loadEager(page.document);
+    assert.equal(rootTheme, theme.toLowerCase());
+    assert.equal(visible, false);
+  }));
 });
 
 test('a page without main content can still display its shared chrome', async () => {
