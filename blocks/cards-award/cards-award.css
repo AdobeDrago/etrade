@@ -1,13 +1,16 @@
 /* Section styling belongs to the block present in that section. */
-body.homepage .awards-section:where(:has(.cards-award)) h2 {
-  margin: 0 0 32px;
+body.homepage .awards-section:not([data-section-layout="authored"]):where(:has(.cards-award)) h2 {
+  margin: 0 0 var(--space-32);
   text-align: center;
 }
 
 .cards-award > ul {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 40px;
+
+  --card-columns: 1;
+  --card-gap: var(--space-40);
+
+  gap: var(--card-gap);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -18,56 +21,58 @@ body.homepage .awards-section:where(:has(.cards-award)) h2 {
   flex-direction: column;
   align-items: flex-start;
   min-width: 0;
-  gap: 24px;
-  color: #242424;
-  font-size: 16px;
-  line-height: 20px;
-  letter-spacing: -0.21px;
+  gap: var(--space-24);
+  color: var(--card-text-color);
+  font-size: var(--text-body-size);
+  line-height: var(--line-height-copy);
+  letter-spacing: var(--tracking-tight);
   overflow-wrap: anywhere;
 }
 
 .cards-award .cards-award-image :is(img, svg, .icon) {
   display: block;
-  width: 72px;
-  height: 72px;
+  width: 4.5rem;
+  height: 4.5rem;
 }
 
 .cards-award .cards-award-body h3 {
-  margin: 0 0 10px;
+  margin: 0 0 var(--space-10);
   color: inherit;
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 26px;
-  letter-spacing: -0.4px;
+  font-size: var(--font-size-22);
+  font-weight: var(--font-weight-semibold);
+  line-height: calc(26 / 22);
+  letter-spacing: var(--tracking-tight);
 }
 
 .cards-award .cards-award-body p {
-  margin: 0 0 20px;
+  margin: 0 0 var(--space-20);
 }
 
 @media (width >= 768px) {
   .cards-award > ul {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 20px;
+    --card-columns: 3;
+    --card-gap: var(--layout-grid-gap);
+
+    gap: var(--card-gap);
   }
 }
 
-body.homepage .section:has(.cards-award) .default-content-wrapper > h2 {
-  margin-bottom: 40px;
-  font-size: 28px;
-  line-height: 32px;
+body.homepage .section:not([data-section-layout="authored"]):has(.cards-award) .default-content-wrapper > h2 {
+  margin-bottom: var(--space-40);
+  font-size: var(--font-size-28);
+  line-height: calc(32 / 28);
   text-align: left;
-  letter-spacing: -0.25px;
+  letter-spacing: var(--tracking-tight);
 }
 
-body.homepage .section:has(.cards-award) .page-intro-actions {
+body.homepage .section:not([data-section-layout="authored"]):has(.cards-award) .page-intro-actions {
   justify-content: center;
-  margin-top: 40px;
+  margin-top: var(--space-40);
 }
 
 @media (width >= 768px) {
-  body.homepage .section:has(.cards-award) .default-content-wrapper > h2 {
-    font-size: 36px;
-    line-height: 40px;
+  body.homepage .section:not([data-section-layout="authored"]):has(.cards-award) .default-content-wrapper > h2 {
+    font-size: var(--font-size-36);
+    line-height: calc(40 / 36);
   }
 }
