@@ -17,3 +17,7 @@ No DA table-name migration is required for the existing Accounts page.
 Heading levels, link labels and disclosure references remain author responsibilities; the block preserves them instead of supplying campaign content.
 
 Preview after code push: https://et-hero-2--etrade--AdobeDrago.aem.page/what-we-offer/our-accounts
+
+## Shared style system
+
+The transparent introduction follows its surrounding section text and link scheme. Rem headings grow with browser text preferences. Explicit Section Metadata owns the surrounding section layout. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

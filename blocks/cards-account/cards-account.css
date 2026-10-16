@@ -1,73 +1,84 @@
-/* cards-account — structural layout only; brand styling applied in design pass. */
+.cards-account {
+  font-size: var(--text-body-size);
+  line-height: var(--line-height-copy);
+}
 
-.cards-account ul {
+/* Account cards share the same surface and action roles as the other card blocks. */
+
+.cards-account > ul {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
+
+  --card-columns: 1;
+  --card-gap: var(--space-24);
+
+  gap: var(--card-gap);
 }
 
-.cards-account li {
+.cards-account > ul > li {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 24px;
+  min-width: 0;
+  gap: var(--space-12);
+  padding: var(--space-24);
+  padding-inline: min(var(--space-24), 12%);
   box-sizing: border-box;
-  border: 1px solid #e0e0e0;
+  border: var(--border-width-thin) solid var(--color-border-default);
 
   /* top accent bar */
-  border-top: 4px solid var(--brand-accent);
-  border-radius: 4px;
-  background-color: #fff;
+  border-top: var(--border-width-accent) solid var(--color-action-primary);
+  border-radius: var(--radius-small);
+  background-color: var(--card-surface-color);
 }
 
-.cards-account-body {
+.cards-account .cards-account-body {
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-8);
 }
 
-.cards-account-body :is(h1, h2, h3, h4, h5, h6) {
+.cards-account .cards-account-body :is(h1, h2, h3, h4, h5, h6) {
   margin: 0;
-  font-family: var(--brand-font-family);
-  color: var(--brand-text);
-  font-weight: 600;
+  font-family: var(--font-family-body);
+  color: var(--card-text-color);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-card-heading-size);
+  line-height: calc(28 / 24);
 }
 
-.cards-account-body p {
+.cards-account .cards-account-body p {
   margin: 0;
-  color: #666;
-  font-size: var(--body-font-size-s);
+  color: var(--card-copy-color);
+  font-size: var(--text-body-size);
 }
 
-.cards-account-actions {
+.cards-account .cards-account-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--space-12);
   align-items: center;
   margin-top: auto;
-}
-
-.cards-account-actions p {
-  margin: 0;
+  padding-top: var(--space-12);
 }
 
 @media (width >= 600px) {
-  .cards-account ul {
-    grid-template-columns: repeat(2, 1fr);
+  .cards-account > ul {
+    --card-columns: 2;
   }
 }
 
 @media (width >= 900px) {
-  .cards-account ul {
-    grid-template-columns: repeat(3, 1fr);
+  .cards-account > ul {
+    --card-columns: 3;
   }
 }
 
-/* --- E*TRADE brand styling --- */
-.cards-account-actions a:any-link {
-  color: var(--brand-link);
-  font-weight: 500;
+
+@media (width >= 768px) {
+  .cards-account .cards-account-body :is(h1, h2, h3, h4, h5, h6) {
+    line-height: calc(32 / 28);
+  }
 }

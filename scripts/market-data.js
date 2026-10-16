@@ -4,16 +4,16 @@ export const LOCAL_MARKET_DATA = '/data/market-data.json';
 const requests = new Map();
 export const MARKET_INDICES = [
   {
-    symbol: 'DJIND', chart: 'DJIND', label: 'DOW', color: '#0065e3',
+    symbol: 'DJIND', chart: 'DJIND', label: 'DOW', color: 'var(--color-chart-index-1)',
   },
   {
-    symbol: 'COMP.IDX', chart: 'COMPIDX', label: 'NASDAQ', color: '#007f85',
+    symbol: 'COMP.IDX', chart: 'COMPIDX', label: 'NASDAQ', color: 'var(--color-chart-index-2)',
   },
   {
-    symbol: 'SPX', chart: 'SPX', label: 'S&P', color: '#857700',
+    symbol: 'SPX', chart: 'SPX', label: 'S&P', color: 'var(--color-chart-index-3)',
   },
   {
-    symbol: 'TNX', chart: 'TNX', label: '10 YR. T-NOTE', color: '#aa6000',
+    symbol: 'TNX', chart: 'TNX', label: '10 YR. T-NOTE', color: 'var(--color-chart-index-4)',
   },
 ];
 export const TOP_FIVE_GROUPS = ['TopDivYieldStocks', 'MostSearchedMFs', 'TopETFs'];

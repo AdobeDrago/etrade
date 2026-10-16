@@ -1,9 +1,9 @@
 .separator {
   position: relative;
   width: 100%;
-  height: var(--separator-mobile-height, var(--separator-height, 45px));
+  height: var(--separator-mobile-height, var(--separator-height, 2.8125rem));
   overflow: hidden;
-  background-color: var(--separator-first-color, #121213);
+  background-color: var(--separator-first-color, var(--color-surface-inverse));
   line-height: 0;
   pointer-events: none;
 }
@@ -15,7 +15,7 @@
 }
 
 .separator .separator-surface {
-  fill: var(--separator-second-color, #fafafa);
+  fill: var(--separator-second-color, var(--color-surface-page));
 }
 
 .separator .separator-line {
@@ -27,6 +27,6 @@
 
 @media (width >= 768px) {
   .separator {
-    height: var(--separator-height, 81px);
+    height: var(--separator-height, 5.0625rem);
   }
 }

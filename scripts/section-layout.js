@@ -7,7 +7,7 @@ export default function decorateSectionBoundaries(main) {
     ? [{ previous: first, firstColor: 'dark', bend: '35%' }] : [];
   if (document.body.classList.contains('why-etrade')) {
     main.querySelectorAll(':scope > .section.dark:has(.cards-icon)').forEach((previous) => {
-      transitions.push({ previous, firstColor: '#1c1a1e', bend: '50%' });
+      transitions.push({ previous, firstColor: 'var(--color-surface-inverse-raised)', bend: '50%' });
     });
   }
   const outlines = new Map([
@@ -26,7 +26,7 @@ export default function decorateSectionBoundaries(main) {
   }
   if (document.body.classList.contains('homepage')) {
     main.querySelectorAll(':scope > .section:has(.columns-feature.band)').forEach((previous) => {
-      transitions.push({ previous, firstColor: '#1c1a1e', bend: '75%' });
+      transitions.push({ previous, firstColor: 'var(--color-surface-inverse-raised)', bend: '75%' });
     });
   }
   transitions.forEach(({ previous, firstColor, bend }) => {
@@ -47,7 +47,8 @@ export default function decorateSectionBoundaries(main) {
   });
   const sections = [...main.querySelectorAll(':scope > .section')].filter((section) => {
     // Backend metadata can leave an empty trailing section with no authored style.
-    if (!section.children.length && !section.textContent.trim() && section.classList.length === 1) {
+    if (!section.children.length && !section.textContent.trim() && section.classList.length === 1
+      && !section.hasAttribute('data-section-layout') && !section.id) {
       section.remove();
       return false;
     }
