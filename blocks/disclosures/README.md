@@ -63,3 +63,7 @@ Authored content is transferred separately. Existing sandbox integration and cam
 ## Style ownership
 
 The block stylesheet owns the disclosure region and `.disclosures-reference` markers in page content. The shared `/scripts/disclosure-references.js` helper runs in `buildAutoBlocks` for content added after the footer is ready, and the block decorator runs it after the authored disclosure items are available. Automatically loaded fragments receive another pass after insertion. Shared homepage section spacing remains in `styles/styles.css`.
+
+## Shared style system
+
+The owned light surface, links, typography, spacing and focus use shared tokens. Inner gutters are bounded in narrow containers and with enlarged text. Legal IDs, ordered entries, authored rich content and the logged, hidden loading-failure behavior are unchanged. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.
