@@ -607,5 +607,85 @@ test('real controls expose two valid strategies and real preferences without sim
   assert.equal(buttons.find((element) => element.textContent === 'Open OneTrust preferences').disabled, true);
   assert.equal(controls.querySelectorAll('[role="tab"]')[2].textContent, 'Consent');
   assert.ok(controls.textContent.includes('Unavailable'));
+  assert.equal(controls.querySelector('.demo-helper-banner-control').hidden, true);
+  assert.equal(controls.querySelector('.demo-helper-cookie-banner').hidden, true);
   controller.stop();
+});
+
+test('demo banner is opt-in, waits for CMP readiness and shares the panel consent actions', async () => {
+  const context = browser('?perf=etrade&perf-phase=eds&perf-work=medium');
+  const requested = [];
+  const controller = startPerformanceDemo(context.document, context.win, {
+    fetchProfile: async () => manifest,
+    importResource: async (url) => { requested.push(new URL(url).pathname); },
+  });
+  const controls = mountPerformanceControls(context.document, context.win);
+  const toggle = controls.querySelector('.demo-helper-banner-toggle input');
+  const banner = controls.querySelector('.demo-helper-cookie-banner');
+  const click = (text) => [...controls.querySelectorAll('button')]
+    .find((element) => element.textContent === text).dispatchEvent(new context.window.Event('click'));
+  assert.equal(toggle.checked, false);
+  assert.equal(banner.hidden, true);
+  toggle.checked = true;
+  toggle.dispatchEvent(new context.window.Event('change'));
+  assert.equal(banner.hidden, true);
+  assert.ok(controls.textContent.includes('will appear when simulated OneTrust is ready'));
+  await delayedCMP(context, controller);
+  assert.equal(banner.hidden, false);
+  assert.ok(banner.textContent.includes('This banner is for demonstration only.'));
+  click('Demo Decline');
+  assert.equal(controller.snapshot().consent, 'declined');
+  assert.equal(banner.hidden, true);
+  assert.equal(toggle.checked, false);
+  assert.equal(requested.length, 2);
+  toggle.checked = true;
+  toggle.dispatchEvent(new context.window.Event('change'));
+  assert.equal(banner.hidden, false);
+  click('Demo Accept');
+  await settle();
+  assert.equal(controller.snapshot().consent, 'accepted');
+  assert.equal(controller.snapshot().completed, manifest.resources.length);
+  assert.equal(banner.hidden, true);
+  toggle.checked = true;
+  toggle.dispatchEvent(new context.window.Event('change'));
+  click('Accept simulated tracking'); // Repeating the same panel choice also dismisses the banner.
+  assert.equal(banner.hidden, true);
+  toggle.checked = true;
+  toggle.dispatchEvent(new context.window.Event('change'));
+  click('Decline simulated tracking');
+  assert.equal(controller.snapshot().consent, 'declined');
+  assert.equal(controller.snapshot().runtimeActive, false);
+  assert.equal(banner.hidden, true);
+  assert.ok(context.consentEvents.every((event) => event.type === 'demo-performance:consent.update'));
+  controller.stop();
+});
+
+test('banner stays absent from comparisons without a simulated consent gate and dismisses on stop', async () => {
+  await Promise.all(['', '?perf=baseline', '?perf=onetrust', '?perf=etrade&perf-phase=early', '?perf=etrade&perf-phase=late']
+    .map(async (query) => {
+      const context = browser(query);
+      const controller = startPerformanceDemo(context.document, context.win, {
+        fetchProfile: async () => manifest, importResource: async () => {},
+      });
+      await controller?.ready;
+      await settle();
+      const controls = mountPerformanceControls(context.document, context.win);
+      assert.equal(controls.querySelector('.demo-helper-banner-control').hidden, true);
+      assert.equal(controls.querySelector('.demo-helper-cookie-banner').hidden, true);
+      controller?.stop();
+    }));
+  const context = browser('?perf=etrade&perf-phase=consent');
+  const controller = startPerformanceDemo(context.document, context.win, {
+    fetchProfile: async () => manifest, importResource: async () => {},
+  });
+  const controls = mountPerformanceControls(context.document, context.win);
+  await controller.ready;
+  await settle();
+  const toggle = controls.querySelector('.demo-helper-banner-toggle input');
+  toggle.checked = true;
+  toggle.dispatchEvent(new context.window.Event('change'));
+  assert.equal(controls.querySelector('.demo-helper-cookie-banner').hidden, false);
+  controller.stop();
+  assert.equal(controls.querySelector('.demo-helper-cookie-banner').hidden, true);
+  assert.equal(toggle.disabled, true);
 });
