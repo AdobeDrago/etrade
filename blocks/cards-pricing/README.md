@@ -4,7 +4,7 @@ Author one row per card in a **Cards Pricing** block. A single content cell is e
 
 Put the amount in the first paragraph (for example `$0`, `$0.65`, or `0.50%`), followed by an H3 label, supporting copy, and an optional standalone linked paragraph. The amount gets the large pricing treatment; labels use smaller headings. An offer card can start with its heading instead. Inline disclosure superscripts and links remain authored.
 
-Standalone links become outline buttons by default; **Cards Pricing (Text Links)** uses text actions with a decorative arrow. Text, destinations, and tracking parameters come from DA. The grid has one column on narrow phones and three from 768px. Cards stretch evenly and align their actions at the bottom.
+Standalone links become outline buttons by default; **Cards Pricing (Text Links)** uses text actions with a decorative arrow. Text, destinations, and tracking parameters come from DA. The grid has one column on narrow phones and up to three from 768px when space permits. Cards stretch evenly and align their actions at the bottom.
 
 For the Investment Choices summary, use **Cards Pricing (Band)**. Put the Low pricing
 H2 immediately before the table in the same section. Author three rows with `$0`,
@@ -20,12 +20,10 @@ The shared rate binding supports `{{rate}}` or named markers plus a separate **R
 
 ## Migration review
 
-This component is migrated on `et-cards-pricing`. Review its changes against `develop`.
-
-Preview: https://et-cards-pricing--etrade--AdobeDrago.aem.page/home
+The shared style migration is on `etrade-style`. Preview: https://etrade-style--etrade--AdobeDrago.aem.page/home
 
 Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
 
 ## Style ownership
 
-The block stylesheet owns both the component and its feature-specific surrounding section styles. Section selectors require this block to be present; `:where()` preserves their existing specificity. Shared homepage section spacing remains in `styles/styles.css`.
+The block consumes shared card, typography, spacing, border, focus and action tokens. Section selectors require this block to be present. Explicit Section Metadata owns the surrounding container, spacing, background and introduction alignment; Band retains its own blue surface and inverse values inside that section. Narrow section cells and enlarged text reduce the internal column count as needed. See the [shared card styles](../../README.md#shared-card-styles) for validation.

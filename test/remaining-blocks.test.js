@@ -5,8 +5,8 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { parseHTML } from 'linkedom';
 
-async function render(name, rows, variants = '', hash = '', visibleCards = 1) {
-  const { document, window } = parseHTML(`<html><body><main><div class="section"><div class="${name} ${variants}">${rows}</div></div></main></body></html>`);
+async function render(name, rows, variants = '', hash = '', visibleCards = 1, theme = '') {
+  const { document, window } = parseHTML(`<html><body><main><div class="section" data-section-theme="${theme}"><div class="${name} ${variants}">${rows}</div></div></main></body></html>`);
   Object.defineProperty(window.HTMLSelectElement.prototype, 'value', {
     configurable: true,
     get() { return this.getAttribute('data-test-value') || '0'; },
@@ -99,6 +99,16 @@ test('columns decorate imported bare formatted links without changing inline lin
   assert.equal(block.querySelector('p a').getAttribute('href'), '/terms');
   const empty = await render('columns', '');
   assert.equal(empty.block.classList.contains('columns-0-cols'), true);
+});
+
+test('feature columns honor authored section themes while explicit block themes keep precedence', async () => {
+  const inherited = await render('columns-feature', row(image, copy), '', '', 1, 'dark');
+  assert.equal(inherited.block.classList.contains('dark'), true);
+  assert.equal(inherited.block.querySelector('h3').id, 'title');
+  assert.equal(inherited.block.querySelector('p a').getAttribute('href'), '/inline?track=1');
+  const explicit = await render('columns-feature', row(image, copy), 'light', '', 1, 'dark');
+  assert.equal(explicit.block.classList.contains('light'), true);
+  assert.equal(explicit.block.classList.contains('dark'), false);
 });
 
 test('last story selection stays selected when two desktop cards share the final scroll position', async () => {

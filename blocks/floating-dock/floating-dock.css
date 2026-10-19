@@ -5,21 +5,21 @@
 .floating-dock .floating-dock-bar {
   box-sizing: border-box;
   position: fixed;
-  z-index: 99;
-  inset: auto 8px 0;
+  z-index: var(--layer-dock);
+  inset: auto var(--space-8) 0;
   display: flex;
   align-items: center;
-  gap: 8px;
-  border-radius: 8px 8px 0 0;
-  padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px));
-  background: #121213;
-  color: #fff;
-  font-family: var(--brand-font-family, 'Helvetica Neue', helvetica, arial, sans-serif);
+  gap: var(--space-8);
+  border-radius: var(--radius-medium) var(--radius-medium) 0 0;
+  padding: var(--space-8) var(--space-8) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+  background: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  font-family: var(--font-family-body);
   font-feature-settings: 'kern', 'liga';
-  font-size: 15px;
-  font-weight: 400;
-  letter-spacing: -0.21px;
-  line-height: 22px;
+  font-size: var(--font-size-15);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: var(--tracking-tight);
+  line-height: calc(22 / 15);
   text-rendering: optimizelegibility;
 }
 
@@ -32,15 +32,15 @@
 .floating-dock .floating-dock-secondary {
   position: absolute;
   right: 0;
-  bottom: calc(100% + 11px);
+  bottom: calc(100% + 0.6875rem);
   left: 0;
   display: flex;
   flex-direction: column;
   max-height: calc(100dvh - var(--floating-dock-height, 61px) - 35px);
   overflow-y: auto;
-  border-radius: 12px;
-  padding: 8px;
-  background: rgb(28 26 30 / 90%);
+  border-radius: 0.75rem;
+  padding: var(--space-8);
+  background: var(--color-surface-overlay-inverse);
   backdrop-filter: blur(20px);
 }
 
@@ -52,28 +52,28 @@
 .floating-dock a.floating-dock-link:any-link {
   display: block;
   border: 0;
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: var(--radius-medium);
+  padding: var(--space-12);
   background: transparent;
-  color: #fff;
+  color: var(--color-text-inverse);
   font-size: inherit;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   line-height: inherit;
   text-decoration: none;
   overflow-wrap: anywhere;
 }
 
 .floating-dock a.floating-dock-link:hover {
-  background: rgb(36 36 36 / 60%);
-  color: #cdb3ff;
+  background: color-mix(in srgb, var(--color-text-primary) 60%, transparent);
+  color: var(--color-link-inverse-hover);
 }
 
 .floating-dock .floating-dock-icon {
   display: inline-block;
-  width: 15px;
-  height: 15px;
-  margin-top: -3px;
-  margin-right: 5px;
+  width: 0.9375rem;
+  height: 0.9375rem;
+  margin-top: -0.1875rem;
+  margin-right: 0.3125rem;
   fill: currentcolor;
   vertical-align: middle;
 }
@@ -81,51 +81,51 @@
 .floating-dock a.floating-dock-primary:any-link {
   flex: 1;
   min-width: 0;
-  border: 1px solid transparent;
-  border-radius: 2px;
-  padding: 12px 30px 13px;
-  background: #5627d8;
-  color: #fff;
-  font-size: 18px;
-  letter-spacing: normal;
-  line-height: 18px;
+  border: var(--border-width-thin) solid transparent;
+  border-radius: var(--radius-control);
+  padding: var(--space-12) min(var(--space-30), 8%) 0.8125rem;
+  background: var(--color-action-primary);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-18);
+  letter-spacing: var(--tracking-normal);
+  line-height: 1;
   text-align: center;
 }
 
 .floating-dock a.floating-dock-primary:hover {
-  background: #451fad;
+  background: var(--color-link-hover);
 }
 
 .floating-dock a.floating-dock-primary:active {
-  background: #351887;
+  background: var(--color-action-primary-active);
 }
 
 .floating-dock .floating-dock-toggle {
   display: flex;
-  flex: 0 0 44px;
+  flex: 0 0 var(--control-touch-target);
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: var(--control-touch-target);
+  height: var(--control-touch-target);
   margin: 0;
-  border: 1px solid #ebccff;
-  border-radius: 50%;
+  border: var(--border-width-thin) solid var(--color-link-inverse-hover);
+  border-radius: var(--radius-round);
   padding: 0;
   background: transparent;
-  color: #fff;
+  color: var(--color-text-inverse);
   cursor: pointer;
 }
 
 .floating-dock .floating-dock-toggle .floating-dock-icon {
-  width: 16px;
-  height: 16px;
+  width: var(--space-16);
+  height: var(--space-16);
   margin: 0;
-  transition: transform 240ms ease;
+  transition: transform var(--motion-duration-fast) ease;
 }
 
 .floating-dock .is-expanded .floating-dock-toggle {
-  border-width: 2px;
-  color: #cdb3ff;
+  border-width: var(--border-width-strong);
+  color: var(--color-link-inverse-hover);
 }
 
 .floating-dock .is-expanded .floating-dock-toggle .floating-dock-icon {
@@ -133,8 +133,8 @@
 }
 
 .floating-dock :is(a, button):focus-visible {
-  outline: 2px solid #ebccff;
-  outline-offset: 2px;
+  outline: var(--focus-ring-width) solid var(--color-link-inverse-hover);
+  outline-offset: var(--focus-ring-offset);
 }
 
 .floating-dock .floating-dock-simple .floating-dock-secondary {
@@ -146,17 +146,17 @@
 @media (width >= 768px) {
   .floating-dock .floating-dock-bar {
     right: 0;
-    bottom: 32px;
+    bottom: var(--space-32);
     left: 0;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: var(--space-20);
     width: fit-content;
     max-width: calc(100% - 16px);
     margin: 0 auto;
-    border-radius: 8px;
-    padding: 8px;
-    font-size: 13px;
-    line-height: 18px;
+    border-radius: var(--radius-medium);
+    padding: var(--space-8);
+    font-size: var(--font-size-13);
+    line-height: calc(18 / 13);
   }
 
   .floating-dock .floating-dock-secondary {
@@ -176,15 +176,15 @@
 
   .floating-dock .floating-dock-secondary a.floating-dock-link + a {
     /* Match the reference's inter-link whitespace and text tracking. */
-    margin-left: 2.93px;
+    margin-left: 0.1831rem;
   }
 
   .floating-dock a.floating-dock-primary:any-link {
     flex: none;
-    margin-left: 5px;
-    padding: 8px 15px;
-    font-size: 15px;
-    line-height: 15px;
+    margin-left: 0.3125rem;
+    padding: var(--space-8) 0.9375rem;
+    font-size: var(--font-size-15);
+    line-height: 1;
   }
 }
 
@@ -198,6 +198,6 @@
   .floating-dock .floating-dock-bar,
   .floating-dock .floating-dock-secondary,
   .floating-dock a.floating-dock-primary:any-link {
-    border: 1px solid CanvasText;
+    border: var(--border-width-thin) solid CanvasText;
   }
 }

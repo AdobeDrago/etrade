@@ -2,7 +2,7 @@
 
 Author one row per card in a **Cards Product** block. Put an H3 product name, an optional H4 rate, supporting paragraphs, and an optional standalone linked paragraph in its cell. Additional cells are merged; empty rows are skipped.
 
-Rates, offer dates, legal references, CTA labels, and destinations belong in DA. The block preserves rich text and supplies a decorative arrow for standalone actions. Cards use one column below 600px and two above it, with safe wrapping and actions aligned at the bottom.
+Rates, offer dates, legal references, CTA labels, and destinations belong in DA. The block preserves rich text and supplies a decorative arrow for standalone actions. Cards use one column below 768px and up to two above it, with safe wrapping and actions aligned at the bottom.
 
 ## Optional dynamic rates
 
@@ -22,7 +22,7 @@ Fallback: -.--
 
 Supported products are savings (`3100`), checking (`4240`) and CDs (`3500`). Savings/checking use an explicit Balance and `advertisedAPY`, `disclosureAPY` or `finalRate`. CDs use a Term such as `12M` with `disclosureAPY` or `finalRate`, or `minDisclosureAPY`/`maxDisclosureAPY` without Term or Balance. A name identifies only the matching markers in that card row.
 
-For a fixed rate, use `Mode: manual` with a numeric `Override`. `Mode: hybrid` uses a populated Override first and otherwise requests the configured API rate. A numeric zero is valid. Page metadata **Bank rates source** selects `direct` (default) or `aggregate`; **Bank rates endpoint** may select a same-origin service route. Without an endpoint, the approved E*TRADE service is used. Sample JSON under `/phx/pros` is for demonstration; verify live service access before delivery. Review authored bindings at https://demo--etrade--AdobeDrago.aem.page/home.
+For a fixed rate, use `Mode: manual` with a numeric `Override`. `Mode: hybrid` uses a populated Override first and otherwise requests the configured API rate. A numeric zero is valid. Page metadata **Bank rates source** selects `direct` (default) or `aggregate`; **Bank rates endpoint** may select a same-origin service route. Without an endpoint override, the shared client requests the real E*TRADE service: guest GET `https://us.etrade.com/phx/pros/apicontent/init/bankRates`, or POST `https://us.etrade.com/phx/pros/aggregate` with the bank-rate subrequest. Concurrent cards share one bounded request. Sample JSON under `/phx/pros` is selected only through an explicit test endpoint; it is not an automatic fallback. Verify real service access from the delivery host separately from fixture tests.
 
 Use `Fallback: -.--` to display that placeholder while a rate loads or cannot be resolved. The placeholder does not prevent valid API or hybrid lookups. With authored `{{rate}}% APY`, it displays as `-.--% APY`; screen readers receive an unavailable-rate label. Numeric fallbacks, including zero, remain supported. Overrides must still be numeric.
 
@@ -32,12 +32,14 @@ The four dummy JSON files under `test/fixtures` and `/phx/pros` share distinct s
 
 ## Migration review
 
-This component is migrated on `et-cards-product`. Review its changes against `et-actions`; merge the prerequisite first when the base is a feature branch.
-
-Preview: https://et-cards-product--etrade--AdobeDrago.aem.page/home
+The shared style migration is on `etrade-style`. Preview: https://etrade-style--etrade--AdobeDrago.aem.page/home
 
 Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
 
 **Cards Product (Three Columns)** displays the three current homepage product
-cards in one row from 900px. The ordinary variant retains its two-column layout.
+cards in up to three columns from 768px. The ordinary variant retains its two-column cap.
 Maintain campaign copy and its matching disclosures in DA.
+
+## Shared styles and layout
+
+The block consumes shared surface, text, typography, spacing, border, focus and action tokens. Its white cards retain dark copy in dark sections. Narrow section cells and enlarged text reduce the internal column count; authored Section Metadata owns the surrounding layout. Rate bindings, units, zero values, fallback labels and legal references are independent of the style migration. See the [shared card styles](../../README.md#shared-card-styles) for validation.

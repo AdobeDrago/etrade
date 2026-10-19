@@ -9,12 +9,13 @@ import { parseHTML } from 'linkedom';
 const fixture = JSON.parse(await readFile(new URL('../data/market-data.json', import.meta.url), 'utf8'));
 const flush = () => new Promise((resolve) => { setTimeout(resolve, 0); });
 
-async function harness(name, markup = '', route = null, mode = 'live') {
+async function harness(name, markup = '', route = null, mode = 'live', rootFontSize = 16) {
   const metadata = mode ? `<meta name="market-data-mode" content="${mode}">` : '';
   const { document, window } = parseHTML(`<html><head>${metadata}</head><body><main><div class="${name}">${markup}</div></main></body></html>`);
   window.location = new URL('https://et-dynamic--etrade--adobedrago.aem.page/home/welcome-back');
   window.origin = window.location.origin;
   window.SAMPLE_PAGEVIEWS_AT_RATE = 'off';
+  window.getComputedStyle = () => ({ fontSize: `${rootFontSize}px` });
   // linkedom exposes select.value as a getter; browsers also expose its setter.
   Object.defineProperty(window.HTMLSelectElement.prototype, 'value', {
     configurable: true,
@@ -232,4 +233,19 @@ test('late chart responses cannot override a newer index selection', async () =>
   assert.equal(tabs[2].getAttribute('aria-selected'), 'true');
   assert.ok(block.querySelector('svg').getAttribute('aria-label').startsWith('S&P:'));
   assert.equal(block.querySelector('tbody').children.length, 12);
+});
+
+test('enlarged market charts reserve room for scaled labels without changing observations', async () => {
+  const ordinary = await harness('market-overview');
+  const enlarged = await harness('market-overview', '', null, 'live', 32);
+  const ordinaryChart = ordinary.block.querySelector('svg');
+  const enlargedChart = enlarged.block.querySelector('svg');
+  assert.equal(ordinaryChart.getAttribute('viewBox'), '0 0 640 300');
+  assert.equal(enlargedChart.getAttribute('viewBox'), '0 0 640 600');
+  assert.equal(enlargedChart.getAttribute('aria-label'), ordinaryChart.getAttribute('aria-label'));
+  assert.equal(enlarged.block.querySelector('tbody').innerHTML, ordinary.block.querySelector('tbody').innerHTML);
+  const lastLabel = [...enlargedChart.querySelectorAll('text')].at(-1);
+  assert.ok(Number(lastLabel.getAttribute('x')) <= 520);
+  const slider = enlarged.block.querySelector('input[type="range"]');
+  assert.equal(slider.max, ordinary.block.querySelector('input[type="range"]').max);
 });
