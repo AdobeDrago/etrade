@@ -218,7 +218,7 @@ Page and block examples used by regression tests live in `test/fixtures/`. Run `
 
 ## Third-party performance demo
 
-Open **Demo controls → Third-party performance** on localhost or the exact `demo--etrade--AdobeDrago.aem.page` preview. It is off by default and host-guarded. Compare the same page and interactions with:
+Open **Demo controls → Third-party performance** on localhost, the `demo--etrade--AdobeDrago.aem.page` preview, or [the demo-controller preview](https://demo-controller--etrade--AdobeDrago.aem.page/home). These exact preview hosts show the controls; the performance simulation remains off until selected. Compare the same page and interactions with:
 
 - `?perf=baseline`: observers and demo controls, without simulated libraries.
 - `?perf=onetrust`: the two captured OneTrust JavaScript payloads.

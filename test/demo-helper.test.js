@@ -31,9 +31,9 @@ function browser(hostname = 'demo--etrade--adobedrago.aem.page') {
   };
 }
 
-function page(markup = '', head = '') {
+function page(markup = '', head = '', hostname = 'demo--etrade--adobedrago.aem.page') {
   const { document, window } = parseHTML(`<html><head>${head}</head><body><main>${markup}</main></body></html>`);
-  const context = browser();
+  const context = browser(hostname);
   const root = mountDemoHelper(document, context.win);
   let focused;
   Object.defineProperty(document, 'activeElement', { get: () => focused });
@@ -48,9 +48,23 @@ function page(markup = '', head = '') {
   };
 }
 
-test('helper guard accepts only local hosts and the exact demo preview host', () => {
-  ['localhost', '127.0.0.1', '[::1]', 'DEMO--ETRADE--ADOBEDRAGO.AEM.PAGE'].forEach((host) => assert.equal(isDemoHelperHost(host), true));
-  ['', 'us.etrade.com', 'demo--etrade--adobedrago.aem.live', 'main--etrade--adobedrago.aem.page', 'et-hero-2--etrade--adobedrago.aem.page', 'demo--etrade--adobedrago.aem.page.example.com'].forEach((host) => assert.equal(isDemoHelperHost(host), false));
+test('helper guard accepts only local hosts and the exact demo preview hosts', () => {
+  ['localhost', '127.0.0.1', '[::1]', 'DEMO--ETRADE--ADOBEDRAGO.AEM.PAGE',
+    'DEMO-CONTROLLER--ETRADE--ADOBEDRAGO.AEM.PAGE']
+    .forEach((host) => assert.equal(isDemoHelperHost(host), true));
+  ['', 'us.etrade.com', 'demo--etrade--adobedrago.aem.live',
+    'demo-controller--etrade--adobedrago.aem.live', 'main--etrade--adobedrago.aem.page',
+    'et-hero-2--etrade--adobedrago.aem.page', 'demo--etrade--adobedrago.aem.page.example.com',
+    'demo-controller--etrade--adobedrago.aem.page.example.com']
+    .forEach((host) => assert.equal(isDemoHelperHost(host), false));
+});
+
+test('demo-controller preview mounts the controls and can save a demo balance', () => {
+  const context = page('', '', 'demo-controller--etrade--adobedrago.aem.page');
+  assert.equal(context.root.querySelector('.demo-helper-toggle').textContent, 'Demo controls');
+  assert.ok(context.root.querySelector('#demo-helper-performance-profile'));
+  assert.deepEqual(saveDemoBalance('100000', context.win), { balance: '100000' });
+  assert.equal(context.reloads(), 1);
 });
 
 test('balance save persists zero and reload state; reset removes only the balance', () => {

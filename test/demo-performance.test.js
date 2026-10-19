@@ -81,6 +81,22 @@ test('disabled, malformed and non-demo URLs never fetch, observe or create a con
   });
 });
 
+test('demo-controller preview supports performance comparisons while remaining opt-in', async () => {
+  const hostname = 'demo-controller--etrade--adobedrago.aem.page';
+  const disabled = browser('', hostname);
+  assert.equal(startPerformanceDemo(disabled.document, disabled.win), null);
+  assert.equal(disabled.observed.size, 0);
+  const context = browser('?perf=baseline', hostname);
+  const controller = startPerformanceDemo(context.document, context.win, {
+    fetchProfile: () => { throw new Error('Baseline must not request fixtures'); },
+  });
+  await controller.ready;
+  assert.equal(controller.snapshot().config.profile, 'baseline');
+  assert.equal(controller.snapshot().requested, 0);
+  assert.equal(context.observed.size, 5);
+  controller.stop();
+});
+
 test('baseline measures without fixture requests; comparison URLs preserve page settings and hash', async () => {
   const context = browser('?perf=baseline');
   const controller = startPerformanceDemo(context.document, context.win, {
