@@ -31,7 +31,16 @@ function button(doc, text) {
 }
 
 const milliseconds = (value) => (value === null || value === undefined ? 'Not observed' : `${Math.round(value)} ms`);
-const bytes = (value) => (value >= 1000000 ? `${(value / 1000000).toFixed(2)} MB` : `${(value / 1000).toFixed(1)} kB`);
+const bytes = (value) => {
+  if (value === null) return 'Unavailable';
+  return value >= 1000000 ? `${(value / 1000000).toFixed(2)} MB` : `${(value / 1000).toFixed(1)} kB`;
+};
+const PHASE_CHOICES = [
+  ['eds', 'EDS · CMP after page, tags after consent'],
+  ['early', 'Startup · CMP and tags before page'],
+  ['late', 'Early CMP · tags when page is ready'],
+  ['consent', 'Early CMP · tags when consent is granted'],
+];
 const STRATEGIES = {
   eds: 'Page content loads first. This demo waits 3 seconds, then loads simulated OneTrust. Tags wait for simulated consent. The delay is a demo setting.',
   early: 'Simulated OneTrust and blocking tag fixtures start before page content. Tracking is not consent-gated in this comparison.',
@@ -103,14 +112,20 @@ export default function mountPerformanceControls(doc, win) {
     });
     wrapper.append(list);
     panels[index].append(wrapper);
+    return wrapper;
   }
   group(0, 'Core Web Vitals', [['lcp', 'LCP'], ['cls', 'CLS']]);
   group(0, 'Additional observations', [['interaction', 'Slowest interaction (lab)'], ['fcp', 'FCP']]);
   panels[0].append(node(doc, 'p', 'muted', 'Slowest interaction is a lab observation, not field INP. Initial-load values can stay unchanged after the page finishes loading.'));
-  group(1, 'This run · fixture downloads', [['transfer', 'Transferred, including headers'], ['downloaded', 'Downloaded source size']]);
-  group(1, 'Reference profile · selected libraries', [['source', 'Total source size'], ['gzip', 'Captured compressed responses'], ['cmp', 'OneTrust source size'], ['tags', 'Other tags source size']]);
-  panels[1].append(node(doc, 'p', 'muted', 'Reference sizes were captured on Oct 13, 2026. This run varies with compression, cache and which fixtures have loaded.'));
-  group(2, 'Simulation', [['fixtures', 'Fixtures loaded'], ['consent', 'Simulated tracking consent'], ['cpu', 'Added CPU work'], ['runtime', 'Interaction workload']]);
+  const downloads = group(1, 'This run · fixture downloads', [['transfer', 'Transferred, including headers'], ['downloaded', 'Downloaded source size']]);
+  const reference = group(1, 'Reference profile · selected libraries', [['source', 'Total source size'], ['gzip', 'Captured compressed responses'], ['cmp', 'OneTrust source size'], ['tags', 'Other tags source size']]);
+  const realDownloads = group(1, 'Real OneTrust network observations', [['requests', 'Requests observed'], ['sdkDuration', 'SDK request duration']]);
+  const requestList = node(doc, 'ul', 'requests');
+  realDownloads.append(requestList);
+  const downloadHelp = node(doc, 'p', 'muted');
+  panels[1].append(downloadHelp);
+  const simulation = group(2, 'Simulation', [['fixtures', 'Fixtures loaded'], ['consent', 'Simulated tracking consent'], ['cpu', 'Added CPU work'], ['runtime', 'Interaction workload']]);
+  const realConsent = group(2, 'Real OneTrust consent', [['sdkStatus', 'SDK file'], ['cmpStatus', 'CMP initialization'], ['activeGroups', 'Active categories'], ['requiredGroups', 'Required categories'], ['gate', 'Tracking gate'], ['tracking', 'Consented module download']]);
   group(2, 'Observed browser work', [['tasks', 'Long tasks'], ['excess', 'Long-task excess (>50 ms)']]);
   const workloadActions = node(doc, 'div', 'actions');
   const run = button(doc, 'Run 30-second workload');
@@ -124,24 +139,51 @@ export default function mountPerformanceControls(doc, win) {
   const form = node(doc, 'form', 'form');
   const profile = select(doc, form, 'profile', 'Libraries', [
     ['off', 'Off'], ['baseline', 'Measured baseline'], ['onetrust', 'OneTrust script weights'], ['etrade', 'E*TRADE tag + OneTrust script weights'],
+    ['onetrust-real', 'OneTrust · real SDK'],
   ], current?.profile || 'off');
-  const phase = select(doc, form, 'phase', 'Loading strategy', [
-    ['eds', 'EDS · CMP after page, tags after consent'],
-    ['early', 'Startup · CMP and tags before page'],
-    ['late', 'Early CMP · tags when page is ready'],
-    ['consent', 'Early CMP · tags when consent is granted'],
-  ], current?.phase || 'eds');
+  const phase = select(doc, form, 'phase', 'Loading strategy', PHASE_CHOICES, current?.phase || 'eds');
   const strategyHelp = node(doc, 'p', 'muted');
   strategyHelp.id = 'demo-helper-strategy-help';
   phase.setAttribute('aria-describedby', strategyHelp.id);
-  const describeStrategy = () => { strategyHelp.textContent = STRATEGIES[phase.value]; };
+  const describeStrategy = () => {
+    if (profile.value === 'onetrust-real') {
+      strategyHelp.textContent = phase.value === 'eds'
+        ? 'Page content loads first; the real OneTrust SDK starts 3 seconds later. Tracking waits for the required OneTrust categories.'
+        : 'The real OneTrust SDK starts asynchronously at page startup. Page rendering does not wait for the SDK, and tracking waits for the required OneTrust categories.';
+    } else strategyHelp.textContent = STRATEGIES[phase.value];
+  };
   phase.addEventListener('change', describeStrategy);
   describeStrategy();
   form.append(strategyHelp);
   const work = select(doc, form, 'work', 'Extra browser processing', [
     ['none', 'Download and parse only'], ['light', 'Light · assumed CPU work'], ['medium', 'Moderate · assumed CPU work'], ['heavy', 'Heavy · assumed CPU work'],
   ], current?.work || 'none');
-  form.append(node(doc, 'p', 'muted', 'Processing levels are assumed CPU work, not measured vendor timings. Interaction and background work run for 30 seconds when page content and tags are ready. Keep settings identical when comparing strategies.'));
+  const processingHelp = node(doc, 'p', 'muted');
+  form.append(processingHelp);
+  function describeProfile() {
+    const real = profile.value === 'onetrust-real';
+    const chosen = phase.value;
+    const choices = real ? [
+      ['eds', 'EDS · real CMP after page, tracking after consent'],
+      ['early', 'Split · async CMP at startup, tracking after consent'],
+    ] : PHASE_CHOICES;
+    phase.replaceChildren();
+    choices.forEach(([value, text]) => {
+      const option = doc.createElement('option');
+      option.value = value;
+      option.textContent = text;
+      option.selected = value === (chosen === 'eds' || !real ? chosen : 'early');
+      phase.append(option);
+    });
+    work.disabled = real;
+    if (real) work.querySelector('[value="none"]').selected = true;
+    processingHelp.textContent = real
+      ? 'This mode runs the real CMP without assumed CPU work. Its domain allowlist and tenant configuration may prevent initialization. It does not install the production analytics/ad stack.'
+      : 'Processing levels are assumed CPU work, not measured vendor timings. Interaction and background work run for 30 seconds when page content and tags are ready. Keep settings identical when comparing strategies.';
+    describeStrategy();
+  }
+  profile.addEventListener('change', describeProfile);
+  describeProfile();
   const actions = node(doc, 'div', 'actions');
   const apply = button(doc, 'Apply & reload');
   apply.className = 'demo-helper-primary';
@@ -156,7 +198,8 @@ export default function mountPerformanceControls(doc, win) {
   const response = button(doc, 'Test response');
   response.dataset.perfInteraction = 'true';
   const refresh = button(doc, 'Refresh measurements');
-  runtimeActions.append(consent, decline, response, refresh);
+  const preferences = button(doc, 'Open OneTrust preferences');
+  runtimeActions.append(consent, decline, preferences, response, refresh);
   const consentHelp = node(doc, 'p', 'muted', 'These buttons simulate consent. No real OneTrust banner or tracking is loaded.');
   const responseStatus = node(doc, 'p', 'muted');
   const refreshStatus = node(doc, 'p', 'muted');
@@ -171,6 +214,22 @@ export default function mountPerformanceControls(doc, win) {
     consentHelp.hidden = !snapshot;
     status.textContent = snapshot ? snapshot.status : 'Off · choose a measured baseline to compare.';
     if (!snapshot) return;
+    const real = snapshot.config.profile === 'onetrust-real';
+    reference.hidden = real;
+    realDownloads.hidden = !real;
+    simulation.hidden = real;
+    realConsent.hidden = !real;
+    workloadActions.hidden = real;
+    tabs[2].textContent = real ? 'Consent' : 'Workload';
+    downloads.querySelector('h4').textContent = real ? 'This run · real OneTrust' : 'This run · fixture downloads';
+    downloadHelp.textContent = real
+      ? 'Actual browser resource timings for OneTrust requests. Cross-origin size restrictions or blocked requests can make byte totals unavailable; unavailable does not mean zero. A partial load does not establish production timing equivalence.'
+      : 'Reference sizes were captured on Oct 13, 2026. This run varies with compression, cache and which fixtures have loaded.';
+    consentHelp.textContent = real
+      ? 'Only OneTrust can grant consent in this mode. If initialization fails, tracking stays off. The consented module is currently an empty integration hook.'
+      : 'These buttons simulate consent. No real OneTrust banner or tracking is loaded.';
+    preferences.hidden = !real;
+    preferences.disabled = !snapshot.realCMP?.canOpenPreferences;
     const gated = snapshot.config.profile === 'etrade'
       && ['eds', 'consent'].includes(snapshot.config.phase);
     consent.hidden = !gated;
@@ -202,9 +261,22 @@ export default function mountPerformanceControls(doc, win) {
       runtime: snapshot.runtimeActive ? 'Active · 30-second window' : 'Inactive',
       tasks: snapshot.metrics.longTasks ?? 'Not observed',
       excess: milliseconds(snapshot.metrics.longTaskExcess),
+      requests: snapshot.realResources?.length ?? 0,
+      sdkDuration: milliseconds(snapshot.realResources?.find((entry) => entry.url.includes('/otSDKStub.js'))?.duration),
+      sdkStatus: snapshot.realCMP?.sdkStatus || 'Not requested',
+      cmpStatus: snapshot.realCMP?.initialized ? 'Initialized' : 'Not initialized',
+      activeGroups: snapshot.realCMP?.activeGroups.join(', ') || 'None reported',
+      requiredGroups: snapshot.realCMP?.requiredGroups.join(', ') || 'C0002, C0004',
+      tracking: snapshot.realCMP?.consentedModule || 'Not loaded',
+      gate: snapshot.realCMP?.consented ? 'Open' : 'Closed',
     };
     Object.entries(metrics).forEach(([key, value]) => {
       values.get(key).textContent = String(value);
+    });
+    requestList.replaceChildren();
+    snapshot.realResources?.forEach((entry) => {
+      const path = new URL(entry.url).pathname;
+      requestList.append(node(doc, 'li', 'muted', `${path} · ${milliseconds(entry.duration)}`));
     });
   }
 
@@ -221,6 +293,7 @@ export default function mountPerformanceControls(doc, win) {
   decline.addEventListener('click', () => { win.etradePerformanceDemo?.declineConsent(); render(); });
   stop.addEventListener('click', () => { win.etradePerformanceDemo?.stop(); render(); });
   run.addEventListener('click', () => { win.etradePerformanceDemo?.runInteractions(); render(); });
+  preferences.addEventListener('click', () => win.etradePerformanceDemo?.openConsentPreferences());
   let refreshing = false;
   let refreshCount = 0;
   refresh.addEventListener('click', () => {

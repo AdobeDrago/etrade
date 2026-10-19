@@ -305,6 +305,12 @@
   padding-top: 12px;
 }
 
+.demo-helper .demo-helper-requests {
+  max-height: 180px;
+  overflow: auto;
+  padding-left: 16px;
+}
+
 .demo-helper [hidden] {
   display: none;
 }

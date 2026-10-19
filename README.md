@@ -223,6 +223,7 @@ Open **Demo controls → Third-party performance** on localhost, the `demo--etra
 - `?perf=baseline`: observers and demo controls, without simulated libraries.
 - `?perf=onetrust`: the two captured OneTrust JavaScript payloads.
 - `?perf=etrade`: OneTrust plus the selected analytics and advertising payloads.
+- `?perf=onetrust-real`: the actual OneTrust SDK, without fixture downloads or assumed CPU work.
 
 The panel opens with six one-click balance presets (50k, 100k, 150k, 200k, 250k and 500k). **Custom balance** retains arbitrary values, including zero. Features and rate insights are collapsed to keep the customer demo compact; feature dots expose their full status to assistive technology and on hover. Locating a feature closes the panel and highlights the real block. Reopening the panel clears the highlight.
 
@@ -235,7 +236,7 @@ Choose **Loading strategy** to compare the same script weights and processing bu
 - **Early CMP · tags when page is ready** (`perf-phase=late`): OneTrust starts before content; tags start automatically after content is ready, without a consent gate.
 - **Early CMP · tags when consent is granted** (`perf-phase=consent`): OneTrust starts before content; tags wait for simulated acceptance. Content readiness alone does not release them.
 
-The EDS strategy follows [Adobe's CMP integration pattern](https://www.aem.live/developer/cmp-integration). Its simulated CMP has no banner rendering or production tracking. Its `demo-performance:consent.update` events are separate from the site's real `consent.update` events. The three-second delay is a chosen demo setting. A URL without `perf-phase` retains startup behavior; the controls suggest EDS for a new comparison.
+The EDS strategy follows [Adobe's CMP integration pattern](https://www.aem.live/developer/cmp-integration). The weight-based profiles have no banner rendering or production tracking. Their `demo-performance:consent.update` events are separate from the site's real `consent.update` events. The three-second delay is a chosen demo setting. A URL without `perf-phase` retains startup behavior; the controls suggest EDS for a new comparison.
 
 For example, compare `/home?perf=etrade&perf-phase=early&perf-work=medium` with `/home?perf=etrade&perf-phase=eds&perf-work=medium`. In EDS mode, measure both declined consent (two CMP fixtures) and accepted consent (all 20 fixtures). Waiting for acceptance is part of the strategy, so record when it occurs.
 
@@ -256,3 +257,22 @@ The [capture manifest](scripts/demo-performance-profile.json) records public scr
 This models payload pressure and illustrative main-thread contention. It does not reproduce vendor instruction complexity, cross-origin DNS/TLS, CMP rendering/layout, geographic or consent rules, dynamic Adobe rule modules, vendor config, chat/security libraries, downstream requests or beacon fan-out. Same-origin hosting, compression and caches affect actual transfers; fresh run URLs avoid module reuse, but hosting controls HTTP caching. The AEM local proxy can compress responses for browsers, and its compression may differ from the captured vendors. Use the actual transfer measurement when interpreting a run. No production pixels or identifiers are activated by the emulator.
 
 Compare FCP, LCP, CLS, long tasks, and the slowest observed interaction across repeated runs under identical cache/throttling conditions. The long-task excess includes the whole observed page lifetime; it is not Lighthouse TBT. The slowest Event Timing interaction is a lab observation, not an implementation of field INP. Chrome's Performance panel can show the `demo-third-party:*` task measures. Run `npm run test:performance-demo` for the opt-in, ordering, consent, expiry and fixture-budget checks.
+
+### Real OneTrust SDK
+
+Choose **Libraries → OneTrust · real SDK** in Comparison settings, or open:
+
+- [Split startup: asynchronous CMP, tracking after consent](https://demo-controller--etrade--AdobeDrago.aem.page/home?perf=onetrust-real&perf-phase=early&perf-work=none).
+- [EDS: CMP three seconds after page content, tracking after consent](https://demo-controller--etrade--AdobeDrago.aem.page/home?perf=onetrust-real&perf-phase=eds&perf-work=none).
+
+Both versions use the real `https://cdn.cookielaw.org/scripttemplates/otSDKStub.js`, with the public domain ID `01953914-53cc-7833-b8d6-c9c9d7301ff9` from the referenced integration. Optional page metadata `onetrust-domain-id` can select another published OneTrust domain ID, including a `-test` ID. The SDK is asynchronous in both versions, and the page never waits for its network requests or initialization. These comparisons remain restricted to the existing exact demo/local hosts and require explicit selection.
+
+`scripts/onetrust.js` registers `OptanonWrapper` and `OneTrustGroupsUpdated` before injection, preserves an existing wrapper, checks already-reported groups, and deduplicates SDK setup. It requires both exact category IDs `C0002` and `C0004`, matching the example integration; validate these against your tenant when adopting it elsewhere. Initialization and changes dispatch real `consent.update` events with `source: 'onetrust'`. The existing `consented.js` integration hook imports once after those categories are granted. It currently contains no analytics/ad vendors. Revocation dispatches `consented: false`; future tracking integrations must stop their ongoing work on that event. Previously executed code cannot be unloaded by removing consent.
+
+The dummy consent loader and its `?consent=accept` override are skipped in this mode. Simulated Accept/Decline and CPU workload controls are also unavailable. **Open OneTrust preferences** uses the actual preference center once its API is ready. Banner visibility and default active categories follow the tenant's configuration and geographic rules; a missing initial banner alone does not prove initialization failed.
+
+The panel distinguishes the SDK file's load/error state from CMP initialization and the consented module. After 15 seconds without initialization, it reports an incomplete load and suggests checking the domain allowlist, configuration and network. It never grants consent as a fallback or bypasses the allowlist. A later genuine initialization callback can recover normally.
+
+**Downloads** lists actual OneTrust resource requests and durations, including configuration and SDK requests observed by the browser. Cross-origin timing restrictions, failed requests or missing size data appear as unavailable totals rather than zero bytes. Captured fixture reference sizes are hidden in this mode. Use identical device/cache/throttling conditions for comparisons; an allowlist-blocked partial run cannot establish full production timing equivalence.
+
+The integration follows [Adobe's CMP loading guidance](https://www.aem.live/developer/cmp-integration) and [OneTrust's documented category events](https://developer.onetrust.com/onetrust/docs/javascript-events-guide). `npm run test:performance-demo` includes real-integration tests for script errors, initialization timeouts, recovery, category matching, revocation, duplicate callbacks and a consented-module load failure. `npm run test:sections` also checks that the real mode cannot import the dummy consent override.

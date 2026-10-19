@@ -261,8 +261,8 @@ async function loadLazy(doc) {
  * Loads everything that happens a lot later,
  * without impacting the user experience.
  */
-function loadDelayed() {
-  import('./consent-check.js');
+function loadDelayed(realConsent = false) {
+  if (!realConsent) import('./consent-check.js');
   // Load controls only on the explicitly enabled demo preview and development hosts.
   if (isDemoHelperHost(window.location.hostname)) {
     import('./demo-helper.js').then(async ({ default: mountDemoHelper }) => {
@@ -285,7 +285,7 @@ async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   performanceDemo?.afterContent();
-  loadDelayed();
+  loadDelayed(performanceDemo?.config.profile === 'onetrust-real');
 }
 
 // Standalone block reviews own their lifecycle; fragments can still use decorateMain.

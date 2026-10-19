@@ -1,6 +1,7 @@
 import isDemoHelperHost from './demo-host.js';
+import startOneTrust from './onetrust.js';
 
-const PROFILES = new Set(['baseline', 'onetrust', 'etrade']);
+const PROFILES = new Set(['baseline', 'onetrust', 'etrade', 'onetrust-real']);
 const PHASES = new Set(['early', 'late', 'consent', 'eds']);
 const WORK = {
   none: { initPer100KB: 0, interaction: 0, background: 0 },
@@ -18,6 +19,7 @@ export function readPerformanceConfig(href) {
   if (!PROFILES.has(profile)) return null;
   const phase = params.get('perf-phase');
   const work = params.get('perf-work');
+  if (profile === 'onetrust-real') return { profile, phase: phase === 'eds' ? 'eds' : 'early', work: 'none' };
   return {
     profile,
     phase: PHASES.has(phase) ? phase : 'early',
@@ -107,6 +109,7 @@ export default function startPerformanceDemo(doc = document, win = window, depen
   const config = readPerformanceConfig(win.location.href);
   if (!config) return null;
   if (win.etradePerformanceDemo) return win.etradePerformanceDemo;
+  const realCMP = config.profile === 'onetrust-real';
   const metrics = {
     fcp: null, lcp: null, cls: null, worstInteraction: null,
   };
@@ -137,11 +140,15 @@ export default function startPerformanceDemo(doc = document, win = window, depen
   let runtimeTimer;
   let interval;
   let manifest;
+  let oneTrust;
   const loads = new Map();
   const consentGated = config.phase === 'eds' || config.phase === 'consent';
   const publish = () => {
     if (stopped) state.status = 'Stopped';
-    else if (config.profile === 'baseline') state.status = 'Baseline · no simulated libraries';
+    else if (realCMP) {
+      state.status = state.realCMP?.status || (contentReady
+        ? 'Page ready · real OneTrust starts after 3 seconds' : 'Waiting for page content');
+    } else if (config.profile === 'baseline') state.status = 'Baseline · no simulated libraries';
     else if (profileFailed) state.status = 'Profile unavailable · page continues without simulation';
     else if (consentGated && state.consent === 'declined') {
       state.status = tagsStarted ? 'Tracking declined · added tag work stopped' : 'Tracking declined · tags remain unloaded';
@@ -260,6 +267,7 @@ export default function startPerformanceDemo(doc = document, win = window, depen
   }
 
   function setConsent(accepted) {
+    if (realCMP) return; // Demo buttons and query overrides never grant real consent.
     const next = accepted ? 'accepted' : 'declined';
     if (stopped || state.consent === next) return;
     consentGranted = accepted;
@@ -280,6 +288,21 @@ export default function startPerformanceDemo(doc = document, win = window, depen
   async function startCMP() {
     if (cmpStarted || stopped) return;
     cmpStarted = true;
+    if (realCMP) {
+      const update = (snapshot) => {
+        state.realCMP = snapshot;
+        state.cmpReady = snapshot.initialized;
+        state.consent = snapshot.consented ? 'accepted' : 'declined';
+        if (!snapshot.initialized) state.consent = 'pending';
+        publish();
+      };
+      oneTrust = startOneTrust(doc, win, {
+        ...dependencies.oneTrust,
+        onChange: update,
+      });
+      update(oneTrust.snapshot());
+      return;
+    }
     cmpLoading = true;
     state.milestones.cmpStarted = win.performance.now();
     publish();
@@ -345,21 +368,39 @@ export default function startPerformanceDemo(doc = document, win = window, depen
     },
     grantConsent() { setConsent(true); },
     declineConsent() { setConsent(false); },
+    openConsentPreferences() { oneTrust?.openPreferences(); },
     refreshMeasurements() { metricObservers.flush(); publish(); },
     snapshot() {
-      const actual = win.performance.getEntriesByType('resource')
-        .filter((entry) => entry.name.includes('/demo-performance-assets/'));
+      const actual = win.performance.getEntriesByType('resource').filter((entry) => {
+        if (!realCMP) return entry.name.includes('/demo-performance-assets/');
+        const { hostname } = new URL(entry.name);
+        return ['cookielaw.org', 'onetrust.com'].some((host) => hostname === host
+          || hostname.endsWith(`.${host}`));
+      });
+      const restrictedSizes = realCMP && (!actual.length
+        || actual.some((entry) => !entry.decodedBodySize));
       return {
         ...state,
         metrics: { ...metrics },
         resources: state.resources.map((resource) => ({ ...resource })),
         milestones: { ...state.milestones },
+        ...(realCMP ? {
+          realResources: actual.map((entry) => ({
+            url: entry.name,
+            duration: entry.duration,
+            transferBytes: entry.transferSize,
+            decodedBytes: entry.decodedBodySize,
+          })),
+          restrictedSizes,
+        } : {}),
         capturedOn: manifest?.capturedOn,
         observedEncodedBytes: state.resources
           .reduce((sum, resource) => sum + resource.encodedBytes, 0),
         decodedBytes: state.resources.reduce((sum, resource) => sum + resource.decodedBytes, 0),
-        actualTransferBytes: actual.reduce((sum, entry) => sum + entry.transferSize, 0),
-        actualDecodedBytes: actual.reduce((sum, entry) => sum + entry.decodedBodySize, 0),
+        actualTransferBytes: restrictedSizes ? null
+          : actual.reduce((sum, entry) => sum + entry.transferSize, 0),
+        actualDecodedBytes: restrictedSizes ? null
+          : actual.reduce((sum, entry) => sum + entry.decodedBodySize, 0),
       };
     },
   };

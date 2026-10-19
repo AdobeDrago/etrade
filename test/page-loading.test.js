@@ -5,9 +5,10 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { parseHTML } from 'linkedom';
 
-async function harness(body, loadSection, theme = '') {
+async function harness(body, loadSection, theme = '', realCMP = false) {
   const { document, window } = parseHTML(`<html data-block-review><head></head><body>${body}</body></html>`);
-  window.location = new URL('http://localhost:3000/home');
+  window.location = new URL(`http://localhost:3000/home${realCMP ? '?perf=onetrust-real&consent=accept' : ''}`);
+  window.hlx = { codeBasePath: '' };
   window.innerWidth = 412;
   const context = vm.createContext({
     document, window, URL, URLSearchParams, sessionStorage: { getItem: () => null },
@@ -41,11 +42,26 @@ async function harness(body, loadSection, theme = '') {
       decoratePricingIntroductions: noop,
       decoratePageActions: noop,
     },
-    './demo-host.js': { default: () => false },
+    './demo-host.js': { default: () => realCMP },
   };
   const source = await readFile(new URL('../scripts/scripts.js', import.meta.url), 'utf8');
   const themeModule = new vm.SourceTextModule(await readFile(new URL('../scripts/page-theme.js', import.meta.url), 'utf8'), { context });
-  const module = new vm.SourceTextModule(`${source}\nexport { loadEager };`, { context });
+  const imports = [];
+  const module = new vm.SourceTextModule(`${source}\nexport { loadEager, loadPage };`, {
+    context,
+    async importModuleDynamically(specifier) {
+      imports.push(specifier);
+      const values = specifier === './demo-performance.js' ? {
+        default: () => ({ config: { profile: 'onetrust-real' }, ready: Promise.resolve(), afterContent: noop }),
+      } : { default: noop };
+      const dependency = new vm.SyntheticModule(['default'], function define() {
+        this.setExport('default', values.default);
+      }, { context });
+      await dependency.link(() => {});
+      await dependency.evaluate();
+      return dependency;
+    },
+  });
   await module.link((specifier) => {
     if (specifier === './page-theme.js') return themeModule;
     const values = dependencies[specifier];
@@ -54,7 +70,9 @@ async function harness(body, loadSection, theme = '') {
     }, { context });
   });
   await module.evaluate();
-  return { document, loadEager: module.namespace.loadEager };
+  return {
+    document, loadEager: module.namespace.loadEager, loadPage: module.namespace.loadPage, imports,
+  };
 }
 
 test('the page stays hidden until its first section and image are ready', async () => {
@@ -97,4 +115,12 @@ test('a page without main content can still display its shared chrome', async ()
   const page = await harness('<header></header>', () => assert.fail('No section should load'));
   await page.loadEager(page.document);
   assert.equal(page.document.body.classList.contains('appear'), true);
+});
+
+test('real OneTrust mode never imports the dummy consent override, even with consent=accept', async () => {
+  const page = await harness('<header></header><main></main><footer></footer>', () => {}, '', true);
+  await page.loadPage();
+  assert.equal(page.document.body.classList.contains('appear'), true);
+  assert.ok(page.imports.includes('./demo-performance.js'));
+  assert.equal(page.imports.includes('./consent-check.js'), false);
 });

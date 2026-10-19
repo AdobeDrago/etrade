@@ -15,14 +15,16 @@ function browser(query, hostname = 'localhost') {
   const queued = new Map();
   const timers = new Map();
   const consentEvents = [];
+  const listeners = new Map();
   let clock = 0;
   let timerID = 0;
   const win = {
     location: { hostname, href: `http://${hostname}/home${query}` },
     CustomEvent: window.CustomEvent,
-    addEventListener() {},
+    addEventListener(name, callback) { listeners.set(name, callback); },
     dispatchEvent(event) {
       consentEvents.push({ type: event.type, detail: event.detail });
+      listeners.get(event.type)?.(event);
       return true;
     },
     performance: {
@@ -515,5 +517,95 @@ test('controls enable accept and decline only when the simulated CMP is ready an
   assert.equal(url.searchParams.get('balance'), '10000');
   assert.equal(url.searchParams.get('perf-work'), 'medium');
   assert.equal(url.searchParams.get('perf-phase'), 'eds');
+  controller.stop();
+});
+
+test('real CMP starts asynchronously without fixture requests or simulated work', async () => {
+  const context = browser('?perf=onetrust-real&perf-phase=early&perf-work=heavy&consent=accept');
+  let imported = 0;
+  const controller = startPerformanceDemo(context.document, context.win, {
+    fetchProfile: () => assert.fail('Real mode must not fetch the fixture profile'),
+    importResource: () => assert.fail('Real mode must not import simulated libraries'),
+    oneTrust: { loadConsented: async () => { imported += 1; } },
+  });
+  await controller.ready;
+  assert.equal(controller.config.work, 'none');
+  assert.ok(context.document.querySelector('script[src*="otSDKStub.js"]'));
+  assert.equal(controller.snapshot().cmpReady, false);
+  controller.afterContent();
+  controller.grantConsent();
+  controller.declineConsent();
+  await settle();
+  assert.equal(controller.snapshot().consent, 'pending');
+  assert.equal(imported, 0);
+  context.win.OnetrustActiveGroups = ',C0002,C0004,';
+  context.win.OptanonWrapper();
+  await settle();
+  assert.equal(controller.snapshot().consent, 'accepted');
+  assert.equal(controller.snapshot().realCMP.consentedModule, 'Loaded');
+  assert.equal(imported, 1);
+  assert.equal(controller.snapshot().simulatedCPU, 0);
+  assert.equal(controller.snapshot().resources.length, 0);
+  controller.stop();
+});
+
+test('real EDS mode postpones the SDK until after content and keeps a blocked CMP closed', async () => {
+  const context = browser('?perf=onetrust-real&perf-phase=eds');
+  const controller = startPerformanceDemo(context.document, context.win);
+  await controller.ready;
+  assert.equal(context.document.querySelector('script'), null);
+  await delayedCMP(context, controller);
+  const script = context.document.querySelector('script');
+  assert.ok(script.src.includes('/otSDKStub.js'));
+  script.dispatchEvent(new context.window.Event('load'));
+  [...context.timers.values()].find((timer) => timer.delay === 15000).callback();
+  assert.equal(controller.snapshot().cmpReady, false);
+  assert.equal(controller.snapshot().consent, 'pending');
+  assert.ok(controller.snapshot().status.includes('CMP did not initialize'));
+  controller.stop();
+});
+
+test('real network measurements exclude fixtures and distinguish unavailable cross-origin sizes', () => {
+  const context = browser('?perf=onetrust-real');
+  let entries = [
+    {
+      name: 'https://cdn.cookielaw.org/scripttemplates/otSDKStub.js', duration: 140, transferSize: 9000, decodedBodySize: 27000,
+    },
+    {
+      name: 'http://localhost/scripts/demo-performance-assets/cmp-stub.js', duration: 5, transferSize: 27000, decodedBodySize: 27000,
+    },
+    {
+      name: 'https://cookielaw.org.example.com/pixel.js', duration: 50, transferSize: 999, decodedBodySize: 999,
+    },
+  ];
+  context.win.performance.getEntriesByType = () => entries;
+  const controller = startPerformanceDemo(context.document, context.win);
+  assert.equal(controller.snapshot().realResources.length, 1);
+  assert.equal(controller.snapshot().actualTransferBytes, 9000);
+  assert.equal(controller.snapshot().actualDecodedBytes, 27000);
+  entries = [...entries, {
+    name: 'https://cdn.cookielaw.org/consent/domain/domain.json',
+    duration: 80,
+    transferSize: 0,
+    decodedBodySize: 0,
+  }];
+  assert.equal(controller.snapshot().actualTransferBytes, null);
+  assert.equal(controller.snapshot().restrictedSizes, true);
+  controller.stop();
+});
+
+test('real controls expose two valid strategies and real preferences without simulated consent', () => {
+  const context = browser('?perf=onetrust-real&perf-phase=eds');
+  const controller = startPerformanceDemo(context.document, context.win);
+  const controls = mountPerformanceControls(context.document, context.win);
+  const phase = controls.querySelector('#demo-helper-performance-phase');
+  assert.deepEqual([...phase.options].map((option) => option.value), ['eds', 'early']);
+  assert.equal(controls.querySelector('#demo-helper-performance-work').disabled, true);
+  const buttons = [...controls.querySelectorAll('button')];
+  assert.equal(buttons.find((element) => element.textContent === 'Accept simulated tracking').hidden, true);
+  assert.equal(buttons.find((element) => element.textContent === 'Decline simulated tracking').hidden, true);
+  assert.equal(buttons.find((element) => element.textContent === 'Open OneTrust preferences').disabled, true);
+  assert.equal(controls.querySelectorAll('[role="tab"]')[2].textContent, 'Consent');
+  assert.ok(controls.textContent.includes('Unavailable'));
   controller.stop();
 });
