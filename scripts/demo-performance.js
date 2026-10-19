@@ -38,7 +38,7 @@ export function performanceURL(href, config) {
 
 function observeMetrics(win, metrics) {
   const observers = [];
-  let session = { start: 0, last: 0, value: 0 };
+  let session;
   const supported = win.PerformanceObserver?.supportedEntryTypes || [];
   if (supported.includes('layout-shift')) metrics.cls = 0;
   if (supported.includes('longtask')) {
@@ -50,7 +50,7 @@ function observeMetrics(win, metrics) {
     const observer = new win.PerformanceObserver((list) => callback(list.getEntries()));
     try {
       observer.observe({ type, buffered: true, ...options });
-      observers.push(observer);
+      observers.push({ observer, callback });
     } catch { /* Keep unavailable metrics empty. */ }
   };
   observe('paint', (entries) => {
@@ -61,7 +61,8 @@ function observeMetrics(win, metrics) {
   });
   observe('layout-shift', (entries) => {
     entries.filter((entry) => !entry.hadRecentInput).forEach((entry) => {
-      if (entry.startTime - session.last > 1000 || entry.startTime - session.start > 5000) {
+      if (!session || entry.startTime - session.last > 1000
+        || entry.startTime - session.start > 5000) {
         session = { start: entry.startTime, last: entry.startTime, value: 0 };
       }
       session.last = entry.startTime;
@@ -80,7 +81,12 @@ function observeMetrics(win, metrics) {
       metrics.worstInteraction = Math.max(metrics.worstInteraction ?? 0, entry.duration);
     });
   }, { durationThreshold: 16 });
-  return () => observers.forEach((observer) => observer.disconnect());
+  return {
+    flush: () => observers.forEach(({ observer, callback }) => {
+      callback(observer.takeRecords?.() || []);
+    }),
+    disconnect: () => observers.forEach(({ observer }) => observer.disconnect()),
+  };
 }
 
 /** Bounded main-thread work. Millisecond budgets are assumptions, not vendor timings. */
@@ -104,7 +110,7 @@ export default function startPerformanceDemo(doc = document, win = window, depen
   const metrics = {
     fcp: null, lcp: null, cls: null, worstInteraction: null,
   };
-  const disconnectMetrics = observeMetrics(win, metrics);
+  const metricObservers = observeMetrics(win, metrics);
   const workload = WORK[config.work];
   const state = {
     config,
@@ -339,6 +345,7 @@ export default function startPerformanceDemo(doc = document, win = window, depen
     },
     grantConsent() { setConsent(true); },
     declineConsent() { setConsent(false); },
+    refreshMeasurements() { metricObservers.flush(); publish(); },
     snapshot() {
       const actual = win.performance.getEntriesByType('resource')
         .filter((entry) => entry.name.includes('/demo-performance-assets/'));
@@ -357,7 +364,7 @@ export default function startPerformanceDemo(doc = document, win = window, depen
     },
   };
   win.etradePerformanceDemo = controller;
-  win.addEventListener('pagehide', () => { stop(); disconnectMetrics(); }, { once: true });
+  win.addEventListener('pagehide', () => { stop(); metricObservers.disconnect(); }, { once: true });
 
   // EDS returns immediately: even the profile request waits until the delayed phase.
   controller.ready = config.profile === 'baseline' || config.phase === 'eds'

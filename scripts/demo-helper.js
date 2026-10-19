@@ -105,7 +105,7 @@ export default function mountDemoHelper(doc = document, win = window) {
   const badge = node(doc, 'p', 'badge', 'DEMO BRANCH');
   const content = node(doc, 'div', 'content');
   const balanceSection = node(doc, 'section', 'section');
-  balanceSection.append(node(doc, 'h3', 'heading', 'User balance'));
+  balanceSection.append(node(doc, 'h3', 'heading', 'Try a balance'));
   const balanceStatus = node(doc, 'p', 'muted');
   const currentBalance = () => {
     const balance = readDemoBalance(win);
@@ -124,17 +124,20 @@ export default function mountDemoHelper(doc = document, win = window) {
   input.value = currentBalance() ?? '';
   input.placeholder = 'e.g. 100000';
   input.setAttribute('aria-describedby', 'demo-helper-balance-help');
-  const presetLabel = node(doc, 'label', 'label', 'Try a balance');
-  const preset = node(doc, 'select', 'input');
-  preset.id = 'demo-helper-preset';
-  presetLabel.htmlFor = preset.id;
-  const custom = node(doc, 'option', '', 'Choose a preset');
-  custom.value = '';
-  preset.append(custom);
-  ['0', '5000', '10000', '50000', '100000', '500000'].forEach((amount) => {
-    const option = node(doc, 'option', '', money(amount));
-    option.value = amount;
-    preset.append(option);
+  const presets = node(doc, 'div', 'presets');
+  const feedback = node(doc, 'p', 'feedback');
+  feedback.setAttribute('role', 'status');
+  presets.setAttribute('role', 'group');
+  presets.setAttribute('aria-label', 'Balance presets');
+  ['50000', '100000', '150000', '200000', '250000', '500000'].forEach((amount) => {
+    const preset = button(doc, `${Number(amount) / 1000}k`, 'preset');
+    preset.setAttribute('aria-label', `Set balance to ${money(amount)}`);
+    preset.setAttribute('aria-pressed', String(readDemoBalance(win) === amount));
+    preset.addEventListener('click', () => {
+      const result = saveDemoBalance(amount, win);
+      if (result.error) feedback.textContent = result.error;
+    });
+    presets.append(preset);
   });
   const help = node(doc, 'p', 'muted', 'Changes API savings and checking tiers on reload. Manual values, author overrides and CD terms stay fixed.');
   help.id = 'demo-helper-balance-help';
@@ -142,28 +145,30 @@ export default function mountDemoHelper(doc = document, win = window) {
   apply.type = 'submit';
   const reset = button(doc, 'Use authored balance');
   const actions = node(doc, 'div', 'actions');
-  actions.append(apply, reset);
-  const feedback = node(doc, 'p', 'feedback');
-  feedback.setAttribute('role', 'status');
-  form.append(label, input, presetLabel, preset, help, actions, feedback);
-  balanceSection.append(balanceStatus, form);
+  actions.append(apply);
+  form.append(label, input, help, actions);
+  const customBalance = node(doc, 'details', 'custom-balance');
+  customBalance.append(node(doc, 'summary', '', 'Custom balance'), form);
+  balanceSection.append(balanceStatus, presets, reset, customBalance, feedback);
 
-  const rates = node(doc, 'section', 'section');
-  rates.append(node(doc, 'h3', 'heading', 'Rate insights'));
+  const rates = node(doc, 'details', 'section');
+  rates.append(node(doc, 'summary', 'heading', 'Rate insights'));
   const connection = node(doc, 'p', 'muted');
   const rateList = node(doc, 'ul', 'list');
   rates.append(connection, rateList);
-  const features = node(doc, 'section', 'section');
-  features.append(node(doc, 'h3', 'heading', 'Features on this page'));
+  const features = node(doc, 'details', 'section');
+  const featureSummary = node(doc, 'summary', 'heading', 'Features on this page');
+  features.append(featureSummary);
   const featureList = node(doc, 'ul', 'list');
+  featureList.classList.add('demo-helper-features');
   features.append(featureList);
   const refresh = button(doc, 'Reload page');
   const footer = node(doc, 'p', 'muted', 'Demo values are local to this browser and origin. The balance is never sent to the rate service.');
   content.append(
-    mountPerformanceControls(doc, win),
     balanceSection,
-    rates,
     features,
+    rates,
+    mountPerformanceControls(doc, win),
     refresh,
     footer,
   );
@@ -183,6 +188,11 @@ export default function mountDemoHelper(doc = document, win = window) {
     panel.hidden = !expanded;
     toggle.setAttribute('aria-expanded', String(expanded));
     toggle.textContent = expanded ? 'Hide demo controls' : 'Demo controls';
+    if (expanded) {
+      win.clearTimeout(highlightTimer);
+      highlight.hidden = true;
+      highlighted = null;
+    }
     try {
       win.sessionStorage.setItem(OPEN_KEY, String(expanded));
     } catch { /* Optional persistence. */ }
@@ -207,13 +217,22 @@ export default function mountDemoHelper(doc = document, win = window) {
     highlightTimer = win.setTimeout(() => { highlight.hidden = true; highlighted = null; }, 4000);
   }
 
-  function item(list, title, detail, target, warning = false) {
+  function item(list, title, detail, target, warning = false, compact = false) {
     const row = node(doc, 'li', warning ? 'item warning' : 'item');
     // Each insight can locate its corresponding content without rewriting it.
     const locateButton = button(doc, title, 'locate');
     locateButton.setAttribute('aria-label', `Locate ${title}`);
     locateButton.addEventListener('click', () => locate(target));
-    row.append(locateButton, node(doc, 'p', 'muted', detail));
+    row.append(locateButton);
+    if (compact) {
+      const indicator = node(doc, 'span', 'feature-state');
+      indicator.dataset.state = /^(Ready|Data loaded)/.test(detail) ? 'ready' : 'info';
+      if (warning) indicator.dataset.state = 'error';
+      indicator.setAttribute('role', 'img');
+      indicator.setAttribute('aria-label', detail);
+      indicator.title = detail;
+      row.append(indicator);
+    } else row.append(node(doc, 'p', 'muted', detail));
     list.append(row);
   }
 
@@ -242,6 +261,7 @@ export default function mountDemoHelper(doc = document, win = window) {
       item(rateList, title, details.join(' · '), card, !!marker.dataset.rateError);
     });
     const blocks = [...doc.querySelectorAll('main .block')];
+    featureSummary.textContent = `Features on this page (${blocks.length})`;
     if (!blocks.length) featureList.append(node(doc, 'li', 'empty', 'No blocks found on this page yet.'));
     blocks.forEach((block) => {
       const state = block.dataset.marketState;
@@ -255,7 +275,7 @@ export default function mountDemoHelper(doc = document, win = window) {
       if (block.querySelector('.hero-dark-offer')) details.push('Authored offer included');
       if (block.dataset.marketError) details.push(`Reason: ${block.dataset.marketError}`);
       if (block.dataset.disclaimerState === 'missing') details.push('Disclaimer not authored');
-      item(featureList, featureName(block), details.join(' · '), block, state === 'unavailable');
+      item(featureList, featureName(block), details.join(' · '), block, state === 'unavailable', true);
     });
   }
 
@@ -281,7 +301,8 @@ export default function mountDemoHelper(doc = document, win = window) {
     setExpanded(!expanded);
     if (expanded) {
       render();
-      panel.querySelector('input, select')?.focus();
+      presets.querySelector('[aria-pressed="true"]')?.focus();
+      if (!presets.contains(doc.activeElement)) presets.querySelector('button')?.focus();
     }
   });
   close.addEventListener('click', () => setExpanded(false, true));
@@ -293,13 +314,6 @@ export default function mountDemoHelper(doc = document, win = window) {
     if (expanded && !root.contains(event.target)) setExpanded(false);
   });
   input.addEventListener('input', () => { input.setCustomValidity(''); feedback.textContent = ''; });
-  preset.addEventListener('change', () => {
-    if (preset.value) {
-      input.value = preset.value;
-      input.setCustomValidity('');
-      feedback.textContent = '';
-    }
-  });
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const result = saveDemoBalance(input.value, win);

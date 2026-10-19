@@ -30,68 +30,151 @@ function button(doc, text) {
   return element;
 }
 
-/** The same demo controls and metrics are present in baseline and loaded comparisons. */
+const milliseconds = (value) => (value === null || value === undefined ? 'Not observed' : `${Math.round(value)} ms`);
+const bytes = (value) => (value >= 1000000 ? `${(value / 1000000).toFixed(2)} MB` : `${(value / 1000).toFixed(1)} kB`);
+const STRATEGIES = {
+  eds: 'Page content loads first. This demo waits 3 seconds, then loads simulated OneTrust. Tags wait for simulated consent. The delay is a demo setting.',
+  early: 'Simulated OneTrust and blocking tag fixtures start before page content. Tracking is not consent-gated in this comparison.',
+  late: 'Simulated OneTrust starts before page content. Tags start automatically when page content is ready, without waiting for consent.',
+  consent: 'Simulated OneTrust starts before page content. Tags wait for you to accept simulated tracking, even when page content is already ready.',
+};
+
+/** Baseline and loaded comparisons share the same controls and measurement overhead. */
 export default function mountPerformanceControls(doc, win) {
-  const section = node(doc, 'section', 'section');
-  section.append(node(doc, 'h3', 'heading', 'Third-party performance'));
-  section.append(node(doc, 'p', 'muted', 'Script sizes captured from E*TRADE on Oct 13, 2026. Both strategies use the same test files. Processing levels are simulated, rather than measured vendor timings.'));
   const current = readPerformanceConfig(win.location.href);
+  const section = node(doc, 'details', 'section');
+  section.classList.add('demo-helper-performance');
+  section.open = Boolean(current);
+  section.append(node(doc, 'summary', 'heading', 'Third-party performance'));
+  const status = node(doc, 'p', 'muted');
+  status.setAttribute('role', 'status');
+  const measurements = node(doc, 'div', 'measurements');
+  const tablist = node(doc, 'div', 'tabs');
+  tablist.setAttribute('role', 'tablist');
+  tablist.setAttribute('aria-label', 'Performance measurements');
+  measurements.append(tablist);
+  const tabs = [];
+  const panels = [];
+  const values = new Map();
+
+  function activate(index) {
+    tabs.forEach((tab, i) => {
+      tab.setAttribute('aria-selected', String(i === index));
+      tab.tabIndex = i === index ? 0 : -1;
+      panels[i].hidden = i !== index;
+    });
+  }
+
+  ['Page experience', 'Downloads', 'Workload'].forEach((label, index) => {
+    const tab = button(doc, label);
+    tab.id = `demo-helper-tab-${index}`;
+    tab.setAttribute('role', 'tab');
+    tab.setAttribute('aria-controls', `demo-helper-metrics-${index}`);
+    const panel = node(doc, 'div', 'metric-panel');
+    panel.id = `demo-helper-metrics-${index}`;
+    panel.setAttribute('role', 'tabpanel');
+    panel.setAttribute('aria-labelledby', tab.id);
+    panel.tabIndex = 0;
+    tab.addEventListener('click', () => activate(index));
+    tab.addEventListener('keydown', (event) => {
+      const next = {
+        ArrowRight: (index + 1) % 3, ArrowLeft: (index + 2) % 3, Home: 0, End: 2,
+      }[event.key];
+      if (next === undefined) return;
+      event.preventDefault();
+      activate(next);
+      tabs[next].focus();
+    });
+    tabs.push(tab);
+    panels.push(panel);
+    tablist.append(tab);
+    measurements.append(panel);
+  });
+  activate(0);
+
+  function group(index, title, rows) {
+    const wrapper = node(doc, 'div', 'metric-group');
+    wrapper.append(node(doc, 'h4', 'metric-heading', title));
+    const list = node(doc, 'dl', 'metrics');
+    rows.forEach(([key, label]) => {
+      const value = node(doc, 'dd', 'metric-value', 'Not observed');
+      values.set(key, value);
+      list.append(node(doc, 'dt', 'metric-label', label), value);
+    });
+    wrapper.append(list);
+    panels[index].append(wrapper);
+  }
+  group(0, 'Core Web Vitals', [['lcp', 'LCP'], ['cls', 'CLS']]);
+  group(0, 'Additional observations', [['interaction', 'Slowest interaction (lab)'], ['fcp', 'FCP']]);
+  panels[0].append(node(doc, 'p', 'muted', 'Slowest interaction is a lab observation, not field INP. Initial-load values can stay unchanged after the page finishes loading.'));
+  group(1, 'This run · fixture downloads', [['transfer', 'Transferred, including headers'], ['downloaded', 'Downloaded source size']]);
+  group(1, 'Reference profile · selected libraries', [['source', 'Total source size'], ['gzip', 'Captured compressed responses'], ['cmp', 'OneTrust source size'], ['tags', 'Other tags source size']]);
+  panels[1].append(node(doc, 'p', 'muted', 'Reference sizes were captured on Oct 13, 2026. This run varies with compression, cache and which fixtures have loaded.'));
+  group(2, 'Simulation', [['fixtures', 'Fixtures loaded'], ['consent', 'Simulated tracking consent'], ['cpu', 'Added CPU work'], ['runtime', 'Interaction workload']]);
+  group(2, 'Observed browser work', [['tasks', 'Long tasks'], ['excess', 'Long-task excess (>50 ms)']]);
+  const workloadActions = node(doc, 'div', 'actions');
+  const run = button(doc, 'Run 30-second workload');
+  const stop = button(doc, 'Stop workload');
+  workloadActions.append(run, stop);
+  panels[2].append(workloadActions);
+
+  const settings = node(doc, 'details', 'settings');
+  settings.open = !current;
+  settings.append(node(doc, 'summary', 'heading', 'Comparison settings'));
   const form = node(doc, 'form', 'form');
   const profile = select(doc, form, 'profile', 'Libraries', [
     ['off', 'Off'], ['baseline', 'Measured baseline'], ['onetrust', 'OneTrust script weights'], ['etrade', 'E*TRADE tag + OneTrust script weights'],
   ], current?.profile || 'off');
   const phase = select(doc, form, 'phase', 'Loading strategy', [
-    ['eds', 'EDS · page first, tracking after consent'],
-    ['early', 'Startup · OneTrust and tags before content'],
-    ['late', 'Startup OneTrust · tags after content'],
-    ['consent', 'Startup OneTrust · tags after consent'],
+    ['eds', 'EDS · CMP after page, tags after consent'],
+    ['early', 'Startup · CMP and tags before page'],
+    ['late', 'Early CMP · tags when page is ready'],
+    ['consent', 'Early CMP · tags when consent is granted'],
   ], current?.phase || 'eds');
+  const strategyHelp = node(doc, 'p', 'muted');
+  strategyHelp.id = 'demo-helper-strategy-help';
+  phase.setAttribute('aria-describedby', strategyHelp.id);
+  const describeStrategy = () => { strategyHelp.textContent = STRATEGIES[phase.value]; };
+  phase.addEventListener('change', describeStrategy);
+  describeStrategy();
+  form.append(strategyHelp);
   const work = select(doc, form, 'work', 'Extra browser processing', [
     ['none', 'Download and parse only'], ['light', 'Light · assumed CPU work'], ['medium', 'Moderate · assumed CPU work'], ['heavy', 'Heavy · assumed CPU work'],
   ], current?.work || 'none');
-  const strategyHelp = node(doc, 'p', 'muted');
-  const describeStrategy = () => {
-    strategyHelp.textContent = phase.value === 'eds'
-      ? 'EDS shows page content, waits 3 seconds, then loads simulated OneTrust. Tag files load after you accept simulated tracking.'
-      : 'OneTrust starts before page content. Tag timing follows the selected startup option.';
-  };
-  phase.addEventListener('change', describeStrategy);
-  describeStrategy();
-  form.append(strategyHelp, node(doc, 'p', 'muted', 'Added click and background processing runs for 30 seconds once page content and tags are ready. Keep libraries and processing settings identical when comparing strategies.'));
+  form.append(node(doc, 'p', 'muted', 'Processing levels are assumed CPU work, not measured vendor timings. Interaction and background work run for 30 seconds when page content and tags are ready. Keep settings identical when comparing strategies.'));
   const actions = node(doc, 'div', 'actions');
   const apply = button(doc, 'Apply & reload');
   apply.className = 'demo-helper-primary';
   apply.type = 'submit';
   actions.append(apply);
   form.append(actions);
-  section.append(form);
-  const status = node(doc, 'p', 'muted');
-  status.setAttribute('role', 'status');
-  const summary = node(doc, 'dl', 'metrics');
+  settings.append(form);
+
   const runtimeActions = node(doc, 'div', 'actions');
   const consent = button(doc, 'Accept simulated tracking');
   const decline = button(doc, 'Decline simulated tracking');
   const response = button(doc, 'Test response');
   response.dataset.perfInteraction = 'true';
   const refresh = button(doc, 'Refresh measurements');
-  const stop = button(doc, 'Stop workload');
-  const run = button(doc, 'Run 30-second workload');
-  runtimeActions.append(consent, decline, run, response, refresh, stop);
-  const responseStatus = node(doc, 'p', 'muted', 'Test menus, FAQs and form inputs too.');
-  section.append(status, summary, runtimeActions, responseStatus);
-  section.append(node(doc, 'p', 'muted', 'Local results vary with device, cache and throttling. Slowest interaction is a lab observation; it is not field INP.'));
+  runtimeActions.append(consent, decline, response, refresh);
+  const consentHelp = node(doc, 'p', 'muted', 'These buttons simulate consent. No real OneTrust banner or tracking is loaded.');
+  const responseStatus = node(doc, 'p', 'muted');
+  const refreshStatus = node(doc, 'p', 'muted');
+  refreshStatus.setAttribute('role', 'status');
+  section.append(status, measurements, runtimeActions, consentHelp);
+  section.append(responseStatus, refreshStatus, settings);
 
   function render() {
-    const controller = win.etradePerformanceDemo;
-    const snapshot = controller?.snapshot();
-    summary.replaceChildren();
+    const snapshot = win.etradePerformanceDemo?.snapshot();
+    measurements.hidden = !snapshot;
     runtimeActions.hidden = !snapshot;
+    consentHelp.hidden = !snapshot;
     status.textContent = snapshot ? snapshot.status : 'Off · choose a measured baseline to compare.';
     if (!snapshot) return;
     const gated = snapshot.config.profile === 'etrade'
       && ['eds', 'consent'].includes(snapshot.config.phase);
     consent.hidden = !gated;
-    decline.hidden = consent.hidden;
+    decline.hidden = !gated;
     consent.disabled = snapshot.status === 'Stopped' || !snapshot.cmpReady;
     decline.disabled = consent.disabled;
     stop.disabled = snapshot.status === 'Stopped' || snapshot.config.profile === 'baseline';
@@ -100,25 +183,28 @@ export default function mountPerformanceControls(doc, win) {
       || snapshot.config.profile !== 'etrade'
       || (gated && snapshot.consent !== 'accepted')
       || snapshot.completed + snapshot.failed < snapshot.resources.length;
-    const ms = (value) => (value === null || value === undefined ? 'Not observed' : `${Math.round(value)} ms`);
-    const kb = (value) => `${(value / 1024).toFixed(1)} KiB`;
-    const values = [
-      ['Fixtures', `${snapshot.completed}/${snapshot.resources.length} loaded${snapshot.failed ? ` · ${snapshot.failed} failed` : ''}`],
-      ['Captured gzip responses', kb(snapshot.observedEncodedBytes)],
-      ['Fixture transfer this run', kb(snapshot.actualTransferBytes)],
-      ['Fixture source size', kb(snapshot.decodedBytes)],
-      ['Simulated tracking consent', gated ? snapshot.consent : 'Not gated in this comparison'],
-      ['FCP', ms(snapshot.metrics.fcp)],
-      ['LCP', ms(snapshot.metrics.lcp)],
-      ['CLS', snapshot.metrics.cls === null ? 'Not observed' : snapshot.metrics.cls.toFixed(3)],
-      ['Slowest interaction', ms(snapshot.metrics.worstInteraction)],
-      ['Long tasks', snapshot.metrics.longTasks ?? 'Not observed'],
-      ['Long-task excess (>50 ms)', ms(snapshot.metrics.longTaskExcess)],
-      ['Added CPU work', ms(snapshot.simulatedCPU)],
-      ['Interaction workload', snapshot.runtimeActive ? 'Active · 30-second window' : 'Inactive'],
-    ];
-    values.forEach(([label, value]) => {
-      summary.append(node(doc, 'dt', 'metric-label', label), node(doc, 'dd', 'metric-value', String(value)));
+    const groupBytes = (name) => snapshot.resources.filter((resource) => resource.group === name)
+      .reduce((total, resource) => total + resource.decodedBytes, 0);
+    const metrics = {
+      lcp: milliseconds(snapshot.metrics.lcp),
+      cls: snapshot.metrics.cls === null ? 'Not observed' : snapshot.metrics.cls.toFixed(3),
+      interaction: milliseconds(snapshot.metrics.worstInteraction),
+      fcp: milliseconds(snapshot.metrics.fcp),
+      transfer: bytes(snapshot.actualTransferBytes),
+      downloaded: bytes(snapshot.actualDecodedBytes),
+      source: bytes(snapshot.decodedBytes),
+      gzip: bytes(snapshot.observedEncodedBytes),
+      cmp: bytes(groupBytes('consent')),
+      tags: bytes(groupBytes('tags')),
+      fixtures: `${snapshot.completed}/${snapshot.resources.length}${snapshot.failed ? ` · ${snapshot.failed} failed` : ''}`,
+      consent: gated ? snapshot.consent : 'Not gated in this comparison',
+      cpu: milliseconds(snapshot.simulatedCPU),
+      runtime: snapshot.runtimeActive ? 'Active · 30-second window' : 'Inactive',
+      tasks: snapshot.metrics.longTasks ?? 'Not observed',
+      excess: milliseconds(snapshot.metrics.longTaskExcess),
+    };
+    Object.entries(metrics).forEach(([key, value]) => {
+      values.get(key).textContent = String(value);
     });
   }
 
@@ -135,7 +221,27 @@ export default function mountPerformanceControls(doc, win) {
   decline.addEventListener('click', () => { win.etradePerformanceDemo?.declineConsent(); render(); });
   stop.addEventListener('click', () => { win.etradePerformanceDemo?.stop(); render(); });
   run.addEventListener('click', () => { win.etradePerformanceDemo?.runInteractions(); render(); });
-  refresh.addEventListener('click', render);
+  let refreshing = false;
+  let refreshCount = 0;
+  refresh.addEventListener('click', () => {
+    if (refreshing) return;
+    refreshing = true;
+    refresh.disabled = true;
+    refresh.textContent = 'Refreshing…';
+    const finish = () => {
+      win.etradePerformanceDemo?.refreshMeasurements();
+      refreshing = false;
+      refreshCount += 1;
+      render();
+      refresh.disabled = false;
+      refresh.textContent = 'Refresh measurements';
+      refreshStatus.textContent = `Measurements updated (${refreshCount}). Initial-load values can stay unchanged. Apply & reload starts a new test.`;
+    };
+    // Give the preceding interaction a paint before collecting queued observations.
+    if (win.requestAnimationFrame) {
+      win.requestAnimationFrame(() => win.requestAnimationFrame(() => win.setTimeout(finish, 0)));
+    } else Promise.resolve().then(finish);
+  });
   let responseCount = 0;
   response.addEventListener('click', () => {
     responseCount += 1;

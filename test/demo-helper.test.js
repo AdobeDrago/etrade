@@ -80,6 +80,21 @@ test('balance save persists zero and reload state; reset removes only the balanc
   assert.equal(context.reloads(), 2);
 });
 
+test('six balance pills apply immediately and secondary information starts collapsed', () => {
+  const context = page('<div class="hero-dark block" data-block-status="loaded"></div>');
+  const { root, window } = context;
+  assert.equal(root.querySelector('.demo-helper-content').firstElementChild.textContent.startsWith('Try a balance'), true);
+  const pills = [...root.querySelectorAll('.demo-helper-preset')];
+  assert.deepEqual(pills.map((pill) => pill.textContent), ['50k', '100k', '150k', '200k', '250k', '500k']);
+  pills[2].dispatchEvent(new window.Event('click'));
+  assert.equal(context.storage.get('userBalance'), '150000');
+  assert.equal(context.reloads(), 1);
+  assert.equal(root.querySelector('.demo-helper-custom-balance').hasAttribute('open'), false);
+  assert.equal(root.querySelector('.demo-helper-features').parentElement.hasAttribute('open'), false);
+  assert.equal(root.querySelector('.demo-helper-feature-state').getAttribute('aria-label'), 'Ready');
+  assert.equal(root.querySelector('.demo-helper-feature-state').dataset.state, 'ready');
+});
+
 test('invalid balances, blocked storage and non-demo hosts never save or reload', () => {
   const context = browser();
   ['', '-1', '100,000', '$1000', '1e5', 'NaN', 'Infinity'].forEach((value) => assert.ok(saveDemoBalance(value, context.win).error));
@@ -115,7 +130,7 @@ test('expand and Escape maintain disclosure semantics and return focus to the tr
   toggle.dispatchEvent(new window.Event('click'));
   assert.equal(toggle.getAttribute('aria-expanded'), 'true');
   assert.equal(panel.hidden, false);
-  assert.equal(document.activeElement.id, 'demo-helper-performance-profile');
+  assert.equal(document.activeElement, root.querySelector('.demo-helper-preset'));
   const escape = new window.Event('keydown', { bubbles: true, cancelable: true });
   escape.key = 'Escape';
   document.activeElement.dispatchEvent(escape);
@@ -130,11 +145,11 @@ test('insights distinguish sample responses, authored overrides, failures and ma
   assert.ok(root.textContent.includes('$100,000 · demo balance'));
   assert.ok(root.textContent.includes('Author override'));
   assert.ok(root.textContent.includes('Fallback · Reason: http-status'));
-  assert.ok(root.textContent.includes('Loading data'));
+  assert.ok(root.querySelector('.demo-helper-feature-state[aria-label="Loading data"]'));
   document.querySelector('.market-ticker').dataset.marketState = 'unavailable';
   document.dispatchEvent(new window.CustomEvent('bank-rates:updated'));
   await new Promise((resolve) => { setTimeout(resolve, 130); });
-  assert.ok(root.textContent.includes('Data unavailable'));
+  assert.ok(root.querySelector('.demo-helper-feature-state[data-state="error"][aria-label="Data unavailable"]'));
 });
 
 test('locate scrolls to real content and collapses the helper without changing content', () => {
@@ -151,6 +166,8 @@ test('locate scrolls to real content and collapses the helper without changing c
   assert.equal(root.querySelector('.demo-helper-panel').hidden, true);
   assert.equal(root.querySelector('.demo-helper-highlight').hidden, false);
   assert.equal(target.textContent, 'Authored title');
+  root.querySelector('.demo-helper-toggle').dispatchEvent(new window.Event('click'));
+  assert.equal(root.querySelector('.demo-helper-highlight').hidden, true);
   assert.equal(mountDemoHelper(document, browser().win), null);
   assert.equal(mountDemoHelper(document, browser('main--etrade--adobedrago.aem.page').win), null);
 });

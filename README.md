@@ -224,12 +224,18 @@ Open **Demo controls → Third-party performance** on localhost, the `demo--etra
 - `?perf=onetrust`: the two captured OneTrust JavaScript payloads.
 - `?perf=etrade`: OneTrust plus the selected analytics and advertising payloads.
 
+The panel opens with six one-click balance presets (50k, 100k, 150k, 200k, 250k and 500k). **Custom balance** retains arbitrary values, including zero. Features and rate insights are collapsed to keep the customer demo compact; feature dots expose their full status to assistive technology and on hover. Locating a feature closes the panel and highlights the real block. Reopening the panel clears the highlight.
+
+When a performance comparison is active, **Page experience** is the first measurement tab, with LCP and CLS grouped under Core Web Vitals. **Downloads** separates this run's transfers from captured reference sizes, including OneTrust versus other tags. **Workload** contains simulation state, browser tasks and workload controls. Expand **Comparison settings** to change the experiment.
+
 Choose **Loading strategy** to compare the same script weights and processing budgets:
 
 - **Startup** (`perf-phase=early`): the OneTrust stub and Adobe Launch hold page decoration. The OneTrust banner and dependent tags load asynchronously. This models startup pressure without installing parser-blocking vendor scripts in the document head.
 - **EDS** (`perf-phase=eds`): page content loads first. Three seconds after content is ready, the profile and OneTrust fixtures load. Tag fixtures stay unloaded until **Accept simulated tracking** is selected. **Decline simulated tracking** leaves them unloaded; declining after acceptance stops further added tag work. Repeated acceptance does not request completed fixtures again.
+- **Early CMP · tags when page is ready** (`perf-phase=late`): OneTrust starts before content; tags start automatically after content is ready, without a consent gate.
+- **Early CMP · tags when consent is granted** (`perf-phase=consent`): OneTrust starts before content; tags wait for simulated acceptance. Content readiness alone does not release them.
 
-The EDS strategy follows [Adobe's CMP integration pattern](https://www.aem.live/developer/cmp-integration). Its simulated CMP has no banner rendering or production tracking. Its `demo-performance:consent.update` events are separate from the site's real `consent.update` events. The existing `late` and `consent` options retain the earlier experiments with OneTrust at startup and tags after content or simulated consent. A URL without `perf-phase` retains startup behavior; the controls suggest EDS for a new comparison.
+The EDS strategy follows [Adobe's CMP integration pattern](https://www.aem.live/developer/cmp-integration). Its simulated CMP has no banner rendering or production tracking. Its `demo-performance:consent.update` events are separate from the site's real `consent.update` events. The three-second delay is a chosen demo setting. A URL without `perf-phase` retains startup behavior; the controls suggest EDS for a new comparison.
 
 For example, compare `/home?perf=etrade&perf-phase=early&perf-work=medium` with `/home?perf=etrade&perf-phase=eds&perf-work=medium`. In EDS mode, measure both declined consent (two CMP fixtures) and accepted consent (all 20 fixtures). Waiting for acceptance is part of the strategy, so record when it occurs.
 
@@ -242,6 +248,8 @@ The default `perf-work=none` adds only downloads and parsing of inert JavaScript
 | Heavy | 60 ms | 120 ms | 60 ms |
 
 These are fixed wall-clock budgets, not measured vendor execution times or device-scaled instructions. Each initialization task is capped at 500 ms. Interaction/background work runs for 30 seconds once content and tags are ready, skips hidden documents, and can be restarted or stopped in the controls. Use **Test response** or real menus, FAQs and inputs, then **Refresh measurements** after the next paint.
+
+**Refresh measurements** waits for a paint, drains queued performance observations and updates the current run with visible confirmation. It does not reload the page, rerun downloads or reset measurements. FCP and LCP can remain unchanged after initial rendering; use **Apply & reload** for a new comparison and restart the workload from its tab if its 30-second window has expired.
 
 The [capture manifest](scripts/demo-performance-profile.json) records public scripts observed on https://us.etrade.com/home on October 13, 2026: 20 selected files, 3,345,830 decoded bytes and 930,920 bytes in captured gzip responses. OneTrust accounts for 593,410 decoded bytes. Local fixtures match decoded bytes exactly and approximate gzip sizes without copying vendor code. The optional maintenance command `node test/generate-performance-assets.mjs` regenerates fixtures from this manifest; there is no site build step.
 

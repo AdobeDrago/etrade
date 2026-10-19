@@ -12,6 +12,7 @@ const manifest = JSON.parse(await readFile(new URL('../scripts/demo-performance-
 function browser(query, hostname = 'localhost') {
   const { document, window } = parseHTML('<html><head></head><body><main><button>FAQ</button></main></body></html>');
   const observed = new Map();
+  const queued = new Map();
   const timers = new Map();
   const consentEvents = [];
   let clock = 0;
@@ -35,7 +36,13 @@ function browser(query, hostname = 'localhost') {
 
       constructor(callback) { this.callback = callback; }
 
-      observe({ type }) { observed.set(type, this.callback); }
+      observe({ type }) { this.type = type; observed.set(type, this.callback); }
+
+      takeRecords() {
+        const entries = queued.get(this.type) || [];
+        queued.delete(this.type);
+        return entries;
+      }
 
       disconnect() { this.callback = null; }
     },
@@ -53,7 +60,7 @@ function browser(query, hostname = 'localhost') {
     clearInterval(id) { timers.delete(id); },
   };
   return {
-    document, win, timers, observed, window, consentEvents,
+    document, win, timers, observed, queued, window, consentEvents,
   };
 }
 
@@ -212,6 +219,85 @@ test('inert fixtures match captured decoded sizes and compression budgets withou
     const module = await import(`../scripts/demo-performance-assets/${resource.id}.js`);
     assert.ok(Array.isArray(module.default));
   }));
+});
+
+test('refresh drains queued observations once and CLS starts its window at the first shift', () => {
+  const context = browser('?perf=baseline');
+  const controller = startPerformanceDemo(context.document, context.win);
+  context.queued.set('event', [{ interactionId: 1, duration: 88 }]);
+  context.queued.set('longtask', [{ duration: 90 }]);
+  // A first shift at 900 ms starts a five-second window, rather than navigation at 0.
+  context.queued.set('layout-shift', [900, 1800, 2700, 3600, 4500, 5400]
+    .map((startTime) => ({ startTime, value: 0.1 })));
+  assert.equal(controller.snapshot().metrics.worstInteraction, null);
+  controller.refreshMeasurements();
+  assert.equal(controller.snapshot().metrics.worstInteraction, 88);
+  assert.ok(Math.abs(controller.snapshot().metrics.cls - 0.6) < 0.0001);
+  assert.equal(controller.snapshot().metrics.longTasks, 1);
+  controller.refreshMeasurements();
+  assert.equal(controller.snapshot().metrics.longTasks, 1);
+  controller.stop();
+});
+
+test('measurement tabs preserve selection and refresh waits for paint with visible feedback', async () => {
+  const context = browser('?perf=baseline');
+  const frames = [];
+  context.win.requestAnimationFrame = (callback) => frames.push(callback);
+  const controller = startPerformanceDemo(context.document, context.win);
+  const controls = mountPerformanceControls(context.document, context.win);
+  const tabs = [...controls.querySelectorAll('[role="tab"]')];
+  assert.equal(tabs[0].getAttribute('aria-selected'), 'true');
+  assert.equal(controls.querySelector('[role="tabpanel"] h4').textContent, 'Core Web Vitals');
+  let focused;
+  tabs.forEach((tab) => { tab.focus = () => { focused = tab; }; });
+  const arrow = new context.window.Event('keydown', { cancelable: true });
+  arrow.key = 'ArrowRight';
+  tabs[0].dispatchEvent(arrow);
+  assert.equal(focused, tabs[1]);
+  assert.equal(tabs[1].getAttribute('aria-selected'), 'true');
+  const refresh = [...controls.querySelectorAll('button')]
+    .find((element) => element.textContent === 'Refresh measurements');
+  context.queued.set('largest-contentful-paint', [{ startTime: 1234 }]);
+  refresh.dispatchEvent(new context.window.Event('click'));
+  assert.equal(refresh.disabled, true);
+  assert.equal(controller.snapshot().metrics.lcp, null);
+  frames.shift()();
+  assert.equal(controller.snapshot().metrics.lcp, null);
+  frames.shift()();
+  const [id, timer] = [...context.timers.entries()].find(([, value]) => value.delay === 0);
+  context.timers.delete(id);
+  timer.callback();
+  assert.equal(controller.snapshot().metrics.lcp, 1234);
+  assert.ok(controls.textContent.includes('Measurements updated (1)'));
+  assert.equal(refresh.disabled, false);
+  assert.equal(tabs[1].getAttribute('aria-selected'), 'true');
+  controller.stop();
+});
+
+test('each loading strategy explains its release condition and downloads separate CMP and tags', async () => {
+  const context = browser('?perf=etrade&perf-phase=early');
+  const controller = startPerformanceDemo(context.document, context.win, {
+    fetchProfile: async () => manifest, importResource: async () => {},
+  });
+  const controls = mountPerformanceControls(context.document, context.win);
+  const phase = controls.querySelector('#demo-helper-performance-phase');
+  const help = controls.querySelector('#demo-helper-strategy-help');
+  ['eds', 'early', 'late', 'consent'].forEach((value) => {
+    [...phase.options].forEach((option) => option.removeAttribute('selected'));
+    phase.querySelector(`[value="${value}"]`).setAttribute('selected', '');
+    phase.dispatchEvent(new context.window.Event('change'));
+    if (value === 'late') assert.ok(help.textContent.includes('without waiting for consent'));
+    if (value === 'consent') assert.ok(help.textContent.includes('wait for you to accept'));
+    if (value === 'eds') assert.ok(help.textContent.includes('3 seconds'));
+    if (value === 'early') assert.ok(help.textContent.includes('before page content'));
+  });
+  await controller.ready;
+  await settle();
+  assert.ok(controls.textContent.includes('3.35 MB'));
+  assert.ok(controls.textContent.includes('593.4 kB'));
+  assert.ok(controls.textContent.includes('930.9 kB'));
+  assert.ok(controls.textContent.includes('No real OneTrust banner'));
+  controller.stop();
 });
 
 test('EDS never holds page readiness and delays the CMP profile and fixtures until after content', async () => {
