@@ -10,3 +10,7 @@ Blank rows are skipped; extra content cells are combined. Rich text, tracking UR
 inline links and superscripts remain authored. Standalone link paragraphs become
 styled actions. Use stable disclosure IDs in `<sup>` when the page uses a disclosure
 set; the footer resolves their displayed numbers.
+
+## Shared style system
+
+Cards, navigation and typography consume shared tokens. Narrow section cells show one card at a time, and story dots wrap inside the block with enlarged text. The carousel keeps its native links, scroll controls, keyboard behavior and live status. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

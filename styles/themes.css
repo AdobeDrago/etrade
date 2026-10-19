@@ -1,0 +1,20 @@
+/* Opt-in page design families. Section schemes and block variants remain independent.
+   Resolve theme values on the root so semantic and compatibility aliases follow them. */
+:root[data-page-theme="charcoal"] {
+  --color-surface-inverse: var(--palette-neutral-950);
+  --color-surface-inverse-raised: var(--palette-neutral-900);
+  --radius-card: 16px;
+}
+
+:root[data-page-theme="purple"] {
+  --color-surface-inverse: var(--palette-purple-900);
+  --color-surface-inverse-raised: var(--palette-purple-900);
+  --color-surface-campaign: var(--palette-purple-900);
+  --color-footer-surface: var(--palette-neutral-150);
+  --color-footer-text: var(--color-text-primary);
+  --color-footer-link: var(--color-link);
+  --color-footer-link-hover: var(--color-link-hover);
+  --footer-color-scheme: light;
+  --footer-icon-filter: brightness(0);
+  --radius-card: var(--radius-control);
+}

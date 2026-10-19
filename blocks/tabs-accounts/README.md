@@ -38,3 +38,7 @@ Cryptocurrency. Its account counts are 6, 3, 6, 2, 4, 4, 1. This page's Bank ord
 is Premium Savings Account, Certificates of Deposit, Max-Rate Checking, Line of
 Credit. Do not reuse the Investment Choices page's six-category snapshot or Bank
 order. Maintain the account panels in DA.
+
+## Shared style system
+
+This block consumes the shared color, typography, spacing, border, focus and applicable motion tokens. Narrow section cells and enlarged text reflow within the block. Authored Section Metadata takes precedence over legacy surrounding section styles; content, links and existing interactions are preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

@@ -1,5 +1,5 @@
 import decorateCardRates from '../../scripts/card-rates.js';
-import { standaloneAction } from '../../scripts/actions.js';
+import { groupActions } from '../../scripts/actions.js';
 
 /**
  * cards-account — grid of account cards, each with a top accent bar, an account
@@ -20,14 +20,8 @@ export default async function decorate(block) {
     cells.forEach((cell) => body.append(...cell.childNodes));
     li.append(body);
 
-    // Group CTA links into an actions row.
-    const ctaParagraphs = [...body.querySelectorAll(':scope > p')].filter((p) => standaloneAction(p));
-    if (ctaParagraphs.length) {
-      const actions = document.createElement('div');
-      actions.className = 'cards-account-actions';
-      ctaParagraphs[0].before(actions);
-      ctaParagraphs.forEach((p) => actions.append(p));
-    }
+    const actions = groupActions(body, 'cards-account', 'outline');
+    if (actions.children.length) li.append(actions);
 
     ul.append(li);
   });

@@ -1,13 +1,28 @@
+main .section > .columns-wrapper {
+  min-width: 0;
+  container: block-layout / inline-size;
+}
+
+.columns {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+:where(.columns) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
 .columns > div {
   display: flex;
   flex-direction: column;
 }
 
 body.homepage .pricing-intro .columns h2 {
-  margin: 0 0 40px;
-  font-size: 28px;
-  line-height: 32px;
-  letter-spacing: -0.4px;
+  margin: 0 0 var(--space-40);
+  font-size: var(--font-size-28);
+  line-height: calc(32 / 28);
+  letter-spacing: var(--tracking-tight);
 }
 
 @media (width >= 768px) {
@@ -15,7 +30,7 @@ body.homepage .pricing-intro .columns h2 {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     align-items: center;
-    gap: 20px;
+    gap: var(--space-20);
   }
 
   body.homepage .pricing-intro .columns > div > div:first-child {
@@ -28,8 +43,8 @@ body.homepage .pricing-intro .columns h2 {
 
   body.homepage .pricing-intro .columns h2 {
     margin-bottom: 0;
-    font-size: 40px;
-    line-height: 44px;
+    font-size: var(--font-size-40);
+    line-height: calc(44 / 40);
   }
 }
 
@@ -53,11 +68,24 @@ body.homepage .pricing-intro .columns h2 {
   .columns > div {
     align-items: center;
     flex-direction: unset;
-    gap: 24px;
+    gap: var(--space-24);
   }
 
   .columns > div > div {
     flex: 1;
     order: unset;
+  }
+}
+
+/* Adapt to the space provided by the section, including enlarged text. */
+@container block-layout (width < 38rem) {
+  main .section .columns > div {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  main .section .columns > div > div {
+    min-width: 0;
   }
 }
