@@ -42,7 +42,7 @@ A comma-separated marker such as `<sup>fees,offer</sup>` becomes separate number
 
 Run `npm run test:disclosures` to verify set delivery, fragment composition, rich text, footnotes, and legacy rendering.
 
-The [Disclosure Manager DA plugin](../../tools/plugins/disclosure-manager/README.md) provides a reorder interface, stable-ID reference insertion, and an audit of the saved page. Register it in the DA Library using its setup instructions. It updates the disclosure set without rewriting page numbers; preview or publish the content separately after saving.
+The [Disclosure Manager DA plugin](../../tools/plugins/disclosure-manager/README.md) provides search across IDs and saved copy, expandable copy previews, source edit links, a reorder interface, stable-ID reference insertion, and an audit of the saved page. Register it in the DA Library using its branch or local setup instructions. It updates the disclosure set without rewriting page numbers; preview or publish the content separately after saving.
 
 Use a two-column **Disclosures** table. `Introduction` rows hold introductory rich text. Numbered rows (`1`, `2`, and so on) hold the corresponding legal copy. An optional `Closing` row follows the numbered list. Blank rows and empty cells are skipped. Links, lists, and inline formatting remain authored; the block has no legal-copy fallback.
 

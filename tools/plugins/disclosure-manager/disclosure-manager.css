@@ -64,7 +64,7 @@
   background: #eee8ff;
 }
 
-.disclosure-manager :is(button, input, a):focus-visible {
+.disclosure-manager :is(button, input, a, summary):focus-visible {
   outline: 2px solid #5627d8;
   outline-offset: 3px;
 }
@@ -98,6 +98,9 @@
 }
 
 .disclosure-manager .source {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
   margin: 0 0 20px;
   overflow-wrap: anywhere;
   font-size: 12px;
@@ -117,6 +120,49 @@
 .disclosure-manager .hint {
   color: #5d566d;
   font-size: 12px;
+}
+
+.disclosure-manager .search-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.disclosure-manager .search {
+  width: 100%;
+  border: 1px solid #bcb5ce;
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.disclosure-manager .copy-preview {
+  margin: 8px 0;
+}
+
+.disclosure-manager .copy-preview summary {
+  color: #5627d8;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.disclosure-manager .preview-body {
+  max-height: 260px;
+  overflow: auto;
+  border-left: 2px solid #dedbe8;
+  margin-top: 8px;
+  padding: 0 12px;
+  overflow-wrap: anywhere;
+}
+
+.disclosure-manager .entry-content > a {
+  font-size: 12px;
+}
+
+.disclosure-manager #retry {
+  margin-bottom: 16px;
 }
 
 .disclosure-manager .disclosure-list,

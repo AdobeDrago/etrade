@@ -16,6 +16,7 @@
     </header>
     <main>
       <p id="status" class="status" role="status" aria-live="polite">Open this tool from the DA Library. <a href="?demo=1">Try the local demo</a>.</p>
+      <button id="retry" type="button" hidden>Retry connection</button>
       <p id="source" class="source"></p>
       <nav class="tabs" aria-label="Manager views">
         <button type="button" data-panel="manage" aria-pressed="true" aria-controls="manage">Manage</button>
@@ -23,7 +24,11 @@
       </nav>
       <section id="manage" aria-label="Manage disclosures">
         <p class="hint">Drag to reorder, or use the arrow buttons. Select disclosures to insert a reference at the editor’s cursor.</p>
+        <label class="search-label" for="search">Find a disclosure</label>
+        <input id="search" class="search" type="search" placeholder="Search IDs, paths, or disclosure copy" aria-describedby="search-summary">
+        <p id="search-summary" class="hint" role="status"></p>
         <ol id="disclosure-list" class="disclosure-list"></ol>
+        <p id="selection-summary" class="hint" role="status"></p>
         <div class="actions">
           <button id="insert" class="primary" type="button" disabled>Insert reference</button>
           <button id="save" type="button" disabled>Save order</button>

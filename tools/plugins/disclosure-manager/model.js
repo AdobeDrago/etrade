@@ -1,4 +1,7 @@
 import { disclosureFragmentPath, disclosureSetEntries } from '../../../scripts/disclosure-sets.js';
+import { readSource, sourceUrl } from '../shared/da-source.js';
+
+export { readSource, sourceUrl };
 
 const parse = (html) => new DOMParser().parseFromString(html, 'text/html');
 
@@ -21,19 +24,6 @@ export function pageDisclosurePath(html) {
   const cell = metadata && cellFor(metadata, 'disclosures');
   return cell?.querySelector('a[href]')?.getAttribute('href')
     || cell?.textContent.trim() || doc.querySelector('meta[name="disclosures"]')?.getAttribute('content');
-}
-
-/** Restrict authenticated source requests to paths inside the current DA site. */
-export function sourceUrl(context, path) {
-  const normalized = disclosureFragmentPath(path);
-  if (!normalized || /[%\s]/.test(normalized) || normalized.split('/').slice(1).some((part) => !part || part === '.' || part === '..')) {
-    throw new Error('Use a document path within this site.');
-  }
-  if (![context.org, context.repo].every((part) => /^[a-z0-9-]+$/i.test(part || ''))) {
-    throw new Error('DA did not provide a valid site context.');
-  }
-  const extension = normalized.endsWith('.json') ? '' : '.html';
-  return `https://admin.da.live/source/${context.org}/${context.repo}${normalized}${extension}`;
 }
 
 export function resolveSetPath(value, context) {
@@ -175,14 +165,6 @@ export function referenceMarkup(ids, entries) {
     throw new Error('Select a disclosure from this set.');
   }
   return `<sup>${[...new Set(ids)].join(',')}</sup>`;
-}
-
-export async function readSource(context, path, request) {
-  const url = new URL(sourceUrl(context, path));
-  url.searchParams.set('nocache', String(Date.now()));
-  const response = await request(url.href, { cache: 'no-store' });
-  if (!response.ok) throw new Error(`Could not load ${path} (${response.status}).`);
-  return response.text();
 }
 
 /** Recheck the snapshot before updating only the disclosure set document. */

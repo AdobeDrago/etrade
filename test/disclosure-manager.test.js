@@ -8,6 +8,8 @@ import {
   auditReferences, orderedEntries, pageDisclosurePath, parseSetSource,
   referenceMarkup, reorderedSource, resolveSetPath, saveOrder, sourceUrl, validateSet,
 } from '../tools/plugins/disclosure-manager/model.js';
+import connectDA from '../tools/plugins/shared/da-sdk.js';
+import { authoringUrl, sourcePreview } from '../tools/plugins/shared/da-source.js';
 
 // linkedom needs an explicit html wrapper; browser DOMParser adds one automatically.
 class BrowserParser {
@@ -276,4 +278,76 @@ test('demo UI loads, audits, reorders, saves, inserts grouped IDs, and refreshes
   assert.equal(byId('audit').hidden, false);
   assert.equal(byId('manage').hidden, true);
   assert.ok(byId('audit-output').querySelector('.error'));
+});
+
+test('search finds saved copy, retains selections, and disables reordering until cleared', async () => {
+  const { document, window } = await uiHarness();
+  const list = document.getElementById('disclosure-list');
+  const search = document.getElementById('search');
+  assert.match(list.children[0].querySelector('.preview-body').textContent, /Demo brokerage-offer disclosure/);
+  assert.equal(
+    list.children[0].querySelector('.entry-content > a').href,
+    'https://da.live/edit#/adobedrago/etrade/disclosures/fragments/brokerage-offer',
+  );
+  const checkbox = list.children[0].querySelector('input');
+  checkbox.checked = true;
+  checkbox.dispatchEvent(new window.Event('change'));
+  search.value = 'SAVINGS-RATE';
+  search.dispatchEvent(new window.Event('input'));
+  assert.deepEqual([...list.children].map((item) => item.hidden), [true, true, false, true]);
+  assert.equal(list.children[2].querySelector('.number').textContent, '3');
+  assert.equal(list.children[2].draggable, false);
+  assert.equal(list.children[2].querySelector('button').disabled, true);
+  assert.match(document.getElementById('selection-summary').textContent, /Selected 1: offer/);
+  assert.equal(document.getElementById('insert').disabled, false);
+  search.value = 'no matching copy';
+  search.dispatchEvent(new window.Event('input'));
+  assert.match(document.getElementById('search-summary').textContent, /0 of 4/);
+  search.value = '';
+  search.dispatchEvent(new window.Event('input'));
+  assert.equal(list.children[0].hidden, false);
+  assert.equal(list.children[0].draggable, true);
+  assert.equal(list.children[0].querySelector('button[aria-label="Move offer down"]').disabled, false);
+  document.getElementById('insert').click();
+  assert.match(document.getElementById('demo-reference').textContent, /<sup>offer<\/sup>/);
+});
+
+test('shared copy previews preserve formatting and safe links without executable markup or media loads', () => {
+  globalThis.document = parseHTML('<html><body></body></html>').document;
+  const preview = sourcePreview(`<body><main><div><p>Hello <strong>world</strong>.
+    <a href="/terms" onclick="bad()">Terms</a><a href="javascript:bad()">Unsafe link</a></p>
+    <ul><li>First item</li></ul><img src="https://example.com/tracking.gif" alt="Logo">
+    <script>bad()</script><iframe src="https://example.com"></iframe>
+    <div class="metadata">Hidden metadata</div></div></main></body>`, context);
+  const wrapper = document.createElement('div');
+  wrapper.append(preview.content);
+  assert.equal(wrapper.querySelector('strong').textContent, 'world');
+  assert.equal(wrapper.querySelector('a').href, 'https://main--etrade--adobedrago.aem.page/terms');
+  assert.equal(wrapper.querySelector('a').hasAttribute('onclick'), false);
+  assert.equal(wrapper.querySelectorAll('a')[1].hasAttribute('href'), false);
+  assert.equal(wrapper.querySelector('li').textContent, 'First item');
+  assert.equal(wrapper.querySelector('script, iframe, img, .metadata'), null);
+  assert.match(preview.text, /Logo/);
+  assert.doesNotMatch(preview.text, /bad\(\)|Hidden metadata/);
+  assert.equal(preview.empty, false);
+  assert.equal(sourcePreview('<body><main><div></div></main></body>', context).empty, true);
+  assert.equal(sourcePreview('<body><main><img alt="" src="/logo.svg"></main></body>', context).empty, false);
+  assert.equal(authoringUrl(context, '/sets/offer.html', 'form'), 'https://da.live/form#/adobedrago/etrade/sets/offer');
+  assert.throws(() => authoringUrl(context, '//other.example/path', 'edit'));
+  assert.throws(() => authoringUrl(context, '/sets/offer', 'unknown'));
+});
+
+test('shared SDK loader validates context and reports standalone, unavailable, and stalled connections', async () => {
+  const previous = globalThis.window;
+  globalThis.window = { parent: {} };
+  try {
+    const sdk = { context, actions: { daFetch: () => {} } };
+    const connected = await connectDA({ loadSDK: async () => ({ default: Promise.resolve(sdk) }) });
+    assert.equal(connected, sdk);
+    await assert.rejects(connectDA({ loadSDK: async () => ({ default: {} }) }), /page context/);
+    await assert.rejects(connectDA({ loadSDK: async () => { throw new Error('Module unavailable'); } }), /Module unavailable/);
+    await assert.rejects(connectDA({ timeout: 5, loadSDK: () => new Promise(() => {}) }), /timed out/);
+    window.parent = window;
+    await assert.rejects(connectDA(), /Open this tool from the DA Library/);
+  } finally { globalThis.window = previous; }
 });

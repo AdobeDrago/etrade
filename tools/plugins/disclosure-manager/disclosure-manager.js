@@ -2,6 +2,8 @@ import {
   auditReferences, orderedEntries, pageDisclosurePath, parseSetSource,
   readSource, referenceMarkup, resolveSetPath, saveOrder, validateSet,
 } from './model.js';
+import connectDA from '../shared/da-sdk.js';
+import { authoringUrl, sourcePreview } from '../shared/da-source.js';
 
 const demo = new URLSearchParams(window.location.search).get('demo') === '1';
 const byId = (id) => document.getElementById(id);
@@ -14,6 +16,8 @@ let dragIndex;
 let setIssues = [];
 const selected = new Set();
 const emptyFragments = new Set();
+const previews = new Map();
+const filtering = () => Boolean(byId('search').value.trim());
 
 function status(message, error = false) {
   byId('status').textContent = message;
@@ -32,9 +36,30 @@ function updateControls() {
   byId('insert').disabled = busy || !valid() || dirty() || !selected.size
     || (!demo && (sdk.context.view !== 'edit' || model.path === sdk.context.path.replace(/\.html$/, '')));
   document.querySelectorAll('.disclosure-item input, .move-actions button').forEach((control) => {
-    control.disabled = busy || control.dataset.unavailable === 'true';
+    control.disabled = busy || control.dataset.unavailable === 'true'
+      || (filtering() && control.tagName === 'BUTTON');
   });
-  document.querySelectorAll('.disclosure-item').forEach((item) => { item.draggable = !busy && valid(); });
+  document.querySelectorAll('.disclosure-item').forEach((item) => { item.draggable = !busy && valid() && !filtering(); });
+  byId('selection-summary').textContent = selected.size
+    ? `Selected ${selected.size}: ${[...selected].join(', ')}. References are inserted in selection order, including selections hidden by search.` : '';
+}
+
+function filterList() {
+  const query = byId('search').value.trim().toLowerCase();
+  const items = [...byId('disclosure-list').children];
+  items.forEach((item) => { item.hidden = !item.dataset.search.includes(query); });
+  byId('search-summary').textContent = model
+    ? `${items.filter((item) => !item.hidden).length} of ${items.length} disclosures${query ? '. Clear search to reorder.' : '. Copy previews show saved source; refresh after editing.'}` : '';
+  updateControls();
+}
+
+function sourceLink(label, path, view) {
+  const link = document.createElement('a');
+  link.href = authoringUrl(sdk.context, path, view);
+  link.target = '_blank';
+  link.rel = 'noopener';
+  link.textContent = label;
+  return link;
 }
 
 function renderAudit() {
@@ -56,7 +81,7 @@ function renderAudit() {
 }
 
 function move(from, to) {
-  if (busy || from === to || to < 0 || to >= order.length) return;
+  if (busy || filtering() || from === to || to < 0 || to >= order.length) return;
   const [item] = order.splice(from, 1);
   order.splice(to, 0, item);
   // Rebuilding the list installs the next set of move callbacks.
@@ -104,6 +129,23 @@ function render() {
     path.className = 'entry-path';
     path.textContent = fragment || 'Missing fragment';
     content.append(id, path);
+    const preview = previews.get(fragment);
+    item.dataset.search = `${disclosureId || ''} ${fragment || ''} ${preview?.text || ''}`.toLowerCase();
+    if (preview) {
+      const details = document.createElement('details');
+      details.className = 'copy-preview';
+      const summary = document.createElement('summary');
+      summary.textContent = 'Preview saved copy';
+      const body = document.createElement('div');
+      body.className = 'preview-body';
+      body.append(preview.content.cloneNode(true));
+      if (!body.textContent.trim()) body.textContent = preview.empty ? 'This fragment is empty.' : 'This fragment contains media. Open its source to review it.';
+      details.append(summary, body);
+      content.append(details);
+    }
+    if (fragment) {
+      try { content.append(sourceLink('Edit fragment ↗', fragment, 'edit')); } catch { /* Audit reports invalid paths. */ }
+    }
     const controls = document.createElement('div');
     controls.className = 'move-actions';
     [-1, 1].forEach((direction) => {
@@ -118,7 +160,7 @@ function render() {
     });
     item.append(handle, badge, checkbox, content, controls);
     item.addEventListener('dragstart', (event) => {
-      if (busy || !valid()) { event.preventDefault(); return; }
+      if (busy || !valid() || filtering()) { event.preventDefault(); return; }
       dragIndex = position;
       event.dataTransfer.setData('text/plain', String(position));
       event.dataTransfer.effectAllowed = 'move';
@@ -139,7 +181,7 @@ function render() {
     list.append(item);
   });
   renderAudit();
-  updateControls();
+  filterList();
 }
 
 async function load() {
@@ -147,6 +189,9 @@ async function load() {
   model = undefined;
   selected.clear();
   emptyFragments.clear();
+  previews.clear();
+  byId('search').value = '';
+  byId('search-summary').textContent = '';
   byId('disclosure-list').replaceChildren();
   byId('audit-output').replaceChildren();
   byId('audit-summary').textContent = '';
@@ -167,10 +212,9 @@ async function load() {
       const checks = await Promise.all(paths.map(async (fragment) => {
         try {
           const html = await readSource(context, fragment, actions.daFetch);
-          const doc = new DOMParser().parseFromString(html, 'text/html');
-          const main = doc.querySelector('main');
-          main?.querySelectorAll('.metadata, .da-metadata').forEach((item) => item.remove());
-          if (!main || (!main.textContent.trim() && !main.querySelector('img, picture, .icon'))) {
+          const preview = sourcePreview(html, context);
+          previews.set(fragment, preview);
+          if (preview.empty) {
             emptyFragments.add(fragment);
             return { type: 'warn', message: `Fragment ${fragment} is empty. Its disclosures will not receive a number.` };
           }
@@ -181,13 +225,12 @@ async function load() {
       }));
       setIssues.push(...checks.filter(Boolean));
     }
-    const link = document.createElement('a');
     const route = path.endsWith('.json') ? 'sheet' : 'form';
-    link.href = `https://da.live/${route}#/${context.org}/${context.repo}${path}`;
-    link.target = '_blank';
-    link.rel = 'noopener';
-    link.textContent = `Edit set: ${path}`;
-    byId('source').replaceChildren(link);
+    byId('source').replaceChildren(
+      sourceLink(`Edit set: ${path}`, path, route),
+      sourceLink('Browse sets ↗', '/disclosures/sets', 'browse'),
+      sourceLink('Browse fragments ↗', '/disclosures/fragments', 'browse'),
+    );
     if (directSet) pageHtml = '';
     render();
     status(valid() ? `Loaded ${model.data.disclosures.length} disclosure(s)${demo ? ' · Demo mode' : ''}.` : 'Fix the set or fragment errors shown in Audit, then refresh.', !valid());
@@ -225,6 +268,7 @@ document.querySelectorAll('[data-panel]').forEach((button) => {
   });
 });
 byId('refresh').addEventListener('click', load);
+byId('search').addEventListener('input', filterList);
 byId('save').addEventListener('click', save);
 byId('reset').addEventListener('click', () => {
   order = model.data.disclosures.map((_, index) => index);
@@ -247,14 +291,22 @@ async function init() {
       output.textContent = `Inserted marker: ${html}. The site displays its corresponding number and link.`;
     });
   } else if (window.parent !== window) {
-    // The DA SDK owns authentication and token refresh; no credentials are stored here.
-    // eslint-disable-next-line import/no-unresolved
-    const { default: DA_SDK } = await import('https://da.live/nx/utils/sdk.js');
-    sdk = await DA_SDK;
+    status('Connecting to the DA Library…');
+    sdk = await connectDA();
   } else return;
   if (!sdk?.context || !sdk.actions?.daFetch) throw new Error('Open Disclosure Manager through the DA Library to connect to your page.');
   await load();
 }
 
-const ready = init().catch((error) => status(error.message, true));
+function connectionFailed(error) {
+  status(error.message, true);
+  byId('retry').hidden = false;
+}
+
+byId('retry').addEventListener('click', () => {
+  byId('retry').hidden = true;
+  init().catch(connectionFailed);
+});
+
+const ready = init().catch(connectionFailed);
 export default ready;

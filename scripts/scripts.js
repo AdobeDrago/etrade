@@ -99,6 +99,45 @@ function buildFloatingDockAutoBlock(main) {
   });
 }
 
+/** Resolve standalone picker and legacy fragment links on the current environment. */
+async function loadFragmentLinks(main) {
+  try {
+    const references = [...main.querySelectorAll('a[href*="/fragments/"]')].flatMap((link) => {
+      // The picker marks the anchor itself .fragment; only ancestor blocks own decoration.
+      if (link.parentElement.closest('.fragment')) return [];
+      const paragraph = link.closest('p');
+      if (!paragraph || paragraph.querySelectorAll('a').length !== 1
+        || paragraph.textContent.trim() !== link.textContent.trim()
+        || paragraph.querySelector('img, picture')) return [];
+      let url;
+      try { url = new URL(link.getAttribute('href'), window.location.href); } catch { return []; }
+      const projectHost = /--etrade--adobedrago\.aem\.(page|live)$/i.test(url.hostname);
+      if (url.origin !== window.location.origin && !projectHost) return [];
+      const path = url.pathname.replace(/(?:\.plain)?\.html$/, '');
+      if (!path.includes('/fragments/') || path.endsWith('/')) return [];
+      return [{ paragraph, path }];
+    });
+    if (!references.length) return;
+    // eslint-disable-next-line import/no-cycle
+    const { loadFragment } = await import('../blocks/fragment/fragment.js');
+    await Promise.all(references.map(async ({ paragraph, path }) => {
+      try {
+        const fragment = await loadFragment(path);
+        if (!fragment) throw new Error(`Fragment could not be loaded: ${path}`);
+        const containingMain = paragraph.closest('main') || main;
+        paragraph.replaceWith(...fragment.children);
+        decorateDisclosureReferences(containingMain);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Fragment loading failed', error);
+      }
+    }));
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Fragment loading failed', error);
+  }
+}
+
 /**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
@@ -106,24 +145,7 @@ function buildFloatingDockAutoBlock(main) {
 function buildAutoBlocks(main) {
   try {
     buildFloatingDockAutoBlock(main);
-    // auto load `*/fragments/*` references
-    const fragments = [...main.querySelectorAll('a[href*="/fragments/"]')].filter((f) => !f.closest('.fragment'));
-    if (fragments.length > 0) {
-      // eslint-disable-next-line import/no-cycle
-      import('../blocks/fragment/fragment.js').then(({ loadFragment }) => {
-        fragments.forEach(async (fragment) => {
-          try {
-            const { pathname } = new URL(fragment.href);
-            const frag = await loadFragment(pathname);
-            fragment.parentElement.replaceWith(...frag.children);
-            decorateDisclosureReferences(main);
-          } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error('Fragment loading failed', error);
-          }
-        });
-      });
-    }
+    loadFragmentLinks(main);
     buildWidgetAutoBlocks(main);
     decorateDisclosureReferences(main);
   } catch (error) {
