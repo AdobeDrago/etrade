@@ -1,14 +1,26 @@
+main .section > .carousel-story-wrapper {
+  min-width: 0;
+  container: block-layout / inline-size;
+}
+
+:where(.carousel-story) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
 .carousel-story {
+  min-width: 0;
+  overflow-wrap: anywhere;
   max-width: 980px;
-  margin: 12px auto 0;
+  margin: var(--space-12) auto 0;
 }
 
 .carousel-story .carousel-story-slides {
   position: relative;
   display: flex;
-  gap: 16px;
-  margin: 28px 0 0;
-  padding: 0 0 4px;
+  gap: var(--space-16);
+  margin: 1.75rem 0 0;
+  padding: 0 0 var(--space-4);
   list-style: none;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -20,20 +32,27 @@
 }
 
 .carousel-story .carousel-story-card {
+  --text-color: var(--color-text-primary);
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --action-link-color: var(--color-link);
+  --action-outline-hover-text: var(--color-action-primary-text);
+
+  color-scheme: light;
   box-sizing: border-box;
   display: flex;
   flex: 0 0 100%;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-16);
   min-width: 0;
-  padding: 16px;
-  border: 1px solid #e2e2e2;
-  border-radius: 16px;
-  background: #fff;
-  color: #242424;
-  font-size: 13px;
-  line-height: 18px;
-  letter-spacing: -0.21px;
+  padding: var(--space-16);
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-13);
+  line-height: calc(18 / 13);
+  letter-spacing: var(--tracking-tight);
   scroll-snap-align: start;
 }
 
@@ -45,36 +64,36 @@
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 10px;
+  border-radius: 0.625rem;
 }
 
 .carousel-story .carousel-story-body {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-16);
 }
 
 .carousel-story .carousel-story-body p {
   margin: 0;
-  color: #666;
-  font-size: 16px;
-  line-height: 20px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-16);
+  line-height: calc(20 / 16);
 }
 
 .carousel-story .carousel-story-body .carousel-story-eyebrow {
   margin: 0;
-  color: #242424;
-  font-size: 14px;
-  line-height: 18px;
-  letter-spacing: 0.14px;
-  font-family: 'Chivo Mono', monospace;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-14);
+  line-height: calc(18 / 14);
+  letter-spacing: var(--tracking-eyebrow);
+  font-family: var(--font-family-mono);
 }
 
 .carousel-story .carousel-story-heading {
-  margin: 0 0 10px;
-  font-size: 28px;
-  line-height: 32px;
-  letter-spacing: -0.25px;
+  margin: 0 0 var(--space-10);
+  font-size: var(--font-size-28);
+  line-height: calc(32 / 28);
+  letter-spacing: var(--tracking-tight);
 }
 
 .carousel-story .carousel-story-nav {
@@ -85,29 +104,29 @@
 .carousel-story .carousel-story-nav button {
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 48px;
+  width: var(--space-64);
+  height: var(--space-48);
   margin: 0;
   padding: 0;
-  border: 1px solid #e4e4e4;
-  border-radius: 16px 0 0 16px;
-  background: white;
-  color: #242424;
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-card) 0 0 var(--radius-card);
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
   cursor: pointer;
 }
 
 .carousel-story .carousel-story-nav button::before {
-  width: 10px;
-  height: 10px;
+  width: var(--space-10);
+  height: var(--space-10);
   border: solid currentcolor;
-  border-width: 2px 2px 0 0;
+  border-width: var(--border-width-strong) var(--border-width-strong) 0 0;
   content: '';
   transform: rotate(-135deg);
 }
 
 .carousel-story .carousel-story-nav .carousel-story-next {
   border-left: 0;
-  border-radius: 0 16px 16px 0;
+  border-radius: 0 var(--radius-card) var(--radius-card) 0;
 }
 
 .carousel-story .carousel-story-nav .carousel-story-next::before {
@@ -115,20 +134,23 @@
 }
 
 .carousel-story .carousel-story-dots {
+  box-sizing: border-box;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 6.4px;
+  gap: 0.4rem;
   width: fit-content;
-  margin: 24px auto 0;
-  border-radius: 1000px;
-  padding: 12px 16px;
-  background: #fff;
+  max-width: 100%;
+  margin: var(--space-24) auto 0;
+  border-radius: var(--radius-pill);
+  padding: var(--space-12) var(--space-16);
+  background: var(--color-surface-default);
 }
 
 .carousel-story .carousel-story-dots button {
   position: relative;
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   margin: 0;
   padding: 0;
   border: 0;
@@ -138,24 +160,24 @@
 
 .carousel-story .carousel-story-dots button::before {
   position: absolute;
-  inset: 5px;
-  border-radius: 50%;
-  background: #242424;
+  inset: 0.3125rem;
+  border-radius: var(--radius-round);
+  background: var(--color-text-primary);
   content: '';
 }
 
 .carousel-story .carousel-story-dots button[aria-current='true']::before {
-  background: #451fad;
+  background: var(--color-link-hover);
 }
 
 .carousel-story .carousel-story-dots button[aria-current='true'] {
-  outline: 1px solid #451fad;
-  border-radius: 50%;
+  outline: var(--focus-ring-width) solid var(--color-link-hover);
+  border-radius: var(--radius-round);
 }
 
 .carousel-story .carousel-story-nav button:disabled {
-  color: #666;
-  background: #ccc;
+  color: var(--color-text-secondary);
+  background: var(--color-border-strong);
   cursor: default;
 }
 
@@ -173,49 +195,56 @@
 }
 
 .carousel-story :is(button, .carousel-story-slides):focus-visible {
-  outline: 2px solid #5627d8;
-  outline-offset: 2px;
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
 }
 
 @media (width >= 768px) {
   .carousel-story .carousel-story-card {
-  flex-basis: calc((100% - 16px) / 2);
+  flex-basis: calc((100% - var(--space-16)) / 2);
 }
 }
 
 @media (width >= 768px) {
   .carousel-story .carousel-story-card {
-    padding: 24px;
+    padding: var(--space-24);
   }
 }
 
-body.why-etrade .section:has(.carousel-story) .default-content-wrapper {
+body.why-etrade .section:not([data-section-layout="authored"]):has(.carousel-story) .default-content-wrapper {
   max-width: 1020px;
   text-align: center;
 }
 
-body.why-etrade .section:has(.carousel-story) .default-content-wrapper > h2 {
-  margin-bottom: 10px;
-  font-size: 32px;
-  line-height: 36px;
+body.why-etrade .section:not([data-section-layout="authored"]):has(.carousel-story) .default-content-wrapper > h2 {
+  margin-bottom: var(--space-10);
+  font-size: var(--font-size-32);
+  line-height: calc(36 / 32);
 }
 
-body.why-etrade .section:has(.carousel-story) .default-content-wrapper > p {
-  margin-bottom: 16px;
+body.why-etrade .section:not([data-section-layout="authored"]):has(.carousel-story) .default-content-wrapper > p {
+  margin-bottom: var(--space-16);
 }
 
 @media (width >= 768px) {
-  body.why-etrade .section:has(.carousel-story) .default-content-wrapper {
+  body.why-etrade .section:not([data-section-layout="authored"]):has(.carousel-story) .default-content-wrapper {
     max-width: 1000px;
   }
 
-  body.why-etrade .section:has(.carousel-story) .default-content-wrapper > h2 {
-    font-size: 44px;
-    line-height: 48px;
+  body.why-etrade .section:not([data-section-layout="authored"]):has(.carousel-story) .default-content-wrapper > h2 {
+    font-size: var(--font-size-44);
+    line-height: calc(48 / 44);
   }
 }
 
+body.why-etrade main > .section:not([data-section-layout="authored"]):has(.carousel-story) {
+  padding-bottom: 5.25rem;
+}
 
-body.why-etrade main > .section:has(.carousel-story) {
-  padding-bottom: 84px;
+/* Adapt to the space provided by the section, including enlarged text. */
+@container block-layout (width < 22rem) {
+  main .section .carousel-story .carousel-story-card {
+    flex-basis: 100%;
+    padding-inline: min(var(--space-24), 8%);
+  }
 }

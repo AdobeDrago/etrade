@@ -1,70 +1,107 @@
+main .section > .welcome-hero-wrapper {
+  min-width: 0;
+  container: block-layout / inline-size;
+}
+
+:where(.welcome-hero) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
+main > .section.welcome-hero-container {
+  margin: 0;
+  padding: 0;
+}
+
+main > .section > .welcome-hero-wrapper {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
 .welcome-hero {
+  --text-color: var(--color-text-inverse);
+  --link-color: var(--color-link-inverse);
+  --link-hover-color: var(--color-link-inverse-hover);
+  --action-link-color: var(--color-link-inverse);
+  --action-outline-hover-text: var(--color-text-primary);
+
+  color-scheme: dark;
+  min-width: 0;
+  overflow-wrap: anywhere;
   position: relative;
   box-sizing: border-box;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 24px;
-  padding: 24px 20px;
+  gap: var(--space-24);
+  padding: var(--space-24) var(--space-20);
   isolation: isolate;
-  background: var(--brand-dark-bg);
+  background: var(--color-surface-inverse);
 }
 
 .welcome-hero .welcome-hero-login {
+  --text-color: var(--color-text-primary);
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --action-link-color: var(--color-link);
+  --action-outline-hover-text: var(--color-action-primary-text);
+
+  color-scheme: light;
   z-index: 1;
   order: 0;
   box-sizing: border-box;
   width: 100%;
   max-width: 400px;
-  padding: 24px 35px;
-  background: #fff;
-  color: var(--brand-text);
-  font-size: 13px;
-  line-height: 18px;
+  padding: var(--space-24) 2.1875rem;
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-13);
+  line-height: calc(18 / 13);
 }
 
 .welcome-hero .welcome-hero-login :is(h1, h2) {
-  margin: 0 0 18px;
+  margin: 0 0 1.125rem;
   color: inherit;
-  font-size: 32px;
-  line-height: 38px;
+  font-size: var(--font-size-32);
+  line-height: calc(38 / 32);
   text-align: center;
 }
 
 .welcome-hero .welcome-hero-login p {
-  margin: 15px 0;
+  margin: 0.9375rem 0;
   color: inherit;
-  font-size: 13px;
-  line-height: 18px;
+  font-size: var(--font-size-13);
+  line-height: calc(18 / 13);
 }
 
 .welcome-hero .welcome-hero-form {
-  margin: 0 0 26px;
+  margin: 0 0 1.625rem;
 }
 
 .welcome-hero .welcome-hero-field + .welcome-hero-field {
-  margin-top: 23px;
+  margin-top: 1.4375rem;
 }
 
 .welcome-hero .welcome-hero-field > label,
 .welcome-hero .welcome-hero-password-label {
   display: block;
-  margin-bottom: 2px;
+  margin-bottom: var(--space-2);
 }
 
 .welcome-hero .welcome-hero-destination > label {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: var(--space-4);
 }
 
 .welcome-hero .welcome-hero-field > input,
 .welcome-hero .welcome-hero-select select {
   box-sizing: border-box;
   width: 100%;
-  height: 33px;
-  border: 1px solid #707070;
+  height: 2.0625rem;
+  border: var(--border-width-thin) solid var(--color-border-control);
   border-radius: 0;
-  padding: 5px 12px;
-  background: #fff;
+  padding: 0.3125rem var(--space-12);
+  background: var(--color-surface-default);
   color: inherit;
 }
 
@@ -77,71 +114,71 @@
 .welcome-hero .welcome-hero-show-password {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 0.3125rem;
   border: 0;
   padding: 0;
   background: transparent;
-  color: #6525ff;
-  line-height: 18px;
+  color: var(--color-link);
+  line-height: calc(18 / 13);
   cursor: pointer;
 }
 
 .welcome-hero .welcome-hero-login-icon {
   flex: 0 0 auto;
-  width: 16px;
-  height: 16px;
-  color: var(--brand-accent);
+  width: var(--space-16);
+  height: var(--space-16);
+  color: var(--color-action-primary);
   fill: currentcolor;
 }
 
 .welcome-hero .welcome-hero-options {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
-  margin: 21px 0 18px;
+  gap: 0.375rem;
+  margin: 1.3125rem 0 1.125rem;
 }
 
 .welcome-hero .welcome-hero-options label {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-10);
   cursor: pointer;
 }
 
 .welcome-hero .welcome-hero-options input {
   appearance: none;
-  flex: 0 0 16px;
+  flex: 0 0 var(--space-16);
   box-sizing: border-box;
-  width: 16px;
-  height: 16px;
+  width: var(--space-16);
+  height: var(--space-16);
   margin: 0;
-  border: 1px solid #707070;
-  border-radius: 2px;
-  background: #fff;
+  border: var(--border-width-thin) solid var(--color-border-control);
+  border-radius: var(--radius-control);
+  background: var(--color-surface-default);
   cursor: pointer;
 }
 
 .welcome-hero .welcome-hero-options input:checked {
-  border-color: var(--brand-accent);
-  background: var(--brand-accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m3 8 3 3 7-7' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E") center / 14px no-repeat;
+  border-color: var(--color-action-primary);
+  background: var(--color-action-primary) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m3 8 3 3 7-7' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E") center / 14px no-repeat;
 }
 
 .welcome-hero .welcome-hero-security-option {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 0.1875rem;
 }
 
 .welcome-hero .welcome-hero-security-info {
-  flex: 0 0 13px;
-  width: 13px;
-  height: 13px;
+  flex: 0 0 0.8125rem;
+  width: 0.8125rem;
+  height: 0.8125rem;
   border: 1.5px solid currentcolor;
-  border-radius: 50%;
+  border-radius: var(--radius-round);
   padding: 0;
   background: transparent;
   color: inherit;
-  font: 600 10px/10px Arial, sans-serif;
+  font: var(--font-weight-semibold) var(--font-size-10)/1 var(--font-family-ui);
   cursor: pointer;
 }
 
@@ -149,7 +186,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: end;
-  gap: 20px;
+  gap: var(--space-20);
 }
 
 .welcome-hero .welcome-hero-select {
@@ -158,67 +195,67 @@
 
 .welcome-hero .welcome-hero-select select {
   appearance: none;
-  padding-right: 32px;
+  padding-right: var(--space-32);
   cursor: pointer;
 }
 
 .welcome-hero .welcome-hero-select::after {
   position: absolute;
-  top: 11px;
-  right: 13px;
-  width: 7px;
-  height: 7px;
-  border-right: 2px solid currentcolor;
-  border-bottom: 2px solid currentcolor;
+  top: 0.6875rem;
+  right: 0.8125rem;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-right: var(--border-width-strong) solid currentcolor;
+  border-bottom: var(--border-width-strong) solid currentcolor;
   transform: rotate(45deg);
   pointer-events: none;
   content: '';
 }
 
 .welcome-hero .welcome-hero-submit {
-  height: 33px;
+  height: 2.0625rem;
   border: 0;
-  border-radius: 2px;
-  padding: 5px 12px;
-  background: #5627d8;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 23px;
+  border-radius: var(--radius-control);
+  padding: 0.3125rem var(--space-12);
+  background: var(--color-action-primary);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-15);
+  font-weight: var(--font-weight-medium);
+  line-height: calc(23 / 15);
   cursor: pointer;
 }
 
 .welcome-hero .welcome-hero-submit:hover {
-  background: var(--brand-accent-hover);
+  background: var(--color-action-primary-hover);
 }
 
 .welcome-hero .welcome-hero-login-footer {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
-  margin-top: 22px;
+  gap: var(--space-12);
+  margin-top: 1.375rem;
 }
 
 .welcome-hero .welcome-hero-login-footer a:has(svg) {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-4);
 }
 
 .welcome-hero .welcome-hero-login a:any-link {
-  color: #6525ff;
+  color: var(--color-link);
 }
 
 @media (width < 480px) {
   .welcome-hero .welcome-hero-login {
-    padding-right: 20px;
-    padding-left: 20px;
+    padding-right: var(--space-20);
+    padding-left: var(--space-20);
   }
 
   .welcome-hero .welcome-hero-options {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: var(--space-12);
   }
 }
 
@@ -226,7 +263,11 @@
   z-index: 1;
   order: 1;
   min-width: 0;
-  color: #fff;
+  color: var(--color-text-inverse);
+}
+
+.welcome-hero:not(.has-image) .welcome-hero-campaign {
+  background: var(--color-surface-inverse);
 }
 
 .welcome-hero > .welcome-hero-image,
@@ -244,7 +285,7 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(90deg, #19223c80, #19223c00);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--color-surface-feature) 50%, transparent), transparent);
   content: '';
 }
 
@@ -253,42 +294,42 @@
 }
 
 .welcome-hero .welcome-hero-copy :is(h1, h2) {
-  margin: 0 0 30px;
+  margin: 0 0 var(--space-30);
   color: inherit;
-  font-size: 40px;
-  line-height: 44px;
-  letter-spacing: -1px;
+  font-size: var(--font-size-40);
+  line-height: calc(44 / 40);
+  letter-spacing: var(--tracking-display);
 }
 
 .welcome-hero .welcome-hero-copy p {
-  margin: 0 0 30px;
+  margin: 0 0 var(--space-30);
   color: inherit;
-  font-size: 20px;
-  line-height: 26px;
+  font-size: var(--font-size-20);
+  line-height: calc(26 / 20);
 }
 
 .welcome-hero .welcome-hero-copy > p {
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 .welcome-hero .welcome-hero-copy p.etrade-actions {
-  margin-top: 40px;
+  margin-top: var(--space-40);
 }
 
 .welcome-hero .welcome-hero-copy .welcome-hero-primary {
   box-sizing: border-box;
-  width: 240px;
+  width: 15rem;
   max-width: 100%;
-  min-height: 33px;
-  padding: 9px 15px;
+  min-height: 2.0625rem;
+  padding: 0.5625rem 0.9375rem;
   border-radius: 0;
-  font-size: 15px;
-  line-height: 15px;
+  font-size: var(--font-size-15);
+  line-height: 1;
 }
 
 .welcome-hero :is(a, button, input, select):focus-visible {
-  outline: 3px solid #ab80ff;
-  outline-offset: 4px;
+  outline: var(--focus-ring-width) solid var(--color-link-inverse);
+  outline-offset: var(--focus-ring-offset);
 }
 
 @media (width < 768px) {
@@ -296,7 +337,7 @@
     grid-template-rows: auto auto;
     gap: 0;
     padding: 0;
-    background: #fff;
+    background: var(--color-surface-default);
   }
 
   .welcome-hero .welcome-hero-login {
@@ -306,7 +347,7 @@
 
   .welcome-hero .welcome-hero-campaign {
     grid-row: 2;
-    padding: 60px 20px;
+    padding: var(--space-60) var(--space-20);
   }
 
   .welcome-hero > .welcome-hero-image,
@@ -316,8 +357,8 @@
   }
 
   .welcome-hero .welcome-hero-copy p {
-    font-size: 22px;
-    line-height: 28px;
+    font-size: var(--font-size-22);
+    line-height: calc(28 / 22);
   }
 }
 
@@ -325,14 +366,14 @@
   .welcome-hero {
     grid-template-columns: minmax(0, 1fr) minmax(350px, 400px);
     align-items: start;
-    gap: 20px;
-    min-height: 560px;
-    padding: 30px max(20px, calc((100% - 1200px) / 2 + 10px));
+    gap: var(--space-20);
+    min-height: 35rem;
+    padding: var(--space-30) max(var(--space-20), calc((100% - 75rem) / 2 + var(--space-10)));
   }
 
   .welcome-hero .welcome-hero-campaign {
     order: 0;
-    padding: 10px;
+    padding: var(--space-10);
   }
 
   .welcome-hero .welcome-hero-login {
@@ -340,28 +381,71 @@
   }
 
   .welcome-hero .welcome-hero-copy :is(h1, h2) {
-    font-size: 48px;
-    line-height: 52px;
+    font-size: var(--font-size-48);
+    line-height: calc(52 / 48);
   }
 
   .welcome-hero .welcome-hero-copy p {
-    font-size: 22px;
-    line-height: 28px;
+    font-size: var(--font-size-22);
+    line-height: calc(28 / 22);
   }
 }
 
 @media (width >= 992px) {
   .welcome-hero .welcome-hero-copy :is(h1, h2) {
-    font-size: 72px;
-    line-height: 76px;
+    font-size: var(--font-size-72);
+    line-height: calc(76 / 72);
   }
 }
 
 @media (width >= 992px) {
   .welcome-hero .welcome-hero-login {
     justify-self: end;
-    width: 400px;
-    min-height: 465px;
-    margin-right: -10px;
+    width: 25rem;
+    min-height: 29.0625rem;
+    margin-right: -0.625rem;
+  }
+}
+
+/* Adapt to the space provided by the section, including enlarged text. */
+@container block-layout (width < 38rem) {
+  main .section .welcome-hero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    gap: 0;
+    padding: 0;
+  }
+
+  main .section .welcome-hero .welcome-hero-login {
+    grid-row: 1;
+    order: 0;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-inline: 0;
+    padding-inline: min(2.1875rem, 8%);
+  }
+
+  main .section .welcome-hero .welcome-hero-campaign {
+    grid-row: 2;
+    order: 1;
+    padding: var(--space-40) min(var(--space-20), 8%);
+  }
+
+  main .section .welcome-hero > .welcome-hero-image,
+main .section .welcome-hero.has-image::after {
+    grid-row: 2;
+    grid-column: 1;
+  }
+
+  main .section .welcome-hero .welcome-hero-options,
+main .section .welcome-hero .welcome-hero-logon-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  main .section .welcome-hero .welcome-hero-password-label,
+main .section .welcome-hero .welcome-hero-login-footer {
+    flex-wrap: wrap;
+    gap: var(--space-8);
   }
 }

@@ -1,5 +1,7 @@
 import { groupActions } from './actions.js';
 import decorateSectionBoundaries from './section-layout.js';
+import decorateSectionAuthoring from './section-authoring.js';
+import decoratePageTheme from './page-theme.js';
 import decorateDisclosureReferences from './disclosure-references.js';
 import decoratePageLayout, {
   localizePageLinks, decoratePricingIntroductions, decoratePageActions,
@@ -178,6 +180,7 @@ export function decorateMain(main) {
   decorateIcons(main);
   buildAutoBlocks(main);
   decorateSections(main);
+  decorateSectionAuthoring(main);
   decorateSectionBoundaries(main);
   decorateBlocks(main);
   decorateButtons(main);
@@ -190,6 +193,7 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  decoratePageTheme();
   decoratePageLayout();
   const main = doc.querySelector('main');
   if (main) {
