@@ -18,6 +18,7 @@ function cleanHref(href) {
   const hash = hashAt < 0 ? '' : href.slice(hashAt);
   const target = hashAt < 0 ? href : href.slice(0, hashAt);
   const queryAt = target.indexOf('?');
+  if (queryAt < 0) return href;
   const query = target.slice(queryAt + 1).split('&').filter((part) => {
     const name = new URLSearchParams(part).keys().next().value;
     return name !== KEY_PARAM && name !== CATEGORY_PARAM;
@@ -31,13 +32,21 @@ export function decorateTrackingLinks(root, base = root.baseURI || root.ownerDoc
   if (root.matches?.('a[href]')) links.unshift(root);
   links.forEach((link) => {
     const href = link.getAttribute('href');
+    const queryAt = href.indexOf('?');
+    const hashAt = href.indexOf('#');
+    if (queryAt < 0 || (hashAt >= 0 && queryAt > hashAt)) return;
+    // Resolving a fragment/empty href against the current page can inherit its query.
+    // Read only the query actually authored on this link, before URL normalization.
+    const query = href.slice(queryAt + 1, hashAt < 0 ? undefined : hashAt);
+    const parameters = new URLSearchParams(query);
+    if (!parameters.has(KEY_PARAM)) return;
     let url;
     try { url = new URL(href, base); } catch { return; }
-    if (!['http:', 'https:', 'mailto:', 'tel:'].includes(url.protocol)
-      || !url.searchParams.has(KEY_PARAM)) return;
-    const key = url.searchParams.get(KEY_PARAM).trim();
-    const required = categories(url.searchParams.get(CATEGORY_PARAM) ?? DEFAULT_CATEGORY);
-    link.setAttribute('href', cleanHref(href));
+    if (!['http:', 'https:', 'mailto:', 'tel:'].includes(url.protocol)) return;
+    const key = parameters.get(KEY_PARAM).trim();
+    const required = categories(parameters.get(CATEGORY_PARAM) ?? DEFAULT_CATEGORY);
+    const clean = cleanHref(href);
+    if (clean !== href) link.setAttribute('href', clean);
     link.removeAttribute('data-tracking-key');
     link.removeAttribute('data-tracking-category');
     if (!key || key.length > 160 || [...key].some((char) => char.charCodeAt(0) < 32)

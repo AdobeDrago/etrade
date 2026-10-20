@@ -65,6 +65,60 @@ test('raw and percent-encoded @tracking keys decorate consistently; ordinary tra
   assert.equal(ordinary.getAttribute('href'), '/home?tracking=real&cta-tracking-key=external');
 });
 
+test('fragment and empty links never inherit a tracking marker from the current page URL', () => {
+  const { document } = browser('<a href="#offer">Offer</a><a href="">Current page</a><a href="?tracking=campaign#offer">Campaign</a>');
+  const links = [...document.querySelectorAll('a')];
+  const authored = links.map((link) => link.getAttribute('href'));
+  for (let pass = 0; pass < 3; pass += 1) {
+    decorateTrackingLinks(document, `${PAGE}?@tracking=landing`);
+  }
+  assert.deepEqual(links.map((link) => link.getAttribute('href')), authored);
+  assert.ok(links.every((link) => !link.hasAttribute('data-tracking-key')));
+});
+
+test('URL normalization cannot cause repeated href writes for malformed tracking parameters', () => {
+  const { document } = browser();
+  const link = document.createElement('a');
+  const authored = '/home?@track\ning=hero';
+  link.setAttribute('href', authored);
+  let writes = 0;
+  const setAttribute = link.setAttribute.bind(link);
+  link.setAttribute = (name, value) => {
+    if (name === 'href') writes += 1;
+    setAttribute(name, value);
+  };
+  for (let pass = 0; pass < 3; pass += 1) decorateTrackingLinks(link, PAGE);
+  assert.equal(writes, 0);
+  assert.equal(link.getAttribute('href'), authored);
+  assert.equal(link.hasAttribute('data-tracking-key'), false);
+});
+
+test('observed relative links settle after decoration even when the page URL has a tracking marker', async () => {
+  const context = browser('', { location: new URL(`${PAGE}?@tracking=landing`) });
+  const NativeObserver = context.window.MutationObserver;
+  let deliveries = 0;
+  context.win.MutationObserver = class {
+    constructor(callback) {
+      this.observer = new NativeObserver((records) => {
+        deliveries += 1;
+        // Bound the old infinite loop so a regression fails instead of hanging the test runner.
+        if (deliveries > 5) this.observer.disconnect();
+        else callback(records);
+      });
+    }
+
+    observe(target, options) { this.observer.observe(target, options); }
+  };
+  startTracking(context.document, context.win);
+  const link = context.document.createElement('a');
+  link.setAttribute('href', '?@tracking=authored#offer');
+  context.document.querySelector('main').append(link);
+  await settle();
+  assert.ok(deliveries <= 2, `Expected observer to settle, received ${deliveries} callbacks`);
+  assert.equal(link.getAttribute('href'), '#offer');
+  assert.equal(link.dataset.trackingKey, 'authored');
+});
+
 test('category grants release only eligible events; a missing destination never reports a send', async () => {
   const queue = createTrackingQueue();
   queue.track({ key: 'advertising' });
