@@ -169,7 +169,8 @@ export default function startPerformanceDemo(doc = document, win = window, depen
   function interaction(event) {
     if (stopped || doc.hidden || (consentGated && !consentGranted)) return;
     // Control changes do not inflate the workload; the explicit response test does.
-    if (event.target.closest?.('.demo-helper') && !event.target.closest('[data-perf-interaction]')) return;
+    if (event.target.closest?.('.demo-helper, .demo-cookie-banner')
+      && !event.target.closest('[data-perf-interaction]')) return;
     state.simulatedCPU += occupy(win, workload.interaction, 'interaction');
   }
 

@@ -210,20 +210,26 @@ export default function mountPerformanceControls(doc, win) {
   bannerLabel.append(bannerToggle, node(doc, 'span', 'label-text', 'Show demo cookie banner'));
   const bannerWaiting = node(doc, 'p', 'muted', 'The demo banner will appear when simulated OneTrust is ready.');
   bannerWaiting.setAttribute('role', 'status');
-  const banner = node(doc, 'section', 'cookie-banner');
+  const banner = doc.createElement('aside');
+  banner.className = 'demo-cookie-banner';
+  banner.hidden = true;
   banner.id = 'demo-helper-cookie-banner';
   banner.setAttribute('role', 'region');
   banner.setAttribute('aria-labelledby', 'demo-helper-cookie-banner-title');
-  const bannerTitle = node(doc, 'h4', 'heading', 'Demo cookie consent');
+  const bannerTitle = node(doc, 'h2', 'heading', 'Demo cookie consent');
   bannerTitle.id = 'demo-helper-cookie-banner-title';
   const bannerActions = node(doc, 'div', 'actions');
   const bannerAccept = button(doc, 'Demo Accept');
-  bannerAccept.className = 'demo-helper-primary';
+  bannerAccept.className = 'demo-cookie-banner-action demo-cookie-banner-accept';
   const bannerDecline = button(doc, 'Demo Decline');
+  bannerDecline.className = 'demo-cookie-banner-action';
   bannerActions.append(bannerAccept, bannerDecline);
-  banner.append(node(doc, 'p', 'badge', 'DEMONSTRATION ONLY'), bannerTitle);
-  banner.append(node(doc, 'p', 'muted', 'This is where you would normally see a message about cookie consent. This banner is for demonstration only.'), bannerActions);
-  bannerControl.append(bannerLabel, bannerWaiting, banner);
+  const bannerCopy = node(doc, 'div', 'banner-copy');
+  bannerCopy.append(node(doc, 'p', 'badge', 'DEMONSTRATION ONLY'), bannerTitle);
+  bannerCopy.append(node(doc, 'p', 'muted', 'This is where you would normally see a message about cookie consent. This banner is for demonstration only.'));
+  banner.append(bannerCopy, bannerActions);
+  doc.body.append(banner);
+  bannerControl.append(bannerLabel, bannerWaiting);
   const responseStatus = node(doc, 'p', 'muted');
   const refreshStatus = node(doc, 'p', 'muted');
   refreshStatus.setAttribute('role', 'status');
@@ -231,6 +237,16 @@ export default function mountPerformanceControls(doc, win) {
   section.append(bannerControl);
   section.append(responseStatus, refreshStatus, settings);
   let lastConsent;
+  let bannerVisible = false;
+  const notifyBannerLayout = () => doc.dispatchEvent(new win.CustomEvent('demo-cookie-banner:updated'));
+  if (win.ResizeObserver) new win.ResizeObserver(notifyBannerLayout).observe(banner);
+
+  function showBanner(visible) {
+    banner.hidden = !visible;
+    if (bannerVisible === visible) return;
+    bannerVisible = visible;
+    notifyBannerLayout();
+  }
 
   function render() {
     const snapshot = win.etradePerformanceDemo?.snapshot();
@@ -238,10 +254,9 @@ export default function mountPerformanceControls(doc, win) {
     runtimeActions.hidden = !snapshot;
     consentHelp.hidden = !snapshot;
     bannerControl.hidden = true;
-    banner.hidden = true;
     bannerWaiting.hidden = true;
     status.textContent = snapshot ? snapshot.status : 'Off · choose a measured baseline to compare.';
-    if (!snapshot) return;
+    if (!snapshot) { showBanner(false); return; }
     const real = snapshot.config.profile === 'onetrust-real';
     reference.hidden = real;
     realDownloads.hidden = !real;
@@ -268,7 +283,7 @@ export default function mountPerformanceControls(doc, win) {
     lastConsent = snapshot.consent;
     bannerToggle.disabled = snapshot.status === 'Stopped';
     bannerWaiting.hidden = !bannerToggle.checked || snapshot.cmpReady;
-    banner.hidden = !gated || !bannerToggle.checked || !snapshot.cmpReady;
+    showBanner(gated && bannerToggle.checked && snapshot.cmpReady);
     consent.hidden = !gated;
     decline.hidden = !gated;
     consent.disabled = snapshot.status === 'Stopped' || !snapshot.cmpReady;
@@ -337,7 +352,7 @@ export default function mountPerformanceControls(doc, win) {
     if (accepted) win.etradePerformanceDemo.grantConsent();
     else win.etradePerformanceDemo.declineConsent();
     render();
-    if (restoreFocus) (accepted ? consent : decline).focus();
+    if (restoreFocus) (doc.querySelector('.demo-helper-toggle') || bannerToggle).focus();
   }
   consent.addEventListener('click', () => chooseConsent(true));
   decline.addEventListener('click', () => chooseConsent(false));
@@ -345,9 +360,7 @@ export default function mountPerformanceControls(doc, win) {
   bannerDecline.addEventListener('click', () => chooseConsent(false));
   bannerToggle.addEventListener('change', () => {
     render();
-    if (bannerToggle.checked) {
-      (banner.hidden ? bannerWaiting : banner).scrollIntoView?.({ block: 'nearest', behavior: 'instant' });
-    }
+    if (bannerToggle.checked && banner.hidden) bannerWaiting.scrollIntoView?.({ block: 'nearest' });
   });
   stop.addEventListener('click', () => { win.etradePerformanceDemo?.stop(); render(); });
   run.addEventListener('click', () => { win.etradePerformanceDemo?.runInteractions(); render(); });

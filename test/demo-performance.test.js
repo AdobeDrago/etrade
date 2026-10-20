@@ -6,6 +6,7 @@ import test from 'node:test';
 import { parseHTML } from 'linkedom';
 import startPerformanceDemo, { readPerformanceConfig, performanceURL } from '../scripts/demo-performance.js';
 import mountPerformanceControls from '../scripts/demo-performance-controls.js';
+import mountDemoHelper from '../scripts/demo-helper.js';
 
 const manifest = JSON.parse(await readFile(new URL('../scripts/demo-performance-profile.json', import.meta.url)));
 
@@ -608,7 +609,7 @@ test('real controls expose two valid strategies and real preferences without sim
   assert.equal(controls.querySelectorAll('[role="tab"]')[2].textContent, 'Consent');
   assert.ok(controls.textContent.includes('Unavailable'));
   assert.equal(controls.querySelector('.demo-helper-banner-control').hidden, true);
-  assert.equal(controls.querySelector('.demo-helper-cookie-banner').hidden, true);
+  assert.equal(context.document.querySelector('.demo-cookie-banner').hidden, true);
   controller.stop();
 });
 
@@ -621,8 +622,10 @@ test('demo banner is opt-in, waits for CMP readiness and shares the panel consen
   });
   const controls = mountPerformanceControls(context.document, context.win);
   const toggle = controls.querySelector('.demo-helper-banner-toggle input');
-  const banner = controls.querySelector('.demo-helper-cookie-banner');
-  const click = (text) => [...controls.querySelectorAll('button')]
+  const banner = context.document.querySelector('.demo-cookie-banner');
+  assert.equal(banner.parentElement, context.document.body);
+  assert.equal(controls.contains(banner), false);
+  const click = (text) => [...controls.querySelectorAll('button'), ...banner.querySelectorAll('button')]
     .find((element) => element.textContent === text).dispatchEvent(new context.window.Event('click'));
   assert.equal(toggle.checked, false);
   assert.equal(banner.hidden, true);
@@ -646,6 +649,11 @@ test('demo banner is opt-in, waits for CMP readiness and shares the panel consen
   assert.equal(controller.snapshot().consent, 'accepted');
   assert.equal(controller.snapshot().completed, manifest.resources.length);
   assert.equal(banner.hidden, true);
+  const cpuBeforeChoice = controller.snapshot().simulatedCPU;
+  toggle.checked = true;
+  toggle.dispatchEvent(new context.window.Event('change'));
+  click('Demo Accept');
+  assert.equal(controller.snapshot().simulatedCPU, cpuBeforeChoice);
   toggle.checked = true;
   toggle.dispatchEvent(new context.window.Event('change'));
   click('Accept simulated tracking'); // Repeating the same panel choice also dismisses the banner.
@@ -671,7 +679,7 @@ test('banner stays absent from comparisons without a simulated consent gate and 
       await settle();
       const controls = mountPerformanceControls(context.document, context.win);
       assert.equal(controls.querySelector('.demo-helper-banner-control').hidden, true);
-      assert.equal(controls.querySelector('.demo-helper-cookie-banner').hidden, true);
+      assert.equal(context.document.querySelector('.demo-cookie-banner').hidden, true);
       controller?.stop();
     }));
   const context = browser('?perf=etrade&perf-phase=consent');
@@ -684,8 +692,46 @@ test('banner stays absent from comparisons without a simulated consent gate and 
   const toggle = controls.querySelector('.demo-helper-banner-toggle input');
   toggle.checked = true;
   toggle.dispatchEvent(new context.window.Event('change'));
-  assert.equal(controls.querySelector('.demo-helper-cookie-banner').hidden, false);
+  assert.equal(context.document.querySelector('.demo-cookie-banner').hidden, false);
   controller.stop();
-  assert.equal(controls.querySelector('.demo-helper-cookie-banner').hidden, true);
+  assert.equal(context.document.querySelector('.demo-cookie-banner').hidden, true);
   assert.equal(toggle.disabled, true);
+});
+
+test('page banner survives closing the panel, reserves space and restores focus after a choice', async () => {
+  const context = browser('?perf=etrade&perf-phase=eds');
+  context.win.innerHeight = 900;
+  context.win.MutationObserver = function MutationObserver() { this.observe = () => {}; };
+  const controller = startPerformanceDemo(context.document, context.win, {
+    fetchProfile: async () => manifest, importResource: async () => {},
+  });
+  const helper = mountDemoHelper(context.document, context.win);
+  const banner = context.document.querySelector('.demo-cookie-banner');
+  banner.getBoundingClientRect = () => ({ top: 740, height: 144 });
+  let focused;
+  Object.defineProperty(context.document, 'activeElement', { get: () => focused });
+  context.document.querySelectorAll('button, input').forEach((element) => {
+    element.focus = () => { focused = element; };
+  });
+  const toggle = helper.querySelector('.demo-helper-banner-toggle input');
+  helper.querySelector('.demo-helper-toggle').dispatchEvent(new context.window.Event('click'));
+  assert.equal(helper.querySelector('.demo-helper-panel').hidden, false);
+  await delayedCMP(context, controller);
+  toggle.checked = true;
+  toggle.dispatchEvent(new context.window.Event('change'));
+  assert.equal(helper.style.getPropertyValue('--demo-helper-bottom'), '172px');
+  const performance = helper.querySelector('.demo-helper-performance');
+  performance.open = false;
+  helper.querySelector('.demo-helper-close').dispatchEvent(new context.window.Event('click'));
+  assert.equal(helper.querySelector('.demo-helper-panel').hidden, true);
+  assert.equal(banner.hidden, false);
+  const accept = [...banner.querySelectorAll('button')].find((element) => element.textContent === 'Demo Accept');
+  accept.focus();
+  accept.dispatchEvent(new context.window.Event('click', { bubbles: true }));
+  await settle();
+  assert.equal(controller.snapshot().consent, 'accepted');
+  assert.equal(banner.hidden, true);
+  assert.equal(helper.style.getPropertyValue('--demo-helper-bottom'), '16px');
+  assert.equal(focused, helper.querySelector('.demo-helper-toggle'));
+  controller.stop();
 });

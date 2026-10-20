@@ -283,11 +283,13 @@ export default function mountDemoHelper(doc = document, win = window) {
     const dock = doc.querySelector('.floating-dock-bar');
     const rect = dock?.getBoundingClientRect();
     const dockLinks = dock?.querySelector('.floating-dock-secondary:not([hidden])');
+    const banner = doc.querySelector('.demo-cookie-banner:not([hidden])')?.getBoundingClientRect();
     const top = Math.min(
       rect?.top ?? win.innerHeight,
       dockLinks?.getBoundingClientRect().top ?? win.innerHeight,
+      banner?.top ?? win.innerHeight,
     );
-    const bottom = rect?.height ? Math.max(16, win.innerHeight - top + 12) : 16;
+    const bottom = rect?.height || banner?.height ? Math.max(16, win.innerHeight - top + 12) : 16;
     root.style.setProperty('--demo-helper-bottom', `${bottom}px`);
     positionHighlight();
   }
@@ -340,6 +342,7 @@ export default function mountDemoHelper(doc = document, win = window) {
   }
   if (win.ResizeObserver) new win.ResizeObserver(position).observe(doc.body);
   win.addEventListener('resize', position);
+  doc.addEventListener('demo-cookie-banner:updated', position);
   win.addEventListener('scroll', positionHighlight, { passive: true });
   win.addEventListener('storage', (event) => {
     if (event.key !== DEMO_BALANCE_KEY && event.key !== null) return;
