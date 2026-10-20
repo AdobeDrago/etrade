@@ -43,6 +43,7 @@ async function harness(body, loadSection, theme = '', realCMP = false) {
       decoratePageActions: noop,
     },
     './demo-host.js': { default: () => realCMP },
+    './tracking.js': { default: noop, decorateTrackingLinks: noop },
   };
   const source = await readFile(new URL('../scripts/scripts.js', import.meta.url), 'utf8');
   const themeModule = new vm.SourceTextModule(await readFile(new URL('../scripts/page-theme.js', import.meta.url), 'utf8'), { context });

@@ -284,3 +284,29 @@ The panel distinguishes the SDK file's load/error state from CMP initialization 
 **Downloads** lists actual OneTrust resource requests and durations, including configuration and SDK requests observed by the browser. Cross-origin timing restrictions, failed requests or missing size data appear as unavailable totals rather than zero bytes. Captured fixture reference sizes are hidden in this mode. Use identical device/cache/throttling conditions for comparisons; an allowlist-blocked partial run cannot establish full production timing equivalence.
 
 The integration follows [Adobe's CMP loading guidance](https://www.aem.live/developer/cmp-integration) and [OneTrust's documented category events](https://developer.onetrust.com/onetrust/docs/javascript-events-guide). `npm run test:performance-demo` includes real-integration tests for script errors, initialization timeouts, recovery, category matching, revocation, duplicate callbacks and a consented-module load failure. `npm run test:sections` also checks that the real mode cannot import the dummy consent override.
+
+### Authored link tracking
+
+Add `@tracking` to any authored link or CTA URL to opt that interaction into tracking:
+
+```text
+/home?tracking=campaign&@tracking=hero-home#offer
+```
+
+The shared decorator produces `href="/home?tracking=campaign#offer"`, `data-tracking-key="hero-home"`, and `data-tracking-category="C0004"`. It removes only the reserved authoring parameters, preserving other query bytes, relative paths and fragments. Both literal `@tracking` and URL-encoded `%40tracking` are accepted and removed after decoration. An empty key disables tracking. Remove the parameter in authored content to opt out. The destination's ordinary `tracking` parameter is never consumed. Mail and telephone links are supported too.
+
+The default required category is `C0004`. Optional `@tracking-category=C0002` selects a different category; a comma-separated list such as `C0002,C0004` requires every listed category. Match these IDs to the tenant's actual category policy. Invalid or empty category settings do not create a tracking marker. Authors only need a key for the default advertising example.
+
+`scripts/tracking.js` starts before autoblocking and CMP setup. `decorateMain` tags fragment content before block decoration; a targeted observer also handles later links and href updates. Moved or cloned anchors retain their attributes. One delegated listener captures normal, keyboard-generated and middle-button clicks, including clicks on descendants, without preventing or delaying navigation. Buttons can use the same `data-tracking-key` and `data-tracking-category` attributes.
+
+The category-aware queue is bounded to 100 events in memory for the current page. Navigation or reload clears it; no event history is persisted. Events awaiting an unknown choice remain queued. A category grant releases only eligible events; an explicit rejection or withdrawal discards waiting payloads and skips new events for that category. Previously discarded events are never replayed on a later grant. A full queue skips new captures rather than evicting waiting events.
+
+The queue reads exact groups from `OneTrustGroupsUpdated`, the existing real `consent.update` bridge, and restored `OnetrustActiveGroups`. `OneTrust.IsAlertBoxClosed()` and `OTConsentApplied` distinguish unresolved choices from a saved or explicit rejection. An initialized banner without a choice leaves absent categories pending; removing a previously granted category revokes it immediately. Dummy query-string consent and performance-simulation consent cannot grant the real queue. The existing consented-module loader still requires both `C0002` and `C0004`; the new queue evaluates each event's categories independently.
+
+**Demo controls → Tracking** shows live page events, category states and expandable payload previews. **Try a sample queue** provides separate C0002/C0004 controls and sample clicks. These controls never alter OneTrust preferences or real page-event consent. Both logs show the latest 25 retained events. Consent changes update the log immediately; ready events explicitly say **destination not connected**. The local `/test/demo-helper.html` review includes two marked links that stay on the page for inspection.
+
+No Adobe library or network sender is installed. A future integration can register an asynchronous adapter with `window.etradeTracking.setSender(adapter)`; it receives each eligible record, including `payload`, `categories`, and the original capture timestamp. `setSender(null)` pauses dispatch. The queue calls the adapter sequentially in original order among eligible events, rechecks consent before each call, and marks an event sent only when the adapter promise resolves. It does not claim downstream ingestion. Failed calls are visible and are never automatically retried because a rejected response can follow a delivered request. Revocation cannot cancel a request already dispatched, but prevents later dispatches.
+
+Payload previews use the standard XDM link-click shape (`web.webinteraction.linkClicks`, `web.webInteraction.name`, `linkClicks.value`) with the original click timestamp. Page and destination URLs omit query strings and fragments; mail/telephone destinations omit contact details. `context` carries the authored label and block name for future mapping. Actual Adobe Debugger beacons and CJA ingestion remain dependent on development configuration and a consent-aware adapter.
+
+Run `npm run test:tracking` for decoration, category separation, denial/revocation, ordering, queue bounds, dynamic links, and live-log isolation checks.

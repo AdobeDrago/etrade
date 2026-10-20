@@ -3,6 +3,7 @@ import { DEMO_BALANCE_KEY, readDemoBalance } from './demo-balance.js';
 import isDemoHelperHost from './demo-host.js';
 import mountPerformanceControls from './demo-performance-controls.js';
 import { readPerformanceConfig } from './demo-performance.js';
+import mountTrackingControls from './demo-tracking.js';
 
 export { default as isDemoHelperHost } from './demo-host.js';
 
@@ -104,7 +105,7 @@ export default function mountDemoHelper(doc = document, win = window) {
   const headingGroup = node(doc, 'div', 'heading-group');
   const heading = node(doc, 'h2', 'title', 'Demo controls');
   const close = button(doc, 'Close', 'close');
-  headingGroup.append(heading, node(doc, 'p', 'subtitle', 'Page tools & loading comparisons'));
+  headingGroup.append(heading, node(doc, 'p', 'subtitle', 'Page tools, performance & tracking'));
   header.append(headingGroup, close);
   const content = node(doc, 'div', 'content');
   const balanceSection = node(doc, 'section', 'section');
@@ -174,15 +175,18 @@ export default function mountDemoHelper(doc = document, win = window) {
   performance.open = true;
   performance.querySelector('summary').hidden = true;
   performanceView.append(performance);
+  const trackingView = node(doc, 'div', 'view');
+  trackingView.append(mountTrackingControls(doc, win));
   const navigation = node(doc, 'div', 'navigation');
   navigation.setAttribute('role', 'tablist');
   navigation.setAttribute('aria-label', 'Demo controls');
-  const views = [pageTools, performanceView];
+  const views = [pageTools, performanceView, trackingView];
+  const viewNames = ['page', 'performance', 'tracking'];
   const tabs = [];
   let selectedView = readPerformanceConfig(win.location.href) ? 1 : 0;
   try {
     const stored = win.sessionStorage.getItem(VIEW_KEY);
-    if (['page', 'performance'].includes(stored)) selectedView = stored === 'performance' ? 1 : 0;
+    if (viewNames.includes(stored)) selectedView = viewNames.indexOf(stored);
   } catch { /* Use the URL's initial view. */ }
   function selectView(index) {
     selectedView = index;
@@ -192,9 +196,11 @@ export default function mountDemoHelper(doc = document, win = window) {
       tab.tabIndex = i === index ? 0 : -1;
       views[i].hidden = i !== index;
     });
-    try { win.sessionStorage.setItem(VIEW_KEY, index === 1 ? 'performance' : 'page'); } catch { /* Optional persistence. */ }
+    try {
+      win.sessionStorage.setItem(VIEW_KEY, viewNames[index]);
+    } catch { /* Optional persistence. */ }
   }
-  ['Page tools', 'Performance'].forEach((text, index) => {
+  ['Page tools', 'Performance', 'Tracking'].forEach((text, index) => {
     const tab = button(doc, text, 'view-tab');
     tab.id = `demo-helper-view-tab-${index}`;
     tab.setAttribute('role', 'tab');
@@ -205,7 +211,10 @@ export default function mountDemoHelper(doc = document, win = window) {
     tab.addEventListener('click', () => selectView(index));
     tab.addEventListener('keydown', (event) => {
       const next = {
-        ArrowRight: 1 - index, ArrowLeft: 1 - index, Home: 0, End: 1,
+        ArrowRight: (index + 1) % views.length,
+        ArrowLeft: (index + views.length - 1) % views.length,
+        Home: 0,
+        End: views.length - 1,
       }[event.key];
       if (next === undefined) return;
       event.preventDefault();
@@ -349,7 +358,7 @@ export default function mountDemoHelper(doc = document, win = window) {
     setExpanded(!expanded);
     if (expanded) {
       render();
-      if (selectedView === 1) tabs[1].focus();
+      if (selectedView > 0) tabs[selectedView].focus();
       else {
         presets.querySelector('[aria-pressed="true"]')?.focus();
         if (!presets.contains(doc.activeElement)) presets.querySelector('button')?.focus();

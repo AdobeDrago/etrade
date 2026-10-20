@@ -7,6 +7,7 @@ import decoratePageLayout, {
   localizePageLinks, decoratePricingIntroductions, decoratePageActions,
 } from './page-layout.js';
 import isDemoHelperHost from './demo-host.js';
+import startTracking, { decorateTrackingLinks } from './tracking.js';
 import {
   loadHeader,
   loadFooter,
@@ -178,6 +179,7 @@ function decorateButtons(main) {
  */
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
+  decorateTrackingLinks(main, window.location.href);
   decorateIcons(main);
   buildAutoBlocks(main);
   decorateSections(main);
@@ -274,6 +276,7 @@ function loadDelayed(realConsent = false) {
 }
 
 async function loadPage() {
+  startTracking(document, window);
   let performanceDemo;
   if (isDemoHelperHost(window.location.hostname)
     && new URLSearchParams(window.location.search).has('perf')) {

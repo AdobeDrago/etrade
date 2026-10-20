@@ -139,7 +139,7 @@ test('expand and Escape maintain disclosure semantics and return focus to the tr
   assert.equal(document.activeElement, toggle);
 });
 
-test('page and performance views support keyboard switching and preserve the chosen view', () => {
+test('page, performance and tracking views support keyboard switching and preserve the chosen view', () => {
   const {
     root, document, window, session,
   } = page();
@@ -159,6 +159,15 @@ test('page and performance views support keyboard switching and preserve the cho
   tabs[0].dispatchEvent(new window.Event('click'));
   assert.equal(session.get('etrade:demo-helper-view'), 'page');
   assert.equal(views[0].hidden, false);
+  const end = new window.Event('keydown', { bubbles: true, cancelable: true });
+  end.key = 'End';
+  tabs[0].dispatchEvent(end);
+  assert.equal(views[2].hidden, false);
+  assert.equal(document.activeElement, tabs[2]);
+  assert.equal(session.get('etrade:demo-helper-view'), 'tracking');
+  tabs[2].dispatchEvent(right);
+  assert.equal(views[0].hidden, false);
+  assert.equal(document.activeElement, tabs[0]);
 });
 
 test('insights distinguish sample responses, authored overrides, failures and market state', async () => {

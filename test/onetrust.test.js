@@ -48,6 +48,7 @@ test('real SDK uses the correct asynchronous URL and registers callbacks before 
   assert.equal(script.getAttribute('data-domain-script'), ONETRUST_DOMAIN_ID);
   assert.equal(controller.hasConsent(), false);
   assert.equal(context.events[0].detail.consented, false);
+  assert.equal(context.events[0].detail.initialized, false);
   assert.equal(context.imports(), 0);
 });
 
@@ -98,6 +99,7 @@ test('both exact category IDs are required; repeated callbacks import the consen
   assert.equal(controller.snapshot().consentedModule, 'Loaded');
   assert.equal(controller.hasConsent(), true);
   assert.equal(context.events.at(-1).detail.source, 'onetrust');
+  assert.equal(context.events.at(-1).detail.initialized, true);
   assert.deepEqual(context.events.at(-1).detail.activeGroups, ['C0001', 'C0002', 'C0004']);
 });
 

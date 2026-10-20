@@ -13,6 +13,7 @@
     "test:sections": "node --experimental-vm-modules --test test/section-authoring.test.js test/page-layout.test.js test/page-loading.test.js",
     "test:hero": "node --experimental-vm-modules --test test/hero.test.js",
     "test:demo-helper": "node --experimental-vm-modules --test test/demo-helper.test.js",
+    "test:tracking": "node --experimental-vm-modules --test test/tracking.test.js",
     "lint:js": "eslint .",
     "lint:css": "stylelint \"blocks/**/*.css\" \"styles/*.css\"",
     "lint": "npm run lint:js && npm run lint:css",

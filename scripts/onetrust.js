@@ -70,6 +70,7 @@ export default function startOneTrust(doc = document, win = window, options = {}
     detail: {
       consented: controller.hasConsent(),
       source: 'onetrust',
+      initialized: state.initialized,
       activeGroups: [...state.activeGroups],
       requiredGroups: [...requiredGroups],
     },
