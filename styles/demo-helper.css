@@ -467,6 +467,67 @@
   background: var(--color-surface-page);
 }
 
+.demo-helper .demo-helper-vitals-header,
+.demo-helper .demo-helper-comparison-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.demo-helper .demo-helper-save-run,
+.demo-helper .demo-helper-clear-run {
+  flex-shrink: 0;
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.demo-helper .demo-helper-comparison {
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-medium);
+  margin: 12px 0;
+  padding: 12px;
+}
+
+.demo-helper .demo-helper-comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  table-layout: fixed;
+}
+
+.demo-helper .demo-helper-comparison-table :is(th, td) {
+  border-bottom: 1px solid var(--color-border-default);
+  padding: 8px 4px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.demo-helper .demo-helper-comparison-table th:first-child {
+  width: 36%;
+  padding-left: 0;
+  text-align: left;
+}
+
+.demo-helper .demo-helper-comparison-table td:last-child {
+  font-weight: var(--font-weight-semibold);
+}
+
+.demo-helper .demo-helper-comparison-notes,
+.demo-helper .demo-helper-comparison-description,
+.demo-helper .demo-helper-workload-help {
+  margin: 12px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.demo-helper .demo-helper-comparison-description {
+  margin: 8px 0;
+  white-space: pre-line;
+}
+
 .demo-helper .demo-helper-vitals .demo-helper-metrics {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

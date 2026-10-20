@@ -160,6 +160,7 @@ export default function startPerformanceDemo(doc = document, win = window, depen
   let profileFailed = false;
   let cmpTimer;
   let runtimeTimer;
+  let runtimeEndsAt;
   let interval;
   let manifest;
   let oneTrust;
@@ -202,6 +203,7 @@ export default function startPerformanceDemo(doc = document, win = window, depen
     doc.removeEventListener('click', interaction, true);
     doc.removeEventListener('keydown', interaction, true);
     state.runtimeActive = false;
+    runtimeEndsAt = undefined;
   }
 
   function startRuntime() {
@@ -209,10 +211,12 @@ export default function startPerformanceDemo(doc = document, win = window, depen
       || (consentGated && !consentGranted)) return;
     endRuntime();
     state.runtimeActive = true;
+    runtimeEndsAt = win.performance.now() + RUNTIME_MS;
     doc.addEventListener('click', interaction, true);
     doc.addEventListener('keydown', interaction, true);
     interval = win.setInterval(() => {
       if (!doc.hidden) state.simulatedCPU += occupy(win, workload.background, 'background');
+      publish();
     }, 2000);
     runtimeTimer = win.setTimeout(() => { endRuntime(); publish(); }, RUNTIME_MS);
   }
@@ -406,9 +410,12 @@ export default function startPerformanceDemo(doc = document, win = window, depen
       });
       const restrictedSizes = realCMP && (!actual.length
         || actual.some((entry) => !entry.decodedBodySize));
+      const remaining = state.runtimeActive
+        ? Math.max(0, runtimeEndsAt - win.performance.now()) : 0;
       return {
         ...state,
         metrics: { ...metrics },
+        runtimeRemainingMs: remaining,
         resources: state.resources.map((resource) => ({ ...resource })),
         milestones: { ...state.milestones },
         ...(realCMP ? {

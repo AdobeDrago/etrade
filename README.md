@@ -231,6 +231,8 @@ In **Performance**, use **No tag stack**, **Traditional** or **EDS** for a one-c
 
 When a performance comparison is active, **Page experience** is the first measurement tab, with LCP and CLS grouped under Core Web Vitals. **Downloads** separates this run's transfers from captured reference sizes, including OneTrust versus other tags. **Workload** contains simulation state, browser tasks and workload controls. Expand **Advanced settings** for library selection, additional loading strategies, assumed CPU presets or the real OneTrust SDK.
 
+Use **Save this run** beside Core Web Vitals to keep one fixed reference in the current browser tab. Switch from Traditional to EDS to compare saved and current LCP, FCP, CLS, transferred bytes, loaded files and consent. The reference survives reloads on the same page and page parameters; it is not included in copied comparison links. Changes to processing, balance or viewport, pending tags and incomplete real CMP loads are called out beside the table. These are individual observations, without automatic percentage claims or rankings. **Replace saved run** updates the reference; **Clear** removes only that reference. Saving becomes available after a paint measurement is observed; if browser storage is blocked, the panel reports that the reference could not be saved.
+
 Choose **Loading strategy** to compare the same script weights and processing budgets:
 
 - **Startup** (`perf-phase=early`): the OneTrust stub and Adobe Launch hold page decoration. The OneTrust banner and dependent tags load asynchronously. This models startup pressure without installing parser-blocking vendor scripts in the document head.
@@ -242,6 +244,8 @@ The EDS strategy follows [Adobe's CMP integration pattern](https://www.aem.live/
 
 For the full-stack simulation in EDS or consent-gated mode, enable **Show demo cookie banner** in the performance panel to display a OneTrust-style consent banner across the bottom of the page. It is independent of the panel and stays visible when the panel is closed or its sections are collapsed. The demo controls move above the banner so neither covers the other's buttons. It is off by default and appears once the simulated CMP is ready. The description explains that it is a demo and does not change real cookie preferences. **Accept** and **Decline** use exactly the same simulated consent actions as the panel buttons and dismiss the banner; the checkbox can reopen it to demonstrate another choice. A panel choice also dismisses it. The banner is unavailable in real OneTrust mode and comparisons without a simulated tracking consent gate.
 
+After a consent choice, **Simulated consent** collapses to make room for the results. Expand it to change the choice or reopen the banner. Choosing consent inside the panel moves focus to that summary; choosing it on the page returns focus to Demo controls.
+
 For example, compare `/home?perf=etrade&perf-phase=early&perf-work=medium` with `/home?perf=etrade&perf-phase=eds&perf-work=medium`. In EDS mode, measure both declined consent (two CMP fixtures) and accepted consent (all 20 fixtures). Waiting for acceptance is part of the strategy, so record when it occurs.
 
 The default `perf-work=none` adds only downloads and parsing of inert JavaScript fixtures. Optional `light|medium|heavy` presets add **assumed** CPU budgets:
@@ -252,7 +256,7 @@ The default `perf-work=none` adds only downloads and parsing of inert JavaScript
 | Moderate | 20 ms | 40 ms | 30 ms |
 | Heavy | 60 ms | 120 ms | 60 ms |
 
-These are fixed wall-clock budgets, not measured vendor execution times or device-scaled instructions. Each initialization task is capped at 500 ms. Interaction/background work runs for 30 seconds once content and tags are ready, skips hidden documents, and can be restarted or stopped in the controls. Use **Test response** or real menus, FAQs and inputs, then **Refresh measurements** after the next paint.
+These are fixed wall-clock budgets, not measured vendor execution times or device-scaled instructions. Each initialization task is capped at 500 ms. Interaction/background work runs for 30 seconds once content and tags are ready and skips hidden documents. **Workload** explains whether processing is disabled, awaiting consent, active or idle, and displays the remaining window while active. **Change processing** opens the relevant Advanced setting. **Restart 30-second workload** restarts the window; **Stop this run** stops further simulated work until a reload. **Test response** waits for paint and collects pending measurements automatically, then reports whether the assumed interaction workload was active. Real menus, FAQs and inputs also exercise an active workload.
 
 Browser performance observations update the panel automatically, batched for the next frame. **Refresh measurements** also waits for a paint, drains queued observations and confirms the update. It does not reload the page, rerun downloads or reset measurements. FCP and LCP can remain unchanged after initial rendering; use **Run again** for a fresh run or restart the workload from its tab if its 30-second window has expired.
 

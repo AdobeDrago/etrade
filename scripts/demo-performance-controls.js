@@ -1,5 +1,6 @@
 import { performanceURL, readPerformanceConfig } from './demo-performance.js';
 import isDemoHelperHost from './demo-host.js';
+import mountRunComparison from './demo-run-comparison.js';
 
 function node(doc, tag, name, text) {
   const element = doc.createElement(tag);
@@ -121,6 +122,12 @@ function nextInstruction(snapshot, progress) {
   return 'Explore the page, then compare Page experience and Downloads. Run again for a fresh measurement.';
 }
 
+function afterPaint(win, callback) {
+  if (win.requestAnimationFrame) {
+    win.requestAnimationFrame(() => win.requestAnimationFrame(() => win.setTimeout(callback, 0)));
+  } else Promise.resolve().then(callback);
+}
+
 /** Baseline and loaded comparisons share the same controls and measurement overhead. */
 export default function mountPerformanceControls(doc, win) {
   const current = readPerformanceConfig(win.location.href);
@@ -238,6 +245,11 @@ export default function mountPerformanceControls(doc, win) {
   }
   const vitals = group(0, 'Core Web Vitals', [['lcp', 'LCP · largest paint'], ['cls', 'CLS · layout shift']]);
   vitals.classList.add('demo-helper-vitals');
+  const comparison = mountRunComparison(doc, win);
+  const vitalsHeader = node(doc, 'div', 'vitals-header');
+  vitalsHeader.append(vitals.querySelector('h4'), comparison.save);
+  vitals.prepend(vitalsHeader);
+  panels[0].append(comparison.element, comparison.feedback);
   group(0, 'Additional observations', [['interaction', 'Slowest interaction (lab)'], ['fcp', 'FCP']]);
   panels[0].append(node(doc, 'p', 'muted', 'Slowest interaction is a lab observation, not field INP. Initial-load values can stay unchanged after the page finishes loading.'));
   const downloads = group(1, 'This run · fixture downloads', [['transfer', 'Transferred, including headers'], ['downloaded', 'Downloaded source size']]);
@@ -252,9 +264,10 @@ export default function mountPerformanceControls(doc, win) {
   group(2, 'Observed browser work', [['tasks', 'Long tasks'], ['excess', 'Long-task excess (>50 ms)']]);
   const workloadActions = node(doc, 'div', 'actions');
   const run = button(doc, 'Run 30-second workload');
-  const stop = button(doc, 'Stop workload');
+  const stop = button(doc, 'Stop this run');
   workloadActions.append(run, stop);
-  panels[2].append(workloadActions);
+  const workloadHelp = node(doc, 'p', 'workload-help');
+  panels[2].append(workloadHelp, workloadActions);
 
   const settings = node(doc, 'details', 'settings');
   settings.open = false;
@@ -282,6 +295,13 @@ export default function mountPerformanceControls(doc, win) {
     ['none', 'Download and parse only'], ['light', 'Light · assumed CPU work'], ['medium', 'Moderate · assumed CPU work'], ['heavy', 'Heavy · assumed CPU work'],
   ], current?.work || 'none');
   const processingHelp = node(doc, 'p', 'muted');
+  const changeProcessing = button(doc, 'Change processing');
+  panels[2].append(changeProcessing);
+  changeProcessing.addEventListener('click', () => {
+    settings.open = true;
+    work.scrollIntoView?.({ block: 'nearest' });
+    work.focus();
+  });
   form.append(processingHelp);
   function describeProfile() {
     const real = profile.value === 'onetrust-real';
@@ -321,6 +341,7 @@ export default function mountPerformanceControls(doc, win) {
   const decline = button(doc, 'Decline');
   decline.setAttribute('aria-label', 'Decline simulated tracking');
   const response = button(doc, 'Test response');
+  let testingResponse = false;
   response.dataset.perfInteraction = 'true';
   const refresh = button(doc, 'Refresh measurements');
   const preferences = button(doc, 'Open OneTrust preferences');
@@ -355,12 +376,13 @@ export default function mountPerformanceControls(doc, win) {
   banner.append(bannerCopy, bannerActions);
   doc.body.append(banner);
   bannerControl.append(bannerLabel, bannerWaiting);
-  const consentControl = node(doc, 'div', 'consent-control');
-  const consentState = node(doc, 'p', 'consent-state');
+  const consentControl = node(doc, 'details', 'consent-control');
+  const consentState = node(doc, 'summary', 'consent-state');
   const consentActions = node(doc, 'div', 'actions');
   consentActions.append(consent, decline);
   consentControl.append(consentState, consentActions, bannerControl);
   const responseStatus = node(doc, 'p', 'muted');
+  responseStatus.setAttribute('role', 'status');
   const refreshStatus = node(doc, 'p', 'muted');
   refreshStatus.setAttribute('role', 'status');
   const runActions = node(doc, 'div', 'actions');
@@ -408,6 +430,9 @@ export default function mountPerformanceControls(doc, win) {
     if (real) processing = 'Actual SDK';
     runLabel.textContent = `${PROFILE_LABELS[snapshot.config.profile]} · ${PHASE_LABELS[snapshot.config.phase]} · ${processing}`;
     if (snapshot.config.profile === 'baseline') runLabel.textContent = 'No tag stack · page measurements only';
+    let comparisonLabel = runLabel.textContent;
+    if (snapshot.config.profile === 'etrade') comparisonLabel = `${snapshot.config.phase === 'early' ? 'Traditional' : PHASE_LABELS[snapshot.config.phase]} · ${processing}`;
+    comparison.update(snapshot, comparisonLabel);
     const timed = (value) => (value === undefined ? '' : `at ${(value / 1000).toFixed(2)} s`);
     const stage = (key, { text, state, time }) => {
       const entry = stages.get(key);
@@ -424,6 +449,16 @@ export default function mountPerformanceControls(doc, win) {
     simulation.hidden = real;
     realConsent.hidden = !real;
     workloadActions.hidden = real;
+    workloadHelp.hidden = real;
+    changeProcessing.hidden = real;
+    if (snapshot.config.profile !== 'etrade') workloadHelp.textContent = 'The interaction workload is available with the full simulated tag stack.';
+    else if (snapshot.config.work === 'none') workloadHelp.textContent = 'Download and parse only: no assumed CPU delays are added. Choose a processing preset to demonstrate interaction and background work.';
+    else if (snapshot.status === 'Stopped') workloadHelp.textContent = 'This run is stopped. Use Run again for a fresh comparison.';
+    else if (gated && !snapshot.cmpReady) workloadHelp.textContent = 'OneTrust is still loading. Consent controls become available when it is ready.';
+    else if (gated && snapshot.consent !== 'accepted') workloadHelp.textContent = 'Accept simulated consent to release the tags and start the 30-second workload.';
+    else if (snapshot.completed + snapshot.failed < snapshot.resources.length || !snapshot.resources.length) workloadHelp.textContent = 'Waiting for the simulated tag stack to finish loading.';
+    else if (snapshot.runtimeActive) workloadHelp.textContent = `Assumed processing is active for another ${Math.ceil(snapshot.runtimeRemainingMs / 1000)} seconds. Try Test response or interact with the page.`;
+    else workloadHelp.textContent = 'The workload is idle. Run another 30-second window to demonstrate interaction and background work.';
     tabs[2].textContent = real ? 'Consent' : 'Workload';
     downloads.querySelector('h4').textContent = real ? 'This run · real OneTrust' : 'This run · fixture downloads';
     downloadHelp.textContent = real
@@ -435,6 +470,7 @@ export default function mountPerformanceControls(doc, win) {
     preferences.hidden = !real;
     preferences.disabled = !snapshot.realCMP?.canOpenPreferences;
     consentControl.hidden = !gated;
+    if (lastConsent !== snapshot.consent) consentControl.open = snapshot.consent === 'pending';
     consentState.textContent = `Simulated consent · ${{ pending: 'no choice yet', accepted: 'accepted', declined: 'declined' }[snapshot.consent]}`;
     consent.setAttribute('aria-pressed', String(snapshot.consent === 'accepted'));
     decline.setAttribute('aria-pressed', String(snapshot.consent === 'declined'));
@@ -454,7 +490,8 @@ export default function mountPerformanceControls(doc, win) {
     bannerAccept.disabled = consent.disabled;
     bannerDecline.disabled = consent.disabled;
     stop.disabled = snapshot.status === 'Stopped' || snapshot.config.profile === 'baseline';
-    response.disabled = snapshot.status === 'Stopped';
+    response.disabled = snapshot.status === 'Stopped' || testingResponse;
+    run.textContent = snapshot.runtimeActive ? 'Restart 30-second workload' : 'Run 30-second workload';
     run.disabled = snapshot.status === 'Stopped' || snapshot.config.work === 'none'
       || snapshot.config.profile !== 'etrade'
       || (gated && snapshot.consent !== 'accepted')
@@ -475,7 +512,7 @@ export default function mountPerformanceControls(doc, win) {
       fixtures: `${snapshot.completed}/${snapshot.resources.length}${snapshot.failed ? ` · ${snapshot.failed} failed` : ''}`,
       consent: gated ? snapshot.consent : 'Not gated in this comparison',
       cpu: milliseconds(snapshot.simulatedCPU),
-      runtime: snapshot.runtimeActive ? 'Active · 30-second window' : 'Inactive',
+      runtime: snapshot.runtimeActive ? `Active · ${Math.ceil(snapshot.runtimeRemainingMs / 1000)} s left` : 'Inactive',
       tasks: snapshot.metrics.longTasks ?? 'Not observed',
       excess: milliseconds(snapshot.metrics.longTaskExcess),
       requests: snapshot.realResources?.length ?? 0,
@@ -527,11 +564,13 @@ export default function mountPerformanceControls(doc, win) {
     if (snapshot?.config.profile !== 'etrade' || !['eds', 'consent'].includes(snapshot.config.phase)
       || !snapshot.cmpReady || snapshot.status === 'Stopped') return;
     const restoreFocus = banner.contains(doc.activeElement);
+    const restorePanelFocus = consentControl.contains(doc.activeElement);
     bannerToggle.checked = false;
     if (accepted) win.etradePerformanceDemo.grantConsent();
     else win.etradePerformanceDemo.declineConsent();
     render();
     if (restoreFocus) (doc.querySelector('.demo-helper-toggle') || bannerToggle).focus();
+    else if (restorePanelFocus && !consentControl.open) consentState.focus();
   }
   consent.addEventListener('click', () => chooseConsent(true));
   decline.addEventListener('click', () => chooseConsent(false));
@@ -561,16 +600,34 @@ export default function mountPerformanceControls(doc, win) {
       refreshStatus.textContent = `Measurements updated (${refreshCount}). Initial-load values can stay unchanged. Apply & reload starts a new test.`;
     };
     // Give the preceding interaction a paint before collecting queued observations.
-    if (win.requestAnimationFrame) {
-      win.requestAnimationFrame(() => win.requestAnimationFrame(() => win.setTimeout(finish, 0)));
-    } else Promise.resolve().then(finish);
+    afterPaint(win, finish);
   });
   let responseCount = 0;
   response.addEventListener('click', () => {
+    if (testingResponse) return;
+    const before = win.etradePerformanceDemo?.snapshot();
+    const restoreFocus = doc.activeElement === response;
+    testingResponse = true;
+    response.disabled = true;
+    response.textContent = 'Testing…';
     responseCount += 1;
-    responseStatus.textContent = `Response ${responseCount} rendered. Refresh measurements after the next paint.`;
+    responseStatus.textContent = `Response ${responseCount} rendered. Waiting for paint…`;
+    afterPaint(win, () => {
+      win.etradePerformanceDemo?.refreshMeasurements();
+      render();
+      testingResponse = false;
+      response.disabled = win.etradePerformanceDemo?.snapshot().status === 'Stopped';
+      response.textContent = 'Test response';
+      if (restoreFocus && !response.closest('[hidden]')
+        && (doc.activeElement === doc.body || doc.activeElement === response)) response.focus();
+      let detail = 'No assumed CPU delay was added to this response.';
+      if (before?.runtimeActive) detail = 'This response included the active simulated workload.';
+      else if (before?.config.work !== 'none' && before?.config.profile === 'etrade') detail = 'The simulated workload is idle; check Workload to start it.';
+      responseStatus.textContent = `Response ${responseCount} painted. Measurements updated. ${detail}`;
+    });
   });
   doc.addEventListener('demo-performance:updated', render);
+  win.addEventListener('resize', render);
   render();
   return section;
 }

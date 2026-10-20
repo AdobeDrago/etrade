@@ -302,6 +302,95 @@ test('new browser measurements update the panel automatically and batch notifica
   controller.stop();
 });
 
+test('response tests wait for paint and collect the interaction without a separate refresh', () => {
+  const context = browser('?perf=baseline');
+  const frames = [];
+  context.win.requestAnimationFrame = (callback) => frames.push(callback);
+  const controller = startPerformanceDemo(context.document, context.win);
+  const controls = mountPerformanceControls(context.document, context.win);
+  const response = [...controls.querySelectorAll('button')]
+    .find((element) => element.textContent === 'Test response');
+  let focused = response;
+  Object.defineProperty(context.document, 'activeElement', { get: () => focused });
+  response.focus = () => { focused = response; };
+  context.queued.set('event', [{ interactionId: 1, duration: 64 }]);
+  response.dispatchEvent(new context.window.Event('click'));
+  response.dispatchEvent(new context.window.Event('click'));
+  assert.equal(response.disabled, true);
+  assert.ok(controls.textContent.includes('Response 1 rendered'));
+  assert.equal(controller.snapshot().metrics.worstInteraction, null);
+  focused = context.document.body; // Disabling the active button can blur it in the browser.
+  frames.shift()();
+  frames.shift()();
+  [...context.timers.values()].find((timer) => timer.delay === 0).callback();
+  assert.equal(controller.snapshot().metrics.worstInteraction, 64);
+  assert.equal(response.textContent, 'Test response');
+  assert.equal(response.disabled, false);
+  assert.equal(focused, response);
+  assert.ok(controls.textContent.includes('Response 1 painted. Measurements updated.'));
+  assert.ok(controls.textContent.includes('No assumed CPU delay'));
+  controller.stop();
+});
+
+test('workload help follows CMP readiness, consent, live countdown, expiry and stopping', async () => {
+  const context = browser('?perf=etrade&perf-phase=eds&perf-work=medium');
+  const controller = startPerformanceDemo(context.document, context.win, {
+    fetchProfile: async () => manifest, importResource: async () => {},
+  });
+  const controls = mountPerformanceControls(context.document, context.win);
+  const help = controls.querySelector('.demo-helper-workload-help');
+  assert.ok(help.textContent.includes('OneTrust is still loading'));
+  await delayedCMP(context, controller);
+  assert.ok(help.textContent.includes('Accept simulated consent'));
+  controller.grantConsent();
+  await settle();
+  assert.ok(help.textContent.includes('processing is active'));
+  const before = controller.snapshot().runtimeRemainingMs;
+  const originalClock = context.win.performance.now;
+  context.win.performance.now = () => originalClock() + 5000;
+  const background = [...context.timers.values()].find((timer) => timer.interval);
+  background.callback();
+  assert.ok(controller.snapshot().runtimeRemainingMs < before);
+  assert.ok(help.textContent.includes('25 seconds'));
+  [...context.timers.values()].find((timer) => timer.delay === 30000).callback();
+  assert.equal(controller.snapshot().runtimeRemainingMs, 0);
+  assert.ok(help.textContent.includes('workload is idle'));
+  const settings = controls.querySelector('.demo-helper-settings');
+  const processing = controls.querySelector('#demo-helper-performance-work');
+  let focused = false;
+  processing.focus = () => { focused = true; };
+  [...controls.querySelectorAll('button')]
+    .find((element) => element.textContent === 'Change processing')
+    .dispatchEvent(new context.window.Event('click'));
+  assert.equal(settings.open, true);
+  assert.equal(focused, true);
+  controller.stop();
+  assert.ok(help.textContent.includes('This run is stopped'));
+});
+
+test('a panel consent choice folds its controls and moves focus to the visible summary', async () => {
+  const context = browser('?perf=etrade&perf-phase=eds');
+  const controller = startPerformanceDemo(context.document, context.win, {
+    fetchProfile: async () => manifest, importResource: async () => {},
+  });
+  const controls = mountPerformanceControls(context.document, context.win);
+  const consent = controls.querySelector('.demo-helper-consent-control');
+  const summary = controls.querySelector('.demo-helper-consent-state');
+  const accept = controls.querySelector('[aria-label="Accept simulated tracking"]');
+  let focused = accept;
+  Object.defineProperty(context.document, 'activeElement', { get: () => focused });
+  summary.focus = () => { focused = summary; };
+  assert.equal(consent.open, true);
+  await delayedCMP(context, controller);
+  accept.dispatchEvent(new context.window.Event('click'));
+  assert.equal(consent.open, false);
+  assert.equal(focused, summary);
+  consent.open = true;
+  controller.refreshMeasurements();
+  assert.equal(consent.open, true);
+  controller.stop();
+});
+
 test('each loading strategy explains its release condition and downloads separate CMP and tags', async () => {
   const context = browser('?perf=etrade&perf-phase=early');
   const controller = startPerformanceDemo(context.document, context.win, {
