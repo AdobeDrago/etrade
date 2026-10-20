@@ -635,8 +635,8 @@ test('demo banner is opt-in, waits for CMP readiness and shares the panel consen
   assert.ok(controls.textContent.includes('will appear when simulated OneTrust is ready'));
   await delayedCMP(context, controller);
   assert.equal(banner.hidden, false);
-  assert.ok(banner.textContent.includes('This banner is for demonstration only.'));
-  click('Demo Decline');
+  assert.ok(banner.textContent.includes('This is a demo banner;'));
+  click('Decline');
   assert.equal(controller.snapshot().consent, 'declined');
   assert.equal(banner.hidden, true);
   assert.equal(toggle.checked, false);
@@ -644,7 +644,7 @@ test('demo banner is opt-in, waits for CMP readiness and shares the panel consen
   toggle.checked = true;
   toggle.dispatchEvent(new context.window.Event('change'));
   assert.equal(banner.hidden, false);
-  click('Demo Accept');
+  click('Accept');
   await settle();
   assert.equal(controller.snapshot().consent, 'accepted');
   assert.equal(controller.snapshot().completed, manifest.resources.length);
@@ -652,7 +652,7 @@ test('demo banner is opt-in, waits for CMP readiness and shares the panel consen
   const cpuBeforeChoice = controller.snapshot().simulatedCPU;
   toggle.checked = true;
   toggle.dispatchEvent(new context.window.Event('change'));
-  click('Demo Accept');
+  click('Accept');
   assert.equal(controller.snapshot().simulatedCPU, cpuBeforeChoice);
   toggle.checked = true;
   toggle.dispatchEvent(new context.window.Event('change'));
@@ -725,7 +725,7 @@ test('page banner survives closing the panel, reserves space and restores focus 
   helper.querySelector('.demo-helper-close').dispatchEvent(new context.window.Event('click'));
   assert.equal(helper.querySelector('.demo-helper-panel').hidden, true);
   assert.equal(banner.hidden, false);
-  const accept = [...banner.querySelectorAll('button')].find((element) => element.textContent === 'Demo Accept');
+  const accept = [...banner.querySelectorAll('button')].find((element) => element.textContent === 'Accept');
   accept.focus();
   accept.dispatchEvent(new context.window.Event('click', { bubbles: true }));
   await settle();
