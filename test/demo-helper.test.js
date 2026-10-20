@@ -139,6 +139,28 @@ test('expand and Escape maintain disclosure semantics and return focus to the tr
   assert.equal(document.activeElement, toggle);
 });
 
+test('page and performance views support keyboard switching and preserve the chosen view', () => {
+  const {
+    root, document, window, session,
+  } = page();
+  const tabs = [...root.querySelectorAll('.demo-helper-view-tab')];
+  const views = [...root.querySelectorAll('.demo-helper-view')];
+  assert.equal(tabs[0].getAttribute('aria-selected'), 'true');
+  assert.equal(views[0].hidden, false);
+  assert.equal(views[1].hidden, true);
+  const right = new window.Event('keydown', { bubbles: true, cancelable: true });
+  right.key = 'ArrowRight';
+  tabs[0].dispatchEvent(right);
+  assert.equal(tabs[1].getAttribute('aria-selected'), 'true');
+  assert.equal(views[0].hidden, true);
+  assert.equal(views[1].hidden, false);
+  assert.equal(document.activeElement, tabs[1]);
+  assert.equal(session.get('etrade:demo-helper-view'), 'performance');
+  tabs[0].dispatchEvent(new window.Event('click'));
+  assert.equal(session.get('etrade:demo-helper-view'), 'page');
+  assert.equal(views[0].hidden, false);
+});
+
 test('insights distinguish sample responses, authored overrides, failures and market state', async () => {
   const { document, window, root } = page('<div class="cards-product block"><li><h3>Savings</h3><span data-rate-name="rate" data-rate-source="api" data-rate-balance="100000" data-rate-balance-source="demo">4.15</span></li><li><h3>Manual</h3><span data-rate-name="rate" data-rate-source="override">6.50</span></li><li><h3>Failed rate</h3><span data-rate-name="rate" data-rate-source="fallback" data-rate-error="http-status">1.11</span></li></div><div class="market-ticker block" data-market-state="loading"></div>', '<meta name="bank-rates-endpoint" content="/phx/pros/apicontent/init/bankRates.json">');
   assert.ok(root.textContent.includes('Sample response'));

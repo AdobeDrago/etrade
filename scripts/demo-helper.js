@@ -2,10 +2,12 @@ import { rateDecimal, createBankRateRequest } from './bank-rates.js';
 import { DEMO_BALANCE_KEY, readDemoBalance } from './demo-balance.js';
 import isDemoHelperHost from './demo-host.js';
 import mountPerformanceControls from './demo-performance-controls.js';
+import { readPerformanceConfig } from './demo-performance.js';
 
 export { default as isDemoHelperHost } from './demo-host.js';
 
 const OPEN_KEY = 'etrade:demo-helper-open';
+const VIEW_KEY = 'etrade:demo-helper-view';
 const SOURCE_LABELS = {
   api: 'API response',
   manual: 'Manual',
@@ -99,10 +101,11 @@ export default function mountDemoHelper(doc = document, win = window) {
   panel.id = 'demo-helper-panel';
   panel.hidden = true;
   const header = node(doc, 'div', 'header');
+  const headingGroup = node(doc, 'div', 'heading-group');
   const heading = node(doc, 'h2', 'title', 'Demo controls');
   const close = button(doc, 'Close', 'close');
-  header.append(heading, close);
-  const badge = node(doc, 'p', 'badge', 'DEMO BRANCH');
+  headingGroup.append(heading, node(doc, 'p', 'subtitle', 'Page tools & loading comparisons'));
+  header.append(headingGroup, close);
   const content = node(doc, 'div', 'content');
   const balanceSection = node(doc, 'section', 'section');
   balanceSection.append(node(doc, 'h3', 'heading', 'Try a balance'));
@@ -148,8 +151,8 @@ export default function mountDemoHelper(doc = document, win = window) {
   actions.append(apply);
   form.append(label, input, help, actions);
   const customBalance = node(doc, 'details', 'custom-balance');
-  customBalance.append(node(doc, 'summary', '', 'Custom balance'), form);
-  balanceSection.append(balanceStatus, presets, reset, customBalance, feedback);
+  customBalance.append(node(doc, 'summary', '', 'Balance options'), form, reset);
+  balanceSection.append(balanceStatus, presets, customBalance, feedback);
 
   const rates = node(doc, 'details', 'section');
   rates.append(node(doc, 'summary', 'heading', 'Rate insights'));
@@ -164,15 +167,58 @@ export default function mountDemoHelper(doc = document, win = window) {
   features.append(featureList);
   const refresh = button(doc, 'Reload page');
   const footer = node(doc, 'p', 'muted', 'Demo values are local to this browser and origin. The balance is never sent to the rate service.');
-  content.append(
-    balanceSection,
-    features,
-    rates,
-    mountPerformanceControls(doc, win),
-    refresh,
-    footer,
-  );
-  panel.append(header, badge, content);
+  const pageTools = node(doc, 'div', 'view');
+  pageTools.append(balanceSection, features, rates, refresh, footer);
+  const performanceView = node(doc, 'div', 'view');
+  const performance = mountPerformanceControls(doc, win);
+  performance.open = true;
+  performance.querySelector('summary').hidden = true;
+  performanceView.append(performance);
+  const navigation = node(doc, 'div', 'navigation');
+  navigation.setAttribute('role', 'tablist');
+  navigation.setAttribute('aria-label', 'Demo controls');
+  const views = [pageTools, performanceView];
+  const tabs = [];
+  let selectedView = readPerformanceConfig(win.location.href) ? 1 : 0;
+  try {
+    const stored = win.sessionStorage.getItem(VIEW_KEY);
+    if (['page', 'performance'].includes(stored)) selectedView = stored === 'performance' ? 1 : 0;
+  } catch { /* Use the URL's initial view. */ }
+  function selectView(index) {
+    selectedView = index;
+    panel.scrollTop = 0;
+    tabs.forEach((tab, i) => {
+      tab.setAttribute('aria-selected', String(i === index));
+      tab.tabIndex = i === index ? 0 : -1;
+      views[i].hidden = i !== index;
+    });
+    try { win.sessionStorage.setItem(VIEW_KEY, index === 1 ? 'performance' : 'page'); } catch { /* Optional persistence. */ }
+  }
+  ['Page tools', 'Performance'].forEach((text, index) => {
+    const tab = button(doc, text, 'view-tab');
+    tab.id = `demo-helper-view-tab-${index}`;
+    tab.setAttribute('role', 'tab');
+    tab.setAttribute('aria-controls', `demo-helper-view-${index}`);
+    views[index].id = `demo-helper-view-${index}`;
+    views[index].setAttribute('role', 'tabpanel');
+    views[index].setAttribute('aria-labelledby', tab.id);
+    tab.addEventListener('click', () => selectView(index));
+    tab.addEventListener('keydown', (event) => {
+      const next = {
+        ArrowRight: 1 - index, ArrowLeft: 1 - index, Home: 0, End: 1,
+      }[event.key];
+      if (next === undefined) return;
+      event.preventDefault();
+      selectView(next);
+      tabs[next].focus();
+    });
+    tabs.push(tab);
+    navigation.append(tab);
+  });
+  selectView(selectedView);
+  header.append(navigation);
+  content.append(...views);
+  panel.append(header, content);
   const highlight = node(doc, 'div', 'highlight');
   highlight.hidden = true;
   highlight.setAttribute('aria-hidden', 'true');
@@ -303,8 +349,11 @@ export default function mountDemoHelper(doc = document, win = window) {
     setExpanded(!expanded);
     if (expanded) {
       render();
-      presets.querySelector('[aria-pressed="true"]')?.focus();
-      if (!presets.contains(doc.activeElement)) presets.querySelector('button')?.focus();
+      if (selectedView === 1) tabs[1].focus();
+      else {
+        presets.querySelector('[aria-pressed="true"]')?.focus();
+        if (!presets.contains(doc.activeElement)) presets.querySelector('button')?.focus();
+      }
     }
   });
   close.addEventListener('click', () => setExpanded(false, true));

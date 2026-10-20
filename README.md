@@ -218,21 +218,23 @@ Page and block examples used by regression tests live in `test/fixtures/`. Run `
 
 ## Third-party performance demo
 
-Open **Demo controls → Third-party performance** on localhost, the `demo--etrade--AdobeDrago.aem.page` preview, or [the demo-controller preview](https://demo-controller--etrade--AdobeDrago.aem.page/home). These exact preview hosts show the controls; the performance simulation remains off until selected. Compare the same page and interactions with:
+Open **Demo controls → Performance** on localhost, the `demo--etrade--AdobeDrago.aem.page` preview, or [the demo-controller preview](https://demo-controller--etrade--AdobeDrago.aem.page/home). These exact preview hosts show the controls; the performance simulation remains off until selected. Compare the same page and interactions with:
 
 - `?perf=baseline`: observers and demo controls, without simulated libraries.
 - `?perf=onetrust`: the two captured OneTrust JavaScript payloads.
 - `?perf=etrade`: OneTrust plus the selected analytics and advertising payloads.
 - `?perf=onetrust-real`: the actual OneTrust SDK, without fixture downloads or assumed CPU work.
 
-The panel opens with six one-click balance presets (50k, 100k, 150k, 200k, 250k and 500k). **Custom balance** retains arbitrary values, including zero. Features and rate insights are collapsed to keep the customer demo compact; feature dots expose their full status to assistive technology and on hover. Locating a feature closes the panel and highlights the real block. Reopening the panel clears the highlight.
+**Page tools** opens with six one-click balance presets (50k, 100k, 150k, 200k, 250k and 500k). **Balance options** contains custom values, including zero, and the authored-balance reset. Features and rate insights are collapsed to keep the customer demo compact; feature dots expose their full status to assistive technology and on hover. Locating a feature closes the panel and highlights the real block. Reopening the panel clears the highlight. The sticky header keeps **Page tools**, **Performance** and Close available while scrolling. The chosen view stays selected in the current tab; comparison links default to Performance when no view has been saved.
 
-When a performance comparison is active, **Page experience** is the first measurement tab, with LCP and CLS grouped under Core Web Vitals. **Downloads** separates this run's transfers from captured reference sizes, including OneTrust versus other tags. **Workload** contains simulation state, browser tasks and workload controls. Expand **Comparison settings** to change the experiment.
+In **Performance**, use **No tag stack**, **Traditional** or **EDS** for a one-click comparison. Traditional starts the full simulated stack during startup; EDS loads content first and holds tags for consent. Both use the same captured payload weights and preserve the run's processing preset; a new comparison defaults to download and parse only. Click the current-run status to expand the loading sequence, which shows observed content, CMP and tag milestones. Consent state and next-step instructions distinguish a held stack, loaded scripts and work stopped after revocation. **Run again** reloads the current settings; **Copy comparison link** copies the current URL, with a selectable field if clipboard access fails. Balance overrides remain local and are not included in the comparison link.
+
+When a performance comparison is active, **Page experience** is the first measurement tab, with LCP and CLS grouped under Core Web Vitals. **Downloads** separates this run's transfers from captured reference sizes, including OneTrust versus other tags. **Workload** contains simulation state, browser tasks and workload controls. Expand **Advanced settings** for library selection, additional loading strategies, assumed CPU presets or the real OneTrust SDK.
 
 Choose **Loading strategy** to compare the same script weights and processing budgets:
 
 - **Startup** (`perf-phase=early`): the OneTrust stub and Adobe Launch hold page decoration. The OneTrust banner and dependent tags load asynchronously. This models startup pressure without installing parser-blocking vendor scripts in the document head.
-- **EDS** (`perf-phase=eds`): page content loads first. Three seconds after content is ready, the profile and OneTrust fixtures load. Tag fixtures stay unloaded until **Accept simulated tracking** is selected. **Decline simulated tracking** leaves them unloaded; declining after acceptance stops further added tag work. Repeated acceptance does not request completed fixtures again.
+- **EDS** (`perf-phase=eds`): page content loads first. Three seconds after content is ready, the profile and OneTrust fixtures load. Tag fixtures stay unloaded until **Accept** is selected under Simulated consent. **Decline** leaves them unloaded; declining after acceptance stops further added tag work. Repeated acceptance does not request completed fixtures again.
 - **Early CMP · tags when page is ready** (`perf-phase=late`): OneTrust starts before content; tags start automatically after content is ready, without a consent gate.
 - **Early CMP · tags when consent is granted** (`perf-phase=consent`): OneTrust starts before content; tags wait for simulated acceptance. Content readiness alone does not release them.
 
@@ -252,7 +254,7 @@ The default `perf-work=none` adds only downloads and parsing of inert JavaScript
 
 These are fixed wall-clock budgets, not measured vendor execution times or device-scaled instructions. Each initialization task is capped at 500 ms. Interaction/background work runs for 30 seconds once content and tags are ready, skips hidden documents, and can be restarted or stopped in the controls. Use **Test response** or real menus, FAQs and inputs, then **Refresh measurements** after the next paint.
 
-**Refresh measurements** waits for a paint, drains queued performance observations and updates the current run with visible confirmation. It does not reload the page, rerun downloads or reset measurements. FCP and LCP can remain unchanged after initial rendering; use **Apply & reload** for a new comparison and restart the workload from its tab if its 30-second window has expired.
+Browser performance observations update the panel automatically, batched for the next frame. **Refresh measurements** also waits for a paint, drains queued observations and confirms the update. It does not reload the page, rerun downloads or reset measurements. FCP and LCP can remain unchanged after initial rendering; use **Run again** for a fresh run or restart the workload from its tab if its 30-second window has expired.
 
 The [capture manifest](scripts/demo-performance-profile.json) records public scripts observed on https://us.etrade.com/home on October 13, 2026: 20 selected files, 3,345,830 decoded bytes and 930,920 bytes in captured gzip responses. OneTrust accounts for 593,410 decoded bytes. Local fixtures match decoded bytes exactly and approximate gzip sizes without copying vendor code. The optional maintenance command `node test/generate-performance-assets.mjs` regenerates fixtures from this manifest; there is no site build step.
 
@@ -262,7 +264,7 @@ Compare FCP, LCP, CLS, long tasks, and the slowest observed interaction across r
 
 ### Real OneTrust SDK
 
-Choose **Libraries → OneTrust · real SDK** in Comparison settings, or open:
+Choose **Libraries → OneTrust · real SDK** in Advanced settings, or open:
 
 - [Split startup: asynchronous CMP, tracking after consent](https://demo-controller--etrade--AdobeDrago.aem.page/home?perf=onetrust-real&perf-phase=early&perf-work=none).
 - [EDS: CMP three seconds after page content, tracking after consent](https://demo-controller--etrade--AdobeDrago.aem.page/home?perf=onetrust-real&perf-phase=eds&perf-work=none).

@@ -38,9 +38,22 @@ export function performanceURL(href, config) {
   return url.href;
 }
 
-function observeMetrics(win, metrics) {
+function observeMetrics(win, metrics, onUpdate) {
   const observers = [];
   let session;
+  let pending = false;
+  let observing = true;
+  let frame;
+  const notify = () => {
+    if (pending || !observing) return;
+    pending = true;
+    const deliver = () => {
+      pending = false;
+      if (observing) onUpdate();
+    };
+    if (win.requestAnimationFrame) frame = win.requestAnimationFrame(deliver);
+    else Promise.resolve().then(deliver);
+  };
   const supported = win.PerformanceObserver?.supportedEntryTypes || [];
   if (supported.includes('layout-shift')) metrics.cls = 0;
   if (supported.includes('longtask')) {
@@ -49,7 +62,10 @@ function observeMetrics(win, metrics) {
   }
   const observe = (type, callback, options = {}) => {
     if (!supported.includes(type)) return;
-    const observer = new win.PerformanceObserver((list) => callback(list.getEntries()));
+    const observer = new win.PerformanceObserver((list) => {
+      callback(list.getEntries());
+      notify();
+    });
     try {
       observer.observe({ type, buffered: true, ...options });
       observers.push({ observer, callback });
@@ -87,7 +103,11 @@ function observeMetrics(win, metrics) {
     flush: () => observers.forEach(({ observer, callback }) => {
       callback(observer.takeRecords?.() || []);
     }),
-    disconnect: () => observers.forEach(({ observer }) => observer.disconnect()),
+    disconnect: () => {
+      observing = false;
+      win.cancelAnimationFrame?.(frame);
+      observers.forEach(({ observer }) => observer.disconnect());
+    },
   };
 }
 
@@ -113,7 +133,9 @@ export default function startPerformanceDemo(doc = document, win = window, depen
   const metrics = {
     fcp: null, lcp: null, cls: null, worstInteraction: null,
   };
-  const metricObservers = observeMetrics(win, metrics);
+  const metricObservers = observeMetrics(win, metrics, () => {
+    doc.dispatchEvent(new win.CustomEvent('demo-performance:updated'));
+  });
   const workload = WORK[config.work];
   const state = {
     config,
@@ -248,6 +270,7 @@ export default function startPerformanceDemo(doc = document, win = window, depen
     // Revoking consent may leave dependent fixtures waiting; accepting again resumes them.
     tagsLoaded = state.resources.filter((resource) => resource.group === 'tags')
       .every((resource) => ['loaded', 'failed'].includes(resource.status));
+    if (tagsLoaded) state.milestones.tagsReady = win.performance.now();
     if (!tagsLoaded) {
       tagsStarted = false;
       state.resources.filter((resource) => resource.status === 'waiting')
@@ -289,10 +312,14 @@ export default function startPerformanceDemo(doc = document, win = window, depen
   async function startCMP() {
     if (cmpStarted || stopped) return;
     cmpStarted = true;
+    state.milestones.cmpStarted = win.performance.now();
     if (realCMP) {
       const update = (snapshot) => {
         state.realCMP = snapshot;
         state.cmpReady = snapshot.initialized;
+        if (snapshot.initialized && state.milestones.cmpReady === undefined) {
+          state.milestones.cmpReady = win.performance.now();
+        }
         state.consent = snapshot.consented ? 'accepted' : 'declined';
         if (!snapshot.initialized) state.consent = 'pending';
         publish();
@@ -305,7 +332,6 @@ export default function startPerformanceDemo(doc = document, win = window, depen
       return;
     }
     cmpLoading = true;
-    state.milestones.cmpStarted = win.performance.now();
     publish();
     try {
       const fetchProfile = dependencies.fetchProfile || (() => win.fetch(new URL('./demo-performance-profile.json', import.meta.url), { credentials: 'omit', signal: win.AbortSignal.timeout(5000) }).then((response) => {

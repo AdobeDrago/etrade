@@ -277,6 +277,31 @@ test('measurement tabs preserve selection and refresh waits for paint with visib
   controller.stop();
 });
 
+test('new browser measurements update the panel automatically and batch notifications', async () => {
+  const context = browser('?perf=baseline&perf-work=heavy');
+  const controller = startPerformanceDemo(context.document, context.win);
+  const controls = mountPerformanceControls(context.document, context.win);
+  const tabs = [...controls.querySelectorAll('[role="tab"]')];
+  tabs[1].dispatchEvent(new context.window.Event('click'));
+  let updates = 0;
+  context.document.addEventListener('demo-performance:updated', () => { updates += 1; });
+  context.observed.get('paint')({
+    getEntries: () => [{ name: 'first-contentful-paint', startTime: 820 }],
+  });
+  context.observed.get('largest-contentful-paint')({ getEntries: () => [{ startTime: 1240 }] });
+  context.observed.get('layout-shift')({
+    getEntries: () => [{ startTime: 1500, value: 0.025, hadRecentInput: false }],
+  });
+  await settle();
+  assert.equal(updates, 1);
+  assert.ok(controls.querySelector('.demo-helper-vitals').textContent.includes('1240 ms'));
+  assert.ok(controls.querySelector('.demo-helper-vitals').textContent.includes('0.025'));
+  assert.equal(tabs[1].getAttribute('aria-selected'), 'true');
+  const label = controls.querySelector('.demo-helper-run-label').textContent;
+  assert.equal(label.includes('assumed CPU'), false);
+  controller.stop();
+});
+
 test('each loading strategy explains its release condition and downloads separate CMP and tags', async () => {
   const context = browser('?perf=etrade&perf-phase=early');
   const controller = startPerformanceDemo(context.document, context.win, {
@@ -502,8 +527,8 @@ test('controls enable accept and decline only when the simulated CMP is ready an
   });
   const controls = mountPerformanceControls(context.document, context.win);
   const buttons = [...controls.querySelectorAll('button')];
-  const accept = buttons.find((button) => button.textContent === 'Accept simulated tracking');
-  const decline = buttons.find((button) => button.textContent === 'Decline simulated tracking');
+  const accept = buttons.find((button) => button.getAttribute('aria-label') === 'Accept simulated tracking');
+  const decline = buttons.find((button) => button.getAttribute('aria-label') === 'Decline simulated tracking');
   assert.equal(accept.disabled, true);
   assert.equal(decline.disabled, true);
   await delayedCMP(context, controller);
@@ -519,6 +544,85 @@ test('controls enable accept and decline only when the simulated CMP is ready an
   assert.equal(url.searchParams.get('perf-work'), 'medium');
   assert.equal(url.searchParams.get('perf-phase'), 'eds');
   controller.stop();
+});
+
+test('quick comparisons preserve processing, page parameters and hash without silently starting a workload', () => {
+  const context = browser('?balance=0&perf=etrade&perf-phase=consent&perf-work=medium#rates');
+  const session = new Map();
+  context.win.sessionStorage = { setItem: (key, value) => session.set(key, value) };
+  let destination;
+  context.win.location.assign = (url) => { destination = new URL(url); };
+  const controls = mountPerformanceControls(context.document, context.win);
+  const scenarios = [...controls.querySelectorAll('.demo-helper-scenario')];
+  const choices = [['baseline', 'eds'], ['etrade', 'early'], ['etrade', 'eds']];
+  scenarios.forEach((scenario, index) => {
+    scenario.dispatchEvent(new context.window.Event('click'));
+    assert.equal(destination.searchParams.get('perf'), choices[index][0]);
+    assert.equal(destination.searchParams.get('perf-phase'), choices[index][1]);
+    assert.equal(destination.searchParams.get('perf-work'), 'medium');
+    assert.equal(destination.searchParams.get('balance'), '0');
+    assert.equal(destination.hash, '#rates');
+  });
+  assert.equal(session.get('etrade:demo-helper-open'), 'true');
+  assert.equal(session.get('etrade:demo-helper-view'), 'performance');
+  assert.equal(context.win.etradePerformanceDemo, undefined);
+  const disabled = browser('', 'main--etrade--adobedrago.aem.page');
+  disabled.win.location.assign = () => assert.fail('Must not navigate from a non-demo host');
+  mountPerformanceControls(disabled.document, disabled.win).querySelector('.demo-helper-scenario')
+    .dispatchEvent(new disabled.window.Event('click'));
+});
+
+test('loading progress reflects real milestones, held tags and revocation after download', async () => {
+  const context = browser('?perf=etrade&perf-phase=eds&perf-work=none');
+  const controller = startPerformanceDemo(context.document, context.win, {
+    fetchProfile: async () => manifest, importResource: async () => {},
+  });
+  const controls = mountPerformanceControls(context.document, context.win);
+  const stage = (key) => controls.querySelector(`[data-stage="${key}"]`);
+  assert.equal(stage('content').querySelector('strong').textContent, 'Waiting');
+  assert.equal(stage('tags').querySelector('strong').textContent, 'Awaiting consent');
+  await delayedCMP(context, controller);
+  assert.equal(stage('content').dataset.state, 'done');
+  assert.equal(stage('cmp').dataset.state, 'done');
+  assert.equal(stage('tags').querySelector('strong').textContent, 'Awaiting consent');
+  assert.equal(controller.snapshot().requested, 2);
+  controller.grantConsent();
+  await settle();
+  assert.equal(stage('tags').querySelector('strong').textContent, 'Loaded');
+  assert.ok(stage('tags').querySelector('.demo-helper-stage-timing').textContent.startsWith('at '));
+  const { milestones } = controller.snapshot();
+  assert.ok(milestones.tagsReady > milestones.tagsStarted);
+  controller.declineConsent();
+  assert.equal(stage('tags').querySelector('strong').textContent, 'Declined');
+  const instruction = controls.querySelector('.demo-helper-next-step').textContent;
+  assert.ok(instruction.includes('downloaded scripts stay in memory'));
+  controller.stop();
+  assert.equal(stage('tags').querySelector('strong').textContent, 'Stopped');
+});
+
+test('comparison links copy the current URL, offer a manual fallback and rerun the current configuration', async () => {
+  const context = browser('?perf=baseline&perf-phase=eds&perf-work=none#rates');
+  let copied;
+  let reloads = 0;
+  context.win.navigator = { clipboard: { writeText: async (value) => { copied = value; } } };
+  context.win.location.reload = () => { reloads += 1; };
+  const controls = mountPerformanceControls(context.document, context.win);
+  const click = (text) => [...controls.querySelectorAll('button')]
+    .find((element) => element.textContent === text).dispatchEvent(new context.window.Event('click'));
+  click('Copy comparison link');
+  await settle();
+  assert.equal(copied, context.win.location.href);
+  assert.ok(controls.textContent.includes('link copied'));
+  assert.equal(controls.querySelector('input[aria-label="Comparison link"]').hidden, true);
+  context.win.navigator.clipboard.writeText = async () => { throw new Error('Denied'); };
+  click('Copy comparison link');
+  await settle();
+  const input = controls.querySelector('input[aria-label="Comparison link"]');
+  assert.equal(input.hidden, false);
+  assert.equal(input.value, context.win.location.href);
+  assert.equal(input.readOnly, true);
+  click('Run again');
+  assert.equal(reloads, 1);
 });
 
 test('real CMP starts asynchronously without fixture requests or simulated work', async () => {
@@ -553,6 +657,7 @@ test('real CMP starts asynchronously without fixture requests or simulated work'
 test('real EDS mode postpones the SDK until after content and keeps a blocked CMP closed', async () => {
   const context = browser('?perf=onetrust-real&perf-phase=eds');
   const controller = startPerformanceDemo(context.document, context.win);
+  const controls = mountPerformanceControls(context.document, context.win);
   await controller.ready;
   assert.equal(context.document.querySelector('script'), null);
   await delayedCMP(context, controller);
@@ -563,6 +668,8 @@ test('real EDS mode postpones the SDK until after content and keeps a blocked CM
   assert.equal(controller.snapshot().cmpReady, false);
   assert.equal(controller.snapshot().consent, 'pending');
   assert.ok(controller.snapshot().status.includes('CMP did not initialize'));
+  assert.equal(controls.querySelector('[data-stage="cmp"]').dataset.state, 'error');
+  assert.equal(controls.querySelector('[data-stage="tags"] strong').textContent, 'Closed');
   controller.stop();
 });
 
@@ -603,8 +710,8 @@ test('real controls expose two valid strategies and real preferences without sim
   assert.deepEqual([...phase.options].map((option) => option.value), ['eds', 'early']);
   assert.equal(controls.querySelector('#demo-helper-performance-work').disabled, true);
   const buttons = [...controls.querySelectorAll('button')];
-  assert.equal(buttons.find((element) => element.textContent === 'Accept simulated tracking').hidden, true);
-  assert.equal(buttons.find((element) => element.textContent === 'Decline simulated tracking').hidden, true);
+  assert.equal(buttons.find((element) => element.getAttribute('aria-label') === 'Accept simulated tracking').hidden, true);
+  assert.equal(buttons.find((element) => element.getAttribute('aria-label') === 'Decline simulated tracking').hidden, true);
   assert.equal(buttons.find((element) => element.textContent === 'Open OneTrust preferences').disabled, true);
   assert.equal(controls.querySelectorAll('[role="tab"]')[2].textContent, 'Consent');
   assert.ok(controls.textContent.includes('Unavailable'));
@@ -626,7 +733,8 @@ test('demo banner is opt-in, waits for CMP readiness and shares the panel consen
   assert.equal(banner.parentElement, context.document.body);
   assert.equal(controls.contains(banner), false);
   const click = (text) => [...controls.querySelectorAll('button'), ...banner.querySelectorAll('button')]
-    .find((element) => element.textContent === text).dispatchEvent(new context.window.Event('click'));
+    .find((element) => element.textContent === text || element.getAttribute('aria-label') === text)
+    .dispatchEvent(new context.window.Event('click'));
   assert.equal(toggle.checked, false);
   assert.equal(banner.hidden, true);
   toggle.checked = true;

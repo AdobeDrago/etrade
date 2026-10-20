@@ -47,16 +47,136 @@ const STRATEGIES = {
   late: 'Simulated OneTrust starts before page content. Tags start automatically when page content is ready, without waiting for consent.',
   consent: 'Simulated OneTrust starts before page content. Tags wait for you to accept simulated tracking, even when page content is already ready.',
 };
+const PROFILE_LABELS = {
+  baseline: 'No tag stack', onetrust: 'OneTrust weights', etrade: 'Full tag stack · simulated', 'onetrust-real': 'Real OneTrust SDK',
+};
+const PHASE_LABELS = {
+  eds: 'EDS', early: 'Startup', late: 'Tags after page', consent: 'Early CMP + consent',
+};
+
+function loadingProgress(snapshot) {
+  const { config, milestones } = snapshot;
+  const real = config.profile === 'onetrust-real';
+  const gated = config.profile === 'etrade' && ['eds', 'consent'].includes(config.phase);
+  const stopped = snapshot.status === 'Stopped';
+  const failed = /failed|unavailable|did not initialize/i.test(snapshot.status);
+  const resources = snapshot.resources.filter((resource) => resource.group === 'tags');
+  const loaded = resources.filter((resource) => resource.status === 'loaded').length;
+  const failures = resources.filter((resource) => resource.status === 'failed').length;
+  const complete = resources.length > 0 && loaded === resources.length;
+  const declined = snapshot.consent === 'declined';
+  const content = { text: 'Waiting', state: 'waiting', time: milestones.contentReady };
+  if (milestones.contentReady !== undefined) Object.assign(content, { text: 'Ready', state: 'done' });
+  const cmp = { text: 'Waiting', state: 'waiting', time: milestones.cmpReady };
+  if (milestones.cmpStarted !== undefined) cmp.text = 'Loading';
+  if (failed) Object.assign(cmp, { text: 'Unavailable', state: 'error' });
+  if (stopped) cmp.text = 'Stopped';
+  if (snapshot.cmpReady) Object.assign(cmp, { text: 'Ready', state: 'done' });
+  const tags = { text: 'Waiting', state: 'waiting', time: milestones.tagsReady };
+  if (milestones.tagsStarted !== undefined) tags.text = `${loaded}/${resources.length} loaded`;
+  if (gated && snapshot.consent !== 'accepted') tags.text = 'Awaiting consent';
+  if (complete) Object.assign(tags, { text: 'Loaded', state: 'done' });
+  if (gated && declined) Object.assign(tags, { text: 'Declined', state: 'waiting', time: milestones.consentUpdated });
+  if (failures) Object.assign(tags, { text: `${failures} failed`, state: 'error' });
+  if (stopped) Object.assign(tags, { text: 'Stopped', time: undefined });
+  if (real) {
+    Object.assign(tags, {
+      text: snapshot.realCMP?.consented ? 'Open' : 'Closed',
+      state: snapshot.realCMP?.consented ? 'done' : 'waiting',
+    });
+  }
+  return {
+    real, gated, stopped, failed, declined, loaded, content, cmp, tags,
+  };
+}
+
+function nextInstruction(snapshot, progress) {
+  const {
+    real, gated, stopped, failed, declined, loaded,
+  } = progress;
+  if (stopped) return 'This run is stopped. Run again to start a fresh comparison.';
+  if (failed) {
+    return real
+      ? 'Check the Consent tab for initialization details. Tracking stays gated.'
+      : 'Some downloads are unavailable. Check Downloads or run the comparison again.';
+  }
+  if (real) {
+    return snapshot.cmpReady
+      ? 'Use OneTrust preferences to make a real consent choice. This mode loads the CMP only.'
+      : 'Waiting for the real CMP. Its domain allowlist or tenant settings may prevent initialization.';
+  }
+  if (gated && !snapshot.cmpReady) {
+    return snapshot.config.phase === 'eds'
+      ? 'Content comes first in EDS mode. You can queue the cookie banner while OneTrust loads.'
+      : 'OneTrust starts early in this comparison. You can queue the cookie banner while it loads.';
+  }
+  if (gated && declined) {
+    return loaded
+      ? 'Declined: downloaded scripts stay in memory; additional simulated tracking work stops.'
+      : 'Declined: the tag stack stays unloaded. Reopen the banner to try Accept.';
+  }
+  if (gated && snapshot.consent === 'pending') return 'Try the cookie banner or accept below to release the simulated tag stack.';
+  if (snapshot.config.profile === 'baseline') return 'Page measurements with no simulated tag stack. Try Traditional or EDS next.';
+  if (snapshot.config.profile === 'etrade' && snapshot.config.phase === 'early') return 'Traditional comparison: the stack starts during page startup without a consent gate. Switch to EDS to load content first and wait for consent.';
+  return 'Explore the page, then compare Page experience and Downloads. Run again for a fresh measurement.';
+}
 
 /** Baseline and loaded comparisons share the same controls and measurement overhead. */
 export default function mountPerformanceControls(doc, win) {
   const current = readPerformanceConfig(win.location.href);
+  function navigate(config) {
+    if (!isDemoHelperHost(win.location.hostname)) return;
+    try {
+      win.sessionStorage.setItem('etrade:demo-helper-open', 'true');
+      win.sessionStorage.setItem('etrade:demo-helper-view', 'performance');
+    } catch { /* Optional persistence. */ }
+    win.location.assign(performanceURL(win.location.href, config));
+  }
   const section = node(doc, 'details', 'section');
   section.classList.add('demo-helper-performance');
   section.open = Boolean(current);
-  section.append(node(doc, 'summary', 'heading', 'Third-party performance'));
-  const status = node(doc, 'p', 'muted');
+  section.append(node(doc, 'summary', 'heading', 'Performance comparison'));
+  const scenarios = node(doc, 'div', 'scenarios');
+  scenarios.setAttribute('role', 'group');
+  scenarios.setAttribute('aria-label', 'Quick performance comparisons');
+  [
+    ['baseline', 'eds', 'No tag stack', 'Page only'],
+    ['etrade', 'early', 'Traditional', 'Tags at startup'],
+    ['etrade', 'eds', 'EDS', 'Content first'],
+  ].forEach(([profile, phase, title, description]) => {
+    const scenario = button(doc, '');
+    scenario.className = 'demo-helper-scenario';
+    scenario.setAttribute('aria-pressed', String(current?.profile === profile
+      && (profile === 'baseline' || current.phase === phase)));
+    scenario.append(node(doc, 'strong', 'scenario-title', title), node(doc, 'span', 'scenario-description', description));
+    scenario.addEventListener('click', () => navigate({ profile, phase, work: current?.work || 'none' }));
+    scenarios.append(scenario);
+  });
+  const comparisonHelp = node(doc, 'p', 'muted', 'Traditional and EDS simulate the same production-sized tag stack. Choose a mode to reload.');
+  const overview = node(doc, 'details', 'run-overview');
+  const runSummary = node(doc, 'summary', 'run-summary');
+  const runLabel = node(doc, 'p', 'run-label');
+  const status = node(doc, 'p', 'run-status');
   status.setAttribute('role', 'status');
+  const sequence = node(doc, 'ol', 'sequence');
+  sequence.setAttribute('aria-label', 'Loading progress');
+  const stages = new Map();
+  let order = ['cmp', 'content', 'tags'];
+  if (current?.phase === 'eds' || current?.profile === 'baseline') order = ['content', 'cmp', 'tags'];
+  else if (current?.phase === 'early' && current?.profile === 'etrade') order = ['cmp', 'tags', 'content'];
+  order.forEach((key) => {
+    const item = node(doc, 'li', 'stage');
+    item.dataset.stage = key;
+    const label = node(doc, 'span', 'stage-label', { content: 'Page content', cmp: 'OneTrust', tags: current?.profile === 'onetrust-real' ? 'Consent gate' : 'Tag stack' }[key]);
+    const state = node(doc, 'strong', 'stage-state');
+    const timing = node(doc, 'span', 'stage-timing');
+    item.append(label, state, timing);
+    stages.set(key, { item, state, timing });
+    sequence.append(item);
+  });
+  const nextStep = node(doc, 'p', 'next-step');
+  runSummary.append(runLabel, status);
+  overview.append(runSummary, sequence);
   const measurements = node(doc, 'div', 'measurements');
   const tablist = node(doc, 'div', 'tabs');
   tablist.setAttribute('role', 'tablist');
@@ -108,13 +228,16 @@ export default function mountPerformanceControls(doc, win) {
     rows.forEach(([key, label]) => {
       const value = node(doc, 'dd', 'metric-value', 'Not observed');
       values.set(key, value);
-      list.append(node(doc, 'dt', 'metric-label', label), value);
+      const metric = node(doc, 'div', 'metric');
+      metric.append(node(doc, 'dt', 'metric-label', label), value);
+      list.append(metric);
     });
     wrapper.append(list);
     panels[index].append(wrapper);
     return wrapper;
   }
-  group(0, 'Core Web Vitals', [['lcp', 'LCP'], ['cls', 'CLS']]);
+  const vitals = group(0, 'Core Web Vitals', [['lcp', 'LCP · largest paint'], ['cls', 'CLS · layout shift']]);
+  vitals.classList.add('demo-helper-vitals');
   group(0, 'Additional observations', [['interaction', 'Slowest interaction (lab)'], ['fcp', 'FCP']]);
   panels[0].append(node(doc, 'p', 'muted', 'Slowest interaction is a lab observation, not field INP. Initial-load values can stay unchanged after the page finishes loading.'));
   const downloads = group(1, 'This run · fixture downloads', [['transfer', 'Transferred, including headers'], ['downloaded', 'Downloaded source size']]);
@@ -134,8 +257,8 @@ export default function mountPerformanceControls(doc, win) {
   panels[2].append(workloadActions);
 
   const settings = node(doc, 'details', 'settings');
-  settings.open = !current;
-  settings.append(node(doc, 'summary', 'heading', 'Comparison settings'));
+  settings.open = false;
+  settings.append(node(doc, 'summary', 'heading', 'Advanced settings'));
   const form = node(doc, 'form', 'form');
   const profile = select(doc, form, 'profile', 'Libraries', [
     ['off', 'Off'], ['baseline', 'Measured baseline'], ['onetrust', 'OneTrust script weights'], ['etrade', 'E*TRADE tag + OneTrust script weights'],
@@ -193,13 +316,15 @@ export default function mountPerformanceControls(doc, win) {
   settings.append(form);
 
   const runtimeActions = node(doc, 'div', 'actions');
-  const consent = button(doc, 'Accept simulated tracking');
-  const decline = button(doc, 'Decline simulated tracking');
+  const consent = button(doc, 'Accept');
+  consent.setAttribute('aria-label', 'Accept simulated tracking');
+  const decline = button(doc, 'Decline');
+  decline.setAttribute('aria-label', 'Decline simulated tracking');
   const response = button(doc, 'Test response');
   response.dataset.perfInteraction = 'true';
   const refresh = button(doc, 'Refresh measurements');
   const preferences = button(doc, 'Open OneTrust preferences');
-  runtimeActions.append(consent, decline, preferences, response, refresh);
+  runtimeActions.append(preferences, response, refresh);
   const consentHelp = node(doc, 'p', 'muted', 'These buttons simulate consent. No real OneTrust banner or tracking is loaded.');
   const bannerControl = node(doc, 'div', 'banner-control');
   const bannerLabel = node(doc, 'label', 'banner-toggle');
@@ -230,12 +355,27 @@ export default function mountPerformanceControls(doc, win) {
   banner.append(bannerCopy, bannerActions);
   doc.body.append(banner);
   bannerControl.append(bannerLabel, bannerWaiting);
+  const consentControl = node(doc, 'div', 'consent-control');
+  const consentState = node(doc, 'p', 'consent-state');
+  const consentActions = node(doc, 'div', 'actions');
+  consentActions.append(consent, decline);
+  consentControl.append(consentState, consentActions, bannerControl);
   const responseStatus = node(doc, 'p', 'muted');
   const refreshStatus = node(doc, 'p', 'muted');
   refreshStatus.setAttribute('role', 'status');
-  section.append(status, measurements, runtimeActions, consentHelp);
-  section.append(bannerControl);
-  section.append(responseStatus, refreshStatus, settings);
+  const runActions = node(doc, 'div', 'actions');
+  const rerun = button(doc, 'Run again');
+  const share = button(doc, 'Copy comparison link');
+  runActions.append(rerun, share);
+  const shareStatus = node(doc, 'p', 'muted');
+  shareStatus.setAttribute('role', 'status');
+  const shareURL = node(doc, 'input', 'input');
+  shareURL.readOnly = true;
+  shareURL.hidden = true;
+  shareURL.setAttribute('aria-label', 'Comparison link');
+  section.append(scenarios, comparisonHelp, overview, nextStep, consentControl, measurements);
+  section.append(runtimeActions, responseStatus, refreshStatus, consentHelp);
+  section.append(runActions, shareStatus, shareURL, settings);
   let lastConsent;
   let bannerVisible = false;
   const notifyBannerLayout = () => doc.dispatchEvent(new win.CustomEvent('demo-cookie-banner:updated'));
@@ -250,14 +390,35 @@ export default function mountPerformanceControls(doc, win) {
 
   function render() {
     const snapshot = win.etradePerformanceDemo?.snapshot();
+    overview.hidden = !snapshot;
+    nextStep.hidden = !snapshot;
+    comparisonHelp.hidden = Boolean(snapshot);
+    runActions.hidden = !snapshot;
     measurements.hidden = !snapshot;
     runtimeActions.hidden = !snapshot;
     consentHelp.hidden = !snapshot;
+    consentControl.hidden = true;
     bannerControl.hidden = true;
     bannerWaiting.hidden = true;
-    status.textContent = snapshot ? snapshot.status : 'Off · choose a measured baseline to compare.';
+    status.textContent = snapshot?.status || '';
     if (!snapshot) { showBanner(false); return; }
-    const real = snapshot.config.profile === 'onetrust-real';
+    const progress = loadingProgress(snapshot);
+    const { real, gated } = progress;
+    let processing = snapshot.config.work === 'none' ? 'Download + parse' : `${snapshot.config.work} assumed CPU`;
+    if (real) processing = 'Actual SDK';
+    runLabel.textContent = `${PROFILE_LABELS[snapshot.config.profile]} · ${PHASE_LABELS[snapshot.config.phase]} · ${processing}`;
+    if (snapshot.config.profile === 'baseline') runLabel.textContent = 'No tag stack · page measurements only';
+    const timed = (value) => (value === undefined ? '' : `at ${(value / 1000).toFixed(2)} s`);
+    const stage = (key, { text, state, time }) => {
+      const entry = stages.get(key);
+      entry.state.textContent = text;
+      entry.item.dataset.state = state;
+      entry.timing.textContent = timed(time);
+    };
+    ['content', 'cmp', 'tags'].forEach((key) => stage(key, progress[key]));
+    stages.get('cmp').item.hidden = snapshot.config.profile === 'baseline';
+    stages.get('tags').item.hidden = ['baseline', 'onetrust'].includes(snapshot.config.profile);
+    nextStep.textContent = nextInstruction(snapshot, progress);
     reference.hidden = real;
     realDownloads.hidden = !real;
     simulation.hidden = real;
@@ -273,8 +434,10 @@ export default function mountPerformanceControls(doc, win) {
       : 'These buttons simulate consent. No real OneTrust banner or tracking is loaded.';
     preferences.hidden = !real;
     preferences.disabled = !snapshot.realCMP?.canOpenPreferences;
-    const gated = snapshot.config.profile === 'etrade'
-      && ['eds', 'consent'].includes(snapshot.config.phase);
+    consentControl.hidden = !gated;
+    consentState.textContent = `Simulated consent · ${{ pending: 'no choice yet', accepted: 'accepted', declined: 'declined' }[snapshot.consent]}`;
+    consent.setAttribute('aria-pressed', String(snapshot.consent === 'accepted'));
+    decline.setAttribute('aria-pressed', String(snapshot.consent === 'declined'));
     bannerControl.hidden = !gated;
     if (!gated || snapshot.status === 'Stopped'
       || (lastConsent !== undefined && lastConsent !== snapshot.consent)) {
@@ -336,12 +499,28 @@ export default function mountPerformanceControls(doc, win) {
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    if (!isDemoHelperHost(win.location.hostname)) return;
-    const config = profile.value === 'off' ? null : {
+    navigate(profile.value === 'off' ? null : {
       profile: profile.value, phase: phase.value, work: work.value,
-    };
+    });
+  });
+  rerun.addEventListener('click', () => {
+    if (!isDemoHelperHost(win.location.hostname)) return;
     try { win.sessionStorage.setItem('etrade:demo-helper-open', 'true'); } catch { /* Optional persistence. */ }
-    win.location.assign(performanceURL(win.location.href, config));
+    win.location.reload();
+  });
+  share.addEventListener('click', async () => {
+    try {
+      if (!win.navigator?.clipboard?.writeText) throw new Error('Clipboard unavailable');
+      await win.navigator.clipboard.writeText(win.location.href);
+      shareStatus.textContent = 'Comparison link copied. The balance stays local to this browser.';
+      shareURL.hidden = true;
+    } catch {
+      shareStatus.textContent = 'Copy the link below. The balance stays local to this browser.';
+      shareURL.value = win.location.href;
+      shareURL.hidden = false;
+      shareURL.focus();
+      shareURL.select?.();
+    }
   });
   function chooseConsent(accepted) {
     const snapshot = win.etradePerformanceDemo?.snapshot();
