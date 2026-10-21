@@ -183,6 +183,7 @@ export default function mountXmlTools(doc, { download } = {}) {
       }
       byId('connection').textContent = `Connected · ${sdk.context.org}/${sdk.context.repo}`;
       byId('save-help').textContent = 'Save a demo document, then open its SC editor to review and publish. Your current page is unchanged.';
+      byId('page-export-status').textContent = 'Enter a saved page path, then load it to create its XML export.';
       status('Connected to DA. Import XML or load a saved demo document.');
       render();
     },
