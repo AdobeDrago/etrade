@@ -1,7 +1,14 @@
 import { loadFragment } from '../fragment/fragment.js';
 import { decorateIcons } from '../../scripts/aem.js';
-import { disclosureSetRequest, loadDisclosureSet } from '../../scripts/disclosure-sets.js';
+import { disclosureFragmentPath, disclosureSetRequest, loadDisclosureSet } from '../../scripts/disclosure-sets.js';
 import decorateDisclosureReferences from '../../scripts/disclosure-references.js';
+
+function finishDisclosures(block) {
+  decorateIcons(block);
+  block.querySelectorAll('a').forEach((link) => link.classList.remove('button', 'primary', 'secondary', 'accent'));
+  block.hidden = !block.textContent.trim() && !block.querySelector('img, picture, .icon');
+  if (!block.hidden) decorateDisclosureReferences(document.querySelector('main'), block);
+}
 
 /** Render both legacy table rows and resolved rich-text fragments consistently. */
 function renderDisclosures(block, entries) {
@@ -16,7 +23,6 @@ function renderDisclosures(block, entries) {
     content.append(...nodes);
     if (!content.textContent.trim() && !content.querySelector('img, picture, .icon')) return;
     decorateIcons(content);
-    content.querySelectorAll('a').forEach((link) => link.classList.remove('button', 'primary', 'secondary', 'accent'));
     if (/^\d+$/.test(label)) {
       const number = disclosureId ? list.children.length + 1 : Number(label);
       content.id = `disclosure-${disclosureId || number}`;
@@ -44,8 +50,75 @@ function renderDisclosures(block, entries) {
   if (intro.children.length) block.append(intro);
   if (list.children.length) block.append(list);
   if (closing.children.length) block.append(closing);
-  block.hidden = !block.children.length;
-  if (!block.hidden) decorateDisclosureReferences(document.querySelector('main'), block);
+  finishDisclosures(block);
+}
+
+function renderTable(block) {
+  const entries = [...block.children].flatMap((row) => {
+    const [key, ...cells] = row.children;
+    if (!key || !cells.length) return [];
+    return [{
+      label: key.textContent.trim(),
+      nodes: cells.flatMap((cell) => [...cell.childNodes]),
+    }];
+  });
+  renderDisclosures(block, entries);
+}
+
+/** Preserve rich-text pages, using only their top-level ordered lists as disclosures. */
+function renderPage(block, fragment) {
+  const nodes = [...fragment.childNodes].flatMap((section) => (
+    section.nodeType === 1 && section.tagName === 'DIV' && !section.className
+      ? [...section.childNodes] : [section]
+  ));
+  const children = [];
+  let content;
+  let hasList = false;
+  nodes.forEach((node) => {
+    if (node.nodeType === 3 && !node.textContent.trim()) return;
+    if (node.nodeType === 1 && node.tagName === 'OL') {
+      const items = [...node.children].filter((item) => item.tagName === 'LI');
+      const step = node.hasAttribute('reversed') ? -1 : 1;
+      let number = Number(node.getAttribute('start') ?? (step < 0 ? items.length : 1));
+      node.classList.add('disclosures-items');
+      items.forEach((item) => {
+        number = Number(item.getAttribute('value') ?? number);
+        if (!item.id) item.id = `disclosure-${number}`;
+        item.setAttribute('value', String(number));
+        item.tabIndex = -1;
+        number += step;
+      });
+      children.push(node);
+      content = null;
+      hasList = true;
+    } else {
+      if (!content) {
+        content = document.createElement('div');
+        content.className = hasList ? 'disclosures-closing' : 'disclosures-intro';
+        children.push(content);
+      }
+      content.append(node);
+    }
+  });
+  block.replaceChildren(...children);
+  finishDisclosures(block);
+}
+
+/** Load raw legal copy before any page auto-block transformations can rewrite it. */
+async function renderDocument(block, url) {
+  const path = disclosureFragmentPath(new URL(url).pathname);
+  const fragment = await loadFragment(path, { decorate: false });
+  if (!fragment) throw new Error(`Disclosure document could not be loaded: ${path}`);
+  const content = fragment.querySelector('.disclosures');
+  if (!content) {
+    renderPage(block, fragment);
+    return;
+  }
+  if (!content.querySelector('.disclosures-items, .disclosures-intro, .disclosures-closing')) {
+    renderTable(content);
+  }
+  block.replaceChildren(...content.childNodes);
+  finishDisclosures(block);
 }
 
 /** Fetch each document once, then clone it for every position in the set. */
@@ -76,11 +149,7 @@ export default async function decorate(block) {
       if (request) {
         await renderSet(block, request);
       } else {
-        const fragment = await loadFragment(new URL(reference.href).pathname);
-        const content = fragment?.querySelector('.disclosures');
-        block.replaceChildren(...(content ? [...content.childNodes] : []));
-        block.hidden = !content;
-        if (!block.hidden) decorateDisclosureReferences(document.querySelector('main'), block);
+        await renderDocument(block, reference.href);
       }
     } catch (error) {
       block.replaceChildren();
@@ -90,13 +159,5 @@ export default async function decorate(block) {
     }
     return;
   }
-  const entries = [...block.children].flatMap((row) => {
-    const [key, ...cells] = row.children;
-    if (!key || !cells.length) return [];
-    return [{
-      label: key.textContent.trim(),
-      nodes: cells.flatMap((cell) => [...cell.childNodes]),
-    }];
-  });
-  renderDisclosures(block, entries);
+  renderTable(block);
 }
