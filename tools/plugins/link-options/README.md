@@ -4,7 +4,7 @@ A buildless DA Library dialog for links and CTAs. Authors configure tracking ins
 
 ## Use it
 
-1. Select a complete link in DA, then open **Library → Link Options**. The dialog opens over the editor and loads the link's URL and tracking settings. Alternatively, paste a destination URL into the dialog.
+1. Select a complete link in DA. In New Authoring, open the **Outline** dropdown at the top of the right sidebar and choose **Link Options** under **Extensions**. In the classic editor, open **Library → Link Options**. The dialog opens over the editor and loads the link's URL and tracking settings. Alternatively, paste a destination URL into the dialog.
 2. Toggle **Track clicks** and enter a stable **Tracking key**. **Advanced → Required consent** defaults to Advertising (`C0004`), with Analytics (`C0002`), both categories, and custom category IDs available. IDs must match the tenant's OneTrust policy. Every listed category is required before sending.
 3. Click **Copy URL**. If browser clipboard access is blocked, the helper selects the generated URL and shows manual copy instructions.
 4. Close Link Options, open DA's native **Edit link** dialog, paste into **URL**, then **Save**. Save and preview the page separately in DA.
@@ -15,17 +15,19 @@ The helper reads a single selected anchor, including one serialized inside CTA t
 
 ## Enable in DA
 
-Push the plugin files with the project code first. In the [DA site configuration](https://da.live/config#/adobedrago/etrade/), add this row to the **library** tab, preserving its existing rows and columns. If Link Options is already registered for this ref, update that row's **experience** to `dialog` instead of adding a duplicate:
+Push the plugin files with the project code first. In the [DA site configuration](https://da.live/config#/adobedrago/etrade/), add this row to the **library** tab, preserving its existing rows and columns. If Link Options is already registered for this ref, update that row's **experience** to `fullsize-dialog` instead of adding a duplicate:
 
 | title | path | format | icon | experience | ref |
 | --- | --- | --- | --- | --- | --- |
-| Link Options | https://demo-controller--etrade--adobedrago.aem.live/tools/plugins/link-options/link-options.html | | | dialog | demo-controller |
+| Link Options | https://demo-controller--etrade--adobedrago.aem.live/tools/plugins/link-options/link-options.html | | | fullsize-dialog | demo-controller |
 
-Open [the Home editor with the matching ref](https://da.live/edit?ref=demo-controller#/adobedrago/etrade/home), select the link, then open **Library → Link Options**. Verify that the dialog opens within DA, the selected link loads, **Copy URL** copies the configured URL, and **Close** returns to the editor. The ref selects plugin code; DA content is shared across branches. Review previewed content at [the demo-controller Home preview](https://demo-controller--etrade--adobedrago.aem.page/home).
+Save the configuration, then open [Home in New Authoring with the matching ref](https://da.live/canvas?ref=demo-controller#/adobedrago/etrade/home). Select the link, then open **Outline dropdown → Extensions → Link Options**. Verify that the dialog opens within DA, the selected link loads, **Copy URL** copies the configured URL, and **Close** returns to the editor. The ref selects plugin code; DA content is shared across branches. Review previewed content at [the demo-controller Home preview](https://demo-controller--etrade--adobedrago.aem.page/home).
 
-For local development, use a separate library row with path `http://localhost:3000/tools/plugins/link-options/link-options.html`, experience `dialog`, and ref `local`. Open `https://da.live/edit?ref=local#/adobedrago/etrade/home` with `npx -y @adobe/aem-cli up` running. For main, use the main branch's `.aem.live` URL and leave ref empty after the code is deployed there. No retired repository configuration files are needed.
+If **Extensions** is missing from the Outline dropdown, check the editor URL's `ref`: a row with `ref=demo-controller` is hidden in editors opened without that ref or with another value such as `xml-local`. Reload the editor after saving configuration changes. `fullsize-dialog` opens a modal in New Authoring; the classic editor also accepts this value. Plain `dialog` uses the classic editor's modal but appears as a sidebar tool in New Authoring.
 
-DA hosts the dialog and embeds the plugin URL. Its HTML, CSS and JavaScript must remain served at that URL for the integration to work. The published demo controls have no standalone Link Options shortcut; authoring starts in DA's Library menu. This registration does not add fields to DA's built-in Edit link dialog.
+For local development, use a separate library row with path `http://localhost:3000/tools/plugins/link-options/link-options.html`, experience `fullsize-dialog`, and ref `local`. Open `https://da.live/canvas?ref=local#/adobedrago/etrade/home` with `npx -y @adobe/aem-cli up` running. For main, use the main branch's `.aem.live` URL and leave ref empty after the code is deployed there. No retired repository configuration files are needed.
+
+DA hosts the dialog and embeds the plugin URL. Its HTML, CSS and JavaScript must remain served at that URL for the integration to work. The published demo controls have no standalone Link Options shortcut; authoring starts in DA's Extensions picker (Library in the classic editor). This registration does not add fields to DA's built-in Edit link dialog.
 
 Registration follows Adobe's [plugin tutorial](https://docs.da.live/developers/tutorials/eds-micro-frontends/2). The [DA SDK](https://github.com/adobe/da-nx/blob/main/nx/utils/sdk.js) is used only for `getSelection()` and `closeLibrary()`. No authentication tokens, page content, or settings are stored by this helper. The URL remains local until the author pastes it into DA.
 

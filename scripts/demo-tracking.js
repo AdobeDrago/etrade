@@ -167,7 +167,7 @@ export default function mountTrackingControls(doc, win) {
     element(doc, 'p', 'muted', 'Inspect marked links below, or click one on the page to capture a real event. Event history follows this tab across pages for the current demo session.'),
     connection,
   );
-  root.append(element(doc, 'p', 'muted', 'Configure tracking while authoring in DA: Library → Link Options.'));
+  root.append(element(doc, 'p', 'muted', 'Configure tracking while authoring in DA: Outline menu → Extensions → Link Options.'));
   const sampleQueue = win.etradeDemoSampleTracking || createTrackingQueue({
     initial: readDemoSession(win, 'sample-events'), restoreConsent: true,
   });
