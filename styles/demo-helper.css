@@ -350,6 +350,7 @@
   font-size: var(--font-size-12);
 }
 
+.demo-helper .demo-helper-tracked-links,
 .demo-helper .demo-helper-event-group,
 .demo-helper .demo-helper-event-sandbox {
   border-top: 1px solid var(--color-border-default);
@@ -363,7 +364,8 @@
   font-weight: var(--font-weight-semibold);
 }
 
-.demo-helper .demo-helper-event-log {
+.demo-helper .demo-helper-event-log,
+.demo-helper .demo-helper-tracked-list {
   display: grid;
   gap: 8px;
   max-height: 24rem;
@@ -374,12 +376,20 @@
   list-style: none;
 }
 
+.demo-helper .demo-helper-tracked-link,
 .demo-helper .demo-helper-event {
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-medium);
   padding: 12px;
   background: var(--color-surface-page);
   overflow-wrap: anywhere;
+}
+
+.demo-helper .demo-helper-tracked-key {
+  display: block;
+  margin-top: 4px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-12);
 }
 
 .demo-helper .demo-helper-event-key,

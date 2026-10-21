@@ -300,7 +300,8 @@ test('live event log updates immediately, while sample consent cannot release re
   context.document.body.append(controls);
   context.document.querySelector('main a').dispatchEvent(new context.window.Event('click', { bubbles: true }));
   assert.ok(controls.querySelector('.demo-helper-event-group').textContent.includes('#1 live'));
-  controls.querySelectorAll('button')[1].dispatchEvent(new context.window.Event('click'));
+  [...controls.querySelectorAll('button')].find((button) => button.textContent === 'Capture advertising example')
+    .dispatchEvent(new context.window.Event('click'));
   const advertising = controls.querySelector('[aria-label="Sample C0004 consent"]');
   advertising.querySelector('[value="granted"]').selected = true;
   advertising.dispatchEvent(new context.window.Event('change'));
@@ -311,4 +312,75 @@ test('live event log updates immediately, while sample consent cannot release re
   assert.equal(sample.querySelector('[data-tracking-status="sent"]'), null);
   context.emit('OneTrustGroupsUpdated', ['C0004']);
   assert.ok(controls.querySelector('.demo-helper-event-group').textContent.includes('Ready · destination not connected'));
+});
+
+test('marked Home links appear before a click and can be tested without navigation or a real event', async () => {
+  const context = browser('<a href="/home?@tracking=home-link">Home</a>');
+  const controls = mountTrackingControls(context.document, context.win);
+  context.document.body.append(controls);
+  const inventory = controls.querySelector('.demo-helper-tracked-links');
+  assert.ok(inventory.textContent.includes('1 tracking target detected'));
+  assert.ok(inventory.textContent.includes('Home'));
+  assert.ok(inventory.textContent.includes('home-link'));
+  assert.ok(inventory.textContent.includes('Consent: C0004'));
+  assert.ok(controls.querySelector('.demo-helper-event-group').textContent.includes('No events yet.'));
+  const source = context.document.querySelector('main a');
+  inventory.querySelector('button').dispatchEvent(new context.window.Event('click', { bubbles: true }));
+  assert.equal(source.getAttribute('href'), '/home');
+  assert.equal(context.win.etradeTracking.snapshot().events.length, 0);
+  const sample = controls.querySelector('.demo-helper-event-sandbox');
+  assert.equal(sample.open, true);
+  assert.ok(sample.textContent.includes('#1 home-link'));
+  assert.ok(sample.textContent.includes('Queued · awaiting C0004'));
+  const advertising = sample.querySelector('[aria-label="Sample C0004 consent"]');
+  advertising.querySelector('[value="granted"]').selected = true;
+  advertising.dispatchEvent(new context.window.Event('change'));
+  await settle();
+  assert.ok(sample.textContent.includes('Ready · destination not connected'));
+  assert.equal(context.win.etradeTracking.snapshot().consent.C0004, 'pending');
+  assert.equal(inventory.querySelectorAll('.demo-helper-tracked-link').length, 1);
+});
+
+test('tracking inventory follows fragment links, clones, direct data attributes and removals', async () => {
+  const context = browser();
+  const controls = mountTrackingControls(context.document, context.win);
+  context.document.body.append(controls);
+  const inventory = controls.querySelector('.demo-helper-tracked-links');
+  assert.ok(inventory.textContent.includes('No marked links found.'));
+  const header = context.document.createElement('header');
+  header.innerHTML = '<a href="/home?@tracking=header-home">Home</a>';
+  context.document.body.prepend(header);
+  await settle();
+  assert.ok(inventory.textContent.includes('header-home'));
+  const link = header.querySelector('a');
+  link.dataset.trackingKey = 'updated-home';
+  link.dataset.trackingCategory = 'C0002';
+  link.textContent = 'Updated Home';
+  await settle();
+  assert.ok(inventory.textContent.includes('updated-home'));
+  assert.ok(inventory.textContent.includes('Updated Home'));
+  assert.ok(inventory.textContent.includes('Consent: C0002'));
+  const copy = link.cloneNode(true);
+  link.replaceWith(copy);
+  const button = context.document.createElement('button');
+  button.dataset.trackingKey = 'button-action';
+  button.textContent = 'Action';
+  context.document.querySelector('main').append(button);
+  await settle();
+  assert.equal(inventory.querySelectorAll('.demo-helper-tracked-link').length, 2);
+  copy.removeAttribute('data-tracking-key');
+  button.remove();
+  await settle();
+  assert.equal(inventory.querySelectorAll('.demo-helper-tracked-link').length, 0);
+  assert.ok(inventory.textContent.includes('No marked links found.'));
+});
+
+test('invalid tracking configurations remain visible but cannot be tested', () => {
+  const context = browser('<a href="/home" data-tracking-key="home" data-tracking-category="ads">Home</a><a href="/home" data-tracking-key="">Empty key</a>');
+  const controls = mountTrackingControls(context.document, context.win);
+  const inventory = controls.querySelector('.demo-helper-tracked-links');
+  assert.equal(inventory.querySelectorAll('.demo-helper-tracked-link').length, 2);
+  assert.ok(inventory.textContent.includes('Invalid tracking configuration'));
+  assert.ok(inventory.textContent.includes('(empty key)'));
+  assert.ok([...inventory.querySelectorAll('button')].every((button) => button.disabled));
 });

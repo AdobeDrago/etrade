@@ -64,6 +64,88 @@ function mountLog(doc, container, queue, label) {
   });
 }
 
+function mountTrackedLinks(doc, win, root, onTest) {
+  const section = element(doc, 'section', 'tracked-links');
+  const count = element(doc, 'p', 'muted');
+  count.setAttribute('role', 'status');
+  const list = element(doc, 'ul', 'tracked-list');
+  list.setAttribute('aria-label', 'Detected tracking links and buttons');
+  const feedback = element(doc, 'p', 'muted');
+  feedback.setAttribute('role', 'status');
+  section.append(element(doc, 'h4', 'heading', 'Tracked links on this page'), count, list, feedback);
+  let previousLinks = [];
+  let previousSignature;
+  function render() {
+    const links = [...doc.querySelectorAll('a[href][data-tracking-key], button[data-tracking-key]')]
+      .filter((link) => !root.contains(link));
+    const entries = links.map((link) => {
+      let event;
+      try {
+        event = linkTrackingEvent(link, win.location.href);
+      } catch { /* Show invalid targets too. */ }
+      const label = event?.payload.context.label || link.getAttribute('aria-label')
+        || link.textContent.trim() || link.querySelector('img')?.alt || 'Untitled link';
+      const key = event?.key || '(empty key)';
+      const category = event?.requiredCategories?.join(', ') || 'Invalid tracking configuration';
+      return {
+        link, event, label, key, category,
+      };
+    });
+    const signature = JSON.stringify(entries.map(({
+      event, label, key, category,
+    }) => (
+      [event, label, key, category]
+    )));
+    if (signature === previousSignature && links.length === previousLinks.length
+      && links.every((link, index) => link === previousLinks[index])) return;
+    previousLinks = links;
+    previousSignature = signature;
+    count.textContent = `${links.length} tracking target${links.length === 1 ? '' : 's'} detected. Marking a link does not create a click event.`;
+    list.replaceChildren();
+    feedback.textContent = '';
+    if (!links.length) {
+      list.append(element(doc, 'li', 'empty', 'No marked links found. Author a URL such as /home?@tracking=home-link, or use data-tracking-key on the link.'));
+    }
+    entries.forEach(({
+      link, event, label, key, category,
+    }) => {
+      const item = element(doc, 'li', 'tracked-link');
+      item.append(
+        element(doc, 'strong', 'event-key', label),
+        element(doc, 'code', 'tracked-key', key),
+        element(doc, 'p', 'muted', `Consent: ${category}`),
+      );
+      const test = element(doc, 'button', 'button', 'Test in sample queue');
+      test.type = 'button';
+      test.disabled = !event?.requiredCategories;
+      test.setAttribute('aria-label', `Test ${label} in sample queue`);
+      test.addEventListener('click', () => {
+        try {
+          const current = linkTrackingEvent(link, win.location.href);
+          if (!current?.requiredCategories) return;
+          onTest(current);
+          feedback.textContent = `Sample event added for ${current.key} in “Try a sample queue” below.`;
+        } catch { /* The source link may have changed since the list rendered. */ }
+      });
+      item.append(test);
+      list.append(item);
+    });
+  }
+  render();
+  if (win.MutationObserver) {
+    new win.MutationObserver((records) => {
+      if (records.some((record) => !root.contains(record.target))) render();
+    }).observe(doc.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: ['href', 'data-tracking-key', 'data-tracking-category', 'aria-label', 'alt'],
+    });
+  }
+  return section;
+}
+
 /** Demo controls are observers of real events. Sample consent operates on its own queue. */
 export default function mountTrackingControls(doc, win) {
   if (!isDemoHelperHost(win.location.hostname)) return null;
@@ -77,20 +159,24 @@ export default function mountTrackingControls(doc, win) {
   });
   root.append(
     element(doc, 'h3', 'heading', 'Link tracking'),
-    element(doc, 'p', 'muted', 'Click a marked page link to see its event and required consent category.'),
+    element(doc, 'p', 'muted', 'Inspect marked links below, or click one on the page to capture a real event. Following a link that loads another page clears this page’s event history.'),
     connection,
   );
+  const sampleQueue = createTrackingQueue();
+  const demo = element(doc, 'details', 'event-sandbox');
+  root.append(mountTrackedLinks(doc, win, root, (event) => {
+    sampleQueue.track(event);
+    demo.open = true;
+  }));
   const live = element(doc, 'section', 'event-group');
   live.append(element(doc, 'h4', 'heading', 'Page events · real OneTrust consent'));
   mountLog(doc, live, queue, 'Page tracking events (latest 25)');
   root.append(live);
 
-  const demo = element(doc, 'details', 'event-sandbox');
   demo.append(
     element(doc, 'summary', 'heading', 'Try a sample queue'),
     element(doc, 'p', 'muted', 'Capture a few sample clicks, then grant one category to release its events. These controls affect samples only; they do not change OneTrust or page-event consent.'),
   );
-  const sampleQueue = createTrackingQueue();
   const controls = element(doc, 'div', 'event-consent');
   const actions = element(doc, 'div', 'actions');
   [['C0002', 'analytics'], ['C0004', 'advertising']].forEach(([category, name]) => {
