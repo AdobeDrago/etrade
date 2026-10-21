@@ -1,7 +1,7 @@
 import mountXmlTools from './controller.js';
 
-function download(xml, filename) {
-  const href = URL.createObjectURL(new Blob([xml], { type: 'application/xml;charset=utf-8' }));
+function download(content, filename, type = 'application/xml;charset=utf-8') {
+  const href = URL.createObjectURL(new Blob([content], { type }));
   const link = document.createElement('a');
   link.href = href;
   link.download = filename;

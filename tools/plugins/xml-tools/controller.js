@@ -3,6 +3,7 @@ import {
   parseProductXml, productXml, saveProduct, validateProduct,
 } from './model.js';
 import { loadPageXml } from './page-xml.js';
+import mountPageImport from './page-import.js';
 
 export default function mountXmlTools(doc, { download } = {}) {
   const byId = (id) => doc.getElementById(id);
@@ -19,6 +20,8 @@ export default function mountXmlTools(doc, { download } = {}) {
     byId('status').textContent = message;
     byId('status').classList.toggle('error', error);
   }
+
+  const pageImporter = mountPageImport(doc, { download, onStatus: status });
 
   function links(path) {
     const { org, repo } = sdk.context;
@@ -178,6 +181,7 @@ export default function mountXmlTools(doc, { download } = {}) {
       if (!connection?.actions?.daFetch || !/^[a-z0-9-]+$/i.test(connection.context?.org || '')
         || !/^[a-z0-9-]+$/i.test(connection.context?.repo || '')) throw new Error('DA did not provide a valid site connection.');
       sdk = connection;
+      pageImporter.connect(connection);
       if (!pageDirty && typeof sdk.context.path === 'string' && sdk.context.path.startsWith('/')) {
         byId('page-path').value = sdk.context.path;
       }

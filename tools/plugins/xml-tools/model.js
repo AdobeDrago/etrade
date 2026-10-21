@@ -54,14 +54,19 @@ export function validateProduct(input) {
   return product;
 }
 
-export function parseProductXml(xml) {
+export function parseXmlDocument(xml, maxBytes = MAX_XML_BYTES) {
   if (typeof xml !== 'string' || !xml.trim()) throw new Error('Paste XML or choose Try sample.');
-  if (new Blob([xml]).size > MAX_XML_BYTES) throw new Error('Choose an XML file smaller than 250 KB.');
+  if (new Blob([xml]).size > maxBytes) throw new Error(`Choose an XML file smaller than ${maxBytes / 1000} KB.`);
   if (/<!DOCTYPE|<!ENTITY/i.test(xml)) throw new Error('DTD and entity declarations are not supported.');
   const doc = new DOMParser().parseFromString(xml, 'application/xml');
   if (doc.getElementsByTagName('parsererror').length || doc.getElementsByTagNameNS('*', 'parsererror').length) {
     throw new Error('The XML is malformed. Check the opening and closing tags.');
   }
+  return doc;
+}
+
+export function parseProductXml(xml) {
+  const doc = parseXmlDocument(xml);
   const root = doc.documentElement;
   if (!root || root.tagName !== 'product' || root.attributes.length) throw new Error('Use a <product> root without attributes or namespaces. Choose Try sample for the supported format.');
   const product = {};

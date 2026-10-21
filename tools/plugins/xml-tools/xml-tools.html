@@ -15,8 +15,40 @@
       <span id="connection" class="badge">Standalone demo</span>
     </header>
     <main>
-      <p class="intro">Import a product, edit its content, and export XML. Connect through the DA Library to save it as structured content.</p>
-      <p id="status" class="status" role="status" aria-live="polite">Choose Try sample to begin. Standalone changes stay in this browser tab.</p>
+      <p class="intro">Import an XML page into DA, export a saved page, or manage product XML.</p>
+      <p id="status" class="status" role="status" aria-live="polite">Choose Try page sample or upload a page XML file to begin.</p>
+      <section class="panel page-import" aria-labelledby="page-import-heading">
+        <div class="panel-heading"><h2 id="page-import-heading">Import an XML page</h2><button id="page-sample" type="button">Try page sample</button></div>
+        <p class="hint">Import a da-page XML export or an XHTML page with a main content element. Sections, blocks, rich text, links, and metadata become an editable DA page.</p>
+        <div class="workspace">
+          <div>
+            <label for="page-file">Upload a page XML file</label>
+            <input id="page-file" type="file" accept=".xml,.xhtml,application/xml,text/xml,application/xhtml+xml" aria-describedby="page-format-help">
+            <p id="page-format-help" class="hint">Up to 12 MB of XML and 5 MB of page source. Linked assets remain referenced by their original URLs.</p>
+            <label for="page-xml-input">Or paste page XML</label>
+            <textarea id="page-xml-input" rows="10" spellcheck="false" placeholder="Paste your da-page XML export or XHTML page here"></textarea>
+            <button id="import-page" type="button" class="primary">Import page XML</button>
+          </div>
+          <div>
+            <p id="page-import-status" class="hint" role="status">Import XML to preview the page content.</p>
+            <p id="page-import-connection" class="hint">Standalone mode: download the imported HTML, or open this tool inside DA to create a page.</p>
+          </div>
+        </div>
+        <div id="page-import-result" hidden>
+          <h3 id="page-import-summary" class="import-summary"></h3>
+          <p class="hint">Content preview. EDS applies the site’s block styling after preview or publication. External images are hidden here.</p>
+          <iframe id="page-preview" title="Imported page content preview" sandbox="" referrerpolicy="no-referrer"></iframe>
+          <details><summary>Imported DA HTML</summary><textarea id="page-html-output" aria-label="Imported DA HTML" rows="10" readonly spellcheck="false"></textarea></details>
+          <label for="page-destination">New DA page path</label>
+          <input id="page-destination" type="text" value="/xml-demo/pages/imported-page-copy" spellcheck="false" aria-describedby="destination-help">
+          <p id="destination-help" class="hint">Choose a new destination. Creating a page stops if that path already exists.</p>
+          <div class="actions"><button id="create-page" type="button" class="primary" disabled>Create DA page</button><button id="download-html" type="button" disabled>Download DA HTML</button></div>
+          <div id="page-import-links" class="saved-links" hidden><a id="page-import-edit" target="_blank" rel="noopener">Open imported page in DA</a></div>
+          <p class="hint">After creating the page, open it in DA to edit, preview, and publish. Page imports use the regular page editor.</p>
+        </div>
+      </section>
+      <details class="product-tools">
+        <summary>Product XML demo</summary>
       <div class="workspace">
         <section class="panel" aria-labelledby="import-heading">
           <div class="panel-heading"><h2 id="import-heading">1. Import XML</h2><button id="sample" type="button">Try sample</button></div>
@@ -63,6 +95,7 @@
           <p class="hint">Saving creates an editable SC document and its demo schema. Use DA’s Send → Preview / Publish afterward. XML download reflects the fields above; a public XML feed is a separate integration.</p>
         </section>
       </div>
+      </details>
       <section class="panel page-export" aria-labelledby="page-export-heading">
         <h2 id="page-export-heading">Export an existing DA page</h2>
         <p class="hint">Export any saved page in this site. Save your editor changes first; unsaved changes and separately referenced fragments are not included.</p>
@@ -74,7 +107,7 @@
           <details><summary>Page XML</summary><textarea id="page-xml-output" aria-label="Page XML" rows="12" readonly spellcheck="false"></textarea></details>
         </div>
         <button id="download-page" type="button" disabled>Download page XML</button>
-        <p class="hint">The general da-page format includes a section and block inventory plus the complete saved HTML in source-html. This is a source export, with no linked assets embedded. Product XML above uses a separate schema; importing this page export or mapping it to another system is not implemented.</p>
+        <p class="hint">The general da-page format includes a section and block inventory plus the complete saved HTML in source-html. Import this XML above to create a new DA page. Linked assets stay referenced; product XML uses a separate schema.</p>
       </section>
     </main>
   </body>
