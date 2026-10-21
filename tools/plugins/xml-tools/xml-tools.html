@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>XML Tools · E*TRADE demo</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="./xml-tools.css">
+    <script type="module" src="./xml-tools.js"></script>
+  </head>
+  <body class="xml-tools">
+    <header class="toolbar">
+      <div><p class="eyebrow">E*TRADE · Authoring demo</p><h1>XML Tools</h1></div>
+      <span id="connection" class="badge">Standalone demo</span>
+    </header>
+    <main>
+      <p class="intro">Import a product, edit its content, and export XML. Connect through the DA Library to save it as structured content.</p>
+      <p id="status" class="status" role="status" aria-live="polite">Choose Try sample to begin. Standalone changes stay in this browser tab.</p>
+      <div class="workspace">
+        <section class="panel" aria-labelledby="import-heading">
+          <div class="panel-heading"><h2 id="import-heading">1. Import XML</h2><button id="sample" type="button">Try sample</button></div>
+          <label for="file">Upload a product XML file</label>
+          <input id="file" type="file" accept=".xml,application/xml,text/xml" aria-describedby="format-help">
+          <p id="format-help" class="hint">One product per file, up to 250 KB. The sample shows the supported fields.</p>
+          <label for="xml-input">Or paste XML</label>
+          <textarea id="xml-input" rows="12" spellcheck="false" placeholder="Paste your product XML here"></textarea>
+          <button id="import" type="button" class="primary">Import XML</button>
+        </section>
+        <section class="panel" aria-labelledby="edit-heading">
+          <h2 id="edit-heading">2. Review and edit</h2>
+          <fieldset id="fields" disabled>
+            <legend class="sr-only">Product fields</legend>
+            <label for="product-id">Product ID</label><input id="product-id" data-field="id" type="text" maxlength="80" spellcheck="false">
+            <label for="product-name">Product name</label><input id="product-name" data-field="name" type="text" maxlength="10000">
+            <div class="field-pair">
+              <div><label for="product-rate">Display rate</label><input id="product-rate" data-field="rate" type="text" maxlength="10000" placeholder="e.g. 4.10%"></div>
+              <div><label for="product-date">Effective date</label><input id="product-date" data-field="effectiveDate" type="date"></div>
+            </div>
+            <label for="product-disclosure">Disclosure</label><textarea id="product-disclosure" data-field="disclosure" rows="3" maxlength="10000"></textarea>
+          </fieldset>
+          <p id="field-status" class="hint" role="status">Import XML to enable editing.</p>
+        </section>
+        <section class="panel" aria-labelledby="preview-heading">
+          <h2 id="preview-heading">3. Preview</h2>
+          <p class="hint">Illustrative page preview. All values are sample content.</p>
+          <article id="product-preview" class="product-preview" hidden>
+            <p class="eyebrow">Product</p><h3 id="preview-name"></h3><p id="preview-rate" class="rate"></p>
+            <p id="preview-date"></p><p id="preview-disclosure" class="hint"></p>
+          </article>
+          <p id="preview-empty" class="empty">Your imported product will appear here.</p>
+          <details><summary>Generated XML</summary><textarea id="xml-output" aria-label="Generated XML" rows="12" readonly spellcheck="false"></textarea></details>
+          <button id="download" type="button" disabled>Download XML</button>
+        </section>
+        <section class="panel" aria-labelledby="save-heading">
+          <h2 id="save-heading">4. Save in DA</h2>
+          <p id="save-help" class="hint">Open this tool from the DA Library to enable saving. You can import, edit, and download XML in this standalone demo.</p>
+          <label for="document-path">Demo document path</label>
+          <input id="document-path" type="text" value="/xml-demo/products/sample-cash" spellcheck="false" aria-describedby="path-help">
+          <p id="path-help" class="hint">Saved documents stay under /xml-demo/products/. Existing content must be loaded before updating.</p>
+          <div class="actions"><button id="save" type="button" class="primary" disabled>Save in DA</button><button id="load" type="button" disabled>Load saved content</button></div>
+          <div id="saved-links" class="saved-links" hidden><a id="edit-link" target="_blank" rel="noopener">Open SC editor</a><a id="preview-link" target="_blank" rel="noopener">Preview JSON</a><a id="live-link" target="_blank" rel="noopener">Published JSON</a></div>
+          <p class="hint">Saving creates an editable SC document and its demo schema. Use DA’s Send → Preview / Publish afterward. XML download reflects the fields above; a public XML feed is a separate integration.</p>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

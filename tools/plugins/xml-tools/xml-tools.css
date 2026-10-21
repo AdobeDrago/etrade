@@ -1,0 +1,267 @@
+.xml-tools {
+  margin: 0;
+  background: #f6f5fa;
+  color: #242035;
+  font: 14px/1.5 Arial, sans-serif;
+}
+
+.xml-tools * {
+  box-sizing: border-box;
+}
+
+.xml-tools [hidden] {
+  display: none !important;
+}
+
+.xml-tools .toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #dedbe8;
+  background: #fff;
+}
+
+.xml-tools h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.xml-tools h2 {
+  margin: 0 0 16px;
+  font-size: 17px;
+}
+
+.xml-tools h3 {
+  margin: 8px 0;
+  font-size: 24px;
+}
+
+.xml-tools .eyebrow {
+  margin: 0 0 4px;
+  color: #5627d8;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.xml-tools .badge {
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #eee8ff;
+  font-size: 12px;
+}
+
+.xml-tools main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px 24px 40px;
+}
+
+.xml-tools .intro {
+  margin-top: 0;
+}
+
+.xml-tools .status {
+  padding: 12px 14px;
+  border-left: 3px solid #5627d8;
+  border-radius: 4px;
+  background: #eee8ff;
+  overflow-wrap: anywhere;
+}
+
+.xml-tools .status.error {
+  border-color: #a51e32;
+  background: #fff0f1;
+}
+
+.xml-tools .workspace {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.xml-tools .panel {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #dedbe8;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.xml-tools .panel-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.xml-tools .panel-heading h2 {
+  margin: 0;
+}
+
+.xml-tools label {
+  display: block;
+  margin: 12px 0 5px;
+  font-weight: 700;
+}
+
+.xml-tools :is(input, textarea) {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #bcb5ce;
+  border-radius: 5px;
+  padding: 9px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.xml-tools textarea {
+  resize: vertical;
+}
+
+.xml-tools :is(#xml-input, #xml-output) {
+  font: 12px/1.6 ui-monospace, monospace;
+}
+
+.xml-tools button {
+  min-height: 38px;
+  border: 1px solid #bcb5ce;
+  border-radius: 5px;
+  padding: 8px 12px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.xml-tools button:disabled {
+  opacity: .5;
+  cursor: default;
+}
+
+.xml-tools button:hover:not(:disabled) {
+  background: #eee8ff;
+  border-color: #5627d8;
+}
+
+.xml-tools .primary {
+  background: #5627d8;
+  border-color: #5627d8;
+  color: #fff;
+}
+
+.xml-tools .primary:hover:not(:disabled) {
+  background: #42209e;
+  color: #fff;
+}
+
+.xml-tools #import {
+  margin-top: 12px;
+}
+
+.xml-tools .hint {
+  color: #625b72;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.xml-tools fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.xml-tools .field-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.xml-tools .product-preview {
+  margin: 16px 0;
+  padding: 24px;
+  border-radius: 8px;
+  background: #f6f3ff;
+  overflow-wrap: anywhere;
+}
+
+.xml-tools .rate {
+  margin: 10px 0;
+  color: #5627d8;
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.xml-tools .empty {
+  padding: 24px 12px;
+  border: 1px dashed #bcb5ce;
+  color: #625b72;
+  text-align: center;
+}
+
+.xml-tools details {
+  margin: 16px 0;
+}
+
+.xml-tools summary {
+  margin-bottom: 10px;
+  color: #5627d8;
+  cursor: pointer;
+}
+
+.xml-tools .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.xml-tools .saved-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.xml-tools a {
+  color: #5627d8;
+}
+
+.xml-tools :is(button, input, textarea, a, summary):focus-visible {
+  outline: 2px solid #5627d8;
+  outline-offset: 3px;
+}
+
+.xml-tools .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (width <= 720px) {
+  .xml-tools .workspace {
+  grid-template-columns: 1fr;
+}
+
+  .xml-tools main {
+  padding: 16px 12px 28px;
+}
+
+  .xml-tools .panel {
+  padding: 16px;
+}
+}
