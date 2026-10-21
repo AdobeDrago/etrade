@@ -9,7 +9,8 @@ import {
 } from '../tools/plugins/xml-tools/model.js';
 import mountXmlTools from '../tools/plugins/xml-tools/controller.js';
 import {
-  loadPageXml, pagePath, pagePreview, pageXml, parsePageXml, samplePageXml, saveImportedPage,
+  currentPagePath, loadCurrentPage, loadPageXml, pagePath, pagePreview, pageXml, parsePageXml,
+  replaceCurrentPage, samplePageXml, saveImportedPage,
 } from '../tools/plugins/xml-tools/page-xml.js';
 
 class BrowserParser {
@@ -296,4 +297,152 @@ test('connected page import creates an editable page and exposes its DA editor l
   assert.equal(document.getElementById('page-import-edit').href, 'https://da.live/canvas#/adobedrago/etrade/xml-demo/pages/investing-copy');
   assert.equal(document.getElementById('page-import-links').hidden, false);
   assert.equal(document.getElementById('create-page').disabled, false);
+});
+
+const editorContext = { ...context, path: '/home.html', view: 'edit' };
+
+test('current-page import only replaces the connected page after loading its source', async () => {
+  const mock = service({ '/home': pageSource, '/untouched': pageSource });
+  const imported = parsePageXml(samplePageXml());
+  assert.equal(currentPagePath(editorContext), '/home');
+  await assert.rejects(replaceCurrentPage(editorContext, imported, mock.request), /confirm/);
+  const snapshot = await loadCurrentPage(editorContext, mock.request);
+  await assert.rejects(replaceCurrentPage({ ...editorContext, path: '/untouched' }, imported, mock.request, snapshot), /confirm/);
+  assert.equal(mock.writes.length, 0);
+  const result = await replaceCurrentPage(editorContext, imported, mock.request, snapshot);
+  assert.equal(result.path, '/home');
+  assert.equal(mock.files.get('/home'), imported.source);
+  assert.equal(mock.files.get('/untouched'), pageSource);
+  assert.deepEqual(mock.writes.map((item) => item.key), ['/home']);
+});
+
+test('current-page import refuses changed, missing, protected or inaccessible pages', async () => {
+  const imported = parsePageXml(samplePageXml());
+  const mock = service({ '/home': pageSource });
+  const snapshot = await loadCurrentPage(editorContext, mock.request);
+  mock.files.set('/home', 'Changed by another author');
+  await assert.rejects(replaceCurrentPage(editorContext, imported, mock.request, snapshot), /changed/);
+  mock.files.delete('/home');
+  await assert.rejects(replaceCurrentPage(editorContext, imported, mock.request, snapshot), /404/);
+  [context, { ...editorContext, view: 'form' }, { ...editorContext, path: '/.da/config' },
+    { ...editorContext, path: '/../home' }, { ...editorContext, path: 'https://other/home' },
+  ].forEach((invalid) => assert.throws(() => currentPagePath(invalid)));
+  await assert.rejects(loadCurrentPage({ ...editorContext, org: 'other/site' }, () => assert.fail('Unsafe request')), /inside DA/);
+  await assert.rejects(replaceCurrentPage(editorContext, imported, async () => new Response('', { status: 403 }), snapshot), /403/);
+  await assert.rejects(replaceCurrentPage(editorContext, imported, async (url, options) => (
+    options.method === 'POST' ? new Response('', { status: 500 }) : new Response(pageSource)
+  ), snapshot), /500/);
+  assert.equal(mock.writes.length, 0);
+});
+
+function currentPageUi(mock = service({ '/home': pageSource }), connectedContext = editorContext) {
+  const { document, window } = parseHTML(html);
+  const byId = (id) => document.getElementById(id);
+  // linkedom has no native dialog implementation; browser QA covers modal focus and Escape.
+  const dialog = byId('page-overwrite-dialog');
+  dialog.showModal = () => { dialog.open = true; };
+  dialog.close = () => { dialog.open = false; };
+  const controller = mountXmlTools(document, { download: () => {} });
+  controller.connect({ context: connectedContext, actions: { daFetch: mock.request } });
+  byId('page-sample').click();
+  byId('page-import-target').querySelector('[value="new"]').removeAttribute('selected');
+  byId('page-import-target').querySelector('[value="current"]').setAttribute('selected', '');
+  byId('page-import-target').dispatchEvent(new window.Event('change'));
+  return {
+    byId, window, mock, controller, dialog,
+  };
+}
+
+const settle = () => new Promise((resolve) => { setImmediate(resolve); });
+
+test('current-page option shows the host path and Cancel or Escape never writes content', async () => {
+  const {
+    byId, window, mock, dialog,
+  } = currentPageUi();
+  assert.equal(byId('new-page-options').hidden, true);
+  assert.equal(byId('create-page').hidden, true);
+  assert.equal(byId('current-page-options').hidden, false);
+  assert.equal(byId('current-page-path').textContent, '/home');
+  assert.equal(byId('import-current-page').disabled, false);
+  byId('import-current-page').click();
+  await settle();
+  assert.equal(dialog.open, true);
+  assert.equal(byId('page-overwrite-path').textContent, '/home');
+  assert.equal(mock.writes.length, 0);
+  byId('cancel-page-overwrite').click();
+  byId('confirm-page-overwrite').click();
+  await settle();
+  assert.equal(dialog.open, false);
+  assert.equal(mock.writes.length, 0);
+  assert.match(byId('page-import-status').textContent, /cancelled/);
+  byId('import-current-page').click();
+  await settle();
+  dialog.dispatchEvent(new window.Event('cancel'));
+  assert.equal(dialog.open, false);
+  assert.equal(byId('import-current-page').disabled, false);
+  assert.equal(mock.writes.length, 0);
+  assert.equal(mock.files.get('/home'), pageSource);
+});
+
+test('confirmed current-page import writes once to the host page regardless of the new-page path', async () => {
+  const { byId, mock, dialog } = currentPageUi();
+  byId('page-destination').value = '/unrelated-destination';
+  byId('create-page').click();
+  assert.equal(mock.writes.length, 0);
+  byId('confirm-page-overwrite').click();
+  assert.equal(mock.writes.length, 0);
+  byId('import-current-page').click();
+  byId('import-current-page').click();
+  await settle();
+  byId('confirm-page-overwrite').click();
+  byId('confirm-page-overwrite').click();
+  await settle();
+  assert.equal(dialog.open, false);
+  assert.deepEqual(mock.writes.map((item) => item.key), ['/home']);
+  assert.equal(mock.files.get('/home'), parsePageXml(samplePageXml()).source);
+  assert.match(byId('page-import-status').textContent, /Imported content onto \/home/);
+  assert.equal(byId('page-import-edit').href, 'https://da.live/canvas#/adobedrago/etrade/home');
+  assert.equal(byId('page-import-links').hidden, false);
+  assert.equal(byId('import-current-page').disabled, false);
+});
+
+test('confirmation is invalidated by XML changes or a different DA connection', async () => {
+  const {
+    byId, window, mock, controller, dialog,
+  } = currentPageUi();
+  byId('import-current-page').click();
+  await settle();
+  byId('page-xml-input').dispatchEvent(new window.Event('input'));
+  assert.equal(dialog.open, false);
+  byId('confirm-page-overwrite').click();
+  await settle();
+  assert.equal(mock.writes.length, 0);
+  assert.equal(byId('import-current-page').disabled, true);
+  byId('page-sample').click();
+  byId('import-current-page').click();
+  await settle();
+  controller.connect({ context: { ...editorContext, path: '/different-page' }, actions: { daFetch: mock.request } });
+  assert.equal(dialog.open, false);
+  byId('confirm-page-overwrite').click();
+  await settle();
+  assert.equal(mock.writes.length, 0);
+});
+
+test('current-page UI requires a host page and reports conflicts without overwriting', async () => {
+  const unavailable = currentPageUi(service(), context);
+  assert.equal(unavailable.byId('import-current-page').disabled, true);
+  unavailable.byId('import-current-page').click();
+  await settle();
+  assert.equal(unavailable.mock.writes.length, 0);
+  const { byId, mock, dialog } = currentPageUi();
+  byId('import-current-page').click();
+  await settle();
+  mock.files.set('/home', 'Changed while the confirmation was open');
+  byId('confirm-page-overwrite').click();
+  await settle();
+  assert.equal(dialog.open, false);
+  assert.equal(mock.writes.length, 0);
+  assert.match(byId('page-import-status').textContent, /changed/);
+  assert.equal(byId('page-import-status').classList.contains('error'), true);
+  assert.equal(byId('import-current-page').disabled, false);
 });

@@ -123,7 +123,46 @@ export function samplePageXml() {
   return pageXml(source, { org: 'adobedrago', repo: 'etrade' }, '/xml-demo/pages/investing');
 }
 
-/** Create a new page on the connected site. Imports never replace existing source. */
+export function currentPagePath(context) {
+  if (!['edit', 'canvas'].includes(context?.view) || typeof context.path !== 'string') {
+    throw new Error('Open XML Tools from a DA page editor to import onto the current page.');
+  }
+  const path = pagePath(context.path);
+  if (path.split('/').some((part) => part.startsWith('.'))) throw new Error('Cannot import onto a hidden configuration page.');
+  return path;
+}
+
+export async function loadCurrentPage(context, request) {
+  const path = currentPagePath(context);
+  const response = await request(`${sourceUrl(context, path)}?nocache=${Date.now()}`, { cache: 'no-store' });
+  if (!response.ok) throw new Error(`Could not read the current DA page (${response.status}). Check your access and try again.`);
+  return { path, source: await response.text() };
+}
+
+async function writeImportedPage(context, path, imported, request) {
+  const body = new FormData();
+  body.append('data', new Blob([imported.source], { type: 'text/html' }), 'page.html');
+  const result = await request(sourceUrl(context, path), { method: 'POST', body });
+  if (!result.ok) throw new Error(`Could not save the imported DA page (${result.status}).`);
+  return { path, source: imported.source };
+}
+
+/** Replace only the connected editor's page, after confirmation of a source snapshot. */
+export async function replaceCurrentPage(context, imported, request, snapshot) {
+  const path = currentPagePath(context);
+  inspectSource(imported?.source);
+  if (snapshot?.path !== path || typeof snapshot.source !== 'string') {
+    throw new Error('Review and confirm the current page overwrite before importing.');
+  }
+  const latest = await loadCurrentPage(context, request);
+  if (latest.source !== snapshot.source) {
+    throw new Error('The current page changed in DA. Review the page and confirm the import again.');
+  }
+  // The Source API synchronizes external writes with DA's open collaborative editor.
+  return writeImportedPage(context, path, imported, request);
+}
+
+/** Create a new page on the connected site, refusing existing destinations. */
 export async function saveImportedPage(context, input, imported, request) {
   const path = pagePath(input);
   if (path.split('/').some((part) => part.startsWith('.'))) throw new Error('Choose a visible page path outside hidden configuration folders.');
@@ -132,11 +171,7 @@ export async function saveImportedPage(context, input, imported, request) {
   const existing = await request(`${url}?nocache=${Date.now()}`, { cache: 'no-store' });
   if (existing.ok) throw new Error('A page already exists at this path. Choose a new destination to keep the existing page.');
   if (existing.status !== 404) throw new Error(`Could not check the destination page (${existing.status}). Check your DA access.`);
-  const body = new FormData();
-  body.append('data', new Blob([imported.source], { type: 'text/html' }), 'page.html');
-  const result = await request(url, { method: 'POST', body });
-  if (!result.ok) throw new Error(`Could not create the DA page (${result.status}).`);
-  return { path, source: imported.source };
+  return writeImportedPage(context, path, imported, request);
 }
 
 export async function loadPageXml(context, input, request) {
