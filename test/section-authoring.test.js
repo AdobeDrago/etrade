@@ -99,6 +99,48 @@ test('section options preserve authored content and direct block wrappers', asyn
   assert.equal(page.main.innerHTML, before);
 });
 
+test('delivery-pipeline section attributes apply without a remaining metadata block', async () => {
+  const page = await harness(`<div data-container="narrow" data-grid="3" data-gap="l" data-spacing="xl" data-color-scheme="dark" data-align="center" id="delivered-section">${content}${card}${card}</div>`);
+  page.decorate();
+  page.blocks();
+  const section = page.main.firstElementChild;
+  assert.equal(section.dataset.sectionContainer, 'narrow');
+  assert.equal(section.dataset.sectionGrid, '3');
+  assert.equal(section.dataset.sectionGap, 'l');
+  assert.equal(section.dataset.sectionSpacing, 'xl');
+  assert.equal(section.dataset.sectionTheme, 'dark');
+  assert.equal(section.dataset.sectionAlign, 'center');
+  assert.equal(section.dataset.sectionLayout, 'authored');
+  assert.equal(section.id, 'delivered-section');
+  assert.equal(section.querySelectorAll(':scope > .cards-wrapper > .cards.block').length, 2);
+  const before = page.main.innerHTML;
+  page.decorate();
+  assert.equal(page.main.innerHTML, before);
+});
+
+test('delivered backgrounds and styles retain their scheme and section identity', async () => {
+  const page = await harness(`<div class="campaign-special" id="offer" data-container="STANDARD" data-background="inverse" data-spacing="none">${content}${card}</div>`);
+  page.decorate();
+  const section = page.main.firstElementChild;
+  assert.equal(section.dataset.sectionContainer, 'standard');
+  assert.equal(section.dataset.sectionSpacing, 'none');
+  assert.equal(section.dataset.sectionTheme, 'dark');
+  assert.equal(section.style.backgroundColor, 'var(--color-surface-inverse)');
+  assert.equal(section.id, 'offer');
+  assert.ok(section.classList.contains('campaign-special'));
+});
+
+test('an unconsumed metadata block overrides delivered defaults and invalid attributes stay inert', async () => {
+  const page = await harness(`<div data-container="narrow" data-grid="8" data-gap="huge" data-color-scheme="invalid">${card}${metadata(row('Container', 'full'), row('Grid', '2'))}</div>`);
+  page.decorate();
+  const section = page.main.firstElementChild;
+  assert.equal(section.dataset.sectionContainer, 'full');
+  assert.equal(section.dataset.sectionGrid, '2');
+  assert.equal(section.dataset.sectionGap, undefined);
+  assert.equal(section.dataset.sectionTheme, undefined);
+  assert.equal(section.querySelector('.section-metadata'), null);
+});
+
 test('all six grid counts and named gap and spacing options are accepted', async () => {
   await Promise.all(['1', '2', '3', '4', '5', '6'].map(async (grid) => {
     const page = await harness(`<div>${card}${metadata(row('Grid', grid))}</div>`);
@@ -206,4 +248,17 @@ test('the real page pipeline applies section options before blocks are initializ
   assert.equal(section.querySelector('.cards').dataset.blockName, 'cards');
   assert.equal(section.querySelector('[data-block-name="section-metadata"]'), null);
   assert.equal(section.querySelectorAll(':scope > .cards-wrapper').length, 1);
+});
+
+test('the real page pipeline applies metadata already consumed by delivery', async () => {
+  const page = await harness('');
+  page.main.innerHTML = `<div data-grid="3" data-container="narrow" data-spacing="l" data-color-scheme="dark">${content}${card}${card}${card}</div>`;
+  const scripts = await page.pipeline();
+  scripts.decorateMain(page.main);
+  const section = page.main.firstElementChild;
+  assert.equal(section.dataset.sectionGrid, '3');
+  assert.equal(section.dataset.sectionContainer, 'narrow');
+  assert.equal(section.dataset.sectionSpacing, 'l');
+  assert.equal(section.dataset.sectionTheme, 'dark');
+  assert.equal(section.querySelectorAll(':scope > .cards-wrapper > .cards.block').length, 3);
 });

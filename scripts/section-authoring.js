@@ -2,6 +2,18 @@ const sizes = new Set(['none', 'xs', 's', 'm', 'l', 'xl', 'xxl']);
 const containers = new Set(['narrow', 'standard', 'full']);
 const surfaces = new Set(['default', 'page', 'subtle', 'inverse', 'inverse-raised', 'highlight']);
 
+function readSectionAttributes(section) {
+  const values = new Map();
+  [
+    'container', 'grid', 'gap', 'spacing', 'align', 'color scheme', 'theme',
+    'background', 'background color', 'anchor',
+  ].forEach((key) => {
+    const text = section.getAttribute(`data-${key.replaceAll(' ', '-')}`);
+    if (text !== null) values.set(key, { text: text.trim() });
+  });
+  return values;
+}
+
 function readMetadata(block) {
   const values = new Map();
   [...block.children].forEach((row) => {
@@ -84,7 +96,8 @@ function setBackground(section, metadata, main) {
 export default function decorateSectionAuthoring(main) {
   main.querySelectorAll(':scope > .section').forEach((section) => {
     const blocks = [...section.querySelectorAll(':scope > div > .section-metadata')];
-    const metadata = new Map();
+    // Delivery can consume Section Metadata before the browser receives the page.
+    const metadata = readSectionAttributes(section);
     blocks.forEach((block) => {
       readMetadata(block).forEach((value, key) => metadata.set(key, value));
     });
