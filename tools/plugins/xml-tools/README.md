@@ -14,9 +14,9 @@ The plugin follows Adobe's [Library plugin registration](https://www.aem.live/do
 
 | title | path | format | icon | experience | ref |
 | --- | --- | --- | --- | --- | --- |
-| XML Tools (demo) | https://codex-xml-tools-demo--etrade--adobedrago.aem.live/tools/plugins/xml-tools/xml-tools.html | | | fullsize-dialog | xml-demo |
+| XML Tools (demo) | https://demo-controller--etrade--adobedrago.aem.live/tools/plugins/xml-tools/xml-tools.html | | | fullsize-dialog | xml-demo |
 
-The example URL uses branch `codex/xml-tools-demo`, represented with a hyphen in the EDS hostname. Confirm the deployed branch URL before registration. For the local server, use `http://localhost:3031/tools/plugins/xml-tools/xml-tools.html` with a separate ref such as `xml-local`. Chrome may block the local frame from the HTTPS DA page; the deployed HTTPS entry avoids that restriction.
+The demo code lives on `demo-controller`. For the local server, use `http://localhost:3031/tools/plugins/xml-tools/xml-tools.html` with a separate ref such as `xml-local`. Chrome may block the local frame from the HTTPS DA page; use the deployed HTTPS entry for DA integration testing.
 
 Open [the DA homepage editor with the demo plugin](https://da.live/edit?ref=xml-demo#/adobedrago/etrade/home), then **Library → XML Tools (demo)**. The homepage is only the plugin's host: the plugin saves separate records under `/xml-demo/products/` and never inserts into or saves the host page.
 
@@ -36,4 +36,4 @@ SC delivery is JSON. **Download XML** creates a real XML file from the current f
 
 Run `npm run test:xml-tools`. Tests cover XML/HTML round trips, escaping, rejected XML structures, field validation, bounded DA paths, schema creation, authentication errors, conflicting saves, and standalone/connected UI behavior. Browser QA covers native XML malformed-input errors and file import/download. The schema and source format were also checked against Adobe's current [SC SDK](https://github.com/adobe/da-nx/blob/main/nx/deps/da-sc-sdk/dist/index.js) converters and schema validator.
 
-Preview: https://codex-xml-tools-demo--etrade--adobedrago.aem.page/tools/plugins/xml-tools/xml-tools.html?demo=1
+Preview: https://demo-controller--etrade--adobedrago.aem.page/tools/plugins/xml-tools/xml-tools.html?demo=1
