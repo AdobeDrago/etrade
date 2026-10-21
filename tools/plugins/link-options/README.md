@@ -1,13 +1,13 @@
 # Link Options
 
-A buildless DA Library URL helper for links and CTAs. Authors configure tracking through fields, copy the generated URL, and paste it into DA's existing **Edit link → URL** field. Display text, title, save and undo stay in DA's native link editor. The helper never writes page source or replaces editor selections.
+A buildless DA Library dialog for links and CTAs. Authors configure tracking inside DA, copy the generated URL, and paste it into DA's existing **Edit link → URL** field. Display text, title, save and undo stay in DA's native link editor. The helper never writes page source or replaces editor selections.
 
 ## Use it
 
-1. Select a complete link in DA, then open **Library → Link Options** to load its URL and tracking settings. Alternatively, paste a destination URL into the helper; this works without DA or authentication.
+1. Select a complete link in DA, then open **Library → Link Options**. The dialog opens over the editor and loads the link's URL and tracking settings. Alternatively, paste a destination URL into the dialog.
 2. Toggle **Track clicks** and enter a stable **Tracking key**. **Advanced → Required consent** defaults to Advertising (`C0004`), with Analytics (`C0002`), both categories, and custom category IDs available. IDs must match the tenant's OneTrust policy. Every listed category is required before sending.
 3. Click **Copy URL**. If browser clipboard access is blocked, the helper selects the generated URL and shows manual copy instructions.
-4. Close the panel, open DA's native **Edit link** dialog, paste into **URL**, then **Save**. Save and preview the page separately in DA.
+4. Close Link Options, open DA's native **Edit link** dialog, paste into **URL**, then **Save**. Save and preview the page separately in DA.
 
 For example, `/home` with key `home-link` produces `/home?@tracking=home-link`. Choosing Analytics produces `/home?@tracking=home-link&@tracking-category=C0002`. The site's shared decorator converts the markers into `data-tracking-key` / `data-tracking-category` and removes them from the visitor's destination URL. Ordinary query parameters and fragments survive. Turning the toggle off removes only the reserved authoring markers. Pasting an existing marked URL loads its settings into the fields.
 
@@ -15,23 +15,24 @@ The helper reads a single selected anchor, including one serialized inside CTA t
 
 ## Enable in DA
 
-Push the plugin files with the project code first. In the [DA site configuration](https://da.live/config#/adobedrago/etrade/), add this row to the **library** tab, preserving its existing rows and columns:
+Push the plugin files with the project code first. In the [DA site configuration](https://da.live/config#/adobedrago/etrade/), add this row to the **library** tab, preserving its existing rows and columns. If Link Options is already registered for this ref, update that row's **experience** to `dialog` instead of adding a duplicate:
 
 | title | path | format | icon | experience | ref |
 | --- | --- | --- | --- | --- | --- |
-| Link Options | https://demo-controller--etrade--adobedrago.aem.live/tools/plugins/link-options/link-options.html | | | inline | demo-controller |
+| Link Options | https://demo-controller--etrade--adobedrago.aem.live/tools/plugins/link-options/link-options.html | | | dialog | demo-controller |
 
-Open [the Home editor with the matching ref](https://da.live/edit?ref=demo-controller#/adobedrago/etrade/home), select the link, then open **Library → Link Options**. The ref selects plugin code; DA content is shared across branches. Review previewed content at [the demo-controller Home preview](https://demo-controller--etrade--adobedrago.aem.page/home).
+Open [the Home editor with the matching ref](https://da.live/edit?ref=demo-controller#/adobedrago/etrade/home), select the link, then open **Library → Link Options**. Verify that the dialog opens within DA, the selected link loads, **Copy URL** copies the configured URL, and **Close** returns to the editor. The ref selects plugin code; DA content is shared across branches. Review previewed content at [the demo-controller Home preview](https://demo-controller--etrade--adobedrago.aem.page/home).
 
-For local development, use a separate library row with path `http://localhost:3000/tools/plugins/link-options/link-options.html`, experience `inline`, and ref `local`. Open `https://da.live/edit?ref=local#/adobedrago/etrade/home` with `npx -y @adobe/aem-cli up` running. For main, use the main branch's `.aem.live` URL and leave ref empty after the code is deployed there. No retired repository configuration files are needed.
+For local development, use a separate library row with path `http://localhost:3000/tools/plugins/link-options/link-options.html`, experience `dialog`, and ref `local`. Open `https://da.live/edit?ref=local#/adobedrago/etrade/home` with `npx -y @adobe/aem-cli up` running. For main, use the main branch's `.aem.live` URL and leave ref empty after the code is deployed there. No retired repository configuration files are needed.
+
+DA hosts the dialog and embeds the plugin URL. Its HTML, CSS and JavaScript must remain served at that URL for the integration to work. The published demo controls have no standalone Link Options shortcut; authoring starts in DA's Library menu. This registration does not add fields to DA's built-in Edit link dialog.
 
 Registration follows Adobe's [plugin tutorial](https://docs.da.live/developers/tutorials/eds-micro-frontends/2). The [DA SDK](https://github.com/adobe/da-nx/blob/main/nx/utils/sdk.js) is used only for `getSelection()` and `closeLibrary()`. No authentication tokens, page content, or settings are stored by this helper. The URL remains local until the author pastes it into DA.
 
 ## Review and tests
 
-- Standalone: `/tools/plugins/link-options/link-options.html` accepts a pasted URL.
-- Prefilled example: `/tools/plugins/link-options/link-options.html?demo=1` starts with a marked Home URL and a real campaign parameter.
-- **Demo controls → Tracking → Open Link Options** opens the helper in a new tab.
+- Local standalone review: `/tools/plugins/link-options/link-options.html` accepts a pasted URL without DA or authentication.
+- Local prefilled example: `/tools/plugins/link-options/link-options.html?demo=1` starts with a marked Home URL and a real campaign parameter.
 - `npm run test:link-options` checks selection parsing, parameter preservation, runtime decoration, validation, toggling, copy fallback, and optional SDK behavior.
 - `npm run test:tracking` verifies the site's tracking and consent queue contract.
 

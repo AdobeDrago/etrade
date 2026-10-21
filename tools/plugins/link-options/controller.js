@@ -117,7 +117,7 @@ export default function mountLinkOptions(doc, {
     try {
       await copy(value);
       byId('copy').textContent = 'Copied';
-      status('URL copied. Close this panel, open DA’s Edit link dialog, paste into URL, then Save.');
+      status('URL copied. Close Link Options, open DA’s Edit link dialog, paste into URL, then Save.');
     } catch {
       byId('manual-copy').hidden = false;
       byId('output-url').focus?.();
