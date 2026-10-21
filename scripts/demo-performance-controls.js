@@ -1,6 +1,10 @@
-import { performanceURL, readPerformanceConfig } from './demo-performance.js';
+import { performanceURL, resolvePerformanceConfig } from './demo-performance.js';
 import isDemoHelperHost from './demo-host.js';
 import mountRunComparison from './demo-run-comparison.js';
+import mountSessionHistory from './demo-session-history.js';
+import {
+  readDemoSession, readDemoUI, writeDemoSession, writeDemoUI,
+} from './demo-session.js';
 
 function node(doc, tag, name, text) {
   const element = doc.createElement(tag);
@@ -130,13 +134,15 @@ function afterPaint(win, callback) {
 
 /** Baseline and loaded comparisons share the same controls and measurement overhead. */
 export default function mountPerformanceControls(doc, win) {
-  const current = readPerformanceConfig(win.location.href);
+  const current = resolvePerformanceConfig(win);
   function navigate(config) {
     if (!isDemoHelperHost(win.location.hostname)) return;
     try {
       win.sessionStorage.setItem('etrade:demo-helper-open', 'true');
       win.sessionStorage.setItem('etrade:demo-helper-view', 'performance');
     } catch { /* Optional persistence. */ }
+    writeDemoSession(win, 'performance-config', config);
+    writeDemoSession(win, 'performance-draft', config);
     win.location.assign(performanceURL(win.location.href, config));
   }
   const section = node(doc, 'details', 'section');
@@ -161,6 +167,7 @@ export default function mountPerformanceControls(doc, win) {
   });
   const comparisonHelp = node(doc, 'p', 'muted', 'Traditional and EDS simulate the same production-sized tag stack. Choose a mode to reload.');
   const overview = node(doc, 'details', 'run-overview');
+  overview.dataset.demoState = 'performance.overview';
   const runSummary = node(doc, 'summary', 'run-summary');
   const runLabel = node(doc, 'p', 'run-label');
   const status = node(doc, 'p', 'run-status');
@@ -199,6 +206,7 @@ export default function mountPerformanceControls(doc, win) {
       tab.tabIndex = i === index ? 0 : -1;
       panels[i].hidden = i !== index;
     });
+    writeDemoUI(win, 'performance.measurements', index);
   }
 
   ['Page experience', 'Downloads', 'Workload'].forEach((label, index) => {
@@ -226,7 +234,8 @@ export default function mountPerformanceControls(doc, win) {
     tablist.append(tab);
     measurements.append(panel);
   });
-  activate(0);
+  const storedTab = readDemoUI(win, 'performance.measurements');
+  activate([0, 1, 2].includes(storedTab) ? storedTab : 0);
 
   function group(index, title, rows) {
     const wrapper = node(doc, 'div', 'metric-group');
@@ -270,6 +279,7 @@ export default function mountPerformanceControls(doc, win) {
   panels[2].append(workloadHelp, workloadActions);
 
   const settings = node(doc, 'details', 'settings');
+  settings.dataset.demoState = 'performance.settings';
   settings.open = false;
   settings.append(node(doc, 'summary', 'heading', 'Advanced settings'));
   const form = node(doc, 'form', 'form');
@@ -327,6 +337,23 @@ export default function mountPerformanceControls(doc, win) {
   }
   profile.addEventListener('change', describeProfile);
   describeProfile();
+  const draft = readDemoSession(win, 'performance-draft');
+  if (draft && ['off', 'baseline', 'onetrust', 'etrade', 'onetrust-real'].includes(draft.profile)
+    && PHASE_CHOICES.some(([value]) => value === draft.phase)
+    && ['none', 'light', 'medium', 'heavy'].includes(draft.work)) {
+    const choose = (input, value) => {
+      const option = [...input.querySelectorAll('option')].find((item) => item.value === value);
+      if (option) option.selected = true;
+    };
+    choose(profile, draft.profile);
+    describeProfile();
+    choose(phase, draft.phase);
+    choose(work, draft.work);
+    describeStrategy();
+  }
+  form.addEventListener('change', () => writeDemoSession(win, 'performance-draft', {
+    profile: profile.value, phase: phase.value, work: work.value,
+  }));
   const actions = node(doc, 'div', 'actions');
   const apply = button(doc, 'Apply & reload');
   apply.className = 'demo-helper-primary';
@@ -351,7 +378,7 @@ export default function mountPerformanceControls(doc, win) {
   const bannerLabel = node(doc, 'label', 'banner-toggle');
   const bannerToggle = doc.createElement('input');
   bannerToggle.type = 'checkbox';
-  bannerToggle.checked = false;
+  bannerToggle.checked = readDemoUI(win, 'performance.banner') === true;
   bannerToggle.setAttribute('aria-controls', 'demo-helper-cookie-banner');
   bannerLabel.append(bannerToggle, node(doc, 'span', 'label-text', 'Show demo cookie banner'));
   const bannerWaiting = node(doc, 'p', 'muted', 'The demo banner will appear when simulated OneTrust is ready.');
@@ -377,6 +404,7 @@ export default function mountPerformanceControls(doc, win) {
   doc.body.append(banner);
   bannerControl.append(bannerLabel, bannerWaiting);
   const consentControl = node(doc, 'details', 'consent-control');
+  consentControl.dataset.demoState = 'performance.consent-panel';
   const consentState = node(doc, 'summary', 'consent-state');
   const consentActions = node(doc, 'div', 'actions');
   consentActions.append(consent, decline);
@@ -398,6 +426,7 @@ export default function mountPerformanceControls(doc, win) {
   section.append(scenarios, comparisonHelp, overview, nextStep, consentControl, measurements);
   section.append(runtimeActions, responseStatus, refreshStatus, consentHelp);
   section.append(runActions, shareStatus, shareURL, settings);
+  section.append(mountSessionHistory(doc, win));
   let lastConsent;
   let bannerVisible = false;
   const notifyBannerLayout = () => doc.dispatchEvent(new win.CustomEvent('demo-cookie-banner:updated'));
@@ -477,6 +506,7 @@ export default function mountPerformanceControls(doc, win) {
     bannerControl.hidden = !gated;
     if (!gated || snapshot.status === 'Stopped'
       || (lastConsent !== undefined && lastConsent !== snapshot.consent)) {
+      if (bannerToggle.checked) writeDemoUI(win, 'performance.banner', false);
       bannerToggle.checked = false;
     }
     lastConsent = snapshot.consent;
@@ -546,14 +576,15 @@ export default function mountPerformanceControls(doc, win) {
     win.location.reload();
   });
   share.addEventListener('click', async () => {
+    const href = performanceURL(win.location.href, win.etradePerformanceDemo?.config || current);
     try {
       if (!win.navigator?.clipboard?.writeText) throw new Error('Clipboard unavailable');
-      await win.navigator.clipboard.writeText(win.location.href);
+      await win.navigator.clipboard.writeText(href);
       shareStatus.textContent = 'Comparison link copied. The balance stays local to this browser.';
       shareURL.hidden = true;
     } catch {
       shareStatus.textContent = 'Copy the link below. The balance stays local to this browser.';
-      shareURL.value = win.location.href;
+      shareURL.value = href;
       shareURL.hidden = false;
       shareURL.focus();
       shareURL.select?.();
@@ -566,6 +597,7 @@ export default function mountPerformanceControls(doc, win) {
     const restoreFocus = banner.contains(doc.activeElement);
     const restorePanelFocus = consentControl.contains(doc.activeElement);
     bannerToggle.checked = false;
+    writeDemoUI(win, 'performance.banner', false);
     if (accepted) win.etradePerformanceDemo.grantConsent();
     else win.etradePerformanceDemo.declineConsent();
     render();
@@ -577,6 +609,7 @@ export default function mountPerformanceControls(doc, win) {
   bannerAccept.addEventListener('click', () => chooseConsent(true));
   bannerDecline.addEventListener('click', () => chooseConsent(false));
   bannerToggle.addEventListener('change', () => {
+    writeDemoUI(win, 'performance.banner', bannerToggle.checked);
     render();
     if (bannerToggle.checked && banner.hidden) bannerWaiting.scrollIntoView?.({ block: 'nearest' });
   });

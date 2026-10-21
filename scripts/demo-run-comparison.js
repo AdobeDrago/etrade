@@ -1,4 +1,5 @@
 import { readDemoBalance } from './demo-balance.js';
+import { readDemoSession, writeDemoSession } from './demo-session.js';
 
 const KEY = 'etrade:demo-comparison';
 const numericKeys = ['lcp', 'fcp', 'cls', 'transfer', 'completed', 'total', 'failed', 'width', 'height'];
@@ -46,7 +47,12 @@ function capture(snapshot, label, environment) {
 
 function readSaved(win) {
   try {
-    const saved = JSON.parse(win.sessionStorage.getItem(KEY));
+    let saved = JSON.parse(win.sessionStorage.getItem(KEY));
+    if (saved?.page !== pageKey(win.location.href)) {
+      const references = readDemoSession(win, 'performance-references');
+      saved = Array.isArray(references)
+        ? references.find((run) => run?.page === pageKey(win.location.href)) : null;
+    }
     if (!saved || saved.version !== 1 || saved.page !== pageKey(win.location.href)) return null;
     if (typeof saved.label !== 'string' || saved.label.length > 200) return null;
     if (saved.balance !== null && (typeof saved.balance !== 'string' || saved.balance.length > 64)) return null;
@@ -66,7 +72,7 @@ function readSaved(win) {
   } catch { return null; }
 }
 
-/** Keep one explicit snapshot in this tab, scoped to the same page and page settings. */
+/** Keep an explicit reference for each page and its settings in this tab. */
 export default function mountRunComparison(doc, win) {
   const environment = {
     page: pageKey(win.location.href),
@@ -164,6 +170,10 @@ export default function mountRunComparison(doc, win) {
     if (!current || save.disabled) return;
     try {
       win.sessionStorage.setItem(KEY, JSON.stringify(current));
+      const stored = readDemoSession(win, 'performance-references');
+      const references = Array.isArray(stored)
+        ? stored.filter((run) => run?.page !== current.page) : [];
+      writeDemoSession(win, 'performance-references', [...references, current].slice(-20));
       saved = current;
       feedback.textContent = 'Run saved. Switch modes to compare against these values.';
       render();
@@ -172,6 +182,10 @@ export default function mountRunComparison(doc, win) {
   clear.addEventListener('click', () => {
     try {
       win.sessionStorage.removeItem(KEY);
+      const references = readDemoSession(win, 'performance-references');
+      if (Array.isArray(references)) {
+        writeDemoSession(win, 'performance-references', references.filter((run) => run?.page !== environment.page));
+      }
       saved = null;
       feedback.textContent = 'Saved comparison cleared.';
       render();

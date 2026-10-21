@@ -1,5 +1,6 @@
 import startTracking, { createTrackingQueue, linkTrackingEvent } from './tracking.js';
 import isDemoHelperHost from './demo-host.js';
+import { readDemoSession, writeDemoSession } from './demo-session.js';
 
 function element(doc, tag, className, text) {
   const node = doc.createElement(tag);
@@ -48,7 +49,11 @@ function mountLog(doc, container, queue, label) {
       const title = element(doc, 'strong', 'event-key', `#${event.id} ${event.key}`);
       const status = element(doc, 'span', 'event-status', eventStatus(event, snapshot));
       const time = new Date(event.timestamp).toLocaleTimeString('en-US');
-      item.append(title, status, element(doc, 'p', 'muted', `${time} · ${event.categories.join(', ')}`));
+      let page = '';
+      try {
+        page = new URL(event.payload?.xdm?.web?.webPageDetails?.URL).pathname;
+      } catch { /* Discarded or custom event. */ }
+      item.append(title, status, element(doc, 'p', 'muted', `${time} · ${event.categories.join(', ')}${page ? ` · ${page}` : ''}`));
       if (event.payload) {
         const payload = element(doc, 'details', 'event-payload');
         payload.dataset.eventId = String(event.id);
@@ -159,7 +164,7 @@ export default function mountTrackingControls(doc, win) {
   });
   root.append(
     element(doc, 'h3', 'heading', 'Link tracking'),
-    element(doc, 'p', 'muted', 'Inspect marked links below, or click one on the page to capture a real event. Following a link that loads another page clears this page’s event history.'),
+    element(doc, 'p', 'muted', 'Inspect marked links below, or click one on the page to capture a real event. Event history follows this tab across pages for the current demo session.'),
     connection,
   );
   const authoring = element(doc, 'p', 'muted');
@@ -170,8 +175,15 @@ export default function mountTrackingControls(doc, win) {
   helper.textContent = 'Open Link Options';
   authoring.append(helper, ' to configure a tracking URL (opens a new tab).');
   root.append(authoring);
-  const sampleQueue = createTrackingQueue();
+  const sampleQueue = win.etradeDemoSampleTracking || createTrackingQueue({
+    initial: readDemoSession(win, 'sample-events'), restoreConsent: true,
+  });
+  if (!win.etradeDemoSampleTracking) {
+    win.etradeDemoSampleTracking = sampleQueue;
+    sampleQueue.subscribe((snapshot) => writeDemoSession(win, 'sample-events', snapshot));
+  }
   const demo = element(doc, 'details', 'event-sandbox');
+  demo.dataset.demoState = 'tracking.samples';
   root.append(mountTrackedLinks(doc, win, root, (event) => {
     sampleQueue.track(event);
     demo.open = true;
@@ -197,6 +209,7 @@ export default function mountTrackingControls(doc, win) {
       const option = doc.createElement('option');
       option.value = state;
       option.textContent = state[0].toUpperCase() + state.slice(1);
+      option.selected = sampleQueue.snapshot().consent[category] === state;
       select.append(option);
     });
     select.addEventListener('change', () => sampleQueue.setConsent({ [category]: select.value }));
@@ -216,6 +229,6 @@ export default function mountTrackingControls(doc, win) {
   demo.append(controls, actions);
   mountLog(doc, demo, sampleQueue, 'Sample tracking events (latest 25)');
   root.append(demo);
-  root.append(element(doc, 'p', 'muted', 'Event history stays in memory and clears when you leave this page.'));
+  root.append(element(doc, 'p', 'muted', 'History is kept in this tab’s session on this preview host. OneTrust revalidates real consent on each page.'));
   return root;
 }

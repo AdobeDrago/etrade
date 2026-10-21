@@ -81,6 +81,19 @@ test('saved measurements survive reload and stay fixed as the current run change
   assert.equal(focused, true);
 });
 
+test('saving a reference on another page preserves the first page’s comparison', () => {
+  const home = browser();
+  home.comparison.update(snapshot(), 'Home reference');
+  home.click(home.comparison.save);
+  const bank = browser(home.store, 'http://localhost/bank?perf=etrade');
+  bank.comparison.update(snapshot({ metrics: { lcp: 2200, fcp: 1900, cls: 0 } }), 'Bank reference');
+  bank.click(bank.comparison.save);
+  const returned = browser(home.store);
+  returned.comparison.update(snapshot(), 'Current home');
+  assert.deepEqual(returned.values('LCP'), ['1200 ms', '1200 ms']);
+  assert.ok(returned.comparison.element.textContent.includes('Home reference'));
+});
+
 test('saved references are scoped to the page and report processing and balance differences', () => {
   const first = browser(new Map(), 'http://localhost/home?b=2&a=1&perf=etrade');
   first.comparison.update(snapshot(), 'Traditional');

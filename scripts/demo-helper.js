@@ -2,8 +2,9 @@ import { rateDecimal, createBankRateRequest } from './bank-rates.js';
 import { DEMO_BALANCE_KEY, readDemoBalance } from './demo-balance.js';
 import isDemoHelperHost from './demo-host.js';
 import mountPerformanceControls from './demo-performance-controls.js';
-import { readPerformanceConfig } from './demo-performance.js';
+import { performanceURL, resolvePerformanceConfig } from './demo-performance.js';
 import mountTrackingControls from './demo-tracking.js';
+import { rememberDemoDetails, resetDemoSession } from './demo-session.js';
 
 export { default as isDemoHelperHost } from './demo-host.js';
 
@@ -152,15 +153,18 @@ export default function mountDemoHelper(doc = document, win = window) {
   actions.append(apply);
   form.append(label, input, help, actions);
   const customBalance = node(doc, 'details', 'custom-balance');
+  customBalance.dataset.demoState = 'page.balance';
   customBalance.append(node(doc, 'summary', '', 'Balance options'), form, reset);
   balanceSection.append(balanceStatus, presets, customBalance, feedback);
 
   const rates = node(doc, 'details', 'section');
+  rates.dataset.demoState = 'page.rates';
   rates.append(node(doc, 'summary', 'heading', 'Rate insights'));
   const connection = node(doc, 'p', 'muted');
   const rateList = node(doc, 'ul', 'list');
   rates.append(connection, rateList);
   const features = node(doc, 'details', 'section');
+  features.dataset.demoState = 'page.features';
   const featureSummary = node(doc, 'summary', 'heading', 'Features on this page');
   features.append(featureSummary);
   const featureList = node(doc, 'ul', 'list');
@@ -183,7 +187,7 @@ export default function mountDemoHelper(doc = document, win = window) {
   const views = [pageTools, performanceView, trackingView];
   const viewNames = ['page', 'performance', 'tracking'];
   const tabs = [];
-  let selectedView = readPerformanceConfig(win.location.href) ? 1 : 0;
+  let selectedView = resolvePerformanceConfig(win) ? 1 : 0;
   try {
     const stored = win.sessionStorage.getItem(VIEW_KEY);
     if (viewNames.includes(stored)) selectedView = viewNames.indexOf(stored);
@@ -227,12 +231,25 @@ export default function mountDemoHelper(doc = document, win = window) {
   selectView(selectedView);
   header.append(navigation);
   content.append(...views);
+  const session = node(doc, 'details', 'section');
+  session.append(node(doc, 'summary', 'heading', 'Demo session'));
+  session.append(node(doc, 'p', 'muted', 'Settings, event history and page runs follow this tab on this preview host until the session ends. Reset clears this demo history and turns off performance simulation.'));
+  const resetSession = button(doc, 'Reset demo session');
+  const resetFeedback = node(doc, 'p', 'muted');
+  resetFeedback.setAttribute('role', 'status');
+  resetSession.addEventListener('click', () => {
+    if (resetDemoSession(win)) win.location.href = performanceURL(win.location.href, null);
+    else resetFeedback.textContent = 'This browser could not reset the saved demo session.';
+  });
+  session.append(resetSession, resetFeedback);
+  content.append(session);
   panel.append(header, content);
   const highlight = node(doc, 'div', 'highlight');
   highlight.hidden = true;
   highlight.setAttribute('aria-hidden', 'true');
   root.append(panel, toggle, highlight);
   doc.body.append(root);
+  rememberDemoDetails(root, win);
   let expanded = false;
   let highlighted;
   let highlightTimer;

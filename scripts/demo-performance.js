@@ -1,5 +1,7 @@
 import isDemoHelperHost from './demo-host.js';
 import startOneTrust from './onetrust.js';
+import { readDemoSession, writeDemoSession } from './demo-session.js';
+import { recordPerformanceSession } from './demo-session-history.js';
 
 const PROFILES = new Set(['baseline', 'onetrust', 'etrade', 'onetrust-real']);
 const PHASES = new Set(['early', 'late', 'consent', 'eds']);
@@ -36,6 +38,18 @@ export function performanceURL(href, config) {
     url.searchParams.set('perf-work', config.work);
   }
   return url.href;
+}
+
+/** Explicit URLs override this tab's last applied mode; unmarked page links inherit it. */
+export function resolvePerformanceConfig(win) {
+  if (!isDemoHelperHost(win.location.hostname)) return null;
+  if (new URL(win.location.href).searchParams.has('perf')) {
+    return readPerformanceConfig(win.location.href);
+  }
+  const saved = readDemoSession(win, 'performance-config');
+  if (!saved || !PROFILES.has(saved.profile) || !PHASES.has(saved.phase)
+    || !Object.hasOwn(WORK, saved.work)) return null;
+  return readPerformanceConfig(performanceURL(win.location.href, saved));
 }
 
 function observeMetrics(win, metrics, onUpdate) {
@@ -126,10 +140,15 @@ function occupy(win, milliseconds, label) {
 /** No payload requests, observers or work unless explicitly enabled on a demo host. */
 export default function startPerformanceDemo(doc = document, win = window, dependencies = {}) {
   if (!isDemoHelperHost(win.location.hostname)) return null;
-  const config = readPerformanceConfig(win.location.href);
+  const config = resolvePerformanceConfig(win);
+  writeDemoSession(win, 'performance-config', config);
+  if (new URL(win.location.href).searchParams.has('perf')) {
+    writeDemoSession(win, 'performance-draft', config);
+  }
   if (!config) return null;
   if (win.etradePerformanceDemo) return win.etradePerformanceDemo;
   const realCMP = config.profile === 'onetrust-real';
+  const rememberedConsent = readDemoSession(win, 'performance-consent');
   const metrics = {
     fcp: null, lcp: null, cls: null, worstInteraction: null,
   };
@@ -300,6 +319,7 @@ export default function startPerformanceDemo(doc = document, win = window, depen
     if (stopped || state.consent === next) return;
     consentGranted = accepted;
     state.consent = next;
+    writeDemoSession(win, 'performance-consent', next);
     state.milestones.consentUpdated = win.performance.now();
     // Simulation events cannot grant consent to the site's real analytics integration.
     win.dispatchEvent(new win.CustomEvent('demo-performance:consent.update', {
@@ -370,6 +390,9 @@ export default function startPerformanceDemo(doc = document, win = window, depen
           .every((resource) => resource.status === 'loaded');
         if (state.cmpReady) {
           state.milestones.cmpReady = win.performance.now();
+          if (state.consent === 'pending' && ['accepted', 'declined'].includes(rememberedConsent)) {
+            setConsent(rememberedConsent === 'accepted');
+          }
           if (config.phase === 'eds' && consentGranted) startTags();
         }
         publish();
@@ -439,6 +462,7 @@ export default function startPerformanceDemo(doc = document, win = window, depen
     },
   };
   win.etradePerformanceDemo = controller;
+  recordPerformanceSession(doc, win, controller);
   win.addEventListener('pagehide', () => { stop(); metricObservers.disconnect(); }, { once: true });
 
   // EDS returns immediately: even the profile request waits until the delayed phase.

@@ -9,7 +9,8 @@ export function trackingCategories(value) {
 }
 
 export function validTrackingKey(key) {
-  return !!key && key.length <= 160 && ![...key].some((char) => char.charCodeAt(0) < 32);
+  return typeof key === 'string' && !!key && key.length <= 160
+    && ![...key].some((char) => char.charCodeAt(0) < 32);
 }
 
 /** Read only an authored query; fragment links must not inherit the current page's query. */

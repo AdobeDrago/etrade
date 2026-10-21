@@ -2,11 +2,37 @@ import {
   DEFAULT_CATEGORY, cleanTrackingHref, trackingCategories as categories,
   trackingParameters, validTrackingKey,
 } from './tracking-attributes.js';
+import { readDemoSession, watchDemoNavigation, writeDemoSession } from './demo-session.js';
 
 const CATEGORY = /^C\d{4,}$/;
 const STATES = new Set(['pending', 'granted', 'denied']);
 const WAITING = new Set(['queued', 'ready']);
+const EVENT_STATES = new Set(['queued', 'ready', 'sending', 'sent', 'failed', 'discarded']);
 const clone = (value) => JSON.parse(JSON.stringify(value));
+
+function restoredEvents(initial, limit, restoreConsent) {
+  if (!Array.isArray(initial?.events)) return [];
+  const ids = new Set();
+  return initial.events.slice(-limit).filter((event) => {
+    if (!Number.isSafeInteger(event?.id) || event.id < 1 || ids.has(event.id)
+      || !validTrackingKey(event.key) || !categories(event.categories)
+      || !EVENT_STATES.has(event.status) || typeof event.timestamp !== 'string'
+      || !Number.isFinite(Date.parse(event.timestamp))
+      || (event.status !== 'discarded' && (!event.payload || typeof event.payload !== 'object'
+        || Array.isArray(event.payload)))) return false;
+    ids.add(event.id);
+    return true;
+  }).map((event) => ({
+    id: event.id,
+    key: event.key,
+    categories: categories(event.categories),
+    timestamp: event.timestamp,
+    // An interrupted request may already have arrived. Never resend it automatically.
+    status: event.status === 'sending' ? 'failed' : event.status,
+    payload: event.status === 'discarded' ? null : clone(event.payload),
+    ...(WAITING.has(event.status) && !restoreConsent ? { status: 'queued' } : {}),
+  })).sort((a, b) => a.id - b.id);
+}
 
 /** Shared by initial content, fragments and dynamically inserted links. */
 export function decorateTrackingLinks(root, base = root.baseURI || root.ownerDocument?.baseURI) {
@@ -30,19 +56,31 @@ export function decorateTrackingLinks(root, base = root.baseURI || root.ownerDoc
   });
 }
 
-/** Page-lifetime queue. No storage, vendor code, or network transport is installed here. */
-export function createTrackingQueue({ limit = 100, now = () => new Date().toISOString() } = {}) {
-  const events = [];
+/** A caller can restore history; real consent grants must be revalidated by OneTrust. */
+export function createTrackingQueue({
+  limit = 100, now = () => new Date().toISOString(), initial = null, restoreConsent = false,
+} = {}) {
+  const events = restoredEvents(initial, limit, restoreConsent);
   const listeners = new Set();
   const consent = { C0002: 'pending', C0004: 'pending' };
+  if (restoreConsent && initial?.consent && typeof initial.consent === 'object') {
+    Object.entries(initial.consent).forEach(([category, state]) => {
+      if (CATEGORY.test(category) && STATES.has(state)) consent[category] = state;
+    });
+  }
+  events.forEach((event) => {
+    event.categories.forEach((category) => { consent[category] ??= 'pending'; });
+  });
   let defaultState = 'pending';
-  let sequence = 0;
-  let skipped = 0;
+  if (restoreConsent && STATES.has(initial?.defaultConsent)) defaultState = initial.defaultConsent;
+  let sequence = Math.max(0, ...events.map((event) => event.id));
+  let skipped = Number.isSafeInteger(initial?.skipped) && initial.skipped >= 0
+    ? initial.skipped : 0;
   let sender = null;
   let flushing = null;
   const stateOf = (category) => consent[category] || defaultState;
   const snapshot = () => clone({
-    events, consent, skipped, connected: !!sender,
+    events, consent, skipped, connected: !!sender, defaultConsent: defaultState,
   });
   const notify = () => listeners.forEach((listener) => {
     try { listener(snapshot()); } catch { /* A viewer cannot interrupt tracking or navigation. */ }
@@ -86,6 +124,7 @@ export function createTrackingQueue({ limit = 100, now = () => new Date().toISOS
     });
     return flushing;
   }
+  refresh();
   return {
     snapshot,
     flush,
@@ -173,8 +212,10 @@ export function linkTrackingEvent(link, pageURL) {
 /** Start before autoblocking and CMP setup so neither link clones nor consent can race us. */
 export default function startTracking(doc = document, win = window) {
   if (win.etradeTracking) return win.etradeTracking;
-  const queue = createTrackingQueue();
+  const queue = createTrackingQueue({ initial: readDemoSession(win, 'page-events') });
   win.etradeTracking = queue;
+  watchDemoNavigation(win);
+  queue.subscribe((snapshot) => writeDemoSession(win, 'page-events', snapshot));
   let activeGroups = [];
   let resolved = false;
   function syncConsent(value, applied = false) {

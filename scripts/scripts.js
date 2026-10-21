@@ -278,8 +278,7 @@ function loadDelayed(realConsent = false) {
 async function loadPage() {
   startTracking(document, window);
   let performanceDemo;
-  if (isDemoHelperHost(window.location.hostname)
-    && new URLSearchParams(window.location.search).has('perf')) {
+  if (isDemoHelperHost(window.location.hostname)) {
     const { default: startPerformanceDemo } = await import('./demo-performance.js');
     performanceDemo = startPerformanceDemo(document, window);
     // Only the observed blocking bootstrap stage delays EDS decoration.
