@@ -8,15 +8,9 @@ Deploy the plugin's HTML, CSS and JavaScript with the project's code first. In t
 
 | title | path | format | icon | experience | ref |
 | --- | --- | --- | --- | --- | --- |
-| Disclosure Manager | https://main--etrade--adobedrago.aem.live/tools/plugins/disclosure-manager/disclosure-manager.html | | | inline | |
+| Disclosure Manager | https://demo--etrade--adobedrago.aem.live/tools/plugins/disclosure-manager/disclosure-manager.html | | | inline | |
 
-To use the code on `demo`, push that branch and add a branch-specific row instead:
-
-| title | path | format | icon | experience | ref |
-| --- | --- | --- | --- | --- | --- |
-| Disclosure Manager (demo) | https://demo--etrade--adobedrago.aem.live/tools/plugins/disclosure-manager/disclosure-manager.html | | | inline | demo |
-
-Open [the homepage editor with the demo ref](https://da.live/edit?ref=demo#/adobedrago/etrade/home), then **Library → Disclosure Manager (demo)**. Use the URL without `?demo=1` for real authoring. The branch selects the plugin code; DA source content is shared across branches. Review previewed content on [the demo homepage](https://demo--etrade--adobedrago.aem.page/home).
+The deployed plugin code lives on `demo`. Leave ref empty so the plugin is available from the regular editor URL. Open [the homepage editor](https://da.live/canvas#/adobedrago/etrade/home), then **Outline dropdown → Disclosure Manager**. In the classic editor use **Library → Disclosure Manager**. Use the plugin URL without `?demo=1` for real authoring. The URL's branch selects the plugin code; DA source content is shared across branches. An editor `?ref=demo` is only needed when reviewing the demo branch's site rendering inside DA. Review previewed content on [the demo homepage](https://demo--etrade--adobedrago.aem.page/home).
 
 For local development, run `npx -y @adobe/aem-cli up` and add a separate row:
 
