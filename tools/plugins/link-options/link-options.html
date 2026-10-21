@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Link Options</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="./link-options.css">
+    <script type="module" src="./link-options.js"></script>
+  </head>
+  <body class="link-options">
+    <header class="toolbar">
+      <div><p class="eyebrow">E*TRADE · Authoring</p><h1>Link Options</h1></div>
+      <button id="reload" type="button" disabled>Reload selection</button>
+    </header>
+    <main>
+      <p class="hint">Configure the link, copy its URL, then paste into DA’s Edit link dialog. Select a link before opening this tool to load its current settings.</p>
+      <p id="status" class="status" role="status" aria-live="polite">Paste a destination URL below, or open this tool from the DA Library to load a selected link.</p>
+      <p id="demo-notice" class="hint" hidden>Home example · This helper copies a URL. It does not change or publish DA content.</p>
+      <p id="selection-label" class="hint"></p>
+      <form id="link-form" novalidate>
+        <fieldset id="fields">
+          <legend>Link details</legend>
+          <label for="url">URL</label>
+          <input id="url" name="url" type="text" placeholder="/home or https://…" autocomplete="off" spellcheck="false" aria-describedby="url-help">
+          <p id="url-help" class="hint">Enter the destination. Tracking settings are managed below.</p>
+          <section class="tracking" aria-label="Tracking options">
+            <label class="switch" for="track-clicks">
+              <span><strong>Track clicks</strong><small>Add a reporting key to this link.</small></span>
+              <input id="track-clicks" type="checkbox" role="switch" aria-controls="tracking-fields">
+            </label>
+            <div id="tracking-fields" hidden>
+              <label for="tracking-key">Tracking key</label>
+              <input id="tracking-key" type="text" maxlength="160" placeholder="e.g. hero-open-account" autocomplete="off" spellcheck="false" aria-describedby="tracking-help">
+              <p id="tracking-help" class="hint">Use a stable name that identifies this interaction in reports.</p>
+              <details id="advanced">
+                <summary>Advanced</summary>
+                <label for="category">Required consent</label>
+                <select id="category" aria-describedby="category-help">
+                  <option value="C0004">Advertising · C0004</option>
+                  <option value="C0002">Analytics · C0002</option>
+                  <option value="C0002,C0004">Analytics + advertising · C0002, C0004</option>
+                  <option value="custom">Custom category IDs</option>
+                </select>
+                <div id="custom-category-field" hidden>
+                  <label for="custom-category">Category IDs</label>
+                  <input id="custom-category" type="text" placeholder="C0002,C0004" autocomplete="off" spellcheck="false">
+                </div>
+                <p id="category-help" class="hint">Sending requires consent for every selected category. These IDs must match the site’s OneTrust configuration.</p>
+              </details>
+            </div>
+          </section>
+          <section class="output" aria-label="Generated link URL">
+            <label for="output-url">URL to copy</label>
+            <input id="output-url" type="text" readonly spellcheck="false" aria-describedby="output-help">
+            <p id="output-help" class="hint"></p>
+            <p id="manual-copy" class="hint" hidden>Use ⌘C on Mac or Ctrl+C on Windows to copy the selected URL.</p>
+          </section>
+          <div class="actions">
+            <button id="copy" class="primary" type="submit">Copy URL</button>
+            <button id="close" type="button" hidden>Close</button>
+          </div>
+          <p class="hint">Display text and title stay in DA’s existing link dialog. Save and preview the page in DA after pasting the URL.</p>
+        </fieldset>
+      </form>
+    </main>
+  </body>
+</html>

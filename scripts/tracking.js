@@ -1,30 +1,12 @@
-const KEY_PARAM = '@tracking';
-const CATEGORY_PARAM = '@tracking-category';
-const DEFAULT_CATEGORY = 'C0004';
+import {
+  DEFAULT_CATEGORY, cleanTrackingHref, trackingCategories as categories,
+  trackingParameters, validTrackingKey,
+} from './tracking-attributes.js';
+
 const CATEGORY = /^C\d{4,}$/;
 const STATES = new Set(['pending', 'granted', 'denied']);
 const WAITING = new Set(['queued', 'ready']);
 const clone = (value) => JSON.parse(JSON.stringify(value));
-
-function categories(value) {
-  const list = Array.isArray(value) ? value : String(value).split(',');
-  const result = [...new Set(list.map((item) => String(item).trim()))];
-  return result.length && result.every((item) => CATEGORY.test(item)) ? result : null;
-}
-
-/** Remove only our authoring parameters, retaining other query bytes and relative URLs. */
-function cleanHref(href) {
-  const hashAt = href.indexOf('#');
-  const hash = hashAt < 0 ? '' : href.slice(hashAt);
-  const target = hashAt < 0 ? href : href.slice(0, hashAt);
-  const queryAt = target.indexOf('?');
-  if (queryAt < 0) return href;
-  const query = target.slice(queryAt + 1).split('&').filter((part) => {
-    const name = new URLSearchParams(part).keys().next().value;
-    return name !== KEY_PARAM && name !== CATEGORY_PARAM;
-  }).join('&');
-  return `${target.slice(0, queryAt)}${query ? `?${query}` : ''}${hash}`;
-}
 
 /** Shared by initial content, fragments and dynamically inserted links. */
 export function decorateTrackingLinks(root, base = root.baseURI || root.ownerDocument?.baseURI) {
@@ -32,25 +14,17 @@ export function decorateTrackingLinks(root, base = root.baseURI || root.ownerDoc
   if (root.matches?.('a[href]')) links.unshift(root);
   links.forEach((link) => {
     const href = link.getAttribute('href');
-    const queryAt = href.indexOf('?');
-    const hashAt = href.indexOf('#');
-    if (queryAt < 0 || (hashAt >= 0 && queryAt > hashAt)) return;
-    // Resolving a fragment/empty href against the current page can inherit its query.
-    // Read only the query actually authored on this link, before URL normalization.
-    const query = href.slice(queryAt + 1, hashAt < 0 ? undefined : hashAt);
-    const parameters = new URLSearchParams(query);
-    if (!parameters.has(KEY_PARAM)) return;
+    const { enabled, key, category } = trackingParameters(href);
+    if (!enabled) return;
     let url;
     try { url = new URL(href, base); } catch { return; }
     if (!['http:', 'https:', 'mailto:', 'tel:'].includes(url.protocol)) return;
-    const key = parameters.get(KEY_PARAM).trim();
-    const required = categories(parameters.get(CATEGORY_PARAM) ?? DEFAULT_CATEGORY);
-    const clean = cleanHref(href);
+    const required = categories(category);
+    const clean = cleanTrackingHref(href);
     if (clean !== href) link.setAttribute('href', clean);
     link.removeAttribute('data-tracking-key');
     link.removeAttribute('data-tracking-category');
-    if (!key || key.length > 160 || [...key].some((char) => char.charCodeAt(0) < 32)
-      || !required) return;
+    if (!validTrackingKey(key) || !required) return;
     link.dataset.trackingKey = key;
     link.dataset.trackingCategory = required.join(',');
   });

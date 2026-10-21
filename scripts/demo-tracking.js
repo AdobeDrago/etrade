@@ -162,6 +162,14 @@ export default function mountTrackingControls(doc, win) {
     element(doc, 'p', 'muted', 'Inspect marked links below, or click one on the page to capture a real event. Following a link that loads another page clears this page’s event history.'),
     connection,
   );
+  const authoring = element(doc, 'p', 'muted');
+  const helper = doc.createElement('a');
+  helper.href = '/tools/plugins/link-options/link-options.html';
+  helper.target = '_blank';
+  helper.rel = 'noopener';
+  helper.textContent = 'Open Link Options';
+  authoring.append(helper, ' to configure a tracking URL (opens a new tab).');
+  root.append(authoring);
   const sampleQueue = createTrackingQueue();
   const demo = element(doc, 'details', 'event-sandbox');
   root.append(mountTrackedLinks(doc, win, root, (event) => {

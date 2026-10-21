@@ -287,6 +287,8 @@ The integration follows [Adobe's CMP loading guidance](https://www.aem.live/deve
 
 ### Authored link tracking
 
+Authors can use the [Link Options helper](tools/plugins/link-options/README.md) to configure a tracking toggle, key and consent category, then copy the generated URL into DA's native link dialog. The demo's Tracking tab links to the standalone helper; the plugin README contains the DA Library registration row and authoring workflow.
+
 Add `@tracking` to any authored link or CTA URL to opt that interaction into tracking:
 
 ```text
