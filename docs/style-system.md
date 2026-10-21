@@ -298,6 +298,8 @@ Dynamic rates are separate from styling. Preserve configured markers, units, leg
 
 ### Actions
 
+For a button in default content, put one link in its own paragraph and format its entire label: **bold** creates a filled primary button, *italic* creates an outlined secondary button, and bold plus italic creates the accent treatment. Applying formatting before or after creating the link has the same result. Inline links in sentences, partially emphasized labels, image links, and links displaying their URL stay ordinary links. Shared action grouping preserves an explicitly authored filled or outlined treatment; unformatted block actions retain the block's default treatment.
+
 `scripts/actions.js` recognizes standalone authored links, normalizes duplicate arrow links, and applies primary, secondary, or outline presentation through shared classes. Block decorators can use `groupActions` or `decorateAction` rather than duplicating that behavior. The destination, tracking attributes, and accessible label remain authored.
 
 `styles/actions.css` styles `.etrade-actions` / `.etrade-action`. Base EDS `.button` rules also remain in `styles/styles.css`; blocks that use shared actions should use the shared helper rather than treating the two class systems as interchangeable. Existing bespoke hero or navigation controls can retain scoped styles where their reference treatment differs.
