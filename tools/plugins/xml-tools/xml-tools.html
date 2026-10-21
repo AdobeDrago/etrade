@@ -63,6 +63,19 @@
           <p class="hint">Saving creates an editable SC document and its demo schema. Use DA’s Send → Preview / Publish afterward. XML download reflects the fields above; a public XML feed is a separate integration.</p>
         </section>
       </div>
+      <section class="panel page-export" aria-labelledby="page-export-heading">
+        <h2 id="page-export-heading">Export an existing DA page</h2>
+        <p class="hint">Export any saved page in this site. Save your editor changes first; unsaved changes and separately referenced fragments are not included.</p>
+        <label for="page-path">Page path</label>
+        <input id="page-path" type="text" value="/home" placeholder="/home" spellcheck="false">
+        <button id="export-page" type="button" class="primary" disabled>Load page for XML export</button>
+        <p id="page-export-status" class="hint" role="status">Open XML Tools inside DA to load an existing page.</p>
+        <div id="page-export-result" hidden>
+          <details><summary>Page XML</summary><textarea id="page-xml-output" aria-label="Page XML" rows="12" readonly spellcheck="false"></textarea></details>
+        </div>
+        <button id="download-page" type="button" disabled>Download page XML</button>
+        <p class="hint">The general da-page format includes a section and block inventory plus the complete saved HTML in source-html. This is a source export, with no linked assets embedded. Product XML above uses a separate schema; importing this page export or mapping it to another system is not implemented.</p>
+      </section>
     </main>
   </body>
 </html>

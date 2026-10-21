@@ -297,7 +297,7 @@ The integration follows [Adobe's CMP loading guidance](https://www.aem.live/deve
 
 ### Authored link tracking
 
-Authors can use the [Link Options helper](tools/plugins/link-options/README.md) to configure a tracking toggle, key and consent category, then copy the generated URL into DA's native link dialog. The demo's Tracking tab links to the standalone helper; the plugin README contains the DA Library registration row and authoring workflow.
+Authors can use the [Link Options helper](tools/plugins/link-options/README.md) inside DA to configure a tracking toggle, key and consent category, then copy the generated URL into DA's native link dialog. Open the Outline dropdown and choose Link Options under Extensions. The plugin README contains the DA registration row and authoring workflow.
 
 Add `@tracking` to any authored link or CTA URL to opt that interaction into tracking:
 
@@ -318,6 +318,8 @@ The queue reads exact groups from `OneTrustGroupsUpdated`, the existing real `co
 **Demo controls → Tracking** lists detected links and buttons, their tracking keys and consent categories, including targets inserted by fragments or block decoration. **Test in sample queue** captures a sample from the selected target without following its URL or adding a real page event. The page-event log shows actual clicks, category states, source page paths and expandable payload previews; marking a link alone does not create an event. The demo session retains event history across page navigation.
 
 **Try a sample queue** provides separate C0002/C0004 controls and sample clicks. Its history and category choices restore from the demo session independently of real consent. These controls never alter OneTrust preferences or real page-event consent. Both logs show the latest 25 retained events. Consent changes update the log immediately; ready events explicitly say **destination not connected**. The local `/test/demo-helper.html` review includes same-page examples and a link to `/test/demo-session.html` for checking persistence across navigation.
+
+**Connect local demo receiver** connects only the sample queue to an in-page callback. Once the corresponding categories are granted, the receipt list shows delivery order and sample events say **Sent · local demo receiver**. No network request, Adobe beacon or page-event consent change occurs. Disconnect pauses dispatch; reconnect after navigating because sender functions are not restored from session storage.
 
 No Adobe library or network sender is installed. A future integration can register an asynchronous adapter with `window.etradeTracking.setSender(adapter)`; it receives each eligible record, including `payload`, `categories`, and the original capture timestamp. `setSender(null)` pauses dispatch. The queue calls the adapter sequentially in original order among eligible events, rechecks consent before each call, and marks an event sent only when the adapter promise resolves. It does not claim downstream ingestion. Failed calls are visible and are never automatically retried because a rejected response can follow a delivered request. Revocation cannot cancel a request already dispatched, but prevents later dispatches.
 

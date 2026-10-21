@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const base = new URL('../tools/plugins/xml-tools/', import.meta.url);
 const prefix = '/tools/plugins/xml-tools/';
-const files = ['xml-tools.html', 'xml-tools.css', 'xml-tools.js', 'controller.js', 'model.js'];
+const files = ['xml-tools.html', 'xml-tools.css', 'xml-tools.js', 'controller.js', 'model.js', 'page-xml.js'];
 const types = { html: 'text/html', css: 'text/css', js: 'text/javascript' };
 const port = Number(process.env.XML_DEMO_PORT || 3031);
 createServer(async (request, response) => {

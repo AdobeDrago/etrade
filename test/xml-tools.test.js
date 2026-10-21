@@ -8,6 +8,7 @@ import {
   productFromSource, productSource, productXml, saveProduct, validateProduct,
 } from '../tools/plugins/xml-tools/model.js';
 import mountXmlTools from '../tools/plugins/xml-tools/controller.js';
+import { loadPageXml, pagePath, pageXml } from '../tools/plugins/xml-tools/page-xml.js';
 
 class BrowserParser {
   // linkedom needs the HTML wrapper supplied by browser DOMParser.
@@ -151,4 +152,55 @@ test('connected UI saves through DA and links to SC editing and preview/live JSO
   assert.equal(document.getElementById('edit-link').href, `https://da.live/form#/adobedrago/etrade${path}`);
   assert.match(document.getElementById('preview-link').href, /\/preview\/adobedrago\/etrade\/xml-demo\/products\/sample-cash$/);
   assert.match(document.getElementById('live-link').href, /\/live\/adobedrago\/etrade\/xml-demo\/products\/sample-cash$/);
+});
+
+const pageSource = '<body><header></header><main><div><h1>Cash &amp; savings</h1><table><tbody><tr><td>Hero (Dark)</td></tr><tr><td><p>Offer &lt;demo&gt;</p><a href="/home?@tracking=hero&amp;x=1">Home</a></td></tr></tbody></table></div><div><div class="cards-product"><div><div>Card</div></div></div></div></main><footer></footer></body>';
+
+test('general page XML preserves the complete saved source, rich markup and section inventory', () => {
+  const xml = pageXml(pageSource, context, '/home');
+  const doc = new DOMParser().parseFromString(xml, 'application/xml');
+  assert.equal(doc.documentElement.tagName, 'da-page');
+  assert.equal(doc.documentElement.getAttribute('path'), '/home');
+  assert.equal(doc.querySelector('source-html').textContent, pageSource);
+  assert.equal(doc.querySelectorAll('section').length, 2);
+  assert.equal(doc.querySelector('block').getAttribute('name'), 'Hero (Dark)');
+  assert.equal(doc.querySelectorAll('block')[1].getAttribute('name'), 'cards-product');
+  assert.match(doc.querySelector('block html').textContent, /@tracking=hero/);
+  assert.throws(() => pageXml('<body>No main</body>', context, '/home'), /no main/);
+  assert.throws(() => pageXml(`${pageSource}\u0001`, context, '/home'), /XML 1.0/);
+});
+
+test('page export confines reads to the connected site and never writes source', async () => {
+  ['', '/', '//other/home', '/a/../home', '/a/./home', '/home?x=1', '/home#x', '/a%2fb', '/a\\b', 'https://other/home'].forEach((value) => assert.throws(() => pagePath(value)));
+  assert.equal(pagePath('/what-we-offer/accounts.html'), '/what-we-offer/accounts');
+  let calls = 0;
+  const result = await loadPageXml(context, '/home', async (url, options) => {
+    calls += 1;
+    assert.equal(new URL(url).pathname, '/source/adobedrago/etrade/home.html');
+    assert.equal(options.method, undefined);
+    return new Response(pageSource);
+  });
+  assert.equal(calls, 1);
+  assert.equal(result.filename, 'home.xml');
+  await assert.rejects(loadPageXml({ ...context, org: 'other/site' }, '/home', () => assert.fail('Unsafe request')), /inside DA/);
+  await assert.rejects(loadPageXml(context, '/missing', async () => new Response('', { status: 404 })), /404/);
+});
+
+test('page export works without importing a product and changing paths invalidates the download', async () => {
+  const { document, window } = parseHTML(html);
+  const downloads = [];
+  const controller = mountXmlTools(document, { download: (...args) => downloads.push(args) });
+  assert.equal(document.getElementById('export-page').disabled, true);
+  controller.connect({ context, actions: { daFetch: service({ '/home': pageSource }).request } });
+  document.getElementById('export-page').click();
+  await new Promise((resolve) => { setImmediate(resolve); });
+  assert.match(document.getElementById('page-export-status').textContent, /Loaded \/home/);
+  document.getElementById('download-page').click();
+  assert.match(downloads[0][0], /<da-page/);
+  assert.equal(downloads[0][1], 'home.xml');
+  const input = document.getElementById('page-path');
+  input.value = '/another-page';
+  input.dispatchEvent(new window.Event('input', { bubbles: true }));
+  assert.equal(document.getElementById('download-page').disabled, true);
+  assert.equal(document.getElementById('page-export-result').hidden, true);
 });

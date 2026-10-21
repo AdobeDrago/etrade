@@ -92,6 +92,10 @@
   background: #fff;
 }
 
+.xml-tools .page-export {
+  margin-top: 18px;
+}
+
 .xml-tools .panel-heading {
   display: flex;
   flex-wrap: wrap;
@@ -127,7 +131,7 @@
   resize: vertical;
 }
 
-.xml-tools :is(#xml-input, #xml-output) {
+.xml-tools :is(#xml-input, #xml-output, #page-xml-output) {
   font: 12px/1.6 ui-monospace, monospace;
 }
 
@@ -164,7 +168,7 @@
   color: #fff;
 }
 
-.xml-tools #import {
+.xml-tools :is(#import, #export-page, #download-page) {
   margin-top: 12px;
 }
 

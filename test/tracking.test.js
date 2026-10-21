@@ -341,6 +341,44 @@ test('marked Home links appear before a click and can be tested without navigati
   assert.equal(inventory.querySelectorAll('.demo-helper-tracked-link').length, 1);
 });
 
+test('local demo receiver drains samples in eligible order and never connects real page events', async () => {
+  const context = browser('<a href="/home?@tracking=real">Home</a>', { fetch: () => assert.fail('No network sender') });
+  const controls = mountTrackingControls(context.document, context.win);
+  context.document.body.append(controls);
+  context.document.querySelector('main a').click();
+  const sample = controls.querySelector('.demo-helper-event-sandbox');
+  const action = (label) => [...sample.querySelectorAll('button')].find((button) => button.textContent === label).click();
+  action('Capture analytics example');
+  action('Capture analytics example');
+  action('Capture advertising example');
+  action('Connect local demo receiver');
+  await settle();
+  assert.equal(sample.querySelectorAll('[data-tracking-status="queued"]').length, 3);
+  const grant = (category) => {
+    const select = sample.querySelector(`[aria-label="Sample ${category} consent"]`);
+    select.querySelector('[value="granted"]').selected = true;
+    select.dispatchEvent(new context.window.Event('change'));
+  };
+  grant('C0002');
+  await settle();
+  const receipts = sample.querySelector('[aria-label="Local demo receiver delivery order"]');
+  assert.deepEqual([...receipts.children].map((item) => item.textContent), [
+    'Received locally: #1 demo-analytics-click', 'Received locally: #2 demo-analytics-click',
+  ]);
+  assert.equal(sample.querySelectorAll('[data-tracking-status="sent"]').length, 2);
+  assert.ok(sample.textContent.includes('Sent · local demo receiver'));
+  action('Disconnect local demo receiver');
+  grant('C0004');
+  await settle();
+  assert.equal(receipts.children.length, 2);
+  assert.equal(sample.querySelectorAll('[data-tracking-status="ready"]').length, 1);
+  action('Connect local demo receiver');
+  await settle();
+  assert.equal(receipts.lastElementChild.textContent, 'Received locally: #3 demo-advertising-click');
+  assert.equal(context.win.etradeTracking.snapshot().connected, false);
+  assert.equal(context.win.etradeTracking.snapshot().events[0].status, 'queued');
+});
+
 test('tracking inventory follows fragment links, clones, direct data attributes and removals', async () => {
   const context = browser();
   const controls = mountTrackingControls(context.document, context.win);

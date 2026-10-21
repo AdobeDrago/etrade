@@ -19,9 +19,9 @@ Push the plugin files with the project code first. In the [DA site configuration
 
 | title | path | format | icon | experience | ref |
 | --- | --- | --- | --- | --- | --- |
-| Link Options | https://demo-controller--etrade--adobedrago.aem.live/tools/plugins/link-options/link-options.html | | | fullsize-dialog | |
+| Link Options | https://demo--etrade--adobedrago.aem.live/tools/plugins/link-options/link-options.html | | | fullsize-dialog | |
 
-Save the configuration, then reload [Home in New Authoring](https://da.live/canvas#/adobedrago/etrade/home). Select the link, then open **Outline dropdown → Extensions → Link Options**. Verify that the dialog opens within DA, the selected link loads, **Copy URL** copies the configured URL, and **Close** returns to the editor. The absolute plugin **path** still loads its code from `demo-controller`; the empty **ref** makes the tool available without a special editor URL and alongside other editor refs. DA content is shared across branches. Review previewed content at [the demo-controller Home preview](https://demo-controller--etrade--adobedrago.aem.page/home).
+Save the configuration, then reload [Home in New Authoring](https://da.live/canvas#/adobedrago/etrade/home). Select the link, then open **Outline dropdown → Extensions → Link Options**. Verify that the dialog opens within DA, the selected link loads, **Copy URL** copies the configured URL, and **Close** returns to the editor. The absolute plugin **path** loads its code from `demo`; the empty **ref** makes the tool available without a special editor URL and alongside other editor refs. DA content is shared across branches. Review previewed content at [the demo Home preview](https://demo--etrade--adobedrago.aem.page/home).
 
 If **Extensions** is missing from the Outline dropdown, confirm that the saved Link Options row has an empty **ref** cell, then reload the editor. A nonempty ref such as `demo-controller` restricts visibility to matching editor URLs (and local development). `fullsize-dialog` opens a modal in New Authoring; the classic editor also accepts this value. Plain `dialog` uses the classic editor's modal but appears as a sidebar tool in New Authoring.
 

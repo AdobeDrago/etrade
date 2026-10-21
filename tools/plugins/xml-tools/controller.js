@@ -2,6 +2,7 @@ import {
   DEMO_FOLDER, FIELDS, MAX_XML_BYTES, SAMPLE_XML, demoPath, loadProduct,
   parseProductXml, productXml, saveProduct, validateProduct,
 } from './model.js';
+import { loadPageXml } from './page-xml.js';
 
 export default function mountXmlTools(doc, { download } = {}) {
   const byId = (id) => doc.getElementById(id);
@@ -11,6 +12,8 @@ export default function mountXmlTools(doc, { download } = {}) {
   let snapshot;
   let busy = false;
   let revision = 0;
+  let pageExport;
+  let pageDirty = false;
 
   function status(message, error = false) {
     byId('status').textContent = message;
@@ -45,6 +48,9 @@ export default function mountXmlTools(doc, { download } = {}) {
     byId('download').disabled = busy || !valid;
     byId('save').disabled = busy || !valid || !sdk;
     byId('load').disabled = busy || !sdk;
+    byId('page-path').disabled = busy;
+    byId('export-page').disabled = busy || !sdk;
+    byId('download-page').disabled = busy || !pageExport;
     byId('product-preview').hidden = !valid;
     byId('preview-empty').hidden = Boolean(valid);
     byId('xml-output').value = valid ? productXml(valid) : '';
@@ -139,12 +145,42 @@ export default function mountXmlTools(doc, { download } = {}) {
 
   byId('save').addEventListener('click', () => operate('save'));
   byId('load').addEventListener('click', () => operate('load'));
+  byId('page-path').addEventListener('input', () => {
+    pageDirty = true;
+    pageExport = undefined;
+    byId('page-xml-output').value = '';
+    byId('page-export-result').hidden = true;
+    byId('page-export-status').textContent = 'Load the saved page to create its XML export.';
+    render();
+  });
+  byId('export-page').addEventListener('click', async () => {
+    if (busy || !sdk) return;
+    busy = true;
+    pageExport = undefined;
+    byId('page-export-result').hidden = true;
+    byId('page-export-status').textContent = 'Reading the saved page from DA…';
+    render();
+    try {
+      pageExport = await loadPageXml(sdk.context, byId('page-path').value, sdk.actions.daFetch);
+      byId('page-xml-output').value = pageExport.xml;
+      byId('page-export-result').hidden = false;
+      byId('page-export-status').textContent = `Loaded ${pageExport.path}. Download its XML below. The original page is unchanged.`;
+    } catch (error) {
+      byId('page-export-status').textContent = error.message;
+    } finally { busy = false; render(); }
+  });
+  byId('download-page').addEventListener('click', () => {
+    if (pageExport && !busy) download(pageExport.xml, pageExport.filename);
+  });
   render();
   return {
     connect(connection) {
       if (!connection?.actions?.daFetch || !/^[a-z0-9-]+$/i.test(connection.context?.org || '')
         || !/^[a-z0-9-]+$/i.test(connection.context?.repo || '')) throw new Error('DA did not provide a valid site connection.');
       sdk = connection;
+      if (!pageDirty && typeof sdk.context.path === 'string' && sdk.context.path.startsWith('/')) {
+        byId('page-path').value = sdk.context.path;
+      }
       byId('connection').textContent = `Connected · ${sdk.context.org}/${sdk.context.repo}`;
       byId('save-help').textContent = 'Save a demo document, then open its SC editor to review and publish. Your current page is unchanged.';
       status('Connected to DA. Import XML or load a saved demo document.');

@@ -9,7 +9,7 @@ function element(doc, tag, className, text) {
   return node;
 }
 
-function eventStatus(event, snapshot) {
+function eventStatus(event, snapshot, sentLabel) {
   if (event.status === 'queued') {
     const waiting = event.categories.filter((category) => snapshot.consent[category] !== 'granted');
     return `Queued · awaiting ${waiting.join(', ')}`;
@@ -17,13 +17,13 @@ function eventStatus(event, snapshot) {
   return {
     ready: snapshot.connected ? 'Ready to send' : 'Ready · destination not connected',
     sending: 'Sending',
-    sent: 'Sent',
+    sent: sentLabel || 'Sent',
     failed: 'Failed · no automatic retry',
     discarded: 'Discarded · consent denied or withdrawn',
   }[event.status];
 }
 
-function mountLog(doc, container, queue, label) {
+function mountLog(doc, container, queue, label, sentLabel) {
   const states = element(doc, 'p', 'muted');
   const summary = element(doc, 'p', 'event-summary');
   summary.setAttribute('role', 'status');
@@ -47,7 +47,7 @@ function mountLog(doc, container, queue, label) {
       const item = element(doc, 'li', 'event');
       item.dataset.trackingStatus = event.status;
       const title = element(doc, 'strong', 'event-key', `#${event.id} ${event.key}`);
-      const status = element(doc, 'span', 'event-status', eventStatus(event, snapshot));
+      const status = element(doc, 'span', 'event-status', eventStatus(event, snapshot, sentLabel));
       const time = new Date(event.timestamp).toLocaleTimeString('en-US');
       let page = '';
       try {
@@ -220,7 +220,29 @@ export default function mountTrackingControls(doc, win) {
     actions.append(capture);
   });
   demo.append(controls, actions);
-  mountLog(doc, demo, sampleQueue, 'Sample tracking events (latest 25)');
+  const receiver = element(doc, 'button', 'button', 'Connect local demo receiver');
+  receiver.type = 'button';
+  const receiverStatus = element(doc, 'p', 'muted', 'The sample receiver runs only in this page. It sends no network requests or Adobe beacons. Reconnect it after navigating.');
+  const receipts = element(doc, 'ol', 'event-log');
+  receipts.setAttribute('aria-label', 'Local demo receiver delivery order');
+  receipts.setAttribute('aria-live', 'polite');
+  const receiverActions = element(doc, 'div', 'actions');
+  receiverActions.append(receiver);
+  receiver.addEventListener('click', () => {
+    if (sampleQueue.snapshot().connected) sampleQueue.setSender(null);
+    else {
+      sampleQueue.setSender(async (event) => {
+        receipts.append(element(doc, 'li', 'muted', `Received locally: #${event.id} ${event.key}`));
+        if (receipts.children.length > 25) receipts.firstElementChild.remove();
+      });
+    }
+  });
+  sampleQueue.subscribe(({ connected }) => {
+    receiver.textContent = connected ? 'Disconnect local demo receiver' : 'Connect local demo receiver';
+    receiver.setAttribute('aria-pressed', String(connected));
+  });
+  demo.append(receiverActions, receiverStatus, receipts);
+  mountLog(doc, demo, sampleQueue, 'Sample tracking events (latest 25)', 'Sent · local demo receiver');
   root.append(demo);
   root.append(element(doc, 'p', 'muted', 'History is kept in this tab’s session on this preview host. OneTrust revalidates real consent on each page.'));
   return root;
