@@ -215,3 +215,112 @@ Run `npm run test:sections` for authoring, page-layout and loading checks. Brows
 Author content directly in DA using the table structures and variants documented in each block's README. Save, preview and publish content separately from code. Dynamic bank-rate settings are documented in [Cards Product](blocks/cards-product/README.md#optional-dynamic-rates); campaign claims and their disclosures must be updated together.
 
 Page and block examples used by regression tests live in `test/fixtures/`. Run `npm run test:blocks` and `npm run test:cards` to check them, or `npm run test:rates` for rate checks alone. For browser rate checks, run `npm run demo:rates` with the AEM proxy on port 3000, then open http://127.0.0.1:3020/test/card-rates.html.
+
+## Third-party performance demo
+
+Open **Demo controls → Performance** on localhost, the `demo--etrade--AdobeDrago.aem.page` preview, or [the demo-controller preview](https://demo-controller--etrade--AdobeDrago.aem.page/home). These exact preview hosts show the controls; the performance simulation remains off until selected. Compare the same page and interactions with:
+
+- `?perf=baseline`: observers and demo controls, without simulated libraries.
+- `?perf=onetrust`: the two captured OneTrust JavaScript payloads.
+- `?perf=etrade`: OneTrust plus the selected analytics and advertising payloads.
+- `?perf=onetrust-real`: the actual OneTrust SDK, without fixture downloads or assumed CPU work.
+
+**Page tools** opens with six one-click balance presets (50k, 100k, 150k, 200k, 250k and 500k). **Balance options** contains custom values, including zero, and the authored-balance reset. Features and rate insights are collapsed to keep the customer demo compact; feature dots expose their full status to assistive technology and on hover. Locating a feature closes the panel and highlights the real block. Reopening the panel clears the highlight. The sticky header keeps **Page tools**, **Performance** and Close available while scrolling. The chosen view stays selected in the current tab; comparison links default to Performance when no view has been saved.
+
+In **Performance**, use **No tag stack**, **Traditional** or **EDS** for a one-click comparison. Traditional starts the full simulated stack during startup; EDS loads content first and holds tags for consent. Both use the same captured payload weights and preserve the run's processing preset; a new comparison defaults to download and parse only. Click the current-run status to expand the loading sequence, which shows observed content, CMP and tag milestones. Consent state and next-step instructions distinguish a held stack, loaded scripts and work stopped after revocation. **Run again** reloads the current settings; **Copy comparison link** includes the active performance configuration even when it was inherited from the session, with a selectable field if clipboard access fails. Balance overrides remain local and are not included in the comparison link.
+
+When a performance comparison is active, **Page experience** is the first measurement tab, with LCP and CLS grouped under Core Web Vitals. **Downloads** separates this run's transfers from captured reference sizes, including OneTrust versus other tags. **Workload** contains simulation state, browser tasks and workload controls. Expand **Advanced settings** for library selection, additional loading strategies, assumed CPU presets or the real OneTrust SDK.
+
+Use **Save this run** beside Core Web Vitals to keep a fixed reference for each page in the current browser tab. Switch from Traditional to EDS to compare saved and current LCP, FCP, CLS, transferred bytes, loaded files and consent. References survive reloads and visits to other pages; each applies only to its original page and page parameters, and is not included in copied comparison links. Saving on another page retains the earlier reference (up to 20 pages). Changes to processing, balance or viewport, pending tags and incomplete real CMP loads are called out beside the table. These are individual observations, without automatic percentage claims or rankings. **Replace saved run** updates the current page's reference; **Clear** removes only that reference. Saving becomes available after a paint measurement is observed; if browser storage is blocked, the panel reports that the reference could not be saved.
+
+### Demo session
+
+Demo state uses `sessionStorage` on the allowed demo hosts, scoped to this tab and origin. The applied performance mode follows links without performance query parameters; explicit `perf` settings in a URL override it. **Off → Apply & reload**, `?perf=off`, or **Demo session → Reset demo session** turns it off for subsequent unmarked links. The existing local `userBalance` contract remains the balance source.
+
+The open panel, selected main view and measurement tab, named expanded sections, unapplied performance form choices, demo banner toggle, simulated performance consent, and sample queue choices survive page navigation. Simulated consent is applied only after the new page's simulated CMP is ready. Actual OneTrust consent is read again on each page; a stored queue never supplies a real grant.
+
+**Performance → Session runs** retains the latest 20 page runs, including page path, mode, processing level, status, consent observation, LCP, FCP, CLS, response timing and transferred bytes. Every navigation starts new measurements; previous measurements appear as history rather than the new page's current metrics. Returning through the browser cache reloads stale demo objects from the latest session. Compare strategies on the same page for meaningful performance comparisons.
+
+**Reset demo session** clears demo histories, comparison references, simulated consent and panel choices, and stops the current performance simulation before navigation. It preserves real OneTrust preferences, authored content and unrelated browser storage. Storage errors leave the current page's controls and measurements usable. Run `npm run test:demo-session` for multi-page restoration, consent separation, history limits, storage failure and reset checks. `/test/demo-helper.html` links to `/test/demo-session.html` for a browser navigation review.
+
+Choose **Loading strategy** to compare the same script weights and processing budgets:
+
+- **Startup** (`perf-phase=early`): the OneTrust stub and Adobe Launch hold page decoration. The OneTrust banner and dependent tags load asynchronously. This models startup pressure without installing parser-blocking vendor scripts in the document head.
+- **EDS** (`perf-phase=eds`): page content loads first. Three seconds after content is ready, the profile and OneTrust fixtures load. Tag fixtures stay unloaded until **Accept** is selected under Simulated consent. **Decline** leaves them unloaded; declining after acceptance stops further added tag work. Repeated acceptance does not request completed fixtures again.
+- **Early CMP · tags when page is ready** (`perf-phase=late`): OneTrust starts before content; tags start automatically after content is ready, without a consent gate.
+- **Early CMP · tags when consent is granted** (`perf-phase=consent`): OneTrust starts before content; tags wait for simulated acceptance. Content readiness alone does not release them.
+
+The EDS strategy follows [Adobe's CMP integration pattern](https://www.aem.live/developer/cmp-integration). The weight-based profiles do not render the vendor's OneTrust banner or load production tracking. Their `demo-performance:consent.update` events are separate from the site's real `consent.update` events. The three-second delay is a chosen demo setting. A URL without `perf-phase` retains startup behavior; the controls suggest EDS for a new comparison.
+
+For the full-stack simulation in EDS or consent-gated mode, enable **Show demo cookie banner** in the performance panel to display a OneTrust-style consent banner across the bottom of the page. It is independent of the panel and stays visible when the panel is closed or its sections are collapsed. The demo controls move above the banner so neither covers the other's buttons. It is off by default and appears once the simulated CMP is ready. The description explains that it is a demo and does not change real cookie preferences. **Accept** and **Decline** use exactly the same simulated consent actions as the panel buttons and dismiss the banner; the checkbox can reopen it to demonstrate another choice. A panel choice also dismisses it. The banner is unavailable in real OneTrust mode and comparisons without a simulated tracking consent gate.
+
+After a consent choice, **Simulated consent** collapses to make room for the results. Expand it to change the choice or reopen the banner. Choosing consent inside the panel moves focus to that summary; choosing it on the page returns focus to Demo controls.
+
+For example, compare `/home?perf=etrade&perf-phase=early&perf-work=medium` with `/home?perf=etrade&perf-phase=eds&perf-work=medium`. In EDS mode, measure both declined consent (two CMP fixtures) and accepted consent (all 20 fixtures). Waiting for acceptance is part of the strategy, so record when it occurs.
+
+The default `perf-work=none` adds only downloads and parsing of inert JavaScript fixtures. Optional `light|medium|heavy` presets add **assumed** CPU budgets:
+
+| Preset | Initialization per 100 KiB of source | Per click/key press | Background every 2 seconds |
+| --- | --- | --- | --- |
+| Light | 5 ms | 8 ms | 10 ms |
+| Moderate | 20 ms | 40 ms | 30 ms |
+| Heavy | 60 ms | 120 ms | 60 ms |
+
+These are fixed wall-clock budgets, not measured vendor execution times or device-scaled instructions. Each initialization task is capped at 500 ms. Interaction/background work runs for 30 seconds once content and tags are ready and skips hidden documents. **Workload** explains whether processing is disabled, awaiting consent, active or idle, and displays the remaining window while active. **Change processing** opens the relevant Advanced setting. **Restart 30-second workload** restarts the window; **Stop this run** stops further simulated work until a reload. **Test response** waits for paint and collects pending measurements automatically, then reports whether the assumed interaction workload was active. Real menus, FAQs and inputs also exercise an active workload.
+
+Browser performance observations update the panel automatically, batched for the next frame. **Refresh measurements** also waits for a paint, drains queued observations and confirms the update. It does not reload the page, rerun downloads or reset measurements. FCP and LCP can remain unchanged after initial rendering; use **Run again** for a fresh run or restart the workload from its tab if its 30-second window has expired.
+
+The [capture manifest](scripts/demo-performance-profile.json) records public scripts observed on https://us.etrade.com/home on October 13, 2026: 20 selected files, 3,345,830 decoded bytes and 930,920 bytes in captured gzip responses. OneTrust accounts for 593,410 decoded bytes. Local fixtures match decoded bytes exactly and approximate gzip sizes without copying vendor code. The optional maintenance command `node test/generate-performance-assets.mjs` regenerates fixtures from this manifest; there is no site build step.
+
+This models payload pressure and illustrative main-thread contention. It does not reproduce vendor instruction complexity, cross-origin DNS/TLS, CMP rendering/layout, geographic or consent rules, dynamic Adobe rule modules, vendor config, chat/security libraries, downstream requests or beacon fan-out. Same-origin hosting, compression and caches affect actual transfers; fresh run URLs avoid module reuse, but hosting controls HTTP caching. The AEM local proxy can compress responses for browsers, and its compression may differ from the captured vendors. Use the actual transfer measurement when interpreting a run. No production pixels or identifiers are activated by the emulator.
+
+Compare FCP, LCP, CLS, long tasks, and the slowest observed interaction across repeated runs under identical cache/throttling conditions. The long-task excess includes the whole observed page lifetime; it is not Lighthouse TBT. The slowest Event Timing interaction is a lab observation, not an implementation of field INP. Chrome's Performance panel can show the `demo-third-party:*` task measures. Run `npm run test:performance-demo` for the opt-in, ordering, consent, expiry and fixture-budget checks.
+
+### Real OneTrust SDK
+
+Choose **Libraries → OneTrust · real SDK** in Advanced settings, or open:
+
+- [Split startup: asynchronous CMP, tracking after consent](https://demo-controller--etrade--AdobeDrago.aem.page/home?perf=onetrust-real&perf-phase=early&perf-work=none).
+- [EDS: CMP three seconds after page content, tracking after consent](https://demo-controller--etrade--AdobeDrago.aem.page/home?perf=onetrust-real&perf-phase=eds&perf-work=none).
+
+Both versions use the real `https://cdn.cookielaw.org/scripttemplates/otSDKStub.js`, with the public domain ID `01953914-53cc-7833-b8d6-c9c9d7301ff9` from the referenced integration. Optional page metadata `onetrust-domain-id` can select another published OneTrust domain ID, including a `-test` ID. The SDK is asynchronous in both versions, and the page never waits for its network requests or initialization. These comparisons remain restricted to the existing exact demo/local hosts and require explicit selection.
+
+`scripts/onetrust.js` registers `OptanonWrapper` and `OneTrustGroupsUpdated` before injection, preserves an existing wrapper, checks already-reported groups, and deduplicates SDK setup. It requires both exact category IDs `C0002` and `C0004`, matching the example integration; validate these against your tenant when adopting it elsewhere. Initialization and changes dispatch real `consent.update` events with `source: 'onetrust'`. The existing `consented.js` integration hook imports once after those categories are granted. It currently contains no analytics/ad vendors. Revocation dispatches `consented: false`; future tracking integrations must stop their ongoing work on that event. Previously executed code cannot be unloaded by removing consent.
+
+The dummy consent loader and its `?consent=accept` override are skipped in this mode. Simulated Accept/Decline and CPU workload controls are also unavailable. **Open OneTrust preferences** uses the actual preference center once its API is ready. Banner visibility and default active categories follow the tenant's configuration and geographic rules; a missing initial banner alone does not prove initialization failed.
+
+The panel distinguishes the SDK file's load/error state from CMP initialization and the consented module. After 15 seconds without initialization, it reports an incomplete load and suggests checking the domain allowlist, configuration and network. It never grants consent as a fallback or bypasses the allowlist. A later genuine initialization callback can recover normally.
+
+**Downloads** lists actual OneTrust resource requests and durations, including configuration and SDK requests observed by the browser. Cross-origin timing restrictions, failed requests or missing size data appear as unavailable totals rather than zero bytes. Captured fixture reference sizes are hidden in this mode. Use identical device/cache/throttling conditions for comparisons; an allowlist-blocked partial run cannot establish full production timing equivalence.
+
+The integration follows [Adobe's CMP loading guidance](https://www.aem.live/developer/cmp-integration) and [OneTrust's documented category events](https://developer.onetrust.com/onetrust/docs/javascript-events-guide). `npm run test:performance-demo` includes real-integration tests for script errors, initialization timeouts, recovery, category matching, revocation, duplicate callbacks and a consented-module load failure. `npm run test:sections` also checks that the real mode cannot import the dummy consent override.
+
+### Authored link tracking
+
+Authors can use the [Link Options helper](tools/plugins/link-options/README.md) to configure a tracking toggle, key and consent category, then copy the generated URL into DA's native link dialog. The demo's Tracking tab links to the standalone helper; the plugin README contains the DA Library registration row and authoring workflow.
+
+Add `@tracking` to any authored link or CTA URL to opt that interaction into tracking:
+
+```text
+/home?tracking=campaign&@tracking=hero-home#offer
+```
+
+The shared decorator produces `href="/home?tracking=campaign#offer"`, `data-tracking-key="hero-home"`, and `data-tracking-category="C0004"`. It removes only the reserved authoring parameters, preserving other query bytes, relative paths and fragments. Both literal `@tracking` and URL-encoded `%40tracking` are accepted and removed after decoration. An empty key disables tracking. Remove the parameter in authored content to opt out. The destination's ordinary `tracking` parameter is never consumed. Mail and telephone links are supported too.
+
+The default required category is `C0004`. Optional `@tracking-category=C0002` selects a different category; a comma-separated list such as `C0002,C0004` requires every listed category. Match these IDs to the tenant's actual category policy. Invalid or empty category settings do not create a tracking marker. Authors only need a key for the default advertising example.
+
+`scripts/tracking.js` starts before autoblocking and CMP setup. `decorateMain` tags fragment content before block decoration; a targeted observer also handles later links and href updates. Moved or cloned anchors retain their attributes. One delegated listener captures normal, keyboard-generated and middle-button clicks, including clicks on descendants, without preventing or delaying navigation. Buttons can use the same `data-tracking-key` and `data-tracking-category` attributes.
+
+The category-aware queue is bounded to 100 retained events. On demo hosts it persists in this tab's session across page navigation and reloads; elsewhere it stays in memory for the current page. Events awaiting an unknown choice remain queued. A category grant releases only eligible events; an explicit rejection or withdrawal discards waiting payloads and skips new events for that category. Previously discarded events are never replayed on a later grant. A full queue skips new captures rather than evicting waiting events. Restored queued/ready page events wait for fresh OneTrust category confirmation. Sent records are never replayed; a send interrupted by navigation is marked failed because delivery may already have occurred, and is never retried automatically. Sender functions are not restored from storage.
+
+The queue reads exact groups from `OneTrustGroupsUpdated`, the existing real `consent.update` bridge, and restored `OnetrustActiveGroups`. `OneTrust.IsAlertBoxClosed()` and `OTConsentApplied` distinguish unresolved choices from a saved or explicit rejection. An initialized banner without a choice leaves absent categories pending; removing a previously granted category revokes it immediately. Dummy query-string consent and performance-simulation consent cannot grant the real queue. The existing consented-module loader still requires both `C0002` and `C0004`; the new queue evaluates each event's categories independently.
+
+**Demo controls → Tracking** lists detected links and buttons, their tracking keys and consent categories, including targets inserted by fragments or block decoration. **Test in sample queue** captures a sample from the selected target without following its URL or adding a real page event. The page-event log shows actual clicks, category states, source page paths and expandable payload previews; marking a link alone does not create an event. The demo session retains event history across page navigation.
+
+**Try a sample queue** provides separate C0002/C0004 controls and sample clicks. Its history and category choices restore from the demo session independently of real consent. These controls never alter OneTrust preferences or real page-event consent. Both logs show the latest 25 retained events. Consent changes update the log immediately; ready events explicitly say **destination not connected**. The local `/test/demo-helper.html` review includes same-page examples and a link to `/test/demo-session.html` for checking persistence across navigation.
+
+No Adobe library or network sender is installed. A future integration can register an asynchronous adapter with `window.etradeTracking.setSender(adapter)`; it receives each eligible record, including `payload`, `categories`, and the original capture timestamp. `setSender(null)` pauses dispatch. The queue calls the adapter sequentially in original order among eligible events, rechecks consent before each call, and marks an event sent only when the adapter promise resolves. It does not claim downstream ingestion. Failed calls are visible and are never automatically retried because a rejected response can follow a delivered request. Revocation cannot cancel a request already dispatched, but prevents later dispatches.
+
+Payload previews use the standard XDM link-click shape (`web.webinteraction.linkClicks`, `web.webInteraction.name`, `linkClicks.value`) with the original click timestamp. Page and destination URLs omit query strings and fragments; mail/telephone destinations omit contact details. `context` carries the authored label and block name for future mapping. Actual Adobe Debugger beacons and CJA ingestion remain dependent on development configuration and a consent-aware adapter.
+
+Run `npm run test:tracking` for decoration, category separation, denial/revocation, ordering, queue bounds, dynamic links, and live-log isolation checks.

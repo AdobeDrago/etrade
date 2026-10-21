@@ -6,6 +6,8 @@ import decorateDisclosureReferences from './disclosure-references.js';
 import decoratePageLayout, {
   localizePageLinks, decoratePricingIntroductions, decoratePageActions,
 } from './page-layout.js';
+import isDemoHelperHost from './demo-host.js';
+import startTracking, { decorateTrackingLinks } from './tracking.js';
 import {
   loadHeader,
   loadFooter,
@@ -177,6 +179,7 @@ function decorateButtons(main) {
  */
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
+  decorateTrackingLinks(main, window.location.href);
   decorateIcons(main);
   buildAutoBlocks(main);
   decorateSections(main);
@@ -260,21 +263,31 @@ async function loadLazy(doc) {
  * Loads everything that happens a lot later,
  * without impacting the user experience.
  */
-function loadDelayed() {
-  import('./consent-check.js');
-  // This helper exists only on demo; its host guard also prevents accidental exposure.
-  import('./demo-helper.js').then(async ({ default: mountDemoHelper, isDemoHelperHost }) => {
-    if (!isDemoHelperHost(window.location.hostname)) return;
-    await loadCSS(`${window.hlx.codeBasePath}/styles/demo-helper.css`);
-    mountDemoHelper();
-  });
+function loadDelayed(realConsent = false) {
+  if (!realConsent) import('./consent-check.js');
+  // Load controls only on the explicitly enabled demo preview and development hosts.
+  if (isDemoHelperHost(window.location.hostname)) {
+    import('./demo-helper.js').then(async ({ default: mountDemoHelper }) => {
+      await loadCSS(`${window.hlx.codeBasePath}/styles/demo-helper.css`);
+      mountDemoHelper();
+    });
+  }
   // load anything that can be postponed to the latest here
 }
 
 async function loadPage() {
+  startTracking(document, window);
+  let performanceDemo;
+  if (isDemoHelperHost(window.location.hostname)) {
+    const { default: startPerformanceDemo } = await import('./demo-performance.js');
+    performanceDemo = startPerformanceDemo(document, window);
+    // Only the observed blocking bootstrap stage delays EDS decoration.
+    await performanceDemo?.ready;
+  }
   await loadEager(document);
   await loadLazy(document);
-  loadDelayed();
+  performanceDemo?.afterContent();
+  loadDelayed(performanceDemo?.config.profile === 'onetrust-real');
 }
 
 // Standalone block reviews own their lifecycle; fragments can still use decorateMain.

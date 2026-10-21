@@ -1,0 +1,155 @@
+import {
+  DEMO_FOLDER, FIELDS, MAX_XML_BYTES, SAMPLE_XML, demoPath, loadProduct,
+  parseProductXml, productXml, saveProduct, validateProduct,
+} from './model.js';
+
+export default function mountXmlTools(doc, { download } = {}) {
+  const byId = (id) => doc.getElementById(id);
+  const inputs = FIELDS.map((key) => doc.querySelector(`[data-field="${key}"]`));
+  let sdk;
+  let product;
+  let snapshot;
+  let busy = false;
+  let revision = 0;
+
+  function status(message, error = false) {
+    byId('status').textContent = message;
+    byId('status').classList.toggle('error', error);
+  }
+
+  function links(path) {
+    const { org, repo } = sdk.context;
+    const edit = new URL('https://da.live/form');
+    edit.hash = `/${org}/${repo}${path}`;
+    byId('edit-link').href = edit.href;
+    const base = 'https://da-sc.adobeaem.workers.dev';
+    byId('preview-link').href = `${base}/preview/${org}/${repo}${path}`;
+    byId('live-link').href = `${base}/live/${org}/${repo}${path}`;
+    byId('saved-links').hidden = false;
+  }
+
+  function render() {
+    byId('fields').disabled = busy || !product;
+    byId('sample').disabled = busy;
+    byId('import').disabled = busy;
+    byId('file').disabled = busy;
+    byId('xml-input').disabled = busy;
+    byId('document-path').disabled = busy;
+    let valid;
+    try {
+      const values = Object.fromEntries(inputs.map((input) => [input.dataset.field, input.value]));
+      valid = product && validateProduct(values);
+    } catch (error) {
+      byId('field-status').textContent = error.message;
+    }
+    byId('download').disabled = busy || !valid;
+    byId('save').disabled = busy || !valid || !sdk;
+    byId('load').disabled = busy || !sdk;
+    byId('product-preview').hidden = !valid;
+    byId('preview-empty').hidden = Boolean(valid);
+    byId('xml-output').value = valid ? productXml(valid) : '';
+    if (valid) {
+      byId('field-status').textContent = 'Fields are valid. Edits update the preview and XML immediately.';
+      byId('preview-name').textContent = valid.name;
+      byId('preview-rate').textContent = valid.rate;
+      byId('preview-date').textContent = `Effective ${valid.effectiveDate}`;
+      byId('preview-disclosure').textContent = valid.disclosure;
+    }
+    return valid;
+  }
+
+  function fill(next) {
+    product = next;
+    inputs.forEach((input) => { input.value = next?.[input.dataset.field] || ''; });
+    if (!next) byId('field-status').textContent = 'Import valid XML to enable editing.';
+    render();
+  }
+
+  function importXml() {
+    revision += 1;
+    try {
+      const next = parseProductXml(byId('xml-input').value);
+      fill(next);
+      if (!snapshot) byId('document-path').value = `${DEMO_FOLDER}${next.id}`;
+      status('XML imported. Edit the fields, download XML, or save the product in DA.');
+    } catch (error) {
+      fill(undefined);
+      status(error.message, true);
+    }
+  }
+
+  byId('sample').addEventListener('click', () => {
+    byId('xml-input').value = SAMPLE_XML;
+    importXml();
+  });
+  byId('import').addEventListener('click', importXml);
+  byId('file').addEventListener('change', async () => {
+    const file = byId('file').files?.[0];
+    if (!file) return;
+    revision += 1;
+    const current = revision;
+    try {
+      if (file.size > MAX_XML_BYTES) throw new Error('Choose an XML file smaller than 250 KB.');
+      const text = await file.text();
+      if (current !== revision) return;
+      byId('xml-input').value = text;
+      importXml();
+    } catch (error) {
+      if (current !== revision) return;
+      fill(undefined);
+      status(error.message, true);
+    }
+  });
+  byId('xml-input').addEventListener('input', () => { revision += 1; });
+  byId('fields').addEventListener('input', () => { revision += 1; render(); });
+  byId('document-path').addEventListener('input', () => { byId('saved-links').hidden = true; });
+  byId('download').addEventListener('click', () => {
+    const value = render();
+    if (!value) return;
+    download(productXml(value), `${value.id}.xml`);
+    status('XML downloaded from the current fields. Save and publish in DA separately to update delivered content.');
+  });
+
+  async function operate(action) {
+    if (busy || !sdk) return;
+    const value = render();
+    busy = true;
+    revision += 1;
+    render();
+    status(action === 'save' ? 'Saving the product and checking its schema in DA…' : 'Loading the saved DA document…');
+    try {
+      const path = demoPath(byId('document-path').value.trim());
+      const result = action === 'save'
+        ? await saveProduct(sdk.context, path, value, sdk.actions.daFetch, snapshot)
+        : await loadProduct(sdk.context, path, sdk.actions.daFetch);
+      snapshot = result;
+      fill(result.product);
+      byId('xml-input').value = productXml(result.product);
+      links(path);
+      status(action === 'save'
+        ? 'Saved in DA. Open the SC editor to review, then use Send → Preview / Publish. The JSON links become available after those steps.'
+        : 'Saved DA content loaded. Edit the fields and save, or download XML.');
+    } catch (error) {
+      status(error.message, true);
+    } finally {
+      busy = false;
+      render();
+    }
+  }
+
+  byId('save').addEventListener('click', () => operate('save'));
+  byId('load').addEventListener('click', () => operate('load'));
+  render();
+  return {
+    connect(connection) {
+      if (!connection?.actions?.daFetch || !/^[a-z0-9-]+$/i.test(connection.context?.org || '')
+        || !/^[a-z0-9-]+$/i.test(connection.context?.repo || '')) throw new Error('DA did not provide a valid site connection.');
+      sdk = connection;
+      byId('connection').textContent = `Connected · ${sdk.context.org}/${sdk.context.repo}`;
+      byId('save-help').textContent = 'Save a demo document, then open its SC editor to review and publish. Your current page is unchanged.';
+      status('Connected to DA. Import XML or load a saved demo document.');
+      render();
+    },
+    connectionError(message) { status(message, true); },
+  };
+}
