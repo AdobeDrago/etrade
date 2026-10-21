@@ -53,7 +53,7 @@ const STRATEGIES = {
   consent: 'Simulated OneTrust starts before page content. Tags wait for you to accept simulated tracking, even when page content is already ready.',
 };
 const PROFILE_LABELS = {
-  baseline: 'No tag stack', onetrust: 'OneTrust weights', etrade: 'Full tag stack · simulated', 'onetrust-real': 'Real OneTrust SDK',
+  baseline: 'No tag stack', onetrust: 'OneTrust weights', etrade: 'Selected tag stack · simulated', 'onetrust-real': 'Real OneTrust SDK',
 };
 const PHASE_LABELS = {
   eds: 'EDS', early: 'Startup', late: 'Tags after page', consent: 'Early CMP + consent',
@@ -165,7 +165,8 @@ export default function mountPerformanceControls(doc, win) {
     scenario.addEventListener('click', () => navigate({ profile, phase, work: current?.work || 'none' }));
     scenarios.append(scenario);
   });
-  const comparisonHelp = node(doc, 'p', 'muted', 'Traditional and EDS simulate the same production-sized tag stack. Choose a mode to reload.');
+  const comparisonHelp = node(doc, 'p', 'muted', 'Choose a mode to reload this page with a different loading strategy.');
+  const methodology = node(doc, 'p', 'muted', 'Both modes run this EDS page. Traditional models a blocking startup. Fixtures represent selected library sizes; extra CPU work is assumed. This is not a benchmark of the current production site.');
   const overview = node(doc, 'details', 'run-overview');
   overview.dataset.demoState = 'performance.overview';
   const runSummary = node(doc, 'summary', 'run-summary');
@@ -423,7 +424,8 @@ export default function mountPerformanceControls(doc, win) {
   shareURL.readOnly = true;
   shareURL.hidden = true;
   shareURL.setAttribute('aria-label', 'Comparison link');
-  section.append(scenarios, comparisonHelp, overview, nextStep, consentControl, measurements);
+  section.append(scenarios, comparisonHelp, methodology, overview);
+  section.append(nextStep, consentControl, measurements);
   section.append(runtimeActions, responseStatus, refreshStatus, consentHelp);
   section.append(runActions, shareStatus, shareURL, settings);
   section.append(mountSessionHistory(doc, win));

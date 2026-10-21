@@ -165,6 +165,7 @@ export default function mountTrackingControls(doc, win) {
   root.append(
     element(doc, 'h3', 'heading', 'Link tracking'),
     element(doc, 'p', 'muted', 'Inspect marked links below, or click one on the page to capture a real event. Event history follows this tab across pages for the current demo session.'),
+    element(doc, 'p', 'muted', 'Waiting clicks are captured locally before consent. Consent gates sending; production collection and retention rules still need to be agreed.'),
     connection,
   );
   root.append(element(doc, 'p', 'muted', 'Configure tracking while authoring in DA: Outline menu → Extensions → Link Options.'));
