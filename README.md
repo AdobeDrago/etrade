@@ -33,6 +33,10 @@ npm run lint
 1. Start AEM Proxy: `aem up` (opens your browser at `http://localhost:3000`)
 1. Open the `etrade` directory in your favorite IDE and start coding :)
 
+## DA block library pilot
+
+The [block library pilot handoff](docs/block-library-pilot.md) contains the DA assistant prompt, source examples, catalog rows, branch requirements, and acceptance checks for Hero Dark and Cards Article. Run `npm run test:library` to check the prepared native tables against the existing decorators. Creating and registering the DA catalog, then verifying native insertion, are separate steps.
+
 ## Shared design tokens
 
 For the architecture, repository file map, DA examples, extension guidance, and validation workflow, see the [E*TRADE style system guide](docs/style-system.md).

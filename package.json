@@ -14,6 +14,7 @@
     "test:accordion": "node --experimental-vm-modules --test test/accordion-faq.test.js",
     "test:sections": "node --experimental-vm-modules --test test/section-authoring.test.js test/page-layout.test.js test/page-loading.test.js",
     "test:hero": "node --experimental-vm-modules --test test/hero.test.js",
+    "test:library": "node --experimental-vm-modules --test test/block-library.test.js",
     "test:demo-helper": "node --experimental-vm-modules --test test/demo-helper.test.js",
     "test:tracking": "node --experimental-vm-modules --test test/tracking.test.js",
     "test:link-options": "node --experimental-vm-modules --test test/link-options.test.js",
