@@ -37,6 +37,8 @@ npm run lint
 
 The [block library pilot handoff](docs/block-library-pilot.md) contains the DA assistant prompt, source examples, catalog rows, branch requirements, and acceptance checks for Hero Dark and Cards Article. Run `npm run test:library` to check the prepared native tables against the existing decorators. Creating and registering the DA catalog, then verifying native insertion, are separate steps.
 
+Individual `/library/blocks/{name}` pages have Purple and Charcoal preview controls on local, AEM preview and DA preview hosts. The controls use the site's actual page-family tokens and remember the selection for that preview session. Use page default restores the authored family. Controls stay outside the insertable content; choosing a preview does not save DA Metadata. Library Metadata descriptions and page Metadata tables are omitted from the rendered gallery, while their source remains available to DA and its picker. Live delivery hosts do not mount the controls.
+
 ## Shared design tokens
 
 For the architecture, repository file map, DA examples, extension guidance, and validation workflow, see the [E*TRADE style system guide](docs/style-system.md).
@@ -81,7 +83,7 @@ Set page Metadata **Theme** to `Purple` or `Charcoal` to select a design family.
 
 [`styles/themes.css`](styles/themes.css) overrides semantic roles from the foundation. The deep purple (`#241056`) and light footer (`#eee`) are reference-page values. Shared typography, spacing, actions, focus and motion remain in `brand.css`; block layouts, artwork and responsive variants remain authored or block-owned. Selecting a family does not replace a block variant or campaign image, or guarantee a pixel match to every reference layout. Use artwork and logo assets appropriate to their surfaces.
 
-The page theme resolves on the document root before the first section loads, so derived tokens and compatibility aliases follow the selected values. No URL-based or operating-system theme detection is used. Missing or unsupported values retain the existing mixed page treatment. Values are case insensitive; `theme-purple` and `theme-charcoal` aliases are accepted. With comma-separated values, the first recognized design family wins.
+The page theme resolves on the document root before the first section loads, so derived tokens and compatibility aliases follow the selected values. No URL-based or operating-system theme detection is used. Missing or unsupported values retain the existing mixed page treatment. Values are case insensitive; `theme-purple` and `theme-charcoal` aliases are accepted. With comma-separated values, the first recognized design family wins. The block library's preview-only selector can temporarily change the family to compare examples; destination pages still use authored Metadata.
 
 `Header Theme: light` or `dark` overrides the family default. Explicit Header block Light/Dark variants also retain precedence over the family default. Legacy `Theme: light` and `Theme: dark` continue to select the header scheme without selecting a page family. A legacy scheme combined with a family (for example, `Theme: Purple, dark`) overrides that family's default header scheme.
 

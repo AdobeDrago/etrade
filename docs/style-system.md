@@ -143,7 +143,9 @@ Author page Metadata like this:
 | --- | --- |
 | Theme | Purple |
 
-The helper sets `<html data-page-theme="purple">`. Missing or unsupported families leave the attribute unset and preserve the existing mixed treatment. There is no path-based selection, operating-system detection, or theme-switcher UI. Values are case insensitive; `theme-purple` and `theme-charcoal` work. For comma-separated values, the first recognized family wins.
+The helper sets `<html data-page-theme="purple">`. Missing or unsupported families leave the attribute unset and preserve the existing mixed treatment. Production selection uses authored Metadata, with no path-based or operating-system theme detection. Values are case insensitive; `theme-purple` and `theme-charcoal` work. For comma-separated values, the first recognized family wins.
+
+On individual block library pages at preview hosts, a Purple/Charcoal selector temporarily remaps the same root tokens. It keeps the choice for the preview session and can restore the page default. These controls stay outside the example content and do not save page Metadata. Blocks can look similar across families when their surfaces, artwork or shape are independently authored. Use the block briefs to distinguish page families from Light/Dark section schemes and block options.
 
 ### Header precedence and legacy compatibility
 

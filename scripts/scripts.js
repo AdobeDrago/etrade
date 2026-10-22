@@ -214,6 +214,12 @@ async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
   decoratePageTheme();
+  if (/^\/library\/blocks\/[^/]+\/?$/.test(window.location.pathname)) {
+    const { default: mountLibraryPreview } = await import('./library-preview.js');
+    if (mountLibraryPreview(doc, window)) {
+      await loadCSS(`${window.hlx.codeBasePath}/styles/library-preview.css`);
+    }
+  }
   decoratePageLayout();
   const main = doc.querySelector('main');
   if (main) {
