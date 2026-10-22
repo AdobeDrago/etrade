@@ -39,6 +39,8 @@ The [block library pilot handoff](docs/block-library-pilot.md) contains the DA a
 
 Individual `/library/blocks/{name}` pages have a floating Theme button that expands into Purple and Charcoal preview controls on local, AEM preview and DA preview hosts. The controls use the site's actual page-family tokens and remember the selection for that preview session. Use page default restores the authored family. Controls stay outside the insertable content; choosing a preview does not save DA Metadata. Library Metadata descriptions and page Metadata tables are omitted from the rendered gallery, while their source remains available to DA and its picker. Live delivery hosts do not mount the controls.
 
+Library briefs keep their introduction and examples visible, with structure, properties, options and notes inside a collapsed Authoring guide. This presentation preserves the original notes and example tables in DA source content.
+
 ## Shared design tokens
 
 For the architecture, repository file map, DA examples, extension guidance, and validation workflow, see the [E*TRADE style system guide](docs/style-system.md).

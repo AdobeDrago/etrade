@@ -33,6 +33,32 @@ function element(doc, tag, className, text) {
   return node;
 }
 
+/** Collapse the known brief range without swallowing examples or their block tables. */
+function collapseAuthoringBrief(main, doc) {
+  const title = main.querySelector('h1');
+  if (!/\sblock brief$/i.test(title?.textContent.trim() || '')) return;
+  const siblings = [...title.parentElement.children];
+  const start = siblings.findIndex((node) => node.matches('h2')
+    && node.textContent.trim().toLowerCase() === 'table structure');
+  const end = siblings.findIndex((node) => node.matches('h2')
+    && node.textContent.trim().toLowerCase() === 'examples');
+  if (start <= siblings.indexOf(title) || end <= start) return;
+  const notes = siblings.slice(start, end);
+  if (notes.some((node) => !node.matches('h2, h3, h4, p, ul, ol, blockquote, pre')
+    || node.querySelector('table, .block'))) return;
+
+  const guide = element(doc, 'details', 'library-preview-guide');
+  const summary = element(doc, 'summary');
+  summary.append(
+    element(doc, 'span', 'library-preview-guide-label', 'Authoring guide'),
+    element(doc, 'span', 'library-preview-guide-hint', 'Structure, properties & options'),
+  );
+  const content = element(doc, 'article', 'library-preview-guide-content');
+  notes[0].before(guide);
+  content.append(...notes);
+  guide.append(summary, content);
+}
+
 export default function mountLibraryPreview(doc = document, win = window) {
   if (!isLibraryPreview(win.location) || doc.querySelector('.library-preview')) return false;
   const main = doc.querySelector('main');
@@ -119,6 +145,7 @@ export default function mountLibraryPreview(doc = document, win = window) {
 
   // These tables describe picker entries and page metadata, not visual components.
   main.querySelectorAll('.library-metadata, .metadata').forEach((metadata) => metadata.remove());
+  collapseAuthoringBrief(main, doc);
   apply(savedTheme(win) || authoredTheme);
   return true;
 }

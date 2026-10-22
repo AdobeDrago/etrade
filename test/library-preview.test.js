@@ -7,9 +7,15 @@ import { parseHTML } from 'linkedom';
 
 async function harness({
   theme = '', metadata = '', storage = new Map(), url,
+  brief = `<h1>Hero Dark block brief</h1><p>Authoring notes.</p>
+    <h2>Table structure</h2><p>Use two columns.</p>
+    <h2>Authoring properties</h2><ul><li data-prose-index="4">Heading: use a real heading.</li></ul>
+    <h2>Supported options</h2><p>Split and balanced.</p>
+    <h2>Authoring notes</h2><p>Keep each CTA in its own paragraph.</p>
+    <h2>Examples</h2><p>Choose a starting point below.</p>`,
 } = {}) {
   const { document, window } = parseHTML(`<html><body><header></header><main>
-    <div><h1>Hero Dark block brief</h1><p>Authoring notes.</p></div>
+    <div>${brief}</div>
     <div><h2>Split hero</h2><div class="hero-dark split"><div><div>Heading</div><div><h2>Campaign</h2></div></div></div>
     <div class="library-metadata"><div><div>description</div><div>Split layout.</div></div></div></div>
     ${metadata}</main><footer></footer></body></html>`);
@@ -61,6 +67,43 @@ test('mounting keeps controls outside main and preserves the insertable example'
   assert.equal(page.document.documentElement.dataset.pageTheme, 'purple');
   assert.equal(page.preview.default(), false);
   assert.equal(page.document.querySelectorAll('.library-preview').length, 1);
+});
+
+test('authoring details collapse while the introduction and insertable examples stay visible', async () => {
+  const page = await harness();
+  const example = page.document.querySelector('.hero-dark');
+  const markup = example.outerHTML;
+  const note = page.document.querySelector('[data-prose-index="4"]');
+  page.preview.default();
+  const guide = page.document.querySelector('details.library-preview-guide');
+  assert.equal(guide.hasAttribute('open'), false);
+  assert.equal(guide.querySelector('summary').firstElementChild.textContent, 'Authoring guide');
+  assert.deepEqual(
+    [...guide.querySelectorAll('h2')].map((node) => node.textContent),
+    ['Table structure', 'Authoring properties', 'Supported options', 'Authoring notes'],
+  );
+  assert.equal(guide.querySelector('[data-prose-index="4"]'), note);
+  assert.equal(guide.querySelector('.block, .hero-dark, table'), null);
+  assert.equal(guide.previousElementSibling.textContent, 'Authoring notes.');
+  assert.equal(guide.nextElementSibling.textContent, 'Examples');
+  assert.equal(page.document.querySelector('.hero-dark'), example);
+  assert.equal(example.outerHTML, markup);
+});
+
+test('incomplete or unexpected brief structures remain untouched', async () => {
+  const briefs = [
+    '<h1>Ordinary page</h1><h2>Table structure</h2><p>Copy</p><h2>Examples</h2>',
+    '<h1>Cards block brief</h1><h2>Table structure</h2><p>No end marker.</p>',
+    '<h1>Cards block brief</h1><h2>Table structure</h2><div class="cards">Example block</div><h2>Examples</h2>',
+  ];
+  await Promise.all(briefs.map(async (brief) => {
+    const page = await harness({ brief });
+    const intro = page.document.querySelector('main > div');
+    const before = intro.innerHTML;
+    page.preview.default();
+    assert.equal(intro.innerHTML, before);
+    assert.equal(page.document.querySelector('.library-preview-guide'), null);
+  }));
 });
 
 test('switching themes changes preview state, retains block options, and persists across library pages', async () => {
