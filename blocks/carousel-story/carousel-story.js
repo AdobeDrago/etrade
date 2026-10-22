@@ -32,22 +32,6 @@ export default function decorate(block) {
   let requested;
   const offset = (index) => cards[index].offsetLeft - cards[0].offsetLeft;
   const maxScroll = () => Math.max(0, slides.scrollWidth - slides.clientWidth);
-  const go = (index) => {
-    const target = Math.max(0, Math.min(cards.length - 1, index));
-    requested = target;
-    slides.scrollTo({
-      left: Math.min(maxScroll(), offset(target)),
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
-    });
-  };
-  cards.forEach((card, index) => {
-    const dot = document.createElement('button');
-    dot.type = 'button';
-    dot.setAttribute('aria-label', `Show story ${index + 1}`);
-    dot.setAttribute('aria-controls', slides.id);
-    dot.addEventListener('click', () => go(index));
-    dots.append(dot);
-  });
   const update = () => {
     const left = slides.scrollLeft;
     current = cards.reduce((nearest, card, i) => (Math.abs(offset(i) - left)
@@ -65,6 +49,23 @@ export default function decorate(block) {
     nav.hidden = maxScroll() <= 1;
     dots.hidden = maxScroll() <= 1;
   };
+  const go = (index) => {
+    const target = Math.max(0, Math.min(cards.length - 1, index));
+    requested = target;
+    slides.scrollTo({
+      left: Math.min(maxScroll(), offset(target)),
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+    });
+    update();
+  };
+  cards.forEach((card, index) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.setAttribute('aria-label', `Show story ${index + 1}`);
+    dot.setAttribute('aria-controls', slides.id);
+    dot.addEventListener('click', () => go(index));
+    dots.append(dot);
+  });
   previous.addEventListener('click', () => go(current - 1));
   next.addEventListener('click', () => go(current + 1));
   slides.addEventListener('keydown', (event) => {

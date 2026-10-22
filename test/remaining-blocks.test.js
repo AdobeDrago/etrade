@@ -114,10 +114,20 @@ test('feature columns honor authored section themes while explicit block themes 
 test('last story selection stays selected when two desktop cards share the final scroll position', async () => {
   const { block } = await render('carousel-story', Array(3).fill(row(image, copy)).join(''), '', '', 2);
   const dots = [...block.querySelectorAll('.carousel-story-dots button')];
+  const slides = block.querySelector('.carousel-story-slides');
+  const { scrollTo } = slides;
+  // Browsers emit no scroll event when the requested position is already reached.
+  slides.scrollTo = (options) => {
+    if (slides.scrollLeft !== options.left) scrollTo(options);
+  };
+  dots[1].click();
+  assert.equal(dots[1].getAttribute('aria-current'), 'true');
   dots[2].click();
   assert.equal(dots[2].getAttribute('aria-current'), 'true');
   assert.equal(block.querySelector('.carousel-story-next').disabled, true);
   assert.equal(block.querySelector('.carousel-story-status').textContent, 'Stories 2–3 of 3');
+  dots[1].click();
+  assert.equal(dots[1].getAttribute('aria-current'), 'true');
 });
 
 test('compact investment cards preserve native links with the text action treatment', async () => {
