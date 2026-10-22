@@ -70,6 +70,10 @@ Flat uses the shared primary text, border and action colors in place of its form
 
 The local `--accordion-faq-*` spacing variables preserve the reference's question padding, answer padding, paragraph rhythm and action separation. Remaining uncommon rem values are component measurements, not additions to the global spacing scale. The existing `--faq-gutter-offset` hook and layout breakpoints remain supported. Expand/collapse behavior and authored content are preserved.
 
+### Page families
+
+The standard accordion also consumes the `--accordion-faq-item-*` theme roles in `styles/themes.css`. **Purple** uses deep-purple question/answer cards, light text and links, a light focus ring, and smaller corners. **Charcoal** uses the existing light-gray cards, dark text, purple links and rounded corners. Changing the page family or library preview updates these colors immediately and preserves open answers. Flat and its Pricing alias retain their light divided rows in both page families. Pages without a selected family retain the existing default treatment.
+
 ## Authored section controls
 
 Both variants support the shared Section Metadata controls. In an authored section, the accordion fills its wrapper or grid cell, and its light surface stays within the block. Its legacy full-width background effect and Flat section resets apply only to sections without the new controls. The section's selected container, background and responsive grid remain in control of the outer layout.

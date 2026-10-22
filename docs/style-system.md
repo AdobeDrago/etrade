@@ -4,6 +4,8 @@ This guide explains the style system implemented in this repository: how values 
 
 The system shares design values across blocks while keeping each block responsible for its layout. Authors can select a page design family, configure a section, and choose a block variant independently.
 
+The standard FAQ accordion has a visible page-family treatment: Purple uses deep-purple cards with light text and links; Charcoal uses rounded light-gray cards with dark text. Its Flat variant retains its light divided-row design in both families. These colors use the `--accordion-faq-item-*` roles in `themes.css`.
+
 For authoring, start with [page themes](#page-themes-section-schemes-and-block-variants) and [section controls](#authoring-sections-in-da). For development, start with the [repository map](#repository-map) and [change guidance](#making-a-change).
 
 ## Contents

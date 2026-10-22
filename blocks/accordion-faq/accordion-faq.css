@@ -461,3 +461,25 @@ main .section[data-section-layout="authored"] .accordion-faq {
 main .section[data-section-spacing] .accordion-faq {
   padding-block: 0;
 }
+
+/* Page families theme the standard cards; Flat keeps its own light divided rows. */
+:root[data-page-theme] .accordion-faq:not(.flat) .accordion-faq-item {
+  background: var(--accordion-faq-item-surface, var(--color-surface-subtle));
+  color: var(--accordion-faq-item-text, var(--color-text-primary));
+}
+
+:root[data-page-theme] .accordion-faq:not(.flat) .accordion-faq-item-label:focus-visible {
+  outline-color: var(--accordion-faq-item-focus, var(--color-focus));
+}
+
+:root[data-page-theme] .accordion-faq:not(.flat) .accordion-faq-item-content a:any-link:not(.button, .etrade-action) {
+  color: var(--accordion-faq-item-link, var(--color-link));
+}
+
+:root[data-page-theme] .accordion-faq:not(.flat) .accordion-faq-item-content a:any-link:focus-visible {
+  outline-color: var(--accordion-faq-item-focus, var(--color-focus));
+}
+
+:root[data-page-theme] .accordion-faq:not(.flat) .accordion-faq-item-content a:any-link:not(.button, .etrade-action):hover {
+  color: var(--accordion-faq-item-link-hover, var(--color-link-hover));
+}
