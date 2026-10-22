@@ -1,6 +1,6 @@
 # Accordion FAQ
 
-Responsive FAQ accordion styled to match the E*TRADE homepage: light surface, rounded gray question rows, left chevrons, expandable rich-text answers, and an Expand all / Collapse all control.
+Responsive FAQ accordion with the two E*TRADE reference presentations: rounded gray rows and left chevrons for Charcoal, or white divided rows and right plus/minus controls for Purple. Rich-text answers and the Expand all / Collapse all control are shared.
 
 ## Authoring in DA
 
@@ -19,11 +19,11 @@ For the complete homepage treatment, author in its own section:
 2. The Accordion FAQ table.
 3. An optional paragraph immediately after the table containing one standalone link, such as the authored See all FAQs link.
 
-The decorator moves that adjacent heading and link into the component to style them. Heading text, heading ID, link text, URL, and tracking parameters remain authored. Unrelated paragraphs and images stay outside the component. The imported homepage's explicit 1×1 tracking images alongside its action are retained in a decorative element without affecting layout. The component's surface and spacing are scoped to `.accordion-faq`; shared design values come from `styles/brand.css`.
+The decorator moves that adjacent heading and link into the component to style them. The linked action follows the heading in the flat presentation and follows the answers in the rounded presentation. Heading text, heading ID, link text, URL, and tracking parameters remain authored. Unrelated paragraphs and images stay outside the component. The imported homepage's explicit 1×1 tracking images alongside its action are retained in a decorative element without affecting layout. The component's surface and spacing are scoped to `.accordion-faq`; shared design values come from `styles/brand.css`.
 
 ## Flat variant
 
-Use **Accordion FAQ (Flat)** for the divided-row layout: a white surface, a centered 2rem heading (32px at the default root size), flat rows with thin bottom dividers, 1.25rem medium-weight question labels, and purple plus/minus controls on the right. The default **Accordion FAQ** keeps the homepage's rounded gray rows and left chevrons. Choose the variant from the reference layout. Flat supports rich-text answers and native HTML tables for any subject. Tables retain their semantics and get a labeled, keyboard-focusable horizontal scroll region for narrow screens.
+Use **Accordion FAQ (Flat)** to retain the divided-row layout in either page family: a white surface, a centered 2rem heading (32px at the default root size), flat rows with thin bottom dividers, 1.25rem medium-weight question labels, and purple plus/minus controls on the right. Standard **Accordion FAQ** follows the selected page family; without one it keeps the homepage's rounded gray rows and left chevrons. Both presentations support rich-text answers and native HTML tables for any subject. Tables retain their semantics and get a labeled, keyboard-focusable horizontal scroll region for narrow screens.
 
 Content authored as **Accordion FAQ (Pricing)** remains supported as a legacy alias. The decorator adds the `flat` class so existing content uses the same styles and behavior. Use **Flat** for new or updated content.
 
@@ -66,13 +66,13 @@ Content publishes separately from code.
 
 Both variants consume the shared semantic colors, font sizes and weights, spacing, container widths, radii, focus and motion tokens. Text sizes and content spacing scale with the browser's root font size, and unitless line heights keep pace with the text. The default heading follows the responsive section-heading role; Flat retains its distinct 2rem heading. Small negative letter spacing uses `--tracking-tight`, equivalent to -0.25px at the default 16px root size.
 
-Flat uses the shared primary text, border and action colors in place of its former separate gray and purple values. The block retains its own light surface and readable headings, paragraphs and ordinary links when placed inside a dark section. Its CTA keeps white text on hover.
+Flat uses local question, divider and control color roles to match the Our Accounts reference; shared tokens supply its surface, answer text and typography. The block retains its own light surface and readable headings, paragraphs and ordinary links when placed inside a dark section. The rounded presentation's outlined CTA keeps white text on hover; Flat uses a plain purple link.
 
 The local `--accordion-faq-*` spacing variables preserve the reference's question padding, answer padding, paragraph rhythm and action separation. Remaining uncommon rem values are component measurements, not additions to the global spacing scale. The existing `--faq-gutter-offset` hook and layout breakpoints remain supported. Expand/collapse behavior and authored content are preserved.
 
 ### Page families
 
-The standard accordion also consumes the `--accordion-faq-item-*` theme roles in `styles/themes.css`. **Purple** uses deep-purple question/answer cards, light text and links, a light focus ring, and smaller corners. **Charcoal** uses the existing light-gray cards, dark text, purple links and rounded corners. Changing the page family or library preview updates these colors immediately and preserves open answers. Flat and its Pricing alias retain their light divided rows in both page families. Pages without a selected family retain the existing default treatment.
+**Purple** uses the [Our Accounts reference](https://us.etrade.com/what-we-offer/our-accounts): white rows with thin dividers, medium-weight question labels, purple plus/minus controls on the right, and an optional plain-text FAQ link below the heading. **Charcoal** uses the homepage's rounded gray rows and left chevrons. A root theme observer updates the presentation through `data-faq-layout`, retaining the existing buttons, answers and open state. It does not add or remove authored block options. An explicitly authored Flat variant and the Pricing alias retain the divided-row presentation in either family. Pages without a selected family retain rounded rows.
 
 ## Authored section controls
 

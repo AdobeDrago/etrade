@@ -4,11 +4,6 @@
   --color-surface-inverse: var(--palette-neutral-950);
   --color-surface-inverse-raised: var(--palette-neutral-900);
   --radius-card: 16px;
-  --accordion-faq-item-surface: var(--color-surface-subtle);
-  --accordion-faq-item-text: var(--color-text-primary);
-  --accordion-faq-item-link: var(--color-link);
-  --accordion-faq-item-link-hover: var(--color-link-hover);
-  --accordion-faq-item-focus: var(--color-focus);
 }
 
 :root[data-page-theme="purple"] {
@@ -22,9 +17,4 @@
   --footer-color-scheme: light;
   --footer-icon-filter: brightness(0);
   --radius-card: var(--radius-control);
-  --accordion-faq-item-surface: var(--color-surface-inverse);
-  --accordion-faq-item-text: var(--color-text-inverse);
-  --accordion-faq-item-link: var(--color-link-inverse-hover);
-  --accordion-faq-item-link-hover: var(--color-text-inverse);
-  --accordion-faq-item-focus: var(--color-focus-inverse);
 }

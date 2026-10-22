@@ -8,10 +8,13 @@ import { parseHTML } from 'linkedom';
 const source = await readFile(new URL('../blocks/accordion-faq/accordion-faq.js', import.meta.url), 'utf8');
 const row = (...cells) => `<div>${cells.map((cell) => `<div>${cell}</div>`).join('')}</div>`;
 
-async function render(rows, variant = '', adjacent = '', sectionAttributes = '') {
+async function render(rows, variant = '', adjacent = '', sectionAttributes = '', theme = '') {
   const { document, window } = parseHTML(`<html><body><main><div class="section" ${sectionAttributes}>${adjacent}<div class="accordion-faq-wrapper"><div class="accordion-faq ${variant}">${rows}</div></div></div></main></body></html>`);
+  if (theme) document.documentElement.dataset.pageTheme = theme;
   const module = new vm.SourceTextModule(source, {
-    context: vm.createContext({ document, Node: window.Node }),
+    context: vm.createContext({
+      document, Node: window.Node, MutationObserver: window.MutationObserver,
+    }),
   });
   await module.link(() => { throw new Error('Unexpected cross-block import'); });
   await module.evaluate();
@@ -94,12 +97,52 @@ test('FAQ preserves heading and introductory copy before the table and moves a s
   assert.equal(intro.block.querySelector('.accordion-faq-action'), null);
 });
 
-test('default FAQ retains its existing chevron and unwrapped answer tables', async () => {
+test('default FAQ retains its existing chevron and semantic answer tables', async () => {
   const { block } = await render(row('Question', fees));
   assert.equal(block.querySelector('.accordion-faq-icon-vertical'), null);
   assert.equal(block.querySelector('.accordion-faq-item-icon path').getAttribute('d'), 'M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z');
-  assert.equal(block.querySelector('.accordion-faq-table'), null);
+  assert.equal(block.querySelector('.accordion-faq-table').getAttribute('role'), 'region');
   assert.equal(block.querySelectorAll('table').length, 1);
+});
+
+test('page family switches between reference layouts without resetting answers or authored variants', async () => {
+  const adjacent = '<div class="default-content-wrapper"><h2 id="accounts-faq">Account FAQs</h2><p><a href="/faqs">See all FAQs</a></p></div>';
+  const { block, document } = await render(row('Question', fees), '', adjacent, '', 'charcoal');
+  const button = block.querySelector('.accordion-faq-item-label');
+  const answer = block.querySelector('.accordion-faq-item-body');
+  const link = answer.querySelector('a');
+  const action = block.querySelector('.accordion-faq-action');
+  button.click();
+  assert.equal(block.dataset.faqLayout, 'cards');
+  assert.equal(block.lastElementChild, action);
+  document.documentElement.dataset.pageTheme = 'purple';
+  await new Promise((resolve) => { setImmediate(resolve); });
+  assert.equal(block.dataset.faqLayout, 'flat');
+  assert.equal(block.classList.contains('flat'), false, 'the authored block variant stays unchanged');
+  assert.equal(block.querySelector('.accordion-faq-item-body'), answer);
+  assert.equal(answer.querySelector('a'), link);
+  assert.equal(button.getAttribute('aria-expanded'), 'true');
+  assert.ok(block.querySelector('.accordion-faq-icon-vertical'));
+  assert.equal(action.nextElementSibling.className, 'accordion-faq-expand-all');
+  document.documentElement.dataset.pageTheme = 'charcoal';
+  await new Promise((resolve) => { setImmediate(resolve); });
+  assert.equal(block.dataset.faqLayout, 'cards');
+  assert.equal(button.getAttribute('aria-expanded'), 'true');
+  assert.equal(block.querySelector('.accordion-faq-icon-vertical'), null);
+  assert.equal(block.lastElementChild, action);
+  button.click();
+  assert.equal(button.getAttribute('aria-expanded'), 'false');
+});
+
+test('Purple initializes the reference layout and explicit Flat retains precedence in Charcoal', async () => {
+  const themed = await render(row('Question', '<p>Answer.</p>'), '', '', '', 'purple');
+  assert.equal(themed.block.dataset.faqLayout, 'flat');
+  assert.ok(themed.block.querySelector('.accordion-faq-icon-vertical'));
+  const explicit = await render(row('Question', '<p>Answer.</p>'), 'flat', '', '', 'purple');
+  explicit.document.documentElement.dataset.pageTheme = 'charcoal';
+  await new Promise((resolve) => { setImmediate(resolve); });
+  assert.equal(explicit.block.dataset.faqLayout, 'flat');
+  assert.ok(explicit.block.querySelector('.accordion-faq-icon-vertical'));
 });
 
 test('grid accordions retain shared section content and use its heading level for every block', async () => {

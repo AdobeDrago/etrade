@@ -4,7 +4,7 @@ This guide explains the style system implemented in this repository: how values 
 
 The system shares design values across blocks while keeping each block responsible for its layout. Authors can select a page design family, configure a section, and choose a block variant independently.
 
-The standard FAQ accordion has a visible page-family treatment: Purple uses deep-purple cards with light text and links; Charcoal uses rounded light-gray cards with dark text. Its Flat variant retains its light divided-row design in both families. These colors use the `--accordion-faq-item-*` roles in `themes.css`.
+The standard FAQ accordion follows the reference presentation for its page family: Purple uses white divided rows and purple plus/minus controls on the right; Charcoal uses rounded light-gray rows and left chevrons. An explicitly authored Flat variant keeps the divided-row presentation in either family. Theme changes preserve open answers.
 
 For authoring, start with [page themes](#page-themes-section-schemes-and-block-variants) and [section controls](#authoring-sections-in-da). For development, start with the [repository map](#repository-map) and [change guidance](#making-a-change).
 
@@ -128,7 +128,7 @@ These settings answer different questions:
 | Section Metadata `Color Scheme` | What foreground and default surface should this section use? | `light` or `dark` |
 | Block table variant | Which supported presentation should this block use? | `Accordion FAQ (Flat)`, `Columns Feature (Dark)` |
 
-A Purple page can contain both light and dark sections. A block with its own light surface can sit inside either. Theme selection does not replace images, change authored copy, or select a block layout.
+A Purple page can contain both light and dark sections. A block with its own light surface can sit inside either. Theme selection does not replace images or change authored copy. Most block layouts remain independently authored; Accordion FAQ uses the page family as its default visual presentation, while an explicit Flat option retains precedence.
 
 ### Page families
 
