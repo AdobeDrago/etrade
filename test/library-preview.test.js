@@ -79,6 +79,32 @@ test('switching themes changes preview state, retains block options, and persist
   assert.equal(next.storage.size, 0);
 });
 
+test('floating controls start collapsed, keep theme selections open, and close with Escape', async () => {
+  const page = await harness();
+  page.preview.default();
+  const toggle = page.document.querySelector('.library-preview-toggle');
+  const tray = page.document.getElementById(toggle.getAttribute('aria-controls'));
+  assert.equal(toggle.getAttribute('aria-expanded'), 'false');
+  assert.equal(tray.hidden, true);
+  toggle.click();
+  assert.equal(toggle.getAttribute('aria-expanded'), 'true');
+  assert.equal(tray.hidden, false);
+  page.document.querySelector('[data-theme="purple"]').click();
+  assert.equal(tray.hidden, false);
+  let focused = false;
+  toggle.focus = () => { focused = true; };
+  const escape = new page.window.Event('keydown', { bubbles: true, cancelable: true });
+  escape.key = 'Escape';
+  page.document.querySelector('[data-theme="purple"]').dispatchEvent(escape);
+  assert.equal(tray.hidden, true);
+  assert.equal(toggle.getAttribute('aria-expanded'), 'false');
+  assert.equal(focused, true);
+  assert.equal(page.document.documentElement.dataset.pageTheme, 'purple');
+  toggle.click();
+  toggle.click();
+  assert.equal(tray.hidden, true);
+});
+
 test('resetting an unthemed page restores its original mixed treatment', async () => {
   const page = await harness();
   page.preview.default();

@@ -37,7 +37,7 @@ npm run lint
 
 The [block library pilot handoff](docs/block-library-pilot.md) contains the DA assistant prompt, source examples, catalog rows, branch requirements, and acceptance checks for Hero Dark and Cards Article. Run `npm run test:library` to check the prepared native tables against the existing decorators. Creating and registering the DA catalog, then verifying native insertion, are separate steps.
 
-Individual `/library/blocks/{name}` pages have Purple and Charcoal preview controls on local, AEM preview and DA preview hosts. The controls use the site's actual page-family tokens and remember the selection for that preview session. Use page default restores the authored family. Controls stay outside the insertable content; choosing a preview does not save DA Metadata. Library Metadata descriptions and page Metadata tables are omitted from the rendered gallery, while their source remains available to DA and its picker. Live delivery hosts do not mount the controls.
+Individual `/library/blocks/{name}` pages have a floating Theme button that expands into Purple and Charcoal preview controls on local, AEM preview and DA preview hosts. The controls use the site's actual page-family tokens and remember the selection for that preview session. Use page default restores the authored family. Controls stay outside the insertable content; choosing a preview does not save DA Metadata. Library Metadata descriptions and page Metadata tables are omitted from the rendered gallery, while their source remains available to DA and its picker. Live delivery hosts do not mount the controls.
 
 ## Shared design tokens
 
