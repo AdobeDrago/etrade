@@ -1,0 +1,109 @@
+.library-brief {
+  margin: 24px 0;
+  color: #292330;
+  font: 14px/1.6 Arial, sans-serif;
+}
+
+.library-brief .library-brief-disclosure {
+  border: 1px solid #e8e3ef;
+  border-radius: 16px;
+  background: #faf9fc;
+}
+
+.library-brief summary {
+  display: flex;
+  box-sizing: border-box;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  min-height: 52px;
+  padding: 12px 20px;
+  border-radius: inherit;
+  list-style: none;
+  cursor: pointer;
+}
+
+.library-brief summary::-webkit-details-marker {
+  display: none;
+}
+
+.library-brief summary::after {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  margin-left: auto;
+  border-right: 1.5px solid #64596f;
+  border-bottom: 1.5px solid #64596f;
+  content: '';
+  transform: rotate(45deg);
+}
+
+.library-brief details[open] > summary::after {
+  transform: rotate(225deg);
+}
+
+.library-brief summary:hover {
+  background: #f2eef9;
+}
+
+.library-brief summary:focus-visible {
+  outline: 3px solid #7344d8;
+  outline-offset: 3px;
+}
+
+.library-brief .library-brief-title {
+  font-weight: 600;
+}
+
+.library-brief .library-brief-description {
+  color: #6d6378;
+  font-size: 12px;
+}
+
+.library-brief .library-brief-content {
+  padding: 0 20px 20px;
+  border-top: 1px solid #e8e3ef;
+}
+
+.library-brief .library-brief-section-label {
+  margin: 24px 0 8px;
+  font: 600 16px/1.4 Arial, sans-serif;
+}
+
+.library-brief :is(p, ul, ol, li) {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  color: inherit;
+  font: inherit;
+}
+
+.library-brief .library-brief-section-label p {
+  font: inherit;
+}
+
+.library-brief .library-brief-section-content {
+  overflow-wrap: anywhere;
+}
+
+.library-brief img {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (width < 640px) {
+  .library-brief summary {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px 12px;
+  }
+
+  .library-brief .library-brief-description {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .library-brief summary::after {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}

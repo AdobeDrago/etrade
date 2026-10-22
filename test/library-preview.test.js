@@ -69,41 +69,12 @@ test('mounting keeps controls outside main and preserves the insertable example'
   assert.equal(page.document.querySelectorAll('.library-preview').length, 1);
 });
 
-test('authoring details collapse while the introduction and insertable examples stay visible', async () => {
+test('theme preview leaves authored brief markup untouched', async () => {
   const page = await harness();
-  const example = page.document.querySelector('.hero-dark');
-  const markup = example.outerHTML;
-  const note = page.document.querySelector('[data-prose-index="4"]');
+  const intro = page.document.querySelector('main > div');
+  const before = intro.innerHTML;
   page.preview.default();
-  const guide = page.document.querySelector('details.library-preview-guide');
-  assert.equal(guide.hasAttribute('open'), false);
-  assert.equal(guide.querySelector('summary').firstElementChild.textContent, 'Authoring guide');
-  assert.deepEqual(
-    [...guide.querySelectorAll('h2')].map((node) => node.textContent),
-    ['Table structure', 'Authoring properties', 'Supported options', 'Authoring notes'],
-  );
-  assert.equal(guide.querySelector('[data-prose-index="4"]'), note);
-  assert.equal(guide.querySelector('.block, .hero-dark, table'), null);
-  assert.equal(guide.previousElementSibling.textContent, 'Authoring notes.');
-  assert.equal(guide.nextElementSibling.textContent, 'Examples');
-  assert.equal(page.document.querySelector('.hero-dark'), example);
-  assert.equal(example.outerHTML, markup);
-});
-
-test('incomplete or unexpected brief structures remain untouched', async () => {
-  const briefs = [
-    '<h1>Ordinary page</h1><h2>Table structure</h2><p>Copy</p><h2>Examples</h2>',
-    '<h1>Cards block brief</h1><h2>Table structure</h2><p>No end marker.</p>',
-    '<h1>Cards block brief</h1><h2>Table structure</h2><div class="cards">Example block</div><h2>Examples</h2>',
-  ];
-  await Promise.all(briefs.map(async (brief) => {
-    const page = await harness({ brief });
-    const intro = page.document.querySelector('main > div');
-    const before = intro.innerHTML;
-    page.preview.default();
-    assert.equal(intro.innerHTML, before);
-    assert.equal(page.document.querySelector('.library-preview-guide'), null);
-  }));
+  assert.equal(intro.innerHTML, before);
 });
 
 test('switching themes changes preview state, retains block options, and persists across library pages', async () => {

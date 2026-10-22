@@ -163,83 +163,6 @@ body[data-library-preview] > footer {
   display: none;
 }
 
-.library-preview-guide {
-  margin: 24px 0;
-  border: 1px solid #e8e3ef;
-  border-radius: 16px;
-  background: #faf9fc;
-  color: #292330;
-  font: 14px/1.6 Arial, sans-serif;
-}
-
-.library-preview-guide > summary {
-  display: flex;
-  box-sizing: border-box;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px 16px;
-  min-height: 52px;
-  padding: 12px 20px;
-  border-radius: inherit;
-  list-style: none;
-  cursor: pointer;
-}
-
-.library-preview-guide > summary::-webkit-details-marker {
-  display: none;
-}
-
-.library-preview-guide > summary::after {
-  flex: 0 0 auto;
-  width: 8px;
-  height: 8px;
-  margin-left: auto;
-  border-right: 1.5px solid #64596f;
-  border-bottom: 1.5px solid #64596f;
-  content: '';
-  transform: rotate(45deg);
-}
-
-.library-preview-guide[open] > summary::after {
-  transform: rotate(225deg);
-}
-
-.library-preview-guide > summary:hover {
-  background: #f2eef9;
-}
-
-.library-preview-guide > summary:focus-visible {
-  outline: 3px solid #7344d8;
-  outline-offset: 3px;
-}
-
-.library-preview-guide .library-preview-guide-label {
-  font-weight: 600;
-}
-
-.library-preview-guide .library-preview-guide-hint {
-  color: #6d6378;
-  font-size: 12px;
-}
-
-.library-preview-guide .library-preview-guide-content {
-  padding: 0 20px 20px;
-  border-top: 1px solid #e8e3ef;
-}
-
-.library-preview-guide .library-preview-guide-content > :is(h2, h3, h4) {
-  margin: 24px 0 8px;
-  color: inherit;
-  font: 600 16px/1.4 Arial, sans-serif;
-}
-
-.library-preview-guide .library-preview-guide-content :is(p, ul, ol, li) {
-  margin-top: 8px;
-  margin-bottom: 8px;
-  color: inherit;
-  font: inherit;
-}
-
 body[data-library-preview]:has(.floating-dock) .library-preview {
   bottom: calc(var(--floating-dock-height, 72px) + 20px + env(safe-area-inset-bottom, 0px));
 }
@@ -257,22 +180,6 @@ body[data-library-preview]:has(.floating-dock) .library-preview {
 }
 
 @media (width < 640px) {
-  .library-preview-guide > summary {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 2px 12px;
-  }
-
-  .library-preview-guide .library-preview-guide-hint {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .library-preview-guide > summary::after {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-  }
-
   .library-preview {
     right: max(12px, env(safe-area-inset-right, 0px));
     bottom: calc(12px + env(safe-area-inset-bottom, 0px));
