@@ -174,6 +174,7 @@ body[data-library-preview] > footer {
 
 .library-preview-guide > summary {
   display: flex;
+  box-sizing: border-box;
   align-items: center;
   flex-wrap: wrap;
   gap: 4px 16px;
@@ -256,6 +257,22 @@ body[data-library-preview]:has(.floating-dock) .library-preview {
 }
 
 @media (width < 640px) {
+  .library-preview-guide > summary {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px 12px;
+  }
+
+  .library-preview-guide .library-preview-guide-hint {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .library-preview-guide > summary::after {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
   .library-preview {
     right: max(12px, env(safe-area-inset-right, 0px));
     bottom: calc(12px + env(safe-area-inset-bottom, 0px));
