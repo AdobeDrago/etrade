@@ -117,7 +117,13 @@ export default function mountLibraryPreview(doc = document, win = window) {
     apply(authoredTheme);
   });
 
-  // These tables describe picker entries and page metadata, not visual components.
+  // DA excludes Library Metadata from insertable variants. Render guide metadata
+  // as a brief only in the gallery, before the normal block decoration runs.
+  main.querySelectorAll('.library-metadata.guide').forEach((guide) => {
+    guide.classList.replace('library-metadata', 'library-brief');
+    guide.classList.remove('guide');
+  });
+  // The remaining tables describe picker entries and page metadata.
   main.querySelectorAll('.library-metadata, .metadata').forEach((metadata) => metadata.remove());
   apply(savedTheme(win) || authoredTheme);
   return true;

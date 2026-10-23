@@ -77,6 +77,41 @@ test('theme preview leaves authored brief markup untouched', async () => {
   assert.equal(intro.innerHTML, before);
 });
 
+test('guide metadata renders as a brief while example metadata stays out of the gallery', async () => {
+  const html = await readFile(new URL('./fixtures/block-library/library-brief.html', import.meta.url), 'utf8');
+  const { document } = parseHTML(html);
+  const [header, ...rows] = document.querySelectorAll('table tr');
+  assert.equal(header.textContent.trim(), 'Library Metadata (Guide)');
+  const raw = rows.map((row) => `<div>${[...row.children].map((cell) => `<div>${cell.innerHTML}</div>`).join('')}</div>`).join('');
+  const page = await harness({
+    brief: `<h1>Hero Dark</h1><p>Introduction.</p>
+      <div class="library-metadata guide" data-aue-resource="guide">${raw}</div><h2>Examples</h2>`,
+  });
+  const guide = page.document.querySelector('.library-metadata.guide');
+  const notes = guide.querySelector('ul');
+  const example = page.document.querySelector('.hero-dark').outerHTML;
+  page.preview.default();
+  assert.equal(page.document.querySelector('.library-brief'), guide);
+  assert.equal(guide.className, 'library-brief');
+  assert.equal(guide.dataset.aueResource, 'guide');
+  assert.equal(guide.querySelector('ul'), notes);
+  assert.equal(guide.previousElementSibling.textContent, 'Introduction.');
+  assert.equal(guide.nextElementSibling.textContent, 'Examples');
+  assert.equal(page.document.querySelector('.library-metadata'), null);
+  assert.equal(page.document.querySelector('.hero-dark').outerHTML, example);
+
+  const renderer = new vm.SourceTextModule(await readFile(new URL('../blocks/library-brief/library-brief.js', import.meta.url), 'utf8'));
+  await renderer.link(() => { throw new Error('Unexpected import'); });
+  await renderer.evaluate();
+  renderer.namespace.default(guide);
+  assert.equal(guide.querySelector('.library-brief-title').textContent, 'Authoring guide');
+  assert.equal(guide.querySelector('details').hasAttribute('open'), false);
+  assert.equal(guide.querySelectorAll('.library-brief-section').length, 4);
+  assert.equal(guide.querySelector('ul'), notes);
+  page.document.querySelector('[data-theme="purple"]').click();
+  assert.equal(guide.querySelector('ul'), notes);
+});
+
 test('switching themes changes preview state, retains block options, and persists across library pages', async () => {
   const page = await harness({ theme: 'charcoal' });
   page.preview.default();
@@ -143,7 +178,11 @@ test('unavailable storage does not prevent theme switching', async () => {
 });
 
 test('live pages retain their theme, metadata and markup', async () => {
-  const page = await harness({ theme: 'purple', url: 'https://us.etrade.com/library/blocks/hero-dark' });
+  const page = await harness({
+    theme: 'purple',
+    url: 'https://us.etrade.com/library/blocks/hero-dark',
+    brief: '<div class="library-metadata guide"><div><div>Title</div><div>Authoring guide</div></div></div>',
+  });
   const html = page.document.documentElement.outerHTML;
   assert.equal(page.preview.default(), false);
   assert.equal(page.document.documentElement.outerHTML, html);

@@ -1,10 +1,10 @@
 # Library Brief
 
-Use this documentation block above the examples in a block library document. It renders a collapsed native disclosure; it does not inspect or move adjacent headings or example blocks.
+The gallery renders authoring guide metadata as this collapsed native disclosure. It does not inspect or move adjacent headings or example blocks.
 
-Author a two-column table with a merged heading row named **Library Brief**:
+Author a two-column table with a merged heading row named **Library Metadata (Guide)**:
 
-| Library Brief | |
+| Library Metadata (Guide) | |
 | --- | --- |
 | Title | Authoring guide |
 | Description | Structure, properties & options |
@@ -15,8 +15,10 @@ Author a two-column table with a merged heading row named **Library Brief**:
 
 `Title` and `Description` are optional plain-text settings. Title defaults to “Authoring guide”; omitted description stays empty. Every other complete, nonempty row becomes a labelled section inside the disclosure. Content cells accept ordinary rich text, lists, links, images and tables. Add rows to add documentation sections; omit rows that do not apply. An empty brief stays hidden.
 
-Keep the family title and short introduction before the brief, and the Examples heading and all example tables after it. Do not place example block tables inside the brief. The library catalog should list component families, rather than this documentation block as a separate family.
+Keep the family title and short introduction before the guide, and the Examples heading and all example tables after it. Put the actual examples in separate sections. Do not place example block tables inside the guide. The library catalog should list component families, rather than this documentation as a separate family.
 
-For the native DA picker, put a normal paragraph immediately before the brief and an adjacent Library Metadata table with `name` set to `Authoring guide`. The picker then presents a disabled reference entry because the brief has no preceding heading anchor. The actual examples retain their own headings and insert actions.
+DA's native pickers exclude tables whose base block name is `library-metadata`, including the `Guide` option. On local and preview gallery pages, `scripts/library-preview.js` converts just these guide tables into `library-brief` before block decoration. The result stays collapsible in preview and is absent from the picker's variants. Other Library Metadata tables continue to supply example names and descriptions.
+
+To migrate an existing library document, deploy this code first, then rename only the guide table's merged heading cell from **Library Brief** to **Library Metadata (Guide)**. Keep all of its documentation rows. Remove the adjacent Library Metadata table that exists only to name that old brief “Authoring guide”; retain each example's metadata. Save the document and check its preview and the Blocks picker. Existing Library Brief tables still render during rollout, but remain insertable until their source heading is updated. Omitting a heading anchor only disables the picker's preview button; it does not disable the separate Add button.
 
 Content is shared across code branches. The block implementation currently ships on `demo`; use `?ref=demo` in DA until the code is promoted.

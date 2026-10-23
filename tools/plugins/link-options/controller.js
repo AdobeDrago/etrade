@@ -57,7 +57,7 @@ export default function mountLinkOptions(doc, {
   async function loadSelection() {
     if (loading || !sdk) return;
     loading = true;
-    byId('reload').disabled = true;
+    byId('load-selection').disabled = true;
     status('Reading the selected link…');
     const requestedAt = revision;
     try {
@@ -65,7 +65,7 @@ export default function mountLinkOptions(doc, {
       if (typeof html !== 'string') throw new Error('No selection found');
       const selected = readSelectedLink(html);
       if (revision !== requestedAt) {
-        status('Your current values were kept. Reload the selection again to replace them.');
+        status('Your current values were kept. Use “Load selected link” again to replace them.');
         return;
       }
       fill(selected);
@@ -75,14 +75,14 @@ export default function mountLinkOptions(doc, {
     } catch (error) {
       const message = error?.message || error;
       status(message === 'No selection found'
-        ? 'Select a complete link and reload the selection, or paste a destination URL below.'
+        ? 'Select a complete link and use “Load selected link”, or paste a destination URL below.'
         : 'Could not load one selected link. Paste its URL below, or select it again in DA.');
     } finally {
       loading = false;
-      byId('reload').disabled = false;
+      byId('load-selection').disabled = false;
     }
   }
-  byId('reload').addEventListener('click', loadSelection);
+  byId('load-selection').addEventListener('click', loadSelection);
   byId('close').addEventListener('click', () => sdk?.actions.closeLibrary?.());
   byId('link-form').addEventListener('input', () => { dirty = true; revision += 1; render(); });
   byId('category').addEventListener('change', render);
@@ -133,7 +133,7 @@ export default function mountLinkOptions(doc, {
     async connect(connection) {
       if (!connection.actions?.getSelection) return;
       sdk = connection;
-      byId('reload').disabled = false;
+      byId('load-selection').disabled = false;
       byId('close').hidden = false;
       if (!dirty) await loadSelection();
     },

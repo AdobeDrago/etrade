@@ -68,7 +68,7 @@ test('the authored DA source table renders all four documentation sections', asy
   const html = await readFile(new URL('./fixtures/block-library/library-brief.html', import.meta.url), 'utf8');
   const { document } = parseHTML(html);
   const [header, ...rows] = document.querySelectorAll('table tr');
-  assert.equal(header.textContent.trim(), 'Library Brief');
+  assert.equal(header.textContent.trim(), 'Library Metadata (Guide)');
   const raw = rows.map((tr) => row(...[...tr.children].map((cell) => cell.innerHTML))).join('');
   const { block } = await render(raw);
   assert.equal(block.querySelectorAll('.library-brief-section').length, 4);

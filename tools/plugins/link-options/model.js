@@ -11,7 +11,7 @@ export function readSelectedLink(html) {
   const doc = new DOMParser().parseFromString(html, 'text/html');
   const links = [...doc.body.querySelectorAll('a[href]')];
   if (links.length !== 1) {
-    throw new Error('Select one complete link and reload the selection, or paste its URL below.');
+    throw new Error('Select one complete link and use “Load selected link”, or paste its URL below.');
   }
   const [link] = links;
   const href = link.getAttribute('href');
