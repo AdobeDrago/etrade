@@ -6,6 +6,10 @@ Previous/Next stop at the boundaries, dots select stories, and a status reports
 visible stories. Focus the list to use Left/Right, Home and End. Reduced-motion
 preferences disable animated scrolling. There is no automatic advance.
 
+Repeated navigation presses advance from the pending destination while smooth
+scrolling is in progress. Native wheel or pointer interaction takes over from
+that request; the controls then follow the actual scroll position.
+
 Blank rows are skipped; extra content cells are combined. Rich text, tracking URLs,
 inline links and superscripts remain authored. Standalone link paragraphs become
 styled actions. Use stable disclosure IDs in `<sup>` when the page uses a disclosure

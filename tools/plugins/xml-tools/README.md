@@ -24,6 +24,8 @@ After reviewing the content preview, choose an **Import destination**:
 
 All writes use the connected DA site, even when the XML was exported from another site. The existence and source comparison checks are optimistic checks, not atomic locks. Current-page replacement uses the Source API, which synchronizes external writes with the open collaborative DA editor. Review the updated page before previewing or publishing. **Open imported page in DA** opens the regular Canvas editor for editing and normal preview/publish actions. Page imports do not require a Structured Content schema. Relative links and asset references keep their authored values, so review them when moving content to another site or directory.
 
+Changing the DA connection clears previous export downloads, saved document snapshots, and result links. Load saved content again before overwriting an existing product in the new connection. Late results from the previous connection cannot become the current export or show a link under the new site. Requests already in progress may still complete on their original site; review that destination if you switch connections during a save.
+
 This implements page XML round trips and XHTML import. Other XML page vocabularies, AEM `.content.xml`, XSD mappings, and AEM Forms packages need format-specific mapping.
 
 ## Enable in DA

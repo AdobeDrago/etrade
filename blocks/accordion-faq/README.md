@@ -50,6 +50,12 @@ The current preview has nine simplified answers. Besides applying the variant, r
 
 Review the variant after saving and previewing content: https://demo--etrade--AdobeDrago.aem.page/what-we-offer/pricing-and-rates#detailed-pricing
 
+## Optional dynamic rates
+
+Answers support the shared `{{rate}}` and named `{{rate:name}}` markers. Add a separate **Rate settings** cell to the same question row, after its answer cell. The question and primary answer are always content, even when their text begins with **Rate settings**; markers in question labels are left as authored. Use the API, manual, or hybrid settings documented in [Cards Product](../cards-product/README.md#optional-dynamic-rates). Settings cells are consumed; additional ordinary answer cells remain content. Units, explanatory text, links, and disclosure markers stay authored. Asynchronous results update the existing answer without resetting its open state.
+
+Missing or invalid settings make no rate request. Without an authored fallback they show an em dash with the accessible label **Rate currently unavailable**; the shared helper retains configured fallback values or text. No product, balance, term, or rate is inferred from a question label. The current Pricing preview's savings and CD rows need authored settings before their markers can display rates.
+
 ## Behavior and accessibility
 
 - All answers start collapsed. Opening one question closes the others, matching production. Closing a question leaves any other answers open.

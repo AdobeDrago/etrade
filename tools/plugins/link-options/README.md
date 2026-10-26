@@ -13,6 +13,8 @@ For example, `/home` with key `home-link` produces `/home?@tracking=home-link`. 
 
 The helper reads a single selected anchor, including one serialized inside CTA table wrappers. If the selection contains multiple links or no anchor, paste the destination or select one link and use **Load selected link**. This reads the current editor selection without reloading the page or dialog. Selection access is optional: late or unavailable SDK connections leave manual authoring usable. Edits entered while the SDK is connecting are retained.
 
+If values change while clipboard permission is pending, the helper identifies the copied URL as the previous version and asks you to copy the current one again. A response from an earlier DA connection cannot replace the current fields; use **Load selected link** again after switching pages or connections.
+
 ## Enable in DA
 
 Push the plugin files with the project code first. In the [DA site configuration](https://da.live/config#/adobedrago/etrade/), add this row to the **library** tab, preserving its existing rows and columns. If Link Options is already registered, update that row instead of adding a duplicate. Set **experience** to `fullsize-dialog` and leave **ref** empty so authors can use the regular editor URL:
