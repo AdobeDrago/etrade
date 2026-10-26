@@ -107,15 +107,22 @@ export function createTrackingQueue({
         if (!next.categories.every((category) => stateOf(category) === 'granted')) break;
         next.status = 'sending';
         notify();
-        try {
-          // eslint-disable-next-line no-await-in-loop
-          await sender(clone(next));
-          next.status = 'sent';
-        } catch {
-          // A failed response can follow a delivered request; never retry automatically.
-          next.status = 'failed';
+        // Subscribers may disconnect the adapter or revoke consent while updating the UI.
+        // No request has started yet, so retain or discard this event as a waiting record.
+        if (!sender || !next.categories.every((category) => stateOf(category) === 'granted')) {
+          next.status = 'queued';
+          refresh();
+        } else {
+          try {
+            // eslint-disable-next-line no-await-in-loop
+            await sender(clone(next));
+            next.status = 'sent';
+          } catch {
+            // A failed response can follow a delivered request; never retry automatically.
+            next.status = 'failed';
+          }
+          notify();
         }
-        notify();
       }
     }).finally(() => {
       flushing = null;
@@ -149,7 +156,8 @@ export function createTrackingQueue({
     },
     track({ key, requiredCategories = [DEFAULT_CATEGORY], payload = {} }) {
       const required = categories(requiredCategories);
-      if (!key || !required || required.some((category) => stateOf(category) === 'denied')) {
+      if (!validTrackingKey(key) || !required
+        || required.some((category) => stateOf(category) === 'denied')) {
         skipped += 1;
         notify();
         return null;

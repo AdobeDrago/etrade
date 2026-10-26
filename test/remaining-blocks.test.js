@@ -130,6 +130,36 @@ test('last story selection stays selected when two desktop cards share the final
   assert.equal(dots[1].getAttribute('aria-current'), 'true');
 });
 
+test('carousel advances each rapid navigation request before smooth scrolling finishes', async () => {
+  const { block, window } = await render('carousel-story', Array(5).fill(row(image, copy)).join(''));
+  const slides = block.querySelector('.carousel-story-slides');
+  const requests = [];
+  window.matchMedia = () => ({ matches: false });
+  slides.scrollTo = (options) => requests.push(options);
+  const next = block.querySelector('.carousel-story-next');
+  next.click();
+  next.click();
+  key(window, slides, 'ArrowRight');
+  assert.deepEqual(requests.map(({ left }) => left), [200, 400, 600]);
+  assert.ok(requests.every(({ behavior }) => behavior === 'smooth'));
+  slides.scrollLeft = 600;
+  slides.dispatchEvent(new window.Event('scroll'));
+  assert.equal(block.querySelectorAll('.carousel-story-dots button')[3].getAttribute('aria-current'), 'true');
+});
+
+test('carousel reduced-motion navigation is instant and native scrolling clears pending navigation', async () => {
+  const { block, window } = await render('carousel-story', Array(5).fill(row(image, copy)).join(''));
+  const slides = block.querySelector('.carousel-story-slides');
+  const requests = [];
+  slides.scrollTo = (options) => requests.push(options);
+  block.querySelector('.carousel-story-next').click();
+  assert.equal(requests[0].behavior, 'instant');
+  // A wheel gesture interrupts the request before it reaches its destination.
+  slides.dispatchEvent(new window.Event('wheel'));
+  block.querySelector('.carousel-story-next').click();
+  assert.equal(requests[1].left, 200);
+});
+
 test('compact investment cards preserve native links with the text action treatment', async () => {
   const { block } = await render('cards-platform', row(image, copy), 'compact');
   const link = block.querySelector('.cards-platform-link');

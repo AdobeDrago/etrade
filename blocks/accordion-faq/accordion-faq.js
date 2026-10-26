@@ -1,3 +1,5 @@
+import decorateCardRates from '../../scripts/card-rates.js';
+
 let accordionCount = 0;
 const themeLayouts = new WeakMap();
 let themeObserver;
@@ -75,7 +77,7 @@ function answerContent(cells) {
   content.className = 'accordion-faq-item-content';
   let paragraph;
   cells.forEach((cell) => {
-    [...cell.cloneNode(true).childNodes].forEach((node) => {
+    [...cell.childNodes].forEach((node) => {
       if (node.nodeType === Node.COMMENT_NODE) return;
       if (node.nodeType === Node.TEXT_NODE && !node.textContent.trim() && !paragraph) return;
       if (node.nodeType === Node.ELEMENT_NODE
@@ -114,7 +116,9 @@ function disclosureIcon(flat) {
 }
 
 /** One authored question/answer row per item. No FAQ copy is supplied by the block. */
-export default function decorate(block) {
+export default async function decorate(block) {
+  // Keep the original marker nodes so asynchronous rate updates reach the rendered answers.
+  const rates = decorateCardRates(block, { contentStart: 1, settingsStart: 2 });
   accordionCount += 1;
   const prefix = `accordion-faq-${accordionCount}`;
   const rows = [...block.children];
@@ -232,4 +236,5 @@ export default function decorate(block) {
   }
   updateLayout();
   watchPageTheme(block, updateLayout);
+  await rates;
 }

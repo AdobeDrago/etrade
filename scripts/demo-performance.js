@@ -200,7 +200,7 @@ export default function startPerformanceDemo(doc = document, win = window, depen
     } else if (cmpLoading) state.status = 'Loading simulated OneTrust';
     else if (!cmpStarted) {
       state.status = contentReady ? 'Page ready · OneTrust starts after 3 seconds' : 'Waiting for page content';
-    } else if (!state.cmpReady && config.phase === 'eds') state.status = 'OneTrust fixture failed · tags remain unloaded';
+    } else if (!state.cmpReady && consentGated) state.status = 'OneTrust fixture failed · tags remain unloaded';
     else if (config.profile === 'onetrust') state.status = state.failed ? 'Some fixtures failed' : 'Simulated OneTrust ready';
     else if (consentGated) state.status = 'OneTrust ready · awaiting simulated consent';
     else state.status = 'Waiting for page content before tags';

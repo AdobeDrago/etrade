@@ -30,6 +30,7 @@ export default function decorate(block) {
   status.setAttribute('role', 'status');
   let current = 0;
   let requested;
+  let navigating = false;
   const offset = (index) => cards[index].offsetLeft - cards[0].offsetLeft;
   const maxScroll = () => Math.max(0, slides.scrollWidth - slides.clientWidth);
   const update = () => {
@@ -40,6 +41,7 @@ export default function decorate(block) {
       ? null : Math.min(maxScroll(), offset(requested));
     const selected = requestedOffset !== null && Math.abs(requestedOffset - left) <= 1
       ? requested : current;
+    if (selected === requested) navigating = false;
     previous.disabled = left <= 1;
     next.disabled = left >= maxScroll() - 1;
     [...dots.children].forEach((dot, index) => dot.setAttribute('aria-current', index === selected ? 'true' : 'false'));
@@ -52,6 +54,7 @@ export default function decorate(block) {
   const go = (index) => {
     const target = Math.max(0, Math.min(cards.length - 1, index));
     requested = target;
+    navigating = true;
     slides.scrollTo({
       left: Math.min(maxScroll(), offset(target)),
       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
@@ -66,13 +69,14 @@ export default function decorate(block) {
     dot.addEventListener('click', () => go(index));
     dots.append(dot);
   });
-  previous.addEventListener('click', () => go(current - 1));
-  next.addEventListener('click', () => go(current + 1));
+  const navigationIndex = () => (navigating ? requested : current);
+  previous.addEventListener('click', () => go(navigationIndex() - 1));
+  next.addEventListener('click', () => go(navigationIndex() + 1));
   slides.addEventListener('keydown', (event) => {
     if (event.target !== slides) return;
     let target;
-    if (event.key === 'ArrowLeft') target = current - 1;
-    if (event.key === 'ArrowRight') target = current + 1;
+    if (event.key === 'ArrowLeft') target = navigationIndex() - 1;
+    if (event.key === 'ArrowRight') target = navigationIndex() + 1;
     if (event.key === 'Home') target = 0;
     if (event.key === 'End') target = cards.length - 1;
     if (target === undefined) return;
@@ -80,6 +84,10 @@ export default function decorate(block) {
     go(target);
   });
   slides.addEventListener('scroll', update, { passive: true });
+  // Native dragging or wheel scrolling takes over from a pending button request.
+  ['pointerdown', 'wheel', 'scrollend'].forEach((type) => {
+    slides.addEventListener(type, () => { navigating = false; }, { passive: true });
+  });
   block.replaceChildren(nav, slides, dots, status);
   const observer = new ResizeObserver(update);
   observer.observe(slides);

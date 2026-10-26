@@ -446,3 +446,77 @@ test('current-page UI requires a host page and reports conflicts without overwri
   assert.equal(byId('page-import-status').classList.contains('error'), true);
   assert.equal(byId('import-current-page').disabled, false);
 });
+
+test('changing the DA connection invalidates an already loaded page export', async () => {
+  const { document } = parseHTML(html);
+  const controller = mountXmlTools(document, { download: () => {} });
+  controller.connect({ context, actions: { daFetch: service({ '/home': pageSource }).request } });
+  document.getElementById('export-page').click();
+  await settle();
+  assert.equal(document.getElementById('download-page').disabled, false);
+  controller.connect({ context: { ...context, path: '/another-page' }, actions: { daFetch: service().request } });
+  assert.equal(document.getElementById('download-page').disabled, true);
+  assert.equal(document.getElementById('page-export-result').hidden, true);
+  assert.equal(document.getElementById('page-xml-output').value, '');
+});
+
+test('a late export from an earlier DA connection cannot enable a stale download', async () => {
+  const { document } = parseHTML(html);
+  const controller = mountXmlTools(document, { download: () => {} });
+  let finish;
+  controller.connect({
+    context, actions: { daFetch: () => new Promise((resolve) => { finish = resolve; }) },
+  });
+  document.getElementById('export-page').click();
+  controller.connect({ context: { ...context, path: '/another-page' }, actions: { daFetch: service().request } });
+  finish(new Response(pageSource));
+  await settle();
+  assert.equal(document.getElementById('page-path').value, '/another-page');
+  assert.equal(document.getElementById('download-page').disabled, true);
+  assert.equal(document.getElementById('page-export-result').hidden, true);
+  assert.doesNotMatch(document.getElementById('page-export-status').textContent, /Loaded \/home/);
+});
+
+test('a product loaded on a previous site cannot authorize overwriting an existing product on a new site', async () => {
+  const { document } = parseHTML(html);
+  const source = productSource(example);
+  const first = service({ [path]: source });
+  const second = service({ [path]: source });
+  const controller = mountXmlTools(document, { download: () => {} });
+  controller.connect({ context, actions: { daFetch: first.request } });
+  document.getElementById('load').click();
+  await settle();
+  controller.connect({
+    context: { ...context, repo: 'other-site' },
+    actions: { daFetch: (url, options) => second.request(String(url).replace('/other-site/', '/etrade/'), options) },
+  });
+  document.getElementById('save').click();
+  await settle();
+  assert.equal(second.writes.length, 0);
+  assert.match(document.getElementById('status').textContent, /Load saved content/);
+});
+
+test('a completed import from an earlier connection cannot expose a link on the new site', async () => {
+  const { document } = parseHTML(html);
+  let finish;
+  const controller = mountXmlTools(document, { download: () => {} });
+  controller.connect({
+    context,
+    actions: {
+      daFetch: async (url, options = {}) => {
+        if (options.method === 'POST') return new Promise((resolve) => { finish = resolve; });
+        return new Response('', { status: 404 });
+      },
+    },
+  });
+  document.getElementById('page-sample').click();
+  document.getElementById('create-page').click();
+  await settle();
+  assert.equal(typeof finish, 'function');
+  controller.connect({ context: { ...context, repo: 'other-site' }, actions: { daFetch: service().request } });
+  finish(new Response(''));
+  await settle();
+  assert.equal(document.getElementById('page-import-links').hidden, true);
+  assert.doesNotMatch(document.getElementById('page-import-status').textContent, /Created /);
+  assert.match(document.getElementById('connection').textContent, /other-site/);
+});

@@ -5,25 +5,158 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { parseHTML } from 'linkedom';
 
-const source = await readFile(new URL('../blocks/accordion-faq/accordion-faq.js', import.meta.url), 'utf8');
 const row = (...cells) => `<div>${cells.map((cell) => `<div>${cell}</div>`).join('')}</div>`;
 
-async function render(rows, variant = '', adjacent = '', sectionAttributes = '', theme = '') {
+async function render(rows, variant = '', adjacent = '', sectionAttributes = '', theme = '', respond = undefined, beforeRates = undefined) {
   const { document, window } = parseHTML(`<html><body><main><div class="section" ${sectionAttributes}>${adjacent}<div class="accordion-faq-wrapper"><div class="accordion-faq ${variant}">${rows}</div></div></div></main></body></html>`);
+  window.location = new URL('http://localhost:3000/review');
   if (theme) document.documentElement.dataset.pageTheme = theme;
-  const module = new vm.SourceTextModule(source, {
-    context: vm.createContext({
-      document, Node: window.Node, MutationObserver: window.MutationObserver,
-    }),
+  const requests = [];
+  const context = vm.createContext({
+    document,
+    window,
+    Node: window.Node,
+    MutationObserver: window.MutationObserver,
+    NodeFilter: { SHOW_TEXT: 4 },
+    CustomEvent: window.CustomEvent,
+    URL,
+    AbortController,
+    setTimeout,
+    clearTimeout,
+    fetch: async (url) => {
+      requests.push(url);
+      if (!respond) throw new Error('Unexpected rate request');
+      return respond();
+    },
   });
-  await module.link(() => { throw new Error('Unexpected cross-block import'); });
+  const modules = new Map();
+  async function moduleFor(url) {
+    if (modules.has(url.href)) return modules.get(url.href);
+    const module = new vm.SourceTextModule(await readFile(url, 'utf8'), { context, identifier: url.href });
+    modules.set(url.href, module);
+    await module.link((specifier, source) => moduleFor(new URL(specifier, source.identifier)));
+    return module;
+  }
+  const module = await moduleFor(new URL('../blocks/accordion-faq/accordion-faq.js', import.meta.url));
   await module.evaluate();
   const block = document.querySelector('.accordion-faq');
-  module.namespace.default(block);
-  return { block, document, decorate: module.namespace.default };
+  const ready = module.namespace.default(block);
+  beforeRates?.({ block, document });
+  await ready;
+  return {
+    block, document, requests, decorate: module.namespace.default,
+  };
 }
 
 const fees = '<table><thead><tr><th scope="col">Pricing</th><th scope="col">0–29 trades</th><th scope="col">30+ trades</th></tr></thead><tbody><tr><th scope="row">Options contract</th><td>$0.65</td><td>$0.50</td></tr><tr><th scope="row">Dime buyback</th><td colspan="2">$0 contract fee</td></tr></tbody></table><p>Read <a href="/terms?track=1">terms</a>.<sup>b</sup></p>';
+
+test('Rate settings remains ordinary text in question and primary answer cells', async () => {
+  const answer = '<p>Rate settings</p><p>Keep <strong>approved terms</strong> and <a href="/terms">details</a>.<sup>c</sup></p>';
+  const { block, requests } = await render(row('Rate settings', '<p>Authors can change account settings.</p>')
+    + row('How are rates configured?', answer));
+  assert.equal(block.querySelectorAll('.accordion-faq-item').length, 2);
+  const [first, second] = [...block.querySelectorAll('.accordion-faq-item')];
+  assert.equal(first.querySelector('button').textContent, 'Rate settings');
+  assert.equal(first.querySelector('.accordion-faq-item-content').textContent, 'Authors can change account settings.');
+  assert.equal(second.querySelector('.accordion-faq-item-content').innerHTML, answer);
+  assert.equal(block.hidden, false);
+  assert.equal(requests.length, 0);
+});
+
+test('FAQ rates bind only answers while settings cells after the primary answer are consumed', async () => {
+  const { block } = await render(row(
+    'Explain {{rate}} notation',
+    '<p>Rate settings</p><p>Current rate: <strong>{{rate}}% APY</strong></p>',
+    '<p>Extra answer.</p>',
+    '<p>Rate settings</p><p>Mode: manual</p><p>Override: 0</p>',
+  ));
+  assert.equal(block.querySelector('button.accordion-faq-item-label').textContent, 'Explain {{rate}} notation');
+  assert.equal(block.querySelector('.accordion-faq-item-content > p').textContent, 'Rate settings');
+  assert.equal(block.querySelector('strong [data-rate-name]').textContent, '0.00');
+  assert.match(block.textContent, /Extra answer/);
+  assert.doesNotMatch(block.textContent, /Mode: manual|Override:/);
+});
+
+test('unconfigured FAQ rate markers show an accessible unavailable state without a request', async () => {
+  const { block, requests } = await render(row('Savings', '<p>Current rate: <strong>{{rate}}% APY</strong><sup>c</sup></p><p>See <a href="/rates">rates</a>.</p>'));
+  const marker = block.querySelector('[data-rate-name="rate"]');
+  assert.equal(marker.textContent, '—');
+  assert.equal(marker.getAttribute('aria-label'), 'Rate currently unavailable');
+  assert.equal(marker.dataset.rateError, 'invalid-settings');
+  assert.equal(block.querySelector('sup').textContent, 'c');
+  assert.equal(block.querySelector('a').getAttribute('href'), '/rates');
+  assert.equal(requests.length, 0);
+  assert.doesNotMatch(block.textContent, /\{\{rate\}\}/);
+});
+
+test('FAQ rate settings are consumed and manual zero rates retain rich answer content', async () => {
+  const { block, requests } = await render(row('Savings', '<p><strong>{{rate}}% APY</strong></p>', '<p>Rate settings</p><p>Mode: manual</p><p>Override: 0</p>', '<p>Extra answer.</p>'));
+  assert.equal(block.querySelector('strong [data-rate-name]').textContent, '0.00');
+  assert.doesNotMatch(block.textContent, /Rate settings|Override:/);
+  assert.match(block.textContent, /Extra answer/);
+  assert.equal(requests.length, 0);
+});
+
+test('asynchronous API results update markers in the rendered FAQ answers', async () => {
+  const sample = JSON.parse(await readFile(new URL('./fixtures/bank-rates.json', import.meta.url), 'utf8'));
+  const { block, requests } = await render(row('Savings', '<p>{{rate}}% APY<sup>c</sup></p>', '<p>Rate settings</p><p>Mode: api</p><p>Product: 3100</p><p>Field: advertisedAPY</p><p>Balance: 0</p>'), '', '', '', '', async () => ({ ok: true, json: async () => sample }));
+  const marker = block.querySelector('[data-rate-name]');
+  assert.equal(marker.textContent, '3.75');
+  assert.equal(marker.dataset.rateSource, 'api');
+  assert.equal(block.querySelector('sup').textContent, 'c');
+  assert.equal(requests.length, 1);
+});
+
+test('a delayed FAQ rate updates the same marker without resetting an open answer', async () => {
+  const sample = JSON.parse(await readFile(new URL('./fixtures/bank-rates.json', import.meta.url), 'utf8'));
+  let release;
+  let originalMarker;
+  const response = new Promise((resolve) => { release = resolve; });
+  const { block } = await render(
+    row(
+      'Savings',
+      '<p>{{rate}}% APY<sup>c</sup></p>',
+      '<p>Rate settings</p><p>Mode: api</p><p>Product: 3100</p><p>Field: advertisedAPY</p><p>Balance: 0</p>',
+    ),
+    '',
+    '',
+    '',
+    '',
+    () => response,
+    ({ block: rendered }) => {
+      originalMarker = rendered.querySelector('[data-rate-name]');
+      assert.equal(originalMarker.dataset.rateSource, 'loading');
+      rendered.querySelector('.accordion-faq-item-label').click();
+      release({ ok: true, json: async () => sample });
+    },
+  );
+  assert.equal(block.querySelector('[data-rate-name]'), originalMarker);
+  assert.equal(originalMarker.textContent, '3.75');
+  assert.equal(block.querySelector('.accordion-faq-item-label').getAttribute('aria-expanded'), 'true');
+  assert.equal(block.querySelector('.accordion-faq-item-body').inert, false);
+});
+
+test('a failed FAQ rate request retains its authored fallback and working answer controls', async () => {
+  const { block, requests } = await render(
+    row(
+      'Savings',
+      '<p>{{rate}}% APY</p>',
+      '<p>Rate settings</p><p>Mode: api</p><p>Product: 3100</p><p>Field: advertisedAPY</p><p>Balance: 0</p><p>Fallback: -.--</p>',
+    ),
+    '',
+    '',
+    '',
+    '',
+    async () => ({ ok: false, status: 503 }),
+  );
+  const marker = block.querySelector('[data-rate-name]');
+  assert.equal(marker.textContent, '-.--');
+  assert.equal(marker.dataset.rateError, 'http-status');
+  assert.equal(marker.getAttribute('aria-label'), 'Rate currently unavailable');
+  assert.equal(requests.length, 1);
+  block.querySelector('.accordion-faq-item-label').click();
+  assert.equal(block.querySelector('.accordion-faq-item-body').inert, false);
+});
 
 ['flat', 'pricing'].forEach((variant) => {
   test(`${variant} answers preserve semantic headers, merged cells, disclosures and extra answer cells`, async () => {

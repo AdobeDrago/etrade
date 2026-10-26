@@ -15,6 +15,7 @@ export default function mountXmlTools(doc, { download } = {}) {
   let revision = 0;
   let pageExport;
   let pageDirty = false;
+  let connectionRevision = 0;
 
   function status(message, error = false) {
     byId('status').textContent = message;
@@ -121,6 +122,8 @@ export default function mountXmlTools(doc, { download } = {}) {
 
   async function operate(action) {
     if (busy || !sdk) return;
+    const connection = sdk;
+    const connectedAt = connectionRevision;
     const value = render();
     busy = true;
     revision += 1;
@@ -129,8 +132,9 @@ export default function mountXmlTools(doc, { download } = {}) {
     try {
       const path = demoPath(byId('document-path').value.trim());
       const result = action === 'save'
-        ? await saveProduct(sdk.context, path, value, sdk.actions.daFetch, snapshot)
-        : await loadProduct(sdk.context, path, sdk.actions.daFetch);
+        ? await saveProduct(connection.context, path, value, connection.actions.daFetch, snapshot)
+        : await loadProduct(connection.context, path, connection.actions.daFetch);
+      if (connectedAt !== connectionRevision) return;
       snapshot = result;
       fill(result.product);
       byId('xml-input').value = productXml(result.product);
@@ -139,7 +143,7 @@ export default function mountXmlTools(doc, { download } = {}) {
         ? 'Saved in DA. Open the SC editor to review, then use Send → Preview / Publish. The JSON links become available after those steps.'
         : 'Saved DA content loaded. Edit the fields and save, or download XML.');
     } catch (error) {
-      status(error.message, true);
+      if (connectedAt === connectionRevision) status(error.message, true);
     } finally {
       busy = false;
       render();
@@ -158,18 +162,22 @@ export default function mountXmlTools(doc, { download } = {}) {
   });
   byId('export-page').addEventListener('click', async () => {
     if (busy || !sdk) return;
+    const connection = sdk;
+    const connectedAt = connectionRevision;
     busy = true;
     pageExport = undefined;
     byId('page-export-result').hidden = true;
     byId('page-export-status').textContent = 'Reading the saved page from DA…';
     render();
     try {
-      pageExport = await loadPageXml(sdk.context, byId('page-path').value, sdk.actions.daFetch);
+      const result = await loadPageXml(connection.context, byId('page-path').value, connection.actions.daFetch);
+      if (connectedAt !== connectionRevision) return;
+      pageExport = result;
       byId('page-xml-output').value = pageExport.xml;
       byId('page-export-result').hidden = false;
       byId('page-export-status').textContent = `Loaded ${pageExport.path}. Download its XML below. The original page is unchanged.`;
     } catch (error) {
-      byId('page-export-status').textContent = error.message;
+      if (connectedAt === connectionRevision) byId('page-export-status').textContent = error.message;
     } finally { busy = false; render(); }
   });
   byId('download-page').addEventListener('click', () => {
@@ -180,6 +188,12 @@ export default function mountXmlTools(doc, { download } = {}) {
     connect(connection) {
       if (!connection?.actions?.daFetch || !/^[a-z0-9-]+$/i.test(connection.context?.org || '')
         || !/^[a-z0-9-]+$/i.test(connection.context?.repo || '')) throw new Error('DA did not provide a valid site connection.');
+      connectionRevision += 1;
+      snapshot = undefined;
+      pageExport = undefined;
+      byId('saved-links').hidden = true;
+      byId('page-export-result').hidden = true;
+      byId('page-xml-output').value = '';
       sdk = connection;
       pageImporter.connect(connection);
       if (!pageDirty && typeof sdk.context.path === 'string' && sdk.context.path.startsWith('/')) {

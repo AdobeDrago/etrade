@@ -64,7 +64,11 @@ function loadingProgress(snapshot) {
   const real = config.profile === 'onetrust-real';
   const gated = config.profile === 'etrade' && ['eds', 'consent'].includes(config.phase);
   const stopped = snapshot.status === 'Stopped';
-  const failed = /failed|unavailable|did not initialize/i.test(snapshot.status);
+  const failed = real
+    ? Boolean(snapshot.realCMP && !snapshot.realCMP.initialized
+      && (['invalid', 'conflict', 'error'].includes(snapshot.realCMP.sdkStatus)
+        || snapshot.realCMP.timedOut))
+    : /failed|unavailable/i.test(snapshot.status);
   const resources = snapshot.resources.filter((resource) => resource.group === 'tags');
   const loaded = resources.filter((resource) => resource.status === 'loaded').length;
   const failures = resources.filter((resource) => resource.status === 'failed').length;
@@ -80,6 +84,7 @@ function loadingProgress(snapshot) {
   const tags = { text: 'Waiting', state: 'waiting', time: milestones.tagsReady };
   if (milestones.tagsStarted !== undefined) tags.text = `${loaded}/${resources.length} loaded`;
   if (gated && snapshot.consent !== 'accepted') tags.text = 'Awaiting consent';
+  if (gated && failed && !snapshot.cmpReady) tags.text = 'Held · CMP unavailable';
   if (complete) Object.assign(tags, { text: 'Loaded', state: 'done' });
   if (gated && declined) Object.assign(tags, { text: 'Declined', state: 'waiting', time: milestones.consentUpdated });
   if (failures) Object.assign(tags, { text: `${failures} failed`, state: 'error' });
@@ -485,8 +490,11 @@ export default function mountPerformanceControls(doc, win) {
     if (snapshot.config.profile !== 'etrade') workloadHelp.textContent = 'The interaction workload is available with the full simulated tag stack.';
     else if (snapshot.config.work === 'none') workloadHelp.textContent = 'Download and parse only: no assumed CPU delays are added. Choose a processing preset to demonstrate interaction and background work.';
     else if (snapshot.status === 'Stopped') workloadHelp.textContent = 'This run is stopped. Use Run again for a fresh comparison.';
-    else if (gated && !snapshot.cmpReady) workloadHelp.textContent = 'OneTrust is still loading. Consent controls become available when it is ready.';
-    else if (gated && snapshot.consent !== 'accepted') workloadHelp.textContent = 'Accept simulated consent to release the tags and start the 30-second workload.';
+    else if (gated && !snapshot.cmpReady) {
+      workloadHelp.textContent = progress.failed
+        ? 'OneTrust is unavailable. Run again to retry the comparison.'
+        : 'OneTrust is still loading. Consent controls become available when it is ready.';
+    } else if (gated && snapshot.consent !== 'accepted') workloadHelp.textContent = 'Accept simulated consent to release the tags and start the 30-second workload.';
     else if (snapshot.completed + snapshot.failed < snapshot.resources.length || !snapshot.resources.length) workloadHelp.textContent = 'Waiting for the simulated tag stack to finish loading.';
     else if (snapshot.runtimeActive) workloadHelp.textContent = `Assumed processing is active for another ${Math.ceil(snapshot.runtimeRemainingMs / 1000)} seconds. Try Test response or interact with the page.`;
     else workloadHelp.textContent = 'The workload is idle. Run another 30-second window to demonstrate interaction and background work.';

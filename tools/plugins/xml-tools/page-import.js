@@ -115,15 +115,18 @@ export default function mountPageImport(doc, { download, onStatus } = {}) {
     if (busy || pendingOverwrite || importsToCurrent() || !sdk || !imported) return;
     busy = true;
     revision += 1;
+    const current = revision;
+    const connection = sdk;
     render();
     status('Checking the new destination and creating the page in DA…');
     try {
-      const result = await saveImportedPage(sdk.context, byId('page-destination').value, imported, sdk.actions.daFetch);
-      const { org, repo } = sdk.context;
+      const result = await saveImportedPage(connection.context, byId('page-destination').value, imported, connection.actions.daFetch);
+      if (revision !== current) return;
+      const { org, repo } = connection.context;
       byId('page-import-edit').href = `https://da.live/canvas#/${org}/${repo}${result.path}`;
       byId('page-import-links').hidden = false;
       status(`Created ${result.path} in DA. Open it to edit, then use Send → Preview / Publish.`);
-    } catch (error) { status(error.message, true); } finally {
+    } catch (error) { if (revision === current) status(error.message, true); } finally {
       busy = false;
       render();
     }
@@ -166,16 +169,20 @@ export default function mountPageImport(doc, { download, onStatus } = {}) {
     const { snapshot, imported: content } = pendingOverwrite;
     busy = true;
     revision += 1;
+    const current = revision;
+    const connection = sdk;
     closeConfirmation();
     render();
     status('Importing content onto the current DA page…');
     try {
-      const result = await replaceCurrentPage(sdk.context, content, sdk.actions.daFetch, snapshot);
-      const { org, repo } = sdk.context;
+      const request = connection.actions.daFetch;
+      const result = await replaceCurrentPage(connection.context, content, request, snapshot);
+      if (revision !== current) return;
+      const { org, repo } = connection.context;
       byId('page-import-edit').href = `https://da.live/canvas#/${org}/${repo}${result.path}`;
       byId('page-import-links').hidden = false;
       status(`Imported content onto ${result.path} in DA. Review the page, then use Send → Preview / Publish.`);
-    } catch (error) { status(error.message, true); } finally {
+    } catch (error) { if (revision === current) status(error.message, true); } finally {
       busy = false;
       render();
     }
@@ -186,6 +193,7 @@ export default function mountPageImport(doc, { download, onStatus } = {}) {
     connect(connection) {
       revision += 1;
       closeConfirmation();
+      byId('page-import-links').hidden = true;
       sdk = connection;
       byId('page-import-connection').textContent = 'Connected to DA. Create a new page, or import onto the current page after confirming the overwrite.';
       render();

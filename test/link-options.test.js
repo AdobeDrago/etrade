@@ -150,6 +150,37 @@ test('clipboard failure offers manual copy; invalid settings never claim a succe
   assert.ok(byId('status').textContent.includes('Enter a tracking key'));
 });
 
+test('edits made while clipboard permission is pending do not claim the current URL was copied', async () => {
+  let finish;
+  const copies = [];
+  const context = await ui((value) => {
+    copies.push(value);
+    return new Promise((resolve) => { finish = resolve; });
+  });
+  context.controller.fill(settings());
+  const copying = context.submit();
+  context.edit('tracking-key', 'revised-link');
+  finish();
+  await copying;
+  assert.deepEqual(copies, ['/home?@tracking=home-link']);
+  assert.equal(context.byId('output-url').value, '/home?@tracking=revised-link');
+  assert.equal(context.byId('copy').textContent, 'Copy URL');
+  assert.match(context.byId('status').textContent, /changed|previous/i);
+});
+
+test('a rejected stale copy never selects an edited or invalid output for manual copying', async () => {
+  let fail;
+  const context = await ui(() => new Promise((resolve, reject) => { fail = reject; }));
+  context.controller.fill(settings());
+  const copying = context.submit();
+  context.edit('tracking-key', '');
+  fail(new Error('Clipboard denied'));
+  await copying;
+  assert.equal(context.byId('output-url').value, '');
+  assert.equal(context.byId('manual-copy').hidden, true);
+  assert.match(context.byId('status').textContent, /changed|current/i);
+});
+
 test('DA integration reads a selection and closes only; it never writes editor or source content', async () => {
   const {
     controller, byId, document, window, submit,
@@ -190,4 +221,19 @@ test('late SDK connections and delayed selection responses preserve manual edits
   resolve('<a href="/overwrite">Other</a>');
   await loading;
   assert.equal(delayed.byId('url').value, '/keep-this');
+});
+
+test('an earlier DA connection cannot replace fields after the selected page connection changes', async () => {
+  const context = await ui();
+  let finish;
+  const first = context.controller.connect({
+    actions: { getSelection: () => new Promise((resolve) => { finish = resolve; }) },
+  });
+  await context.controller.connect({ actions: { getSelection: async () => '<a href="/current-page">Current</a>' } });
+  finish('<a href="/previous-page">Previous</a>');
+  await first;
+  assert.notEqual(context.byId('url').value, '/previous-page');
+  context.byId('load-selection').click();
+  await settle();
+  assert.equal(context.byId('url').value, '/current-page');
 });

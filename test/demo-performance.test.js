@@ -217,7 +217,9 @@ test('inert fixtures match captured decoded sizes and compression budgets withou
     const body = await readFile(new URL(`../scripts/demo-performance-assets/${resource.id}.js`, import.meta.url));
     assert.equal(body.length, resource.decodedBytes, resource.id);
     const difference = Math.abs(gzipSync(body).length - resource.gzipBytes);
-    assert.ok(difference < resource.gzipBytes * 0.005 + 100, resource.id);
+    // Gzip output varies by runtime/zlib; decoded payload sizes remain exact.
+    const tolerance = Math.max(100, resource.gzipBytes * 0.02);
+    assert.ok(difference < tolerance, `${resource.id}: gzip differs by ${difference} bytes (budget ${tolerance})`);
     assert.ok(!/https?:|fetch\(|document\.|window\./.test(body.toString()), resource.id);
     const module = await import(`../scripts/demo-performance-assets/${resource.id}.js`);
     assert.ok(Array.isArray(module.default));
@@ -807,6 +809,50 @@ test('real controls expose two valid strategies and real preferences without sim
   assert.equal(controls.querySelector('.demo-helper-banner-control').hidden, true);
   assert.equal(context.document.querySelector('.demo-cookie-banner').hidden, true);
   controller.stop();
+});
+
+test('both simulated consent strategies report a failed CMP instead of awaiting a choice', async () => {
+  await Promise.all(['eds', 'consent'].map(async (phase) => {
+    const context = browser(`?perf=etrade&perf-phase=${phase}&perf-work=light`);
+    const controller = startPerformanceDemo(context.document, context.win, {
+      fetchProfile: async () => manifest,
+      importResource: async (url) => {
+        if (url.includes('/cmp-banner.js')) throw new Error('Unavailable');
+      },
+    });
+    const controls = mountPerformanceControls(context.document, context.win);
+    if (phase === 'eds') await delayedCMP(context, controller);
+    else { await controller.ready; await settle(); }
+    assert.equal(controller.snapshot().cmpReady, false);
+    assert.match(controller.snapshot().status, /OneTrust fixture failed/);
+    assert.equal(controls.querySelector('[data-stage="cmp"]').dataset.state, 'error');
+    assert.equal(controls.querySelector('[data-stage="tags"] strong').textContent, 'Held · CMP unavailable');
+    assert.match(controls.querySelector('.demo-helper-workload-help').textContent, /OneTrust is unavailable/);
+    assert.equal(controller.snapshot().requested, 2);
+    controller.stop();
+  }));
+});
+
+test('real CMP configuration and SDK timeout failures show an unavailable progress step', async () => {
+  await Promise.all(['invalid', 'conflict', 'timeout'].map(async (failure) => {
+    const context = browser('?perf=onetrust-real');
+    if (failure === 'invalid') {
+      context.document.head.innerHTML = '<meta name="onetrust-domain-id" content="bad-id">';
+    } else if (failure === 'conflict') {
+      context.document.head.innerHTML = '<script data-domain-script="another-tenant" src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js"></script>';
+    }
+    const controller = startPerformanceDemo(context.document, context.win);
+    const controls = mountPerformanceControls(context.document, context.win);
+    await controller.ready;
+    if (failure === 'timeout') {
+      [...context.timers.values()].find((timer) => timer.delay === 15000).callback();
+    }
+    assert.equal(controls.querySelector('[data-stage="cmp"]').dataset.state, 'error', failure);
+    assert.equal(controls.querySelector('[data-stage="cmp"] strong').textContent, 'Unavailable');
+    assert.match(controls.querySelector('.demo-helper-next-step').textContent, /initialization details/);
+    assert.equal(controls.querySelector('[data-stage="tags"] strong').textContent, 'Closed');
+    controller.stop();
+  }));
 });
 
 test('demo banner is opt-in, waits for CMP readiness and shares the panel consent actions', async () => {

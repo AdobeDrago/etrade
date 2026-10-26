@@ -4,6 +4,7 @@
   "version": "1.3.0",
   "description": "Starter project for Adobe Helix",
   "scripts": {
+    "test": "node --experimental-vm-modules --test test/*.test.js",
     "demo:xml-tools": "node test/xml-demo-server.mjs",
     "test:xml-tools": "node --experimental-vm-modules --test test/xml-tools.test.js",
     "test:performance-demo": "node --experimental-vm-modules --test test/demo-performance.test.js test/demo-run-comparison.test.js test/demo-helper.test.js test/onetrust.test.js",

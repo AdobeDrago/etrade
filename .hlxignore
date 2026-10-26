@@ -5,4 +5,6 @@ LICENSE
 package.json
 package-lock.json
 test/**
+tools/importer/bd-snapshots/**
+tools/importer/reports/**
 sync-block-collection.sh

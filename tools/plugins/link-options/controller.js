@@ -48,6 +48,7 @@ export default function mountLinkOptions(doc, {
     }
   }
   function fill(settings) {
+    revision += 1;
     byId('url').value = settings.href;
     byId('track-clicks').checked = settings.enabled;
     byId('tracking-key').value = settings.key;
@@ -112,13 +113,22 @@ export default function mountLinkOptions(doc, {
       return;
     }
     copying = true;
+    const requestedAt = revision;
     byId('copy').disabled = true;
     byId('output-url').value = value;
     try {
       await copy(value);
+      if (revision !== requestedAt) {
+        status('The previous URL was copied. Your values changed; copy the current URL again.');
+        return;
+      }
       byId('copy').textContent = 'Copied';
       status('URL copied. Close Link Options, open DA’s Edit link dialog, paste into URL, then Save.');
     } catch {
+      if (revision !== requestedAt) {
+        status('Your values changed while clipboard access was pending. Review the current URL and copy it again.');
+        return;
+      }
       byId('manual-copy').hidden = false;
       byId('output-url').focus?.();
       byId('output-url').select?.();
@@ -132,6 +142,7 @@ export default function mountLinkOptions(doc, {
   return {
     async connect(connection) {
       if (!connection.actions?.getSelection) return;
+      revision += 1;
       sdk = connection;
       byId('load-selection').disabled = false;
       byId('close').hidden = false;

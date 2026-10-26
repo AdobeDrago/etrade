@@ -8,6 +8,50 @@ import mountTrackingControls from '../scripts/demo-tracking.js';
 const PAGE = 'https://demo--etrade--adobedrago.aem.page/home';
 const settle = () => new Promise((resolve) => { setImmediate(resolve); });
 
+test('disconnecting a sender when an event becomes sending leaves it ready for a later adapter', async () => {
+  const queue = createTrackingQueue();
+  const calls = [];
+  await queue.setConsent({ C0004: 'granted' });
+  const unsubscribe = queue.subscribe((state) => {
+    if (state.events.some((event) => event.status === 'sending')) queue.setSender(null);
+  });
+  await queue.setSender((event) => calls.push(event.id));
+  queue.track({ key: 'cta' });
+  await queue.flush();
+  assert.equal(calls.length, 0);
+  assert.equal(queue.snapshot().events[0].status, 'ready');
+  unsubscribe();
+  await queue.setSender((event) => calls.push(event.id));
+  assert.deepEqual(calls, [1]);
+  assert.equal(queue.snapshot().events[0].status, 'sent');
+});
+
+test('revocation at the dispatch boundary prevents a send and discards its waiting payload', async () => {
+  const queue = createTrackingQueue();
+  const calls = [];
+  await queue.setConsent({ C0004: 'granted' });
+  queue.subscribe((state) => {
+    if (state.events.some((event) => event.status === 'sending') && state.consent.C0004 === 'granted') {
+      queue.setConsent({ C0004: 'denied' });
+    }
+  });
+  await queue.setSender((event) => calls.push(event.id));
+  queue.track({ key: 'cta', payload: { private: 'discard me' } });
+  await queue.flush();
+  assert.equal(calls.length, 0);
+  assert.equal(queue.snapshot().events[0].status, 'discarded');
+  assert.equal(queue.snapshot().events[0].payload, null);
+});
+
+test('the queue rejects invalid direct tracking keys consistently with authored URLs', () => {
+  const queue = createTrackingQueue();
+  [123, {}, 'x'.repeat(161), 'cta\ninvalid', ''].forEach((key) => {
+    assert.equal(queue.track({ key }), null);
+  });
+  assert.equal(queue.snapshot().events.length, 0);
+  assert.equal(queue.snapshot().skipped, 5);
+});
+
 function browser(markup = '', extra = {}) {
   const { document, window } = parseHTML(`<html><body><main>${markup}</main></body></html>`);
   const listeners = new Map();

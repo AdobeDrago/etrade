@@ -161,7 +161,7 @@ export default function mountRunComparison(doc, win) {
     if (saved.width !== current.width || saved.height !== current.height
       || saved.viewportChanged || current.viewportChanged) differences.push('The browser viewport changed during one of these runs.');
     if ((saved.profile === 'onetrust-real') !== (current.profile === 'onetrust-real')) differences.push('Real OneTrust and simulated runs use different code.');
-    if ([saved, current].some((run) => run.failed || (run.profile === 'onetrust-real' && !run.cmpReady))) differences.push('A load is incomplete; review its status before drawing timing conclusions.');
+    if ([saved, current].some((run) => run.failed || (['onetrust', 'onetrust-real'].includes(run.profile) && !run.cmpReady))) differences.push('A load is incomplete; review its status before drawing timing conclusions.');
     if ([saved, current].some((run) => run.profile === 'etrade' && (!run.total || run.completed < run.total))) differences.push('Some tags have not loaded. These runs may include different amounts of work.');
     notes.textContent = differences.join(' ') || 'Single runs under your current browser conditions. Repeat with the same settings to assess consistency.';
   }

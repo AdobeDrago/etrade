@@ -165,3 +165,22 @@ test('real CMP partial loads remain explicit and unknown transfer sizes never ap
   assert.ok(context.comparison.element.textContent.includes('different code'));
   assert.ok(context.comparison.element.textContent.includes('load is incomplete'));
 });
+
+test('OneTrust-only references warn while their CMP fixtures are incomplete', () => {
+  const context = browser();
+  context.comparison.update(snapshot(), 'Reference');
+  context.click(context.comparison.save);
+  context.comparison.update(snapshot({
+    config: { profile: 'onetrust', phase: 'eds', work: 'none' },
+    completed: 0,
+    resources: [],
+    cmpReady: false,
+  }), 'OneTrust weights');
+  assert.ok(context.comparison.element.textContent.includes('load is incomplete'));
+  context.comparison.update(snapshot({
+    config: { profile: 'onetrust', phase: 'eds', work: 'none' },
+    completed: 2,
+    resources: [{}, {}],
+  }), 'OneTrust weights');
+  assert.equal(context.comparison.element.textContent.includes('load is incomplete'), false);
+});
