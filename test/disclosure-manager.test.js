@@ -259,23 +259,31 @@ async function uiHarness() {
     console,
   });
   const modules = new Map();
-  const moduleFor = async (pathname) => {
-    if (modules.has(pathname)) return modules.get(pathname);
-    const code = await readFile(new URL(`.${pathname}`, base), 'utf8');
-    const module = new vm.SourceTextModule(code, {
-      context: contextVm,
-      identifier: `http://localhost:3000${pathname}`,
-      importModuleDynamically: async (specifier, parent) => {
-        const child = await moduleFor(new URL(specifier, parent.identifier).pathname);
-        await child.evaluate();
-        return child;
-      },
-    });
-    modules.set(pathname, module);
-    await module.link((specifier) => moduleFor(new URL(specifier, module.identifier).pathname));
-    return module;
+  const moduleFor = (pathname) => {
+    if (!modules.has(pathname)) {
+      // Cache creation before reading so parallel imports share one module instance.
+      modules.set(pathname, readFile(new URL(`.${pathname}`, base), 'utf8').then((code) => (
+        new vm.SourceTextModule(code, {
+          context: contextVm,
+          identifier: `http://localhost:3000${pathname}`,
+          importModuleDynamically: async (specifier, parent) => {
+            const child = await moduleFor(new URL(specifier, parent.identifier).pathname);
+            if (child.status === 'unlinked') {
+              await child.link((name, ref) => moduleFor(new URL(name, ref.identifier).pathname));
+            }
+            await child.evaluate();
+            return child;
+          },
+        })
+      )));
+    }
+    return modules.get(pathname);
   };
   const controller = await moduleFor(entry);
+  // Let the VM link the static graph instead of linking shared dependencies concurrently.
+  await controller.link((specifier, parent) => (
+    moduleFor(new URL(specifier, parent.identifier).pathname)
+  ));
   await controller.evaluate();
   await controller.namespace.default;
   return { document, window };
