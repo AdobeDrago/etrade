@@ -116,7 +116,7 @@ export function demoPath(path) {
 
 function sourceUrl(context, path) {
   if (![context?.org, context?.repo].every((part) => typeof part === 'string' && /^[a-z0-9-]+$/i.test(part))) {
-    throw new Error('Open XML Tools from the DA Library to connect to your site.');
+    throw new Error('Open Import & Export from the DA Library to connect to your site.');
   }
   return `https://admin.da.live/source/${context.org}/${context.repo}${path}.html`;
 }

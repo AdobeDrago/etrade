@@ -4,19 +4,33 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title>XML Tools · E*TRADE demo</title>
+    <title>Import &amp; Export · E*TRADE</title>
     <link rel="icon" href="data:,">
     <link rel="stylesheet" href="./xml-tools.css">
     <script type="module" src="./xml-tools.js"></script>
   </head>
   <body class="xml-tools">
     <header class="toolbar">
-      <div><p class="eyebrow">E*TRADE · Authoring demo</p><h1>XML Tools</h1></div>
-      <span id="connection" class="badge">Standalone demo</span>
+      <div><p class="eyebrow">E*TRADE · Authoring</p><h1>Import &amp; Export</h1></div>
+      <span id="connection" class="badge">Standalone</span>
     </header>
     <main>
-      <p class="intro">Import an XML page into DA, export a saved page, or manage product XML.</p>
-      <p id="status" class="status" role="status" aria-live="polite">Choose Try page sample or upload a page XML file to begin.</p>
+      <p class="intro">Export the saved page you are editing, or review an XML page before importing it into DA.</p>
+      <p id="status" class="status" role="status" aria-live="polite">Open inside DA to export this page, or upload page XML to review an import.</p>
+      <section class="panel page-export" aria-labelledby="page-export-heading">
+        <h2 id="page-export-heading">Export a page</h2>
+        <button id="export-current-page" type="button" class="primary" disabled>Export this page</button>
+        <p class="hint">Export any saved page in this site. Save your editor changes first; unsaved changes and separately referenced fragments are not included.</p>
+        <label for="page-path">Page path</label>
+        <input id="page-path" type="text" value="/home" placeholder="/home" spellcheck="false">
+        <button id="export-page" type="button" class="primary" disabled>Prepare XML export</button>
+        <p id="page-export-status" class="hint" role="status">Open Import &amp; Export inside DA to load an existing page.</p>
+        <div id="page-export-result" hidden>
+          <details><summary>Page XML</summary><textarea id="page-xml-output" aria-label="Page XML" rows="12" readonly spellcheck="false"></textarea></details>
+        </div>
+        <button id="download-page" type="button" disabled>Download page XML</button>
+        <p class="hint">The general da-page format includes a section and block inventory plus the complete saved HTML in source-html. Import this XML below to create a new DA page or replace the current page after confirmation. Linked assets stay referenced; product XML uses a separate schema.</p>
+      </section>
       <section class="panel page-import" aria-labelledby="page-import-heading">
         <div class="panel-heading"><h2 id="page-import-heading">Import an XML page</h2><button id="page-sample" type="button">Try page sample</button></div>
         <p class="hint">Import a da-page XML export or an XHTML page with a main content element. Sections, blocks, rich text, links, and metadata become an editable DA page.</p>
@@ -27,7 +41,7 @@
             <p id="page-format-help" class="hint">Up to 12 MB of XML and 5 MB of page source. Linked assets remain referenced by their original URLs.</p>
             <label for="page-xml-input">Or paste page XML</label>
             <textarea id="page-xml-input" rows="10" spellcheck="false" placeholder="Paste your da-page XML export or XHTML page here"></textarea>
-            <button id="import-page" type="button" class="primary">Import page XML</button>
+            <button id="import-page" type="button" class="primary">Review page XML</button>
           </div>
           <div>
             <p id="page-import-status" class="hint" role="status">Import XML to preview the page content.</p>
@@ -58,13 +72,23 @@
           <p class="hint">After importing, review the page in DA, then use Send → Preview / Publish. Page imports use the regular page editor.</p>
         </div>
         <dialog id="page-overwrite-dialog" aria-labelledby="page-overwrite-heading" aria-describedby="page-overwrite-warning">
-          <h2 id="page-overwrite-heading">Overwrite current page content?</h2>
+          <h2 id="page-overwrite-heading" tabindex="-1" autofocus>Overwrite current page content?</h2>
           <p id="page-overwrite-warning">Are you sure? This will overwrite all existing content and page metadata on <strong id="page-overwrite-path"></strong> with the imported content.</p>
-          <div class="actions"><button id="cancel-page-overwrite" type="button" autofocus>Cancel</button><button id="confirm-page-overwrite" type="button" class="danger">Overwrite and import</button></div>
+          <p id="page-compare-summary"></p>
+          <div class="comparison-content">
+            <section><h3>Saved page content</h3><pre id="page-compare-before"></pre></section>
+            <section><h3>Incoming content</h3><pre id="page-compare-after"></pre></section>
+          </div>
+          <h3>Page metadata</h3>
+          <p id="page-metadata-empty" class="hint" hidden>No page metadata in either source.</p>
+          <div class="comparison-table" role="region" aria-label="Page metadata comparison" tabindex="0"><table><thead><tr><th scope="col">Field</th><th scope="col">Saved</th><th scope="col">Incoming</th><th scope="col">Change</th></tr></thead><tbody id="page-compare-metadata"></tbody></table></div>
+          <p class="hint">The content comparison shows wording, destinations and image descriptions. Review the imported preview for formatting. Block counts exclude page metadata blocks.</p>
+          <button id="download-page-backup" type="button">Download saved page backup</button>
+          <div class="actions"><button id="cancel-page-overwrite" type="button">Cancel</button><button id="confirm-page-overwrite" type="button" class="danger">Overwrite and import</button></div>
         </dialog>
       </section>
       <details class="product-tools">
-        <summary>Product XML demo</summary>
+        <summary>Advanced: product XML demo</summary>
       <div class="workspace">
         <section class="panel" aria-labelledby="import-heading">
           <div class="panel-heading"><h2 id="import-heading">1. Import XML</h2><button id="sample" type="button">Try sample</button></div>
@@ -112,19 +136,7 @@
         </section>
       </div>
       </details>
-      <section class="panel page-export" aria-labelledby="page-export-heading">
-        <h2 id="page-export-heading">Export an existing DA page</h2>
-        <p class="hint">Export any saved page in this site. Save your editor changes first; unsaved changes and separately referenced fragments are not included.</p>
-        <label for="page-path">Page path</label>
-        <input id="page-path" type="text" value="/home" placeholder="/home" spellcheck="false">
-        <button id="export-page" type="button" class="primary" disabled>Load page for XML export</button>
-        <p id="page-export-status" class="hint" role="status">Open XML Tools inside DA to load an existing page.</p>
-        <div id="page-export-result" hidden>
-          <details><summary>Page XML</summary><textarea id="page-xml-output" aria-label="Page XML" rows="12" readonly spellcheck="false"></textarea></details>
-        </div>
-        <button id="download-page" type="button" disabled>Download page XML</button>
-        <p class="hint">The general da-page format includes a section and block inventory plus the complete saved HTML in source-html. Import this XML above to create a new DA page or replace the current page after confirmation. Linked assets stay referenced; product XML uses a separate schema.</p>
-      </section>
+
     </main>
   </body>
 </html>

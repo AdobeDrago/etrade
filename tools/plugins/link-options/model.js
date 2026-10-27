@@ -2,6 +2,7 @@ import {
   authorTrackingHref, cleanTrackingHref, DEFAULT_CATEGORY,
   trackingCategories, trackingParameters, validTrackingKey,
 } from '../../../scripts/tracking-attributes.js';
+import { authorRouteHref, cleanRouteHref, routeSettings } from '../../../scripts/route-links.js';
 
 function fail(field, message) {
   throw Object.assign(new Error(message), { field });
@@ -22,9 +23,33 @@ export function readSelectedLink(html) {
     tracking.category = link.dataset.trackingCategory ?? DEFAULT_CATEGORY;
   }
   return {
-    href: cleanTrackingHref(href),
+    href: cleanRouteHref(cleanTrackingHref(href)),
     label: link.textContent.trim() || link.querySelector('img')?.alt || 'Image link',
+    target: link.getAttribute('target') || '_self',
+    route: routeSettings(href),
     ...tracking,
+  };
+}
+
+/** Explain the author settings without implying a reporting event has been sent. */
+export function linkSummary(options) {
+  const categories = trackingCategories(options.category);
+  const names = { C0002: 'Analytics', C0004: 'Advertising' };
+  let opening = 'Keep the opening behavior set in DA';
+  if (options.target === '_blank') opening = 'Opens in a new tab or window';
+  else if (options.target === '_self') opening = 'Opens in the same tab';
+  else if (options.target) opening = `Opens in target “${options.target}”`;
+  return {
+    label: options.label || 'Load a selected link to see its wording',
+    destination: options.href.trim() || 'Add a destination below',
+    opening,
+    condition: options.route?.enabled
+      ? `Alternate wording and destination under ${options.route.paths || 'the paths below'}; default everywhere else`
+      : 'Same wording and destination on every page',
+    tracking: options.enabled ? `Reports clicks using “${options.key.trim() || 'add a tracking key'}”` : 'Link click tracking is off',
+    consent: options.enabled
+      ? categories?.map((id) => `${names[id] || 'Custom category'} (${id})`).join(' + ') || 'Choose valid consent categories'
+      : 'No consent category added by this tool',
   };
 }
 
@@ -48,7 +73,12 @@ export function composeLinkURL(options) {
   if (options.enabled && !required) {
     fail('custom-category', 'Use consent category IDs such as C0004 or C0002,C0004.');
   }
-  return authorTrackingHref(href, {
-    enabled: options.enabled, key, category: required || DEFAULT_CATEGORY,
-  });
+  try {
+    return authorRouteHref(authorTrackingHref(href, {
+      enabled: options.enabled, key, category: required || DEFAULT_CATEGORY,
+    }), options.route);
+  } catch (error) {
+    const field = { label: 'route-label', href: 'route-url' }[error.field] || 'route-paths';
+    throw Object.assign(error, { field });
+  }
 }

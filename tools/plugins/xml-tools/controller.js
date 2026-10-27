@@ -2,7 +2,7 @@ import {
   DEMO_FOLDER, FIELDS, MAX_XML_BYTES, SAMPLE_XML, demoPath, loadProduct,
   parseProductXml, productXml, saveProduct, validateProduct,
 } from './model.js';
-import { loadPageXml } from './page-xml.js';
+import { currentPagePath, loadPageXml } from './page-xml.js';
 import mountPageImport from './page-import.js';
 
 export default function mountXmlTools(doc, { download } = {}) {
@@ -16,6 +16,10 @@ export default function mountXmlTools(doc, { download } = {}) {
   let pageExport;
   let pageDirty = false;
   let connectionRevision = 0;
+
+  function currentPath() {
+    try { return currentPagePath(sdk?.context); } catch { return undefined; }
+  }
 
   function status(message, error = false) {
     byId('status').textContent = message;
@@ -54,6 +58,7 @@ export default function mountXmlTools(doc, { download } = {}) {
     byId('load').disabled = busy || !sdk;
     byId('page-path').disabled = busy;
     byId('export-page').disabled = busy || !sdk;
+    byId('export-current-page').disabled = busy || !currentPath();
     byId('download-page').disabled = busy || !pageExport;
     byId('product-preview').hidden = !valid;
     byId('preview-empty').hidden = Boolean(valid);
@@ -160,6 +165,12 @@ export default function mountXmlTools(doc, { download } = {}) {
     byId('page-export-status').textContent = 'Load the saved page to create its XML export.';
     render();
   });
+  byId('export-current-page').addEventListener('click', () => {
+    if (busy || !currentPath()) return;
+    byId('page-path').value = currentPath();
+    pageDirty = false;
+    byId('export-page').click();
+  });
   byId('export-page').addEventListener('click', async () => {
     if (busy || !sdk) return;
     const connection = sdk;
@@ -201,8 +212,10 @@ export default function mountXmlTools(doc, { download } = {}) {
       }
       byId('connection').textContent = `Connected · ${sdk.context.org}/${sdk.context.repo}`;
       byId('save-help').textContent = 'Save a demo document, then open its SC editor to review and publish. Your current page is unchanged.';
-      byId('page-export-status').textContent = 'Enter a saved page path, then load it to create its XML export.';
-      status('Connected to DA. Import XML or load a saved demo document.');
+      byId('page-export-status').textContent = currentPath()
+        ? `Editing ${currentPath()}. Export this page, or enter another saved page path.`
+        : 'Enter a saved page path, then prepare its XML export.';
+      status('Connected to DA. Export a saved page or review an XML file to import.');
       render();
     },
     connectionError(message) { status(message, true); },

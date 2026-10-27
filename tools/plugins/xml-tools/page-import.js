@@ -1,7 +1,8 @@
 import {
   MAX_PAGE_XML_BYTES, currentPagePath, loadCurrentPage, pagePath, pagePreview, parsePageXml,
-  replaceCurrentPage, samplePageXml, saveImportedPage,
+  pageXml, replaceCurrentPage, samplePageXml, saveImportedPage,
 } from './page-xml.js';
+import pageComparison from './page-review.js';
 
 export default function mountPageImport(doc, { download, onStatus } = {}) {
   const byId = (id) => doc.getElementById(id);
@@ -143,6 +144,22 @@ export default function mountPageImport(doc, { download, onStatus } = {}) {
     try {
       const snapshot = await loadCurrentPage(sdk.context, sdk.actions.daFetch);
       if (revision !== current) return;
+      const comparison = pageComparison(snapshot.source, imported.source);
+      byId('page-compare-before').textContent = comparison.before.text || '(No text content)';
+      byId('page-compare-after').textContent = comparison.after.text || '(No text content)';
+      byId('page-compare-summary').textContent = `Saved: ${comparison.before.sections} section(s), ${comparison.before.blocks} block(s). Incoming: ${comparison.after.sections} section(s), ${comparison.after.blocks} block(s).`;
+      const metadata = byId('page-compare-metadata');
+      metadata.replaceChildren();
+      comparison.metadata.forEach((entry) => {
+        const row = doc.createElement('tr');
+        [entry.key, entry.before || '(Not set)', entry.after || '(Not set)', entry.changed ? 'Changed' : 'Unchanged'].forEach((value) => {
+          const cell = doc.createElement('td');
+          cell.textContent = value;
+          row.append(cell);
+        });
+        metadata.append(row);
+      });
+      byId('page-metadata-empty').hidden = Boolean(comparison.metadata.length);
       pendingOverwrite = { snapshot, imported };
       byId('page-overwrite-path').textContent = snapshot.path;
       dialog.showModal();
@@ -163,6 +180,14 @@ export default function mountPageImport(doc, { download, onStatus } = {}) {
   }
 
   byId('cancel-page-overwrite').addEventListener('click', cancelOverwrite);
+  byId('download-page-backup').addEventListener('click', () => {
+    if (!pendingOverwrite || busy) return;
+    try {
+      const { snapshot } = pendingOverwrite;
+      download(pageXml(snapshot.source, sdk.context, snapshot.path), `${snapshot.path.slice(1).replaceAll('/', '--')}-before-import.xml`);
+      status('Saved page backup downloaded. Review the comparison before confirming the import.');
+    } catch (error) { status(error.message, true); }
+  });
   dialog.addEventListener('cancel', cancelOverwrite);
   byId('confirm-page-overwrite').addEventListener('click', async () => {
     if (busy || !pendingOverwrite || !sdk) return;

@@ -19,6 +19,18 @@
       <p id="status" class="status" role="status" aria-live="polite">Paste a destination URL below, or open this tool inside DA to load a selected link.</p>
       <p id="demo-notice" class="hint" hidden>Home example · This helper copies a URL. It does not change or publish DA content.</p>
       <p id="selection-label" class="hint"></p>
+      <section class="link-summary" aria-labelledby="link-summary-heading">
+        <h2 id="link-summary-heading">What this link does</h2>
+        <dl>
+          <dt>Wording</dt><dd id="summary-label"></dd>
+          <dt>Destination</dt><dd id="summary-destination"></dd>
+          <dt>Opening</dt><dd id="summary-opening"></dd>
+          <dt>Page condition</dt><dd id="summary-condition"></dd>
+          <dt>Click reporting</dt><dd id="summary-tracking"></dd>
+          <dt>Required consent</dt><dd id="summary-consent"></dd>
+        </dl>
+        <p class="hint">This summary updates as you edit. Reporting waits for all required consent categories. Wording and opening behavior are read from the selected link and stay in DA’s Edit link dialog.</p>
+      </section>
       <form id="link-form" novalidate>
         <fieldset id="fields">
           <legend>Link details</legend>
@@ -35,7 +47,7 @@
               <input id="tracking-key" type="text" maxlength="160" placeholder="e.g. hero-open-account" autocomplete="off" spellcheck="false" aria-describedby="tracking-help">
               <p id="tracking-help" class="hint">Use a stable name that identifies this interaction in reports.</p>
               <details id="advanced">
-                <summary>Advanced</summary>
+                <summary>Consent settings</summary>
                 <label for="category">Required consent</label>
                 <select id="category" aria-describedby="category-help">
                   <option value="C0004">Advertising · C0004</option>
@@ -51,8 +63,27 @@
               </details>
             </div>
           </section>
+          <section class="route-options" aria-label="Page path condition">
+            <label class="switch" for="route-enabled">
+              <span><strong>Change this link on matching pages</strong><small>One path rule with a default everywhere else.</small></span>
+              <input id="route-enabled" type="checkbox" role="switch" aria-controls="route-fields">
+            </label>
+            <div id="route-fields" hidden>
+              <label for="route-paths">When the page is under</label>
+              <input id="route-paths" type="text" value="/brokerage, /what-we-offer" aria-describedby="route-paths-help" spellcheck="false">
+              <p id="route-paths-help" class="hint">Comma-separated page paths. /brokerage matches that page and its subpages, including .html URLs; it does not match /brokerage-other. The rule uses the page displaying the link, including shared fragments.</p>
+              <label for="route-label">Wording on matching pages</label>
+              <input id="route-label" type="text" maxlength="160" placeholder="e.g. Explore brokerage accounts">
+              <label for="route-url">Destination on matching pages</label>
+              <input id="route-url" type="text" maxlength="2048" placeholder="/what-we-offer/our-accounts" spellcheck="false">
+              <p class="hint">Other pages keep the default URL above and the wording authored in DA. Both versions use the same tracking key, consent and opening behavior. This rule supports text links and text buttons; image and icon links keep their default.</p>
+              <label for="preview-path">Preview on page path</label>
+              <input id="preview-path" type="text" value="/home" spellcheck="false">
+              <p id="route-preview" class="route-preview" role="status"></p>
+            </div>
+          </section>
           <section class="output" aria-label="Generated link URL">
-            <label for="output-url">URL to copy</label>
+            <label for="output-url">1. Copy this URL</label>
             <input id="output-url" type="text" readonly spellcheck="false" aria-describedby="output-help">
             <p id="output-help" class="hint"></p>
             <p id="manual-copy" class="hint" hidden>Use ⌘C on Mac or Ctrl+C on Windows to copy the selected URL.</p>
@@ -61,7 +92,7 @@
             <button id="copy" class="primary" type="submit">Copy URL</button>
             <button id="close" type="button" hidden>Close</button>
           </div>
-          <p class="hint">Display text and title stay in DA’s existing link dialog. Save and preview the page in DA after pasting the URL.</p>
+          <p class="hint">2. Close this tool and open DA’s Edit link dialog. 3. Paste into URL, then Save. Save and preview the page to check the result.</p>
         </fieldset>
       </form>
     </main>

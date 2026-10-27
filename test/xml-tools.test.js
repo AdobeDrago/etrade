@@ -12,6 +12,7 @@ import {
   currentPagePath, loadCurrentPage, loadPageXml, pagePath, pagePreview, pageXml, parsePageXml,
   replaceCurrentPage, samplePageXml, saveImportedPage,
 } from '../tools/plugins/xml-tools/page-xml.js';
+import pageComparison from '../tools/plugins/xml-tools/page-review.js';
 
 class BrowserParser {
   // linkedom needs the HTML wrapper supplied by browser DOMParser.
@@ -335,14 +336,14 @@ test('current-page import refuses changed, missing, protected or inaccessible pa
   assert.equal(mock.writes.length, 0);
 });
 
-function currentPageUi(mock = service({ '/home': pageSource }), connectedContext = editorContext) {
+function currentPageUi(mock = service({ '/home': pageSource }), connectedContext = editorContext, download = () => {}) {
   const { document, window } = parseHTML(html);
   const byId = (id) => document.getElementById(id);
   // linkedom has no native dialog implementation; browser QA covers modal focus and Escape.
   const dialog = byId('page-overwrite-dialog');
   dialog.showModal = () => { dialog.open = true; };
   dialog.close = () => { dialog.open = false; };
-  const controller = mountXmlTools(document, { download: () => {} });
+  const controller = mountXmlTools(document, { download });
   controller.connect({ context: connectedContext, actions: { daFetch: mock.request } });
   byId('page-sample').click();
   byId('page-import-target').querySelector('[value="new"]').removeAttribute('selected');
@@ -354,6 +355,63 @@ function currentPageUi(mock = service({ '/home': pageSource }), connectedContext
 }
 
 const settle = () => new Promise((resolve) => { setImmediate(resolve); });
+
+test('the saved-page backup is an exact restorable snapshot and does not authorize an overwrite', async () => {
+  const downloads = [];
+  const { byId, mock, dialog } = currentPageUi(
+    undefined,
+    undefined,
+    (...args) => downloads.push(args),
+  );
+  byId('download-page-backup').click();
+  assert.equal(downloads.length, 0);
+  byId('import-current-page').click();
+  await settle();
+  byId('download-page-backup').click();
+  assert.equal(downloads[0][1], 'home-before-import.xml');
+  assert.equal(parsePageXml(downloads[0][0]).source, pageSource);
+  assert.equal(dialog.open, true);
+  assert.equal(mock.writes.length, 0);
+  byId('cancel-page-overwrite').click();
+  byId('confirm-page-overwrite').click();
+  assert.equal(mock.writes.length, 0);
+});
+
+test('page comparison exposes text, link destinations and changed or removed metadata without changing source', () => {
+  const before = '<body><main><div><h1>Saved heading</h1><p><a href="/old">Explore</a></p><div class="metadata"><div><div>Title</div><div>Saved title</div></div><div><div>Disclosures</div><div>/legal</div></div></div></div></main></body>';
+  const after = '<body><main><div><h1>Incoming heading</h1><p><a href="/new">Explore</a></p><table><tr><th colspan="2">Metadata</th></tr><tr><td>Title</td><td>Incoming title</td></tr></table></div></main></body>';
+  const comparison = pageComparison(before, after);
+  assert.match(comparison.before.text, /Saved heading\nExplore \(\/old\)/);
+  assert.match(comparison.after.text, /Incoming heading\nExplore \(\/new\)/);
+  assert.doesNotMatch(comparison.before.text, /Saved title|\/legal/);
+  assert.deepEqual(comparison.metadata, [
+    {
+      key: 'disclosures', before: '/legal', after: '', changed: true,
+    },
+    {
+      key: 'title', before: 'Saved title', after: 'Incoming title', changed: true,
+    },
+  ]);
+  assert.equal(comparison.before.blocks, 0);
+  assert.equal(comparison.after.blocks, 0);
+  assert.ok(before.includes('/old'));
+  assert.ok(after.includes('/new'));
+});
+
+test('export this page uses the connected editor path and never writes content', async () => {
+  const { document } = parseHTML(html);
+  const mock = service({ '/what-we-offer/pricing-and-rates': pageSource });
+  const downloads = [];
+  const controller = mountXmlTools(document, { download: (...args) => downloads.push(args) });
+  controller.connect({ context: { ...editorContext, path: '/what-we-offer/pricing-and-rates' }, actions: { daFetch: mock.request } });
+  document.getElementById('page-path').value = '/other';
+  document.getElementById('export-current-page').click();
+  await settle();
+  assert.equal(document.getElementById('page-path').value, '/what-we-offer/pricing-and-rates');
+  document.getElementById('download-page').click();
+  assert.match(downloads[0][0], /path="\/what-we-offer\/pricing-and-rates"/);
+  assert.equal(mock.writes.length, 0);
+});
 
 test('current-page option shows the host path and Cancel or Escape never writes content', async () => {
   const {
@@ -368,6 +426,9 @@ test('current-page option shows the host path and Cancel or Escape never writes 
   await settle();
   assert.equal(dialog.open, true);
   assert.equal(byId('page-overwrite-path').textContent, '/home');
+  assert.match(byId('page-compare-summary').textContent, /Saved:.*Incoming:/);
+  assert.ok(byId('page-compare-before').textContent);
+  assert.match(byId('page-compare-after').textContent, /Investing with confidence/);
   assert.equal(mock.writes.length, 0);
   byId('cancel-page-overwrite').click();
   byId('confirm-page-overwrite').click();

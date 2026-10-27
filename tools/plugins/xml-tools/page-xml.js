@@ -48,7 +48,7 @@ export function pageXml(source, context, input) {
 
 function sourceUrl(context, path) {
   if (![context?.org, context?.repo].every((part) => typeof part === 'string' && /^[a-z0-9-]+$/i.test(part))) {
-    throw new Error('Open XML Tools inside DA to connect to your site.');
+    throw new Error('Open Import & Export inside DA to connect to your site.');
   }
   const encoded = path.split('/').map((part) => encodeURIComponent(part)).join('/');
   return `https://admin.da.live/source/${context.org}/${context.repo}${encoded}.html`;
@@ -125,7 +125,7 @@ export function samplePageXml() {
 
 export function currentPagePath(context) {
   if (!['edit', 'canvas'].includes(context?.view) || typeof context.path !== 'string') {
-    throw new Error('Open XML Tools from a DA page editor to import onto the current page.');
+    throw new Error('Open Import & Export from a DA page editor to import onto the current page.');
   }
   const path = pagePath(context.path);
   if (path.split('/').some((part) => part.startsWith('.'))) throw new Error('Cannot import onto a hidden configuration page.');

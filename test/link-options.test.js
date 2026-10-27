@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { DOMParser, parseHTML } from 'linkedom';
-import { composeLinkURL, readSelectedLink } from '../tools/plugins/link-options/model.js';
+import { composeLinkURL, linkSummary, readSelectedLink } from '../tools/plugins/link-options/model.js';
 import mountLinkOptions from '../tools/plugins/link-options/controller.js';
 import { decorateTrackingLinks } from '../scripts/tracking.js';
 
@@ -23,11 +23,33 @@ const settle = () => new Promise((resolve) => { setImmediate(resolve); });
 test('reads a single selected link inside DA table wrappers without changing markup', () => {
   const html = '<table><tbody><tr><td><p><strong><a href="../home?tracking=real&amp;%40tracking=hero-home&amp;%40tracking-category=C0002%2CC0004#offer">Home</a></strong></p></td></tr></tbody></table>';
   assert.deepEqual(readSelectedLink(html), {
-    href: '../home?tracking=real#offer', label: 'Home', enabled: true, key: 'hero-home', category: 'C0002,C0004',
+    href: '../home?tracking=real#offer',
+    label: 'Home',
+    target: '_self',
+    enabled: true,
+    key: 'hero-home',
+    category: 'C0002,C0004',
+    route: {
+      enabled: false, paths: '', label: '', href: '',
+    },
   });
   assert.ok(html.includes('<strong><a'));
   assert.throws(() => readSelectedLink('<p>Unlinked text</p>'), /Select one complete link/);
   assert.throws(() => readSelectedLink('<a href="/a">A</a><a href="/b">B</a>'), /Select one complete link/);
+});
+
+test('link inspector describes selected opening behavior and consent without changing the link', () => {
+  const selected = readSelectedLink('<a href="/home" target="_blank">Explore &amp; learn</a>');
+  const summary = linkSummary({
+    ...selected, enabled: true, key: 'hero', category: 'C0002,C0004',
+  });
+  assert.equal(summary.label, 'Explore & learn');
+  assert.equal(summary.destination, '/home');
+  assert.equal(summary.opening, 'Opens in a new tab or window');
+  assert.equal(summary.consent, 'Analytics (C0002) + Advertising (C0004)');
+  assert.match(summary.tracking, /hero/);
+  assert.equal(linkSummary(settings({ enabled: false })).tracking, 'Link click tracking is off');
+  assert.match(linkSummary(settings()).opening, /Keep the opening behavior/);
 });
 
 test('reads image labels and explicit data attributes, and exposes invalid settings for correction', () => {
@@ -133,6 +155,27 @@ test('URL helper can work without DA, including pasted markers, toggling off and
   await submit();
   assert.equal(copies[1], '/home?tracking=campaign');
   assert.equal(byId('tracking-fields').hidden, true);
+});
+
+test('route options reload from authored URLs and preview wording and destination together', async () => {
+  const { byId, controller, edit } = await ui();
+  controller.fill(settings({ label: 'Explore accounts', target: '_self' }));
+  edit('route-enabled', true, 'change');
+  edit('route-label', 'Explore brokerage');
+  edit('route-url', '/accounts/brokerage');
+  edit('preview-path', '/what-we-offer/pricing-and-rates');
+  assert.match(byId('route-preview').textContent, /Matching pages: “Explore brokerage” → \/accounts\/brokerage/);
+  const authored = byId('output-url').value;
+  const selected = readSelectedLink(`<a href="${authored.replaceAll('&', '&amp;')}">Explore accounts</a>`);
+  controller.fill(selected);
+  assert.equal(byId('route-enabled').checked, true);
+  assert.equal(byId('route-label').value, 'Explore brokerage');
+  assert.equal(byId('url').value, '/home');
+  edit('preview-path', '/planning');
+  assert.match(byId('route-preview').textContent, /Default: “Explore accounts” → \/home/);
+  edit('route-enabled', false, 'change');
+  assert.doesNotMatch(byId('output-url').value, /@link-/);
+  assert.match(byId('output-url').value, /@tracking=home-link/);
 });
 
 test('clipboard failure offers manual copy; invalid settings never claim a successful copy', async () => {

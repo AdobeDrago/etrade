@@ -1,5 +1,6 @@
-import { composeLinkURL, readSelectedLink } from './model.js';
+import { composeLinkURL, linkSummary, readSelectedLink } from './model.js';
 import { cleanTrackingHref, trackingCategories, trackingParameters } from '../../../scripts/tracking-attributes.js';
+import { cleanRouteHref, resolveRouteLink, routeSettings } from '../../../scripts/route-links.js';
 
 export default function mountLinkOptions(doc, {
   copy = (value) => navigator.clipboard.writeText(value),
@@ -10,6 +11,7 @@ export default function mountLinkOptions(doc, {
   let revision = 0;
   let loading = false;
   let copying = false;
+  let selectedLink = {};
   function status(text, error = false) {
     byId('status').textContent = text;
     byId('status').classList.toggle('error', error);
@@ -17,6 +19,7 @@ export default function mountLinkOptions(doc, {
   function toggleTracking() {
     byId('tracking-fields').hidden = !byId('track-clicks').checked;
     byId('custom-category-field').hidden = byId('category').value !== 'custom';
+    byId('route-fields').hidden = !byId('route-enabled').checked;
   }
   function setCategory(category) {
     const normalized = trackingCategories(category)?.join(',') || category;
@@ -32,26 +35,46 @@ export default function mountLinkOptions(doc, {
       key: byId('tracking-key').value,
       category: byId('category').value === 'custom'
         ? byId('custom-category').value : byId('category').value,
+      route: {
+        enabled: byId('route-enabled').checked,
+        paths: byId('route-paths').value,
+        label: byId('route-label').value,
+        href: byId('route-url').value,
+      },
     };
   }
   function render() {
     toggleTracking();
+    const summary = linkSummary({ ...selectedLink, ...options() });
+    Object.entries(summary).forEach(([key, value]) => { byId(`summary-${key}`).textContent = value; });
     byId('copy').textContent = 'Copy URL';
     byId('manual-copy').hidden = true;
     doc.querySelectorAll('[aria-invalid]').forEach((input) => input.removeAttribute('aria-invalid'));
     try {
       byId('output-url').value = composeLinkURL(options());
+      const previewPath = byId('preview-path').value.trim();
+      const preview = previewPath.startsWith('/') && !previewPath.startsWith('//')
+        ? resolveRouteLink(byId('output-url').value, `https://preview.example${previewPath}`) : undefined;
+      byId('route-preview').textContent = preview
+        ? `${preview.matched ? 'Matching pages' : 'Default'}: “${preview.label || selectedLink.label || 'Your default wording'}” → ${cleanTrackingHref(preview.href)}`
+        : 'Enter a page path beginning with / to preview the result.';
       byId('output-help').textContent = 'Paste this into the URL field in DA’s Edit link dialog, then Save.';
     } catch {
       byId('output-url').value = '';
       byId('output-help').textContent = 'Complete the destination and any enabled tracking settings to generate a URL.';
+      byId('route-preview').textContent = 'Complete the link settings to preview both wording and destination.';
     }
   }
   function fill(settings) {
     revision += 1;
+    selectedLink = { label: settings.label, target: settings.target };
     byId('url').value = settings.href;
     byId('track-clicks').checked = settings.enabled;
     byId('tracking-key').value = settings.key;
+    byId('route-enabled').checked = Boolean(settings.route?.enabled);
+    byId('route-paths').value = settings.route?.paths || '/brokerage, /what-we-offer';
+    byId('route-label').value = settings.route?.label || '';
+    byId('route-url').value = settings.route?.href || '';
     setCategory(settings.category);
     render();
   }
@@ -88,9 +111,18 @@ export default function mountLinkOptions(doc, {
   byId('link-form').addEventListener('input', () => { dirty = true; revision += 1; render(); });
   byId('category').addEventListener('change', render);
   byId('track-clicks').addEventListener('change', render);
+  byId('route-enabled').addEventListener('change', render);
   byId('url').addEventListener('change', () => {
     const settings = trackingParameters(byId('url').value);
-    if (settings.enabled) fill({ ...settings, href: cleanTrackingHref(byId('url').value) });
+    const route = routeSettings(byId('url').value);
+    if (settings.enabled || route.enabled) {
+      fill({
+        ...selectedLink,
+        ...settings,
+        route,
+        href: cleanRouteHref(cleanTrackingHref(byId('url').value)),
+      });
+    }
   });
   byId('link-form').addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -144,6 +176,7 @@ export default function mountLinkOptions(doc, {
       if (!connection.actions?.getSelection) return;
       revision += 1;
       sdk = connection;
+      if (!dirty && connection.context?.path) byId('preview-path').value = connection.context.path;
       byId('load-selection').disabled = false;
       byId('close').hidden = false;
       if (!dirty) await loadSelection();

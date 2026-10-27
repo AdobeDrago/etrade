@@ -21,7 +21,7 @@ if (!standalone) {
       const { default: sdk } = await import('https://da.live/nx/utils/sdk.js');
       controller.connect(await sdk);
     } catch {
-      controller.connectionError('Could not connect to DA. Reopen XML Tools from the Library. Import, editing, and XML download remain available.');
+      controller.connectionError('Could not connect to DA. Reopen Import & Export from the Library. Import, editing, and XML download remain available.');
     }
   })();
 }

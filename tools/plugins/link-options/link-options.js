@@ -6,7 +6,7 @@ async function init() {
   if (demo) {
     document.getElementById('demo-notice').hidden = false;
     controller.fill({
-      href: '/home?campaign=fall', enabled: true, key: 'home-link', category: 'C0004',
+      href: '/home?campaign=fall', label: 'Explore accounts', target: '_self', enabled: true, key: 'home-link', category: 'C0004',
     });
     return;
   }
