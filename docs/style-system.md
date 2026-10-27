@@ -88,6 +88,7 @@ Tokens are ordinary CSS custom properties. There is no token compiler, generated
 | Text roles | `--text-body-size`, `--text-card-heading-size`, `--text-section-heading-size` | Sizes that express a recurring text purpose |
 | Text rhythm | `--line-height-copy`, `--tracking-tight` | Unitless line height and shared letter spacing |
 | Spacing | `--space-24`, `--spacing-l` | Numeric scale and author-facing names |
+| Proportions | `--percent-35`, `--percent-75` | Percentage values for automatic section transition bends |
 | Layout | `--layout-container-max`, `--layout-card-min`, `--layout-gutter` | Shared bounds, grid behavior, and gutters |
 | Shape and interaction | `--radius-card`, `--border-width-thin`, `--focus-ring-width`, `--shadow-popover` | Surfaces, strokes, focus, and elevation |
 | Motion and stacking | `--motion-duration-normal`, `--motion-easing-standard`, `--layer-header` | Transition timing and shared stacking order |
@@ -104,7 +105,10 @@ The palette combines the supplied brand reference with retained component, campa
 - The root font size stays unset so rem sizes follow browser preferences. Line-height tokens are unitless.
 - `--tracking-tight` is `calc(-1rem / 64)`, equivalent to `-0.25px` at the default root size. Use it for the shared small negative letter spacing identified during PR 21 review.
 - Thin strokes, physical container limits, the header reserve, chart coordinates, and asset geometry can retain physical dimensions.
+- The header reserve is 88px below 1085px and 110px above that breakpoint. It is a physical minimum; the navigation can grow with its contents.
 - Reduced-motion preferences set shared motion durations to zero. A block inherits this behavior only when its transitions consume those tokens.
+
+Automatic separators use the existing semantic surface colors and read `--percent-35`, `--percent-50`, `--percent-65`, or `--percent-75` from the preceding section when created. Theme or section overrides can supply a plain percentage. Authored Separator tables retain their explicit colors and bend positions.
 
 Existing block-specific text sizes remain where needed to preserve their reference layouts. Semantic text-role adoption is not complete across every heading; changing `--text-section-heading-size` does not resize every custom hero heading.
 

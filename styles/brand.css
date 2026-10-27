@@ -191,6 +191,7 @@
   --space-24: 1.5rem;
   --space-30: 1.875rem;
   --space-32: 2rem;
+  --space-36: 2.25rem;
   --space-40: 2.5rem;
   --space-48: 3rem;
   --space-60: 3.75rem;
@@ -205,6 +206,12 @@
   --spacing-l: var(--space-24);
   --spacing-xl: var(--space-32);
   --spacing-xxl: var(--space-48);
+
+  /* Proportions used by automatic section transitions. */
+  --percent-35: 35%;
+  --percent-50: 50%;
+  --percent-65: 65%;
+  --percent-75: 75%;
 
   /* Layout. Physical widths preserve the existing page grid and header reserve. */
   --layout-container-max: 1200px;
@@ -287,7 +294,7 @@
 
 @media (width >= 1085px) {
   :root {
-    --layout-header-height: 110.1875px;
+    --layout-header-height: 110px;
   }
 }
 

@@ -35,7 +35,7 @@ main .section > .market-top-five-wrapper {
 .market-top-five select {
   max-width: 100%;
   min-width: 0;
-  padding: var(--space-4) 2.25rem var(--space-4) var(--space-12);
+  padding: var(--space-4) var(--space-36) var(--space-4) var(--space-12);
   border: 0;
   border-bottom: var(--border-width-thin) solid var(--color-link);
   background: var(--color-surface-default);
@@ -148,7 +148,7 @@ main .section > .market-top-five-wrapper {
 
 @media (width >= 768px) {
   .market-top-five .market-top-five-cards {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, max(10rem, calc((100% - 4 * var(--space-16)) / 5))), 1fr));
+    grid-template-columns: var(--market-top-five-grid-columns);
     gap: var(--space-16);
   }
 
@@ -164,6 +164,8 @@ main .section > .market-top-five-wrapper {
 }
 
 .market-top-five {
+  /* This five-quote grid has a smaller minimum than the shared card grid. */
+  --market-top-five-grid-columns: repeat(auto-fit, minmax(min(100%, max(10rem, calc((100% - 4 * var(--space-16)) / 5))), 1fr));
   --text-color: var(--color-text-primary);
   --link-color: var(--color-link);
   --link-hover-color: var(--color-link-hover);
