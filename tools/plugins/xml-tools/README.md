@@ -40,6 +40,17 @@ Use `inline` to keep the tool in the editor sidebar; the import comparison remai
 
 Open [the DA homepage editor](https://da.live/canvas#/adobedrago/etrade/home), then **Outline dropdown → Extensions → Import & Export**. In the classic editor, use **Library → Import & Export**. Page imports create a separate destination by default. Selecting the current-page destination and confirming the warning overwrites the host page. Product imports continue to save records under `/xml-demo/products/`.
 
+## Deploy to another DA site
+
+The registration and editor links above target the AdobeDrago E*TRADE demo. When copying the tool to a customer site:
+
+- Deploy `tools/plugins/xml-tools/` together, then set the customer's Library entry to `https://{branch}--{repo}--{org}.aem.live/tools/plugins/xml-tools/xml-tools.html` using that site's deployed branch, repository, and organization. Keep **experience** set to `inline`.
+- Register the entry in the customer's `https://da.live/config#/{org}/{repo}/` and open it from that site's DA editor. Source API requests, editor links, and Structured Content delivery links use the DA SDK's connected organization and repository; they do not use the registration example's tenant. Adobe service hosts such as `admin.da.live` remain unchanged.
+- Update the E*TRADE title/eyebrow in `xml-tools.html` and the illustrative content in `samplePageXml()` in `page-xml.js` for the customer. Choose suitable demo destinations if `/xml-demo/pages/` and `/xml-demo/products/` are not appropriate; product paths and schema are defined in `model.js`.
+- Review linked media, fragments, and relative paths in imported source. Importing preserves those references and does not copy assets between sites.
+
+First verify export and new-page import on a disposable customer page, then preview through that site's normal DA workflow. Saving through this tool does not publish content.
+
 ## Save, edit, and publish
 
 1. Expand **Advanced: product XML demo**. Import product XML or choose **Try sample**. Edit the fields and choose a document path under `/xml-demo/products/`.
