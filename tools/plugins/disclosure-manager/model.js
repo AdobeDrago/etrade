@@ -88,8 +88,21 @@ export function parseSetSource(source, path) {
       fragment: cellFor(target, 'fragment')?.textContent.trim(),
     };
   });
+  const supporting = (key) => [...(cellFor(block, key)?.querySelector('ul, ol')?.children || [])]
+    .filter((item) => item.tagName === 'LI').map((item) => {
+      const reference = item.textContent.trim();
+      const target = reference.startsWith('self://#')
+        && blocks.find((entry) => entry.classList.contains(reference.slice(8).replaceAll('/', '-')));
+      if (!target) throw new Error(`A disclosure ${key} entry could not be resolved.`);
+      return { fragment: cellFor(target, 'fragment')?.textContent.trim(), kind: cellFor(target, 'kind')?.textContent.trim() };
+    });
   return {
-    source, path, doc, list, items, data: { disclosures },
+    source,
+    path,
+    doc,
+    list,
+    items,
+    data: { disclosures, introduction: supporting('introduction'), closing: supporting('closing') },
   };
 }
 
@@ -108,6 +121,18 @@ export function validateSet(model) {
     if (!path || /[%\s]/.test(path) || path.split('/').slice(1).some((part) => !part || part === '.' || part === '..')) {
       issues.push({ type: 'error', message: `Entry ${index + 1} needs a valid fragment path within this site.` });
     }
+  });
+  ['introduction', 'closing'].forEach((key) => {
+    if (model.data[key] !== undefined && !Array.isArray(model.data[key])) {
+      issues.push({ type: 'error', message: `The ${key} must be a list of fragment references.` });
+      return;
+    }
+    (model.data[key] || []).forEach((item, index) => {
+      const path = disclosureFragmentPath(item?.fragment);
+      if (!path || /[%\s]/.test(path) || path.split('/').slice(1).some((part) => !part || part === '.' || part === '..')) {
+        issues.push({ type: 'error', message: `${key} entry ${index + 1} needs a valid fragment path within this site.` });
+      }
+    });
   });
   return issues;
 }

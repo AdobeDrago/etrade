@@ -6,13 +6,13 @@ export default function decorateDisclosureReferences(main, disclosures = documen
   const usesIds = items.some((item) => item.dataset.disclosureId);
   items.forEach((item, index) => {
     const legacyId = item.id.match(/^disclosure-(\d+)$/)?.[1];
-    const id = item.dataset.disclosureId || legacyId;
     const number = Number(item.getAttribute('value') || legacyId || index + 1);
+    const id = item.dataset.disclosureId || legacyId || String(number);
     if (id && number > 0) {
       const target = { href: `#${item.id}`, number: String(number) };
       targets.set(id, target);
       // Pages may already author a–z IDs while preview still delivers the numeric schema.
-      const legacyNumber = Number(legacyId);
+      const legacyNumber = Number(id);
       if (!usesIds && legacyNumber >= 1 && legacyNumber <= 26) {
         targets.set(String.fromCharCode(96 + legacyNumber), target);
       }

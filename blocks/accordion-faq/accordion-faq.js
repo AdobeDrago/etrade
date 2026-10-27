@@ -1,4 +1,22 @@
+import decorateCardRates from '../../scripts/card-rates.js';
+
 let accordionCount = 0;
+const themeLayouts = new WeakMap();
+let themeObserver;
+
+function watchPageTheme(block, update) {
+  themeLayouts.set(block, update);
+  if (themeObserver || typeof MutationObserver === 'undefined') return;
+  themeObserver = new MutationObserver(() => {
+    document.querySelectorAll('.accordion-faq').forEach((accordion) => {
+      themeLayouts.get(accordion)?.();
+    });
+  });
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-page-theme'],
+  });
+}
 
 function takeAdjacentContent(block) {
   const wrapper = block.closest('.accordion-faq-wrapper');
@@ -59,7 +77,7 @@ function answerContent(cells) {
   content.className = 'accordion-faq-item-content';
   let paragraph;
   cells.forEach((cell) => {
-    [...cell.cloneNode(true).childNodes].forEach((node) => {
+    [...cell.childNodes].forEach((node) => {
       if (node.nodeType === Node.COMMENT_NODE) return;
       if (node.nodeType === Node.TEXT_NODE && !node.textContent.trim() && !paragraph) return;
       if (node.nodeType === Node.ELEMENT_NODE
@@ -98,13 +116,17 @@ function disclosureIcon(flat) {
 }
 
 /** One authored question/answer row per item. No FAQ copy is supplied by the block. */
-export default function decorate(block) {
+export default async function decorate(block) {
+  // Keep the original marker nodes so asynchronous rate updates reach the rendered answers.
+  const rates = decorateCardRates(block, { contentStart: 1, settingsStart: 2 });
   accordionCount += 1;
   const prefix = `accordion-faq-${accordionCount}`;
   const rows = [...block.children];
   // Preserve content authored with the former variant name.
   if (block.classList.contains('pricing')) block.classList.add('flat');
-  const flat = block.classList.contains('flat');
+  const authoredFlat = block.classList.contains('flat');
+  const usesFlatLayout = () => authoredFlat || document.documentElement.dataset.pageTheme === 'purple';
+  const flat = usesFlatLayout();
   const {
     heading, sectionHeading, introduction, action, auxiliary,
   } = takeAdjacentContent(block);
@@ -136,17 +158,15 @@ export default function decorate(block) {
     if (!title || !answers.length) return;
     const content = answerContent(answers);
     if (!content.textContent.trim() && !content.querySelector('img, picture, video, audio, iframe')) return;
-    if (flat) {
-      content.querySelectorAll('table').forEach((table) => {
-        const scroll = document.createElement('div');
-        scroll.className = 'accordion-faq-table';
-        scroll.tabIndex = 0;
-        scroll.setAttribute('role', 'region');
-        scroll.setAttribute('aria-label', `${title} table`);
-        table.replaceWith(scroll);
-        scroll.append(table);
-      });
-    }
+    content.querySelectorAll('table').forEach((table) => {
+      const scroll = document.createElement('div');
+      scroll.className = 'accordion-faq-table';
+      scroll.tabIndex = 0;
+      scroll.setAttribute('role', 'region');
+      scroll.setAttribute('aria-label', `${title} table`);
+      table.replaceWith(scroll);
+      scroll.append(table);
+    });
     const index = items.length + 1;
     const element = document.createElement('div');
     element.className = 'accordion-faq-item';
@@ -197,4 +217,24 @@ export default function decorate(block) {
   if (action) block.append(action);
   if (auxiliary) block.append(auxiliary);
   block.hidden = !block.children.length;
+
+  let currentLayout;
+  function updateLayout() {
+    const nextFlat = usesFlatLayout();
+    const layout = nextFlat ? 'flat' : 'cards';
+    if (layout === currentLayout) return;
+    currentLayout = layout;
+    block.dataset.faqLayout = layout;
+    items.forEach(({ button }) => {
+      button.querySelector('.accordion-faq-item-icon').replaceWith(disclosureIcon(nextFlat));
+    });
+    if (action) {
+      if (nextFlat && toggle.parentElement === block) toggle.before(action);
+      else block.append(action);
+    }
+    if (auxiliary) block.append(auxiliary);
+  }
+  updateLayout();
+  watchPageTheme(block, updateLayout);
+  await rates;
 }

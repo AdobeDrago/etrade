@@ -83,7 +83,12 @@ export function groupActions(content, prefix, primaryKind = 'primary') {
     const link = standaloneAction(paragraph);
     if (!link) return;
     if (!actions.children.length) paragraph.before(actions);
-    decorateAction(link, actions.children.length ? 'secondary' : primaryKind, prefix);
+    // Explicit author formatting wins over the automatic first/next action treatment.
+    let kind = actions.children.length ? 'secondary' : primaryKind;
+    if (link.classList.contains('button')) {
+      kind = link.classList.contains('secondary') ? 'outline' : 'primary';
+    }
+    decorateAction(link, kind, prefix);
     actions.append(link);
     paragraph.remove();
   });

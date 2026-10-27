@@ -8,15 +8,9 @@ Deploy the plugin's HTML, CSS and JavaScript with the project's code first. In t
 
 | title | path | format | icon | experience | ref |
 | --- | --- | --- | --- | --- | --- |
-| Disclosure Manager | https://main--etrade--adobedrago.aem.live/tools/plugins/disclosure-manager/disclosure-manager.html | | | inline | |
+| Disclosure Manager | https://demo--etrade--adobedrago.aem.live/tools/plugins/disclosure-manager/disclosure-manager.html | | | inline | |
 
-To use the code on `demo`, push that branch and add a branch-specific row instead:
-
-| title | path | format | icon | experience | ref |
-| --- | --- | --- | --- | --- | --- |
-| Disclosure Manager (demo) | https://demo--etrade--adobedrago.aem.live/tools/plugins/disclosure-manager/disclosure-manager.html | | | inline | demo |
-
-Open [the homepage editor with the demo ref](https://da.live/edit?ref=demo#/adobedrago/etrade/home), then **Library → Disclosure Manager (demo)**. Use the URL without `?demo=1` for real authoring. The branch selects the plugin code; DA source content is shared across branches. Review previewed content on [the demo homepage](https://demo--etrade--adobedrago.aem.page/home).
+The deployed plugin code lives on `demo`. Leave ref empty so the plugin is available from the regular editor URL. Open [the homepage editor](https://da.live/canvas#/adobedrago/etrade/home), then **Outline dropdown → Disclosure Manager**. In the classic editor use **Library → Disclosure Manager**. Use the plugin URL without `?demo=1` for real authoring. The URL's branch selects the plugin code; DA source content is shared across branches. An editor `?ref=demo` is only needed when reviewing the demo branch's site rendering inside DA. Review previewed content on [the demo homepage](https://demo--etrade--adobedrago.aem.page/home).
 
 For local development, run `npx -y @adobe/aem-cli up` and add a separate row:
 
@@ -31,8 +25,8 @@ The plugin connects through the [DA SDK](https://github.com/adobe/da-nx/blob/mai
 ## Authoring
 
 1. Save the page in DA. Its Metadata **Disclosures** row must reference an existing `/disclosures/sets/...` document using the `disclosure-set` schema, or a site JSON document with the same `disclosures` array. Full project preview/live URLs and Adobe structured-content delivery URLs are supported.
-2. Open Disclosure Manager from the Library. It reads the saved page, resolves its set, and checks the referenced fragment sources. Each item shows its stable ID, fragment path, and expected display number. Empty fragments are excluded from numbering, matching the site's renderer. Missing fragments and invalid or duplicate IDs disable saving and inserting until corrected in the set editor.
-3. Drag items or use **Move up/down**. **Reset order** restores the loaded order. **Save order** saves only the set document; it preserves introduction, closing, schema metadata, fragment contents, other fields, and stable IDs. The page is never rewritten. If the source changed since loading, saving stops and asks you to refresh. This check does not provide an atomic lock against simultaneous edits.
+2. Open Disclosure Manager from the Library. It reads the saved page, resolves its set, and checks the referenced fragment sources. Each item shows a title and excerpt from its fragment, plus its expected display number. Expand **Source and stable ID** for its source path and permanent reference ID. The footer preview includes introduction and closing fragments, follows the proposed order, and highlights selected disclosures. It uses the site disclosure styles in an inert sandbox: links are inactive and images show text alternatives. Empty fragments are excluded from numbering, matching the site's renderer. Missing fragments and invalid or duplicate IDs disable saving and inserting until corrected in the set editor.
+3. Drag items or use **Move up/down**. **Reset order** restores the loaded order. **Save shared order** saves only the set document; it preserves introduction, closing, schema metadata, fragment contents, other fields, and stable IDs. The page is never rewritten. If the source changed since loading, saving stops and asks you to refresh. This check does not provide an atomic lock against simultaneous edits.
 4. Place the editor cursor after a claim, open the manager, select one or more disclosures, and click **Insert reference**. Selection order determines the comma-separated marker, such as `<sup>fees,offer</sup>`. This inserts via the DA editor's `sendHTML` action, keeping the page's normal save/undo flow. Save the page afterward. Insert is disabled while a reorder is unsaved. Use a cursor with no selected claim text because insertion replaces the editor selection.
 5. Preview the changed set and every fragment in DA before reviewing `.aem.page`. Publish the set, fragments and page as needed for `.aem.live` or production. Saving the order does not preview or publish content.
 

@@ -1,7 +1,15 @@
 import { rateDecimal, createBankRateRequest } from './bank-rates.js';
 import { DEMO_BALANCE_KEY, readDemoBalance } from './demo-balance.js';
+import isDemoHelperHost from './demo-host.js';
+import mountPerformanceControls from './demo-performance-controls.js';
+import { performanceURL, resolvePerformanceConfig } from './demo-performance.js';
+import mountTrackingControls from './demo-tracking.js';
+import { rememberDemoDetails, resetDemoSession } from './demo-session.js';
+
+export { default as isDemoHelperHost } from './demo-host.js';
 
 const OPEN_KEY = 'etrade:demo-helper-open';
+const VIEW_KEY = 'etrade:demo-helper-view';
 const SOURCE_LABELS = {
   api: 'API response',
   manual: 'Manual',
@@ -10,12 +18,6 @@ const SOURCE_LABELS = {
   unavailable: 'Unavailable',
   loading: 'Loading',
 };
-
-/** This presentation tool belongs to demo, never a production or other feature host. */
-export function isDemoHelperHost(hostname = '') {
-  return ['localhost', '127.0.0.1', '[::1]', 'demo--etrade--adobedrago.aem.page']
-    .includes(hostname.toLowerCase());
-}
 
 function node(doc, tag, className, text) {
   const element = doc.createElement(tag);
@@ -101,13 +103,14 @@ export default function mountDemoHelper(doc = document, win = window) {
   panel.id = 'demo-helper-panel';
   panel.hidden = true;
   const header = node(doc, 'div', 'header');
+  const headingGroup = node(doc, 'div', 'heading-group');
   const heading = node(doc, 'h2', 'title', 'Demo controls');
   const close = button(doc, 'Close', 'close');
-  header.append(heading, close);
-  const badge = node(doc, 'p', 'badge', 'DEMO BRANCH');
+  headingGroup.append(heading, node(doc, 'p', 'subtitle', 'Page tools, performance & tracking'));
+  header.append(headingGroup, close);
   const content = node(doc, 'div', 'content');
   const balanceSection = node(doc, 'section', 'section');
-  balanceSection.append(node(doc, 'h3', 'heading', 'User balance'));
+  balanceSection.append(node(doc, 'h3', 'heading', 'Try a balance'));
   const balanceStatus = node(doc, 'p', 'muted');
   const currentBalance = () => {
     const balance = readDemoBalance(win);
@@ -126,17 +129,20 @@ export default function mountDemoHelper(doc = document, win = window) {
   input.value = currentBalance() ?? '';
   input.placeholder = 'e.g. 100000';
   input.setAttribute('aria-describedby', 'demo-helper-balance-help');
-  const presetLabel = node(doc, 'label', 'label', 'Try a balance');
-  const preset = node(doc, 'select', 'input');
-  preset.id = 'demo-helper-preset';
-  presetLabel.htmlFor = preset.id;
-  const custom = node(doc, 'option', '', 'Choose a preset');
-  custom.value = '';
-  preset.append(custom);
-  ['0', '5000', '10000', '50000', '100000', '500000'].forEach((amount) => {
-    const option = node(doc, 'option', '', money(amount));
-    option.value = amount;
-    preset.append(option);
+  const presets = node(doc, 'div', 'presets');
+  const feedback = node(doc, 'p', 'feedback');
+  feedback.setAttribute('role', 'status');
+  presets.setAttribute('role', 'group');
+  presets.setAttribute('aria-label', 'Balance presets');
+  ['50000', '100000', '150000', '200000', '250000', '500000'].forEach((amount) => {
+    const preset = button(doc, `${Number(amount) / 1000}k`, 'preset');
+    preset.setAttribute('aria-label', `Set balance to ${money(amount)}`);
+    preset.setAttribute('aria-pressed', String(readDemoBalance(win) === amount));
+    preset.addEventListener('click', () => {
+      const result = saveDemoBalance(amount, win);
+      if (result.error) feedback.textContent = result.error;
+    });
+    presets.append(preset);
   });
   const help = node(doc, 'p', 'muted', 'Changes API savings and checking tiers on reload. Manual values, author overrides and CD terms stay fixed.');
   help.id = 'demo-helper-balance-help';
@@ -144,30 +150,106 @@ export default function mountDemoHelper(doc = document, win = window) {
   apply.type = 'submit';
   const reset = button(doc, 'Use authored balance');
   const actions = node(doc, 'div', 'actions');
-  actions.append(apply, reset);
-  const feedback = node(doc, 'p', 'feedback');
-  feedback.setAttribute('role', 'status');
-  form.append(label, input, presetLabel, preset, help, actions, feedback);
-  balanceSection.append(balanceStatus, form);
+  actions.append(apply);
+  form.append(label, input, help, actions);
+  const customBalance = node(doc, 'details', 'custom-balance');
+  customBalance.dataset.demoState = 'page.balance';
+  customBalance.append(node(doc, 'summary', '', 'Balance options'), form, reset);
+  balanceSection.append(balanceStatus, presets, customBalance, feedback);
 
-  const rates = node(doc, 'section', 'section');
-  rates.append(node(doc, 'h3', 'heading', 'Rate insights'));
+  const rates = node(doc, 'details', 'section');
+  rates.dataset.demoState = 'page.rates';
+  rates.append(node(doc, 'summary', 'heading', 'Rate insights'));
   const connection = node(doc, 'p', 'muted');
   const rateList = node(doc, 'ul', 'list');
   rates.append(connection, rateList);
-  const features = node(doc, 'section', 'section');
-  features.append(node(doc, 'h3', 'heading', 'Features on this page'));
+  const features = node(doc, 'details', 'section');
+  features.dataset.demoState = 'page.features';
+  const featureSummary = node(doc, 'summary', 'heading', 'Features on this page');
+  features.append(featureSummary);
   const featureList = node(doc, 'ul', 'list');
+  featureList.classList.add('demo-helper-features');
   features.append(featureList);
   const refresh = button(doc, 'Reload page');
   const footer = node(doc, 'p', 'muted', 'Demo values are local to this browser and origin. The balance is never sent to the rate service.');
-  content.append(balanceSection, rates, features, refresh, footer);
-  panel.append(header, badge, content);
+  const pageTools = node(doc, 'div', 'view');
+  pageTools.append(balanceSection, features, rates, refresh, footer);
+  const performanceView = node(doc, 'div', 'view');
+  const performance = mountPerformanceControls(doc, win);
+  performance.open = true;
+  performance.querySelector('summary').hidden = true;
+  performanceView.append(performance);
+  const trackingView = node(doc, 'div', 'view');
+  trackingView.append(mountTrackingControls(doc, win));
+  const navigation = node(doc, 'div', 'navigation');
+  navigation.setAttribute('role', 'tablist');
+  navigation.setAttribute('aria-label', 'Demo controls');
+  const views = [pageTools, performanceView, trackingView];
+  const viewNames = ['page', 'performance', 'tracking'];
+  const tabs = [];
+  let selectedView = resolvePerformanceConfig(win) ? 1 : 0;
+  try {
+    const stored = win.sessionStorage.getItem(VIEW_KEY);
+    if (viewNames.includes(stored)) selectedView = viewNames.indexOf(stored);
+  } catch { /* Use the URL's initial view. */ }
+  function selectView(index) {
+    selectedView = index;
+    panel.scrollTop = 0;
+    tabs.forEach((tab, i) => {
+      tab.setAttribute('aria-selected', String(i === index));
+      tab.tabIndex = i === index ? 0 : -1;
+      views[i].hidden = i !== index;
+    });
+    try {
+      win.sessionStorage.setItem(VIEW_KEY, viewNames[index]);
+    } catch { /* Optional persistence. */ }
+  }
+  ['Page tools', 'Performance', 'Tracking'].forEach((text, index) => {
+    const tab = button(doc, text, 'view-tab');
+    tab.id = `demo-helper-view-tab-${index}`;
+    tab.setAttribute('role', 'tab');
+    tab.setAttribute('aria-controls', `demo-helper-view-${index}`);
+    views[index].id = `demo-helper-view-${index}`;
+    views[index].setAttribute('role', 'tabpanel');
+    views[index].setAttribute('aria-labelledby', tab.id);
+    tab.addEventListener('click', () => selectView(index));
+    tab.addEventListener('keydown', (event) => {
+      const next = {
+        ArrowRight: (index + 1) % views.length,
+        ArrowLeft: (index + views.length - 1) % views.length,
+        Home: 0,
+        End: views.length - 1,
+      }[event.key];
+      if (next === undefined) return;
+      event.preventDefault();
+      selectView(next);
+      tabs[next].focus();
+    });
+    tabs.push(tab);
+    navigation.append(tab);
+  });
+  selectView(selectedView);
+  header.append(navigation);
+  content.append(...views);
+  const session = node(doc, 'details', 'section');
+  session.append(node(doc, 'summary', 'heading', 'Demo session'));
+  session.append(node(doc, 'p', 'muted', 'Settings, event history and page runs follow this tab on this preview host until the session ends. Reset clears this demo history and turns off performance simulation.'));
+  const resetSession = button(doc, 'Reset demo session');
+  const resetFeedback = node(doc, 'p', 'muted');
+  resetFeedback.setAttribute('role', 'status');
+  resetSession.addEventListener('click', () => {
+    if (resetDemoSession(win)) win.location.href = performanceURL(win.location.href, null);
+    else resetFeedback.textContent = 'This browser could not reset the saved demo session.';
+  });
+  session.append(resetSession, resetFeedback);
+  content.append(session);
+  panel.append(header, content);
   const highlight = node(doc, 'div', 'highlight');
   highlight.hidden = true;
   highlight.setAttribute('aria-hidden', 'true');
   root.append(panel, toggle, highlight);
   doc.body.append(root);
+  rememberDemoDetails(root, win);
   let expanded = false;
   let highlighted;
   let highlightTimer;
@@ -178,6 +260,11 @@ export default function mountDemoHelper(doc = document, win = window) {
     panel.hidden = !expanded;
     toggle.setAttribute('aria-expanded', String(expanded));
     toggle.textContent = expanded ? 'Hide demo controls' : 'Demo controls';
+    if (expanded) {
+      win.clearTimeout(highlightTimer);
+      highlight.hidden = true;
+      highlighted = null;
+    }
     try {
       win.sessionStorage.setItem(OPEN_KEY, String(expanded));
     } catch { /* Optional persistence. */ }
@@ -202,13 +289,22 @@ export default function mountDemoHelper(doc = document, win = window) {
     highlightTimer = win.setTimeout(() => { highlight.hidden = true; highlighted = null; }, 4000);
   }
 
-  function item(list, title, detail, target, warning = false) {
+  function item(list, title, detail, target, warning = false, compact = false) {
     const row = node(doc, 'li', warning ? 'item warning' : 'item');
     // Each insight can locate its corresponding content without rewriting it.
     const locateButton = button(doc, title, 'locate');
     locateButton.setAttribute('aria-label', `Locate ${title}`);
     locateButton.addEventListener('click', () => locate(target));
-    row.append(locateButton, node(doc, 'p', 'muted', detail));
+    row.append(locateButton);
+    if (compact) {
+      const indicator = node(doc, 'span', 'feature-state');
+      indicator.dataset.state = /^(Ready|Data loaded)/.test(detail) ? 'ready' : 'info';
+      if (warning) indicator.dataset.state = 'error';
+      indicator.setAttribute('role', 'img');
+      indicator.setAttribute('aria-label', detail);
+      indicator.title = detail;
+      row.append(indicator);
+    } else row.append(node(doc, 'p', 'muted', detail));
     list.append(row);
   }
 
@@ -237,6 +333,7 @@ export default function mountDemoHelper(doc = document, win = window) {
       item(rateList, title, details.join(' · '), card, !!marker.dataset.rateError);
     });
     const blocks = [...doc.querySelectorAll('main .block')];
+    featureSummary.textContent = `Features on this page (${blocks.length})`;
     if (!blocks.length) featureList.append(node(doc, 'li', 'empty', 'No blocks found on this page yet.'));
     blocks.forEach((block) => {
       const state = block.dataset.marketState;
@@ -250,7 +347,7 @@ export default function mountDemoHelper(doc = document, win = window) {
       if (block.querySelector('.hero-dark-offer')) details.push('Authored offer included');
       if (block.dataset.marketError) details.push(`Reason: ${block.dataset.marketError}`);
       if (block.dataset.disclaimerState === 'missing') details.push('Disclaimer not authored');
-      item(featureList, featureName(block), details.join(' · '), block, state === 'unavailable');
+      item(featureList, featureName(block), details.join(' · '), block, state === 'unavailable', true);
     });
   }
 
@@ -258,11 +355,13 @@ export default function mountDemoHelper(doc = document, win = window) {
     const dock = doc.querySelector('.floating-dock-bar');
     const rect = dock?.getBoundingClientRect();
     const dockLinks = dock?.querySelector('.floating-dock-secondary:not([hidden])');
+    const banner = doc.querySelector('.demo-cookie-banner:not([hidden])')?.getBoundingClientRect();
     const top = Math.min(
       rect?.top ?? win.innerHeight,
       dockLinks?.getBoundingClientRect().top ?? win.innerHeight,
+      banner?.top ?? win.innerHeight,
     );
-    const bottom = rect?.height ? Math.max(16, win.innerHeight - top + 12) : 16;
+    const bottom = rect?.height || banner?.height ? Math.max(16, win.innerHeight - top + 12) : 16;
     root.style.setProperty('--demo-helper-bottom', `${bottom}px`);
     positionHighlight();
   }
@@ -274,7 +373,14 @@ export default function mountDemoHelper(doc = document, win = window) {
 
   toggle.addEventListener('click', () => {
     setExpanded(!expanded);
-    if (expanded) { render(); input.focus(); }
+    if (expanded) {
+      render();
+      if (selectedView > 0) tabs[selectedView].focus();
+      else {
+        presets.querySelector('[aria-pressed="true"]')?.focus();
+        if (!presets.contains(doc.activeElement)) presets.querySelector('button')?.focus();
+      }
+    }
   });
   close.addEventListener('click', () => setExpanded(false, true));
   root.addEventListener('keydown', (event) => {
@@ -285,13 +391,6 @@ export default function mountDemoHelper(doc = document, win = window) {
     if (expanded && !root.contains(event.target)) setExpanded(false);
   });
   input.addEventListener('input', () => { input.setCustomValidity(''); feedback.textContent = ''; });
-  preset.addEventListener('change', () => {
-    if (preset.value) {
-      input.value = preset.value;
-      input.setCustomValidity('');
-      feedback.textContent = '';
-    }
-  });
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const result = saveDemoBalance(input.value, win);
@@ -318,6 +417,7 @@ export default function mountDemoHelper(doc = document, win = window) {
   }
   if (win.ResizeObserver) new win.ResizeObserver(position).observe(doc.body);
   win.addEventListener('resize', position);
+  doc.addEventListener('demo-cookie-banner:updated', position);
   win.addEventListener('scroll', positionHighlight, { passive: true });
   win.addEventListener('storage', (event) => {
     if (event.key !== DEMO_BALANCE_KEY && event.key !== null) return;

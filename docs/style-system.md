@@ -4,6 +4,8 @@ This guide explains the style system implemented in this repository: how values 
 
 The system shares design values across blocks while keeping each block responsible for its layout. Authors can select a page design family, configure a section, and choose a block variant independently.
 
+The standard FAQ accordion follows the reference presentation for its page family: Purple uses white divided rows and purple plus/minus controls on the right; Charcoal uses rounded light-gray rows and left chevrons. An explicitly authored Flat variant keeps the divided-row presentation in either family. Theme changes preserve open answers.
+
 For authoring, start with [page themes](#page-themes-section-schemes-and-block-variants) and [section controls](#authoring-sections-in-da). For development, start with the [repository map](#repository-map) and [change guidance](#making-a-change).
 
 ## Contents
@@ -126,7 +128,7 @@ These settings answer different questions:
 | Section Metadata `Color Scheme` | What foreground and default surface should this section use? | `light` or `dark` |
 | Block table variant | Which supported presentation should this block use? | `Accordion FAQ (Flat)`, `Columns Feature (Dark)` |
 
-A Purple page can contain both light and dark sections. A block with its own light surface can sit inside either. Theme selection does not replace images, change authored copy, or select a block layout.
+A Purple page can contain both light and dark sections. A block with its own light surface can sit inside either. Theme selection does not replace images or change authored copy. Most block layouts remain independently authored; Accordion FAQ uses the page family as its default visual presentation, while an explicit Flat option retains precedence.
 
 ### Page families
 
@@ -143,7 +145,9 @@ Author page Metadata like this:
 | --- | --- |
 | Theme | Purple |
 
-The helper sets `<html data-page-theme="purple">`. Missing or unsupported families leave the attribute unset and preserve the existing mixed treatment. There is no path-based selection, operating-system detection, or theme-switcher UI. Values are case insensitive; `theme-purple` and `theme-charcoal` work. For comma-separated values, the first recognized family wins.
+The helper sets `<html data-page-theme="purple">`. Missing or unsupported families leave the attribute unset and preserve the existing mixed treatment. Production selection uses authored Metadata, with no path-based or operating-system theme detection. Values are case insensitive; `theme-purple` and `theme-charcoal` work. For comma-separated values, the first recognized family wins.
+
+On individual block library pages at preview hosts, a Purple/Charcoal selector temporarily remaps the same root tokens. It keeps the choice for the preview session and can restore the page default. These controls stay outside the example content and do not save page Metadata. Blocks can look similar across families when their surfaces, artwork or shape are independently authored. Use the block briefs to distinguish page families from Light/Dark section schemes and block options.
 
 ### Header precedence and legacy compatibility
 
@@ -297,6 +301,8 @@ Adding a new member of the card family requires reviewing the shared selector li
 Dynamic rates are separate from styling. Preserve configured markers, units, legal references, zero values, and unavailable-rate labels. See [Cards Product](../blocks/cards-product/README.md#optional-dynamic-rates) for the service and authoring contract.
 
 ### Actions
+
+For a button in default content, put one link in its own paragraph and format its entire label: **bold** creates a filled primary button, *italic* creates an outlined secondary button, and bold plus italic creates the accent treatment. Applying formatting before or after creating the link has the same result. Inline links in sentences, partially emphasized labels, image links, and links displaying their URL stay ordinary links. Shared action grouping preserves an explicitly authored filled or outlined treatment; unformatted block actions retain the block's default treatment.
 
 `scripts/actions.js` recognizes standalone authored links, normalizes duplicate arrow links, and applies primary, secondary, or outline presentation through shared classes. Block decorators can use `groupActions` or `decorateAction` rather than duplicating that behavior. The destination, tracking attributes, and accessible label remain authored.
 

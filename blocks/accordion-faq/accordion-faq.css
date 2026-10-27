@@ -223,15 +223,6 @@
   color: var(--color-action-primary-text);
 }
 
-.accordion-faq .accordion-faq-item-content a:any-link:not(.button) {
-  color: var(--color-link);
-}
-
-.accordion-faq .accordion-faq-item-content a:any-link:not(.button):hover,
-.accordion-faq .accordion-faq-item-content a:any-link:not(.button):focus-visible {
-  text-decoration: underline;
-}
-
 .accordion-faq .accordion-faq-auxiliary {
   position: absolute;
   width: 1px;
@@ -287,23 +278,26 @@
 }
 
 /* The flat variant uses divided rows, plus/minus controls and scrollable tables. */
-main .section:not([data-section-layout="authored"]):has(.accordion-faq.flat) {
+main .section:not([data-section-layout="authored"]):has(.accordion-faq[data-faq-layout="flat"]) {
   margin: 0;
   padding: 0;
   background: var(--color-surface-default);
   color: var(--color-text-primary);
 }
 
-main .section:not([data-section-layout="authored"]) > .accordion-faq-wrapper:has(.accordion-faq.flat) {
+main .section:not([data-section-layout="authored"]) > .accordion-faq-wrapper:has(.accordion-faq[data-faq-layout="flat"]) {
   box-sizing: border-box;
   max-width: var(--layout-container-max);
   padding: 0 var(--layout-gutter);
 }
 
-.accordion-faq.flat {
+.accordion-faq[data-faq-layout="flat"] {
   --accordion-faq-question-padding: 0.9375rem;
   --accordion-faq-answer-padding: 0.9375rem;
-  --accordion-faq-paragraph-spacing: 1.125rem;
+  --accordion-faq-paragraph-spacing: 0.5625rem;
+  --accordion-faq-divider-color: #ebebeb;
+  --accordion-faq-question-color: #333;
+  --accordion-faq-control-color: #63c;
 
   position: static;
   width: 100%;
@@ -316,7 +310,7 @@ main .section:not([data-section-layout="authored"]) > .accordion-faq-wrapper:has
   line-height: calc(18 / 13);
 }
 
-.accordion-faq.flat .accordion-faq-heading {
+.accordion-faq[data-faq-layout="flat"] .accordion-faq-heading {
   margin-bottom: 3.125rem;
   font-size: var(--font-size-32);
   font-weight: var(--font-weight-medium);
@@ -324,75 +318,106 @@ main .section:not([data-section-layout="authored"]) > .accordion-faq-wrapper:has
   letter-spacing: inherit;
 }
 
-.accordion-faq.flat .accordion-faq-expand-all {
+.accordion-faq[data-faq-layout="flat"]:has(.accordion-faq-action) .accordion-faq-heading {
+  margin-bottom: var(--space-10);
+}
+
+.accordion-faq[data-faq-layout="flat"] .accordion-faq-expand-all {
   margin-right: 0;
+  color: var(--accordion-faq-control-color);
   text-decoration: underline;
 }
 
-.accordion-faq.flat .accordion-faq-items {
+.accordion-faq[data-faq-layout="flat"] .accordion-faq-items {
   gap: 1.125rem;
   margin-top: var(--space-20);
 }
 
-.accordion-faq.flat .accordion-faq-item {
-  border-bottom: var(--border-width-thin) solid var(--color-border-default);
+.accordion-faq[data-faq-layout="flat"] .accordion-faq-item {
+  border-bottom: var(--border-width-thin) solid var(--accordion-faq-divider-color);
   border-radius: 0;
   padding: var(--space-10) 0 0;
   background: transparent;
 }
 
-.accordion-faq.flat .accordion-faq-item-label {
+.accordion-faq[data-faq-layout="flat"] .accordion-faq-item-label {
   grid-template-columns: minmax(0, 1fr) var(--space-20);
   gap: 0.9375rem;
   padding: var(--space-10) var(--accordion-faq-question-padding);
-  color: var(--color-text-primary);
+  color: var(--accordion-faq-question-color);
   font-size: var(--font-size-20);
   font-weight: var(--font-weight-medium);
-  line-height: 1.2;
+  line-height: 1.05;
   letter-spacing: inherit;
 }
 
-.accordion-faq.flat .accordion-faq-item-label:focus-visible {
+.accordion-faq[data-faq-layout="flat"] .accordion-faq-item-label:focus-visible {
   border-radius: 0;
 }
 
-.accordion-faq.flat .accordion-faq-item-icon {
+.accordion-faq[data-faq-layout="flat"] .accordion-faq-item-icon {
   grid-column: 2;
   grid-row: 1;
-  color: var(--color-action-primary);
+  color: var(--accordion-faq-control-color);
   transform: none;
 }
 
-.accordion-faq.flat .accordion-faq-item-text {
+.accordion-faq[data-faq-layout="flat"] .accordion-faq-item-text {
   grid-column: 1;
   grid-row: 1;
 }
 
-.accordion-faq.flat .is-open .accordion-faq-icon-vertical {
+.accordion-faq[data-faq-layout="flat"] .is-open .accordion-faq-icon-vertical {
   display: none;
 }
 
-.accordion-faq.flat .accordion-faq-item-content :is(h1, h2, h3, h4, h5, h6) {
+.accordion-faq[data-faq-layout="flat"] .accordion-faq-item-content :is(h1, h2, h3, h4, h5, h6) {
   font-size: var(--font-size-15);
   line-height: 1.4;
 }
 
-.accordion-faq.flat .accordion-faq-item-content :is(b, strong) {
+.accordion-faq[data-faq-layout="flat"] .accordion-faq-item-content :is(b, strong) {
   font-weight: var(--font-weight-medium);
 }
 
-.accordion-faq.flat .accordion-faq-table {
+.accordion-faq[data-faq-layout="flat"] .accordion-faq-action {
+  margin: 0 0 var(--space-10);
+}
+
+.accordion-faq .accordion-faq-item-content a:any-link:not(.button) {
+  color: var(--color-link);
+}
+
+.accordion-faq[data-faq-layout="flat"] .accordion-faq-action a:any-link {
+  border: 0;
+  padding: 0;
+  color: var(--accordion-faq-control-color);
+  font-size: var(--text-supporting-size);
+  line-height: calc(18 / 13);
+}
+
+.accordion-faq[data-faq-layout="flat"] .accordion-faq-action a:any-link:hover {
+  background: transparent;
+  color: var(--color-link-hover);
+}
+
+.accordion-faq .accordion-faq-item-content a:any-link:not(.button):hover,
+.accordion-faq .accordion-faq-item-content a:any-link:not(.button):focus-visible {
+  text-decoration: underline;
+}
+
+.accordion-faq .accordion-faq-table {
   max-width: 100%;
   margin-bottom: 1.125rem;
   overflow-x: auto;
 }
 
-.accordion-faq.flat .accordion-faq-table:focus-visible {
+.accordion-faq .accordion-faq-table:focus-visible {
   outline: var(--focus-ring-width) solid var(--color-focus);
   outline-offset: calc(-1 * var(--focus-ring-width));
 }
 
-.accordion-faq.flat table {
+.accordion-faq[data-faq-layout="flat"] table {
   width: 100%;
   min-width: 22.5rem;
   border-collapse: collapse;
@@ -401,7 +426,7 @@ main .section:not([data-section-layout="authored"]) > .accordion-faq-wrapper:has
   line-height: 1.4;
 }
 
-.accordion-faq.flat :is(th, td) {
+.accordion-faq[data-faq-layout="flat"] :is(th, td) {
   border-top: var(--border-width-thin) solid var(--color-border-default);
   padding: 0.375rem;
   font-weight: var(--font-weight-regular);
@@ -409,12 +434,12 @@ main .section:not([data-section-layout="authored"]) > .accordion-faq-wrapper:has
   vertical-align: top;
 }
 
-.accordion-faq.flat td[colspan] {
+.accordion-faq[data-faq-layout="flat"] td[colspan] {
   text-align: center;
   vertical-align: middle;
 }
 
-.accordion-faq.flat :is(th, td) p:last-child {
+.accordion-faq[data-faq-layout="flat"] :is(th, td) p:last-child {
   margin-bottom: 0;
 }
 
@@ -427,11 +452,11 @@ main .section:not([data-section-layout="authored"]) > .accordion-faq-wrapper:has
   }
 }
 
-body.our-accounts .accordion-faq.flat {
+body.our-accounts .accordion-faq[data-faq-layout="flat"] {
   padding-top: 0;
 }
 
-body.our-accounts .accordion-faq.flat .accordion-faq-heading {
+body.our-accounts .accordion-faq[data-faq-layout="flat"] .accordion-faq-heading {
   margin-bottom: var(--space-10);
   text-align: center;
 }

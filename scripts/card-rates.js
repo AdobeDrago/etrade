@@ -104,19 +104,24 @@ async function resolveRate(markers, settings, options) {
   }
 }
 
-/** Consume settings before card decoration moves cells; markers survive that move. */
-export default function decorateCardRates(block) {
+/** Consume settings before decoration moves cells; preserve protected content cells. */
+export default function decorateCardRates(block, {
+  contentStart = 0, settingsStart = contentStart,
+} = {}) {
   const pending = [];
   const options = pageOptions(block.ownerDocument);
   [...block.children].forEach((row) => {
     const settings = [];
-    [...row.children].forEach((cell) => {
+    const cells = [...row.children];
+    cells.slice(settingsStart).forEach((cell) => {
       const lines = cellLines(cell);
       if (lines[0]?.toLowerCase() !== 'rate settings') return;
       settings.push(parseRateSettings(lines.slice(1)));
       cell.remove();
     });
-    const markers = rateMarkers(row, settings);
+    const markers = contentStart === 0 ? rateMarkers(row, settings)
+      : cells.slice(contentStart).filter((cell) => cell.parentElement === row)
+        .flatMap((cell) => rateMarkers(cell, settings));
     const names = [...new Set(markers.map((marker) => marker.dataset.rateName))];
     names.forEach((name) => {
       const matches = settings.filter((entry) => entry.name === name);
