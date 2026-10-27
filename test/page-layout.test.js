@@ -12,7 +12,13 @@ async function harness(path, markup = '') {
   window.origin = window.location.origin;
   window.SAMPLE_PAGEVIEWS_AT_RATE = 'off';
   const context = vm.createContext({
-    document, window, URL, URLSearchParams, crypto: webcrypto, CustomEvent: window.CustomEvent,
+    document,
+    window,
+    URL,
+    URLSearchParams,
+    crypto: webcrypto,
+    CustomEvent: window.CustomEvent,
+    getComputedStyle: (node) => node.style,
   });
   const modules = new Map();
   async function moduleFor(url) {
@@ -104,6 +110,19 @@ test('missing hero and audience transitions render once, while authored separato
     assert.equal(section.style.display, 'none');
   });
   assert.equal(main.firstElementChild.dataset.separatorAfter, 'true');
+  const settings = (block) => Object.fromEntries([...block.children].map((row) => (
+    [...row.children].map((cell) => cell.textContent)
+  )));
+  assert.equal(settings(main.querySelector('.separator'))['First section color'], 'var(--color-surface-inverse)');
+  assert.deepEqual([...main.querySelectorAll('.separator')].map((block) => settings(block)['Line break location']), ['35%', '50%']);
+  const themed = await harness('/home', `
+    <div class="section" style="--percent-35: 40%"><div><div class="hero-product"></div></div></div>
+    <div class="section" style="--percent-75: 80%"><div><div class="columns-feature band"></div></div></div>
+    <div class="section"><div>Content</div></div>`);
+  themed.layout.default();
+  themed.sections(themed.document.querySelector('main'));
+  assert.deepEqual([...themed.document.querySelectorAll('.separator')].map((block) => settings(block)['Line break location']), ['40%', '80%']);
+  assert.equal(settings(themed.document.querySelectorAll('.separator')[1])['First section color'], 'var(--color-surface-inverse-raised)');
   const existing = await harness('/planning', `
     <div class="section"><div><div class="hero-dark split"></div></div></div>
     <div class="section"><div><div class="separator"><div><div>Height</div><div>99px</div></div></div></div></div>
