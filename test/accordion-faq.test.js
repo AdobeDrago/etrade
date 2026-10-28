@@ -278,6 +278,28 @@ test('Purple initializes the reference layout and explicit Flat retains preceden
   assert.ok(explicit.block.querySelector('.accordion-faq-icon-vertical'));
 });
 
+test('section families override the page presentation while preserving open answers and explicit Flat', async () => {
+  const { block, document } = await render(row('Question', fees), '', '', 'data-section-family="purple"', 'charcoal');
+  const section = block.closest('.section');
+  const button = block.querySelector('.accordion-faq-item-label');
+  const answer = block.querySelector('.accordion-faq-item-body');
+  assert.equal(block.dataset.faqLayout, 'flat');
+  button.click();
+  document.documentElement.dataset.pageTheme = 'purple';
+  section.dataset.sectionFamily = 'charcoal';
+  await new Promise((resolve) => { setImmediate(resolve); });
+  assert.equal(block.dataset.faqLayout, 'cards');
+  assert.equal(button.getAttribute('aria-expanded'), 'true');
+  assert.equal(block.querySelector('.accordion-faq-item-body'), answer);
+  assert.equal(block.querySelector('.accordion-faq-icon-vertical'), null);
+  section.removeAttribute('data-section-family');
+  await new Promise((resolve) => { setImmediate(resolve); });
+  assert.equal(block.dataset.faqLayout, 'flat', 'removing the override restores the page family');
+  assert.equal(button.getAttribute('aria-expanded'), 'true');
+  const explicit = await render(row('Question', fees), 'flat', '', 'data-section-family="charcoal"', 'purple');
+  assert.equal(explicit.block.dataset.faqLayout, 'flat');
+});
+
 test('grid accordions retain shared section content and use its heading level for every block', async () => {
   const adjacent = '<div class="default-content-wrapper"><h3 id="shared-faq">Shared heading</h3><p>Shared introduction with <a href="/details?track=1">details</a>.</p></div>';
   const { block, document, decorate } = await render(row('First question', '<p>Answer.</p>'), '', adjacent, 'data-section-layout="authored" data-section-grid="2"');

@@ -129,10 +129,11 @@ These settings answer different questions:
 | Setting | Question it answers | Example |
 | --- | --- | --- |
 | Page Metadata `Theme` | Which design family supplies shared values for this page? | `Purple` or `Charcoal` |
+| Section Metadata `Theme` | Which design family overrides the page for this section's components? | `Purple` or `Charcoal` |
 | Section Metadata `Color Scheme` | What foreground and default surface should this section use? | `light` or `dark` |
 | Block table variant | Which supported presentation should this block use? | `Accordion FAQ (Flat)`, `Columns Feature (Dark)` |
 
-A Purple page can contain both light and dark sections. A block with its own light surface can sit inside either. Theme selection does not replace images or change authored copy. Most block layouts remain independently authored; Accordion FAQ uses the page family as its default visual presentation, while an explicit Flat option retains precedence.
+A Purple page can contain both light and dark sections. A block with its own light surface can sit inside either. Theme selection does not replace images or change authored copy. Most block layouts remain independently authored; Accordion FAQ uses its section family, or the page family when no override is authored, as its default visual presentation. An explicit Flat option retains precedence.
 
 ### Page families
 
@@ -152,6 +153,19 @@ Author page Metadata like this:
 The helper sets `<html data-page-theme="purple">`. Missing or unsupported families leave the attribute unset and preserve the existing mixed treatment. Production selection uses authored Metadata, with no path-based or operating-system theme detection. Values are case insensitive; `theme-purple` and `theme-charcoal` work. For comma-separated values, the first recognized family wins.
 
 On individual block library pages at preview hosts, a Purple/Charcoal selector temporarily remaps the same root tokens. It keeps the choice for the preview session and can restore the page default. These controls stay outside the example content and do not save page Metadata. Blocks can look similar across families when their surfaces, artwork or shape are independently authored. Use the block briefs to distinguish page families from Light/Dark section schemes and block options.
+
+### Section family overrides
+
+To use the Purple design family inside a Charcoal page, put this table in the desired section:
+
+| Section Metadata | |
+| --- | --- |
+| Theme | Purple |
+| Color Scheme | dark |
+
+`Theme` selects the component family: inverse and campaign surfaces, shared card corners, and the FAQ's default presentation. `Color Scheme` independently selects light/dark section text and its default background. Omit Color Scheme to retain the existing section scheme. The helper sets `data-section-family="purple"` on this section; it does not change the root page family, global header/footer, or neighboring sections. `Charcoal` works the same way on a Purple page. Remove the Theme row to inherit the page family again.
+
+The aliases `theme-purple` and `theme-charcoal` also work in Section Metadata `Style`. Legacy section `Theme: light` or `dark` remains a color-scheme alias. A family alone preserves the section's existing layout; Container, Grid, Gap and Spacing remain separate choices. Block variants, explicit colors, artwork and block-owned surfaces retain their existing behavior.
 
 ### Header precedence and legacy compatibility
 
@@ -197,6 +211,7 @@ This example creates a standard-width section with three whole blocks per row on
 | --- | --- | --- |
 | Container | `narrow`, `standard`, `full` | 800px maximum, 1200px maximum, or full width without side gutters; constrained maximums include gutters |
 | Grid | Whole numbers `1`–`6` | Whole blocks stack below 768px, use up to two columns from 768px, and use the selected count from 1200px |
+| Theme | `Purple`, `Charcoal` | Override the page's design family within this section; missing or unsupported values inherit the page family |
 | Gap | `none`, `xs`, `s`, `m`, `l`, `xl`, `xxl` | Space between section grid cells |
 | Spacing | The same named sizes | Equal top/bottom section padding; replaces outer vertical margins |
 | Color Scheme | `light`, `dark` | Text, normal/hover links, inherited actions, native controls, and default surface |

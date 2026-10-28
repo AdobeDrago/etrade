@@ -78,6 +78,8 @@ Keep layout and variants scoped to the owning block. Choose inverse text/link ro
 
 Set page Metadata **Theme** to `Purple` or `Charcoal` to select a design family. These are project names for the two reference treatments, independent of a section's light/dark color scheme.
 
+Section Metadata **Theme** can select the other family for one section's components. For example, a Charcoal page can contain a Purple section with its own shared surfaces, card corners and FAQ presentation. Section **Color Scheme** remains an independent light/dark choice; the global header and footer continue to follow the page family. See [section family overrides](docs/style-system.md#section-family-overrides).
+
 | Page Theme | Reference pages | Defaults |
 | --- | --- | --- |
 | `Purple` | [Platforms](https://us.etrade.com/platforms), [Pricing and Rates](https://us.etrade.com/what-we-offer/pricing-and-rates), [Welcome Back](https://us.etrade.com/home/welcome-back) | Light header, deep-purple inverse and campaign surfaces, light footer, small card corners |

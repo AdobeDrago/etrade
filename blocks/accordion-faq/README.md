@@ -78,7 +78,7 @@ The local `--accordion-faq-*` spacing variables preserve the reference's questio
 
 ### Page families
 
-**Purple** uses the [Our Accounts reference](https://us.etrade.com/what-we-offer/our-accounts): white rows with thin dividers, medium-weight question labels, purple plus/minus controls on the right, and an optional plain-text FAQ link below the heading. **Charcoal** uses the homepage's rounded gray rows and left chevrons. A root theme observer updates the presentation through `data-faq-layout`, retaining the existing buttons, answers and open state. It does not add or remove authored block options. An explicitly authored Flat variant and the Pricing alias retain the divided-row presentation in either family. Pages without a selected family retain rounded rows.
+**Purple** uses the [Our Accounts reference](https://us.etrade.com/what-we-offer/our-accounts): white rows with thin dividers, medium-weight question labels, purple plus/minus controls on the right, and an optional plain-text FAQ link below the heading. **Charcoal** uses the homepage's rounded gray rows and left chevrons. Section Metadata `Theme: Purple` or `Charcoal` overrides the page family for that section. Theme observers update the presentation through `data-faq-layout`, retaining the existing buttons, answers and open state. They do not add or remove authored block options. An explicitly authored Flat variant and the Pricing alias retain the divided-row presentation in either family. Pages without a selected family retain rounded rows.
 
 ## Authored section controls
 

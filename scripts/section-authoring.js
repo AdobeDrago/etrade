@@ -42,6 +42,7 @@ function styleOptions(section, text, options) {
     });
     if (name === 'container' && !options.container) options.container = 'standard';
     if (name === 'light-scheme' || name === 'dark-scheme') options.theme = name.startsWith('dark') ? 'dark' : 'light';
+    if (name === 'theme-purple' || name === 'theme-charcoal') options.family = name.slice(6);
     if (name === 'center') options.align = 'center';
   });
 }
@@ -107,7 +108,11 @@ export default function decorateSectionAuthoring(main) {
       if (metadata.has(key)) options[key] = metadata.get(key).text.toLowerCase();
     });
     const backgroundTheme = setBackground(section, metadata, main);
-    const theme = metadata.get('color scheme')?.text || metadata.get('theme')?.text
+    const sectionTheme = metadata.get('theme')?.text.toLowerCase().replace(/^theme-/, '') || '';
+    const family = sectionTheme || options.family;
+    if (['purple', 'charcoal'].includes(family)) section.dataset.sectionFamily = family;
+    const legacyScheme = ['light', 'dark'].includes(sectionTheme) ? sectionTheme : '';
+    const theme = metadata.get('color scheme')?.text || legacyScheme
       || options.theme || backgroundTheme;
     if (containers.has(options.container)) section.dataset.sectionContainer = options.container;
     if (/^[1-6]$/.test(options.grid)) {
@@ -126,7 +131,7 @@ export default function decorateSectionAuthoring(main) {
     const anchor = (metadata.get('anchor')?.text || metadata.get('id')?.text || '').replace(/^#/, '');
     if (anchor && !/\s/.test(anchor)) section.id = anchor;
     if ([...section.attributes].some(({ name }) => name.startsWith('data-section-')
-      && !['data-section-status', 'data-section-kind'].includes(name))) section.dataset.sectionLayout = 'authored';
+      && !['data-section-status', 'data-section-kind', 'data-section-family'].includes(name))) section.dataset.sectionLayout = 'authored';
     blocks.forEach((block) => {
       const wrapper = block.parentElement;
       block.remove();
