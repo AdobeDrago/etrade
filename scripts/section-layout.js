@@ -4,10 +4,10 @@ import { buildBlock } from './aem.js';
 export default function decorateSectionBoundaries(main) {
   const first = main.querySelector(':scope > .section');
   const transitions = first?.querySelector('.hero-dark.split, .hero-product')
-    ? [{ previous: first, firstColor: 'dark', bend: '35%' }] : [];
+    ? [{ previous: first, firstColor: 'var(--color-surface-inverse)', bend: 35 }] : [];
   if (document.body.classList.contains('why-etrade')) {
     main.querySelectorAll(':scope > .section.dark:has(.cards-icon)').forEach((previous) => {
-      transitions.push({ previous, firstColor: 'var(--color-surface-inverse-raised)', bend: '50%' });
+      transitions.push({ previous, firstColor: 'var(--color-surface-inverse-raised)', bend: 50 });
     });
   }
   const outlines = new Map([
@@ -19,14 +19,14 @@ export default function decorateSectionBoundaries(main) {
     main.querySelectorAll(':scope > .section').forEach((previous) => {
       if (previous.querySelector(outlines)) {
         transitions.push({
-          previous, firstColor: 'light', bend: document.body.classList.contains('planning') ? '65%' : '50%',
+          previous, firstColor: 'var(--color-surface-page)', bend: document.body.classList.contains('planning') ? 65 : 50,
         });
       }
     });
   }
   if (document.body.classList.contains('homepage')) {
     main.querySelectorAll(':scope > .section:has(.columns-feature.band)').forEach((previous) => {
-      transitions.push({ previous, firstColor: 'var(--color-surface-inverse-raised)', bend: '75%' });
+      transitions.push({ previous, firstColor: 'var(--color-surface-inverse-raised)', bend: 75 });
     });
   }
   transitions.forEach(({ previous, firstColor, bend }) => {
@@ -38,9 +38,10 @@ export default function decorateSectionBoundaries(main) {
     section.dataset.sectionStatus = 'initialized';
     section.style.display = 'none';
     const wrapper = document.createElement('div');
+    const bendValue = getComputedStyle(previous).getPropertyValue(`--percent-${bend}`).trim() || `${bend}%`;
     wrapper.append(buildBlock('separator', [
-      ['First section color', firstColor], ['Second section color', 'light'],
-      ['Line break location', bend], ['Height', '81px'], ['Mobile height', '45px'],
+      ['First section color', firstColor], ['Second section color', 'var(--color-surface-page)'],
+      ['Line break location', bendValue], ['Height', '81px'], ['Mobile height', '45px'],
     ]));
     section.append(wrapper);
     previous.after(section);
