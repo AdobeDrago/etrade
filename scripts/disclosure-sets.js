@@ -23,7 +23,7 @@ export function disclosureSetRequest(value, base = window.location.href) {
   if (url.pathname.endsWith('.json')) return url.href;
   const path = disclosureFragmentPath(url.pathname);
   if (!path?.startsWith('/disclosures/sets/')) return null;
-  const preview = /(?:\.aem\.page$|\.hlx\.page$)/i.test(location.hostname)
+  const preview = /(?:\.aem\.page$|\.hlx\.page$|da\.live$)/i.test(location.hostname)
     || ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
   return `${DELIVERY_ORIGIN}/${preview ? 'preview' : 'live'}${SITE_PATH}${path}`;
 }
