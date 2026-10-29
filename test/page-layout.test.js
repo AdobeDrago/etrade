@@ -132,3 +132,20 @@ test('missing hero and audience transitions render once, while authored separato
   assert.equal(existing.document.querySelectorAll('.separator').length, 1);
   assert.match(existing.document.querySelector('.separator').textContent, /99px/);
 });
+
+test('generated transitions follow each source section family without changing neighboring sections', async () => {
+  const { document, layout, sections } = await harness('/home', `
+    <div class="section" data-section-family="purple"><div><div class="hero-dark split"></div></div></div>
+    <div class="section" data-section-family="charcoal"><div><div class="columns-feature band"></div></div></div>
+    <div class="section"><div>Content</div></div>`);
+  document.documentElement.dataset.pageTheme = 'charcoal';
+  layout.default();
+  const main = document.querySelector('main');
+  sections(main);
+  sections(main);
+  assert.deepEqual([...main.querySelectorAll('.separator-container')]
+    .map((section) => section.dataset.sectionFamily), ['purple', 'charcoal']);
+  assert.equal(document.documentElement.dataset.pageTheme, 'charcoal');
+  assert.equal(main.lastElementChild.dataset.sectionFamily, undefined);
+  assert.equal(main.querySelectorAll('.separator').length, 2);
+});

@@ -300,6 +300,33 @@ test('section families override the page presentation while preserving open answ
   assert.equal(explicit.block.dataset.faqLayout, 'flat');
 });
 
+test('detached fragment FAQs adopt their shared parent family and keep answers open after insertion', async () => {
+  await Promise.all([
+    ['purple', 'charcoal', 'cards'],
+    ['charcoal', 'purple', 'flat'],
+  ].map(async ([fragmentFamily, parentFamily, expected]) => {
+    const { block, document, decorate } = await render(row('Existing question', fees), '', '', `data-section-family="${parentFamily}"`, fragmentFamily);
+    const parent = block.closest('.section');
+    const fragment = document.createElement('main');
+    fragment.innerHTML = `<div class="section" data-section-family="${fragmentFamily}"><div class="accordion-faq-wrapper"><div class="accordion-faq">${row('Fragment question', fees)}</div></div></div>`;
+    const faq = fragment.querySelector('.accordion-faq');
+    // Fragments decorate their blocks before their wrappers move into the parent section.
+    await decorate(faq);
+    const button = faq.querySelector('.accordion-faq-item-label');
+    const answer = faq.querySelector('.accordion-faq-item-body');
+    button.click();
+    parent.append(...fragment.firstElementChild.childNodes);
+    await new Promise((resolve) => { setImmediate(resolve); });
+    assert.equal(faq.dataset.faqLayout, expected);
+    assert.equal(button.getAttribute('aria-expanded'), 'true');
+    assert.equal(faq.querySelector('.accordion-faq-item-body'), answer);
+    parent.dataset.sectionFamily = fragmentFamily;
+    await new Promise((resolve) => { setImmediate(resolve); });
+    assert.equal(faq.dataset.faqLayout, fragmentFamily === 'purple' ? 'flat' : 'cards');
+    assert.equal(button.getAttribute('aria-expanded'), 'true');
+  }));
+});
+
 test('grid accordions retain shared section content and use its heading level for every block', async () => {
   const adjacent = '<div class="default-content-wrapper"><h3 id="shared-faq">Shared heading</h3><p>Shared introduction with <a href="/details?track=1">details</a>.</p></div>';
   const { block, document, decorate } = await render(row('First question', '<p>Answer.</p>'), '', adjacent, 'data-section-layout="authored" data-section-grid="2"');

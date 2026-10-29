@@ -6,22 +6,25 @@ let themeObserver;
 
 function watchPageTheme(block, update) {
   themeLayouts.set(block, update);
-  if (typeof MutationObserver === 'undefined') return;
-  if (!themeObserver) {
-    themeObserver = new MutationObserver(() => {
-      document.querySelectorAll('.accordion-faq').forEach((accordion) => {
-        themeLayouts.get(accordion)?.();
-      });
+  if (themeObserver || typeof MutationObserver === 'undefined') return;
+  themeObserver = new MutationObserver((mutations) => {
+    // Fragments decorate off-document and can discard their section on insertion.
+    const changed = mutations.some((mutation) => mutation.type === 'attributes'
+      || [...mutation.addedNodes, ...mutation.removedNodes].some((node) => (
+        node.nodeType === Node.ELEMENT_NODE
+        && (node.matches('.accordion-faq') || node.querySelector('.accordion-faq'))
+      )));
+    if (!changed) return;
+    document.querySelectorAll('.accordion-faq').forEach((accordion) => {
+      themeLayouts.get(accordion)?.();
     });
-    themeObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-page-theme'],
-    });
-  }
-  const section = block.closest('.section');
-  if (section) {
-    themeObserver.observe(section, { attributes: true, attributeFilter: ['data-section-family'] });
-  }
+  });
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-page-theme', 'data-section-family'],
+    childList: true,
+    subtree: true,
+  });
 }
 
 function takeAdjacentContent(block) {
