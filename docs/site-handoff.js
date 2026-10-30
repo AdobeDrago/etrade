@@ -165,6 +165,115 @@ function enableSidebarResize() {
   syncResize();
 }
 
+function enableGuideSearch(revealEntry) {
+  const trigger = document.querySelector('#guide-search-open');
+  const dialog = document.querySelector('#guide-search-dialog');
+  const input = document.querySelector('#guide-search-input');
+  const results = document.querySelector('#guide-search-results');
+  const status = document.querySelector('#guide-search-status');
+  if (!trigger || !dialog || !input || !results || !status) return;
+  const topics = [];
+  let topic;
+  const normalize = (value) => value.replace(/\s+/g, ' ').trim();
+  // textContent includes catalog entries hidden by the independent block filter.
+  document.querySelectorAll('main :is(h1, h2, h3, h4, p, li, tr, dt, dd, pre, figcaption, .prompt)')
+    .forEach((node, index) => {
+      if (node.parentElement.closest('p, li, tr, pre, figcaption, .prompt, .catalog-tools, .catalog-index')) return;
+      const block = node.closest('.block-entry');
+      const heading = /^H[1-4]$/.test(node.tagName);
+      if (heading && (!block || node === block.querySelector('h3'))) {
+        if (!node.id && !block) node.id = `guide-topic-${index}`;
+        const label = node.cloneNode(true);
+        label.querySelectorAll('.tag').forEach((tag) => tag.remove());
+        topic = {
+          title: normalize(label.textContent),
+          section: normalize(node.closest('section').querySelector('h2')?.textContent || 'Overview'),
+          id: block?.id || node.id,
+          text: '',
+        };
+        topics.push(topic);
+      } else if (topic) {
+        const text = node.tagName === 'TR'
+          ? [...node.children].map((cell) => cell.textContent).join(' · ')
+          : node.textContent;
+        topic.text += ` ${normalize(text)}`;
+      }
+    });
+
+  const search = () => {
+    const query = normalize(input.value).toLowerCase();
+    results.replaceChildren();
+    if (query.length < 2) {
+      status.textContent = 'Enter at least 2 characters to search.';
+      return;
+    }
+    const words = query.split(' ');
+    const matches = topics.map((item) => {
+      const title = item.title.toLowerCase();
+      const text = `${title} ${item.section} ${item.text}`.toLowerCase();
+      const score = (title.includes(query) ? 100 : 0)
+        + words.filter((word) => title.includes(word)).length * 10;
+      return { ...item, score, matches: words.every((word) => text.includes(word)) };
+    }).filter((item) => item.matches).sort((a, b) => b.score - a.score);
+    status.textContent = matches.length
+      ? `${matches.length} result${matches.length === 1 ? '' : 's'}${matches.length > 20 ? ' · Showing the first 20' : ''}`
+      : 'No results. Try a block name, setting or shorter phrase.';
+    matches.slice(0, 20).forEach((item) => {
+      const row = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = `#${item.id}`;
+      const section = document.createElement('span');
+      section.className = 'guide-search-section';
+      section.textContent = item.section;
+      const title = document.createElement('strong');
+      title.textContent = item.title;
+      const excerpt = document.createElement('span');
+      excerpt.className = 'guide-search-excerpt';
+      const text = normalize(item.text);
+      const positions = words.map((word) => text.toLowerCase().indexOf(word))
+        .filter((position) => position >= 0);
+      const start = Math.max(0, (positions.length ? Math.min(...positions) : 0) - 45);
+      excerpt.textContent = `${start ? '…' : ''}${text.slice(start, start + 170)}${text.length > start + 170 ? '…' : ''}`;
+      link.append(section, title, excerpt);
+      row.append(link);
+      results.append(row);
+    });
+  };
+
+  trigger.hidden = false;
+  trigger.addEventListener('click', () => {
+    search();
+    dialog.showModal();
+    input.focus();
+  });
+  dialog.querySelector('.guide-search-close').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      dialog.close();
+    }
+  });
+  input.addEventListener('input', search);
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowDown' && results.firstElementChild) {
+      event.preventDefault();
+      results.querySelector('a').focus();
+    }
+  });
+  dialog.querySelector('form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    results.querySelector('a')?.click();
+  });
+  results.addEventListener('click', (event) => {
+    const link = event.target.closest('a');
+    if (!link || event.button !== 0 || event.metaKey || event.ctrlKey
+      || event.shiftKey || event.altKey) return;
+    revealEntry(link.hash);
+    if (mobile.matches && navigation) navigation.open = false;
+    dialog.close();
+  });
+}
+
 function filterBlocks() {
   const words = filter.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
   let shown = 0;
@@ -234,4 +343,5 @@ window.addEventListener('scroll', refreshLayout, { passive: true });
 window.addEventListener('resize', refreshTableLayout);
 window.addEventListener('hashchange', refreshLayout);
 enableSidebarResize();
+enableGuideSearch(revealBlock);
 refreshLayout();

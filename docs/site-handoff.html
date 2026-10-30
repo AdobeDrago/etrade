@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="E*TRADE site handoff: DA authoring, all 32 blocks, Purple and Charcoal design families, disclosures, rates, tools, preview and publishing.">
 <title>Site handoff guide | E*TRADE</title>
-<link rel="stylesheet" href="site-handoff.css?v=20261030-review-copy">
-<script src="site-handoff.js?v=20261030-sidebar" defer></script>
+<link rel="stylesheet" href="site-handoff.css?v=20261030-search">
+<script src="site-handoff.js?v=20261030-search" defer></script>
 </head>
 <body class="author-guide">
 <a class="skip-link" href="#main">Skip to guide</a>
@@ -14,9 +14,19 @@
 <div class="guide-header-inner">
 <a class="guide-brand" href="#start" aria-label="E*TRADE — guide overview"><img src="../icons/etrade-logo-light.svg" width="217" height="54" alt="E*TRADE from Morgan Stanley"></a>
 <div class="guide-header-title"><span>Site operations</span><span class="guide-current-section" hidden>Overview</span></div>
-<div class="guide-header-actions"><a class="header-catalog" href="#block-catalog">Block catalog <span aria-hidden="true">↗</span></a><a class="header-demo" href="https://demo--etrade--adobedrago.aem.page/home" target="_blank" rel="noopener">Open demo <span aria-hidden="true">↗</span></a></div>
+<div class="guide-header-actions"><button class="guide-search-open" id="guide-search-open" type="button" aria-label="Search guide" aria-haspopup="dialog" aria-controls="guide-search-dialog" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path></svg><span>Search guide</span></button><a class="header-catalog" href="#block-catalog">Block catalog <span aria-hidden="true">↗</span></a><a class="header-demo" href="https://demo--etrade--adobedrago.aem.page/home" target="_blank" rel="noopener">Open demo <span aria-hidden="true">↗</span></a></div>
 </div>
 </header>
+<dialog class="guide-search-dialog" id="guide-search-dialog" aria-labelledby="guide-search-title">
+<div class="guide-search-heading"><h2 id="guide-search-title">Search the guide</h2><button class="guide-search-close" type="button" aria-label="Close guide search">×</button></div>
+<form class="guide-search-form" role="search">
+<label for="guide-search-input">Search headings, instructions and all 32 blocks</label>
+<input id="guide-search-input" name="guide-query" type="search" placeholder="Try metadata, disclosures or Hero Dark" autocomplete="off" autofocus>
+</form>
+<p class="guide-search-status" id="guide-search-status" role="status" aria-live="polite">Enter at least 2 characters to search.</p>
+<ol class="guide-search-results" id="guide-search-results" aria-label="Guide search results"></ol>
+<p class="guide-search-help">Enter opens the first result. Esc closes search.</p>
+</dialog>
 <div class="guide-layout">
 <aside class="guide-sidebar" id="guide-sidebar">
 <nav class="guide-nav" aria-label="Guide contents">
@@ -1142,7 +1152,7 @@ npm test</code></pre>
 <p>For each update, compare the prose with the owning source, review affected examples, check links, and inspect desktop/phone rendering. Recheck any workflow you label verified, record the environment/date, and update the code reference only after comparing it with that implementation. Preserve existing section anchors when possible.</p>
 <h3>Change record</h3>
 <div class="table-scroll" role="region" aria-label="Documentation change record" tabindex="0"><table class="guide-change-record"><thead><tr><th scope="col">Date</th><th scope="col">Change</th><th scope="col">Verification scope</th></tr></thead><tbody>
-<tr><td><time datetime="2026-10-30">Oct 30, 2026</time></td><td>Added block selection, 32-block summaries, image and metadata references, authoring examples, a new-page checklist, maintenance guidance and Adobe references. Added sidebar resizing and stable menu selection. Simplified the wording and date layout after review.</td><td>Compared documentation with the local implementation and reviewed official Adobe references. DA acceptance, content approvals and live integrations remain in <a href="#open-items">Handoff checks</a>.</td></tr>
+<tr><td><time datetime="2026-10-30">Oct 30, 2026</time></td><td>Added block selection, 32-block summaries, image and metadata references, authoring examples, a new-page checklist, maintenance guidance and Adobe references. Added sidebar resizing, stable menu selection and guide search. Simplified the wording and date layout after review.</td><td>Compared documentation with the local implementation and reviewed official Adobe references. Checked search navigation, catalog filtering, keyboard controls and phone layouts. DA acceptance, content approvals and live integrations remain in <a href="#open-items">Handoff checks</a>.</td></tr>
 <tr><td><time datetime="2026-10-29">Oct 29, 2026</time></td><td>Created the handoff guide, block catalog, screenshots and handoff checks. Refined the layout and aligned the header width.</td><td>Code reference and preview checks are recorded in <a href="#open-items">Handoff checks</a> and <a href="#reference">Technical reference</a>.</td></tr>
 </tbody></table></div>
 </section>

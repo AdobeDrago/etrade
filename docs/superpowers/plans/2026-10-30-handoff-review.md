@@ -30,15 +30,17 @@
 
 ### Task 2: Guide search
 
-- [ ] Write behavioral tests for full-guide matching, hidden catalog entries, independent filters, navigation and literal input; observe the missing feature fail.
-- [ ] Add a header search button and accessible dialog with ranked results and excerpts.
-- [ ] Implement heading/passages indexing and existing-anchor navigation without changing the block filter.
-- [ ] Verify tests, desktop/mobile layout, keyboard use, no results, focus return and catalog interactions.
-- [ ] Run project tests, lint, explicit documentation CSS lint and structural checks.
-- [ ] Request one fresh review, resolve material findings, save screenshots and prepare the finished work for focused commits.
+- [x] Write behavioral tests for full-guide matching, hidden catalog entries, independent filters, navigation and literal input; observe the missing feature fail.
+- [x] Add a header search button and accessible dialog with ranked results and excerpts.
+- [x] Implement heading/passages indexing and existing-anchor navigation without changing the block filter.
+- [x] Verify tests, desktop/mobile layout, keyboard use, no results, focus return and catalog interactions.
+- [x] Run project tests, lint, explicit documentation CSS lint and structural checks.
+- [x] Request one fresh review, resolve material findings, save screenshots and prepare the finished work for focused commits.
 
 ## Execution notes
 
 - Initial phrase scan: zero matches. Reference-field repetition and the maintenance section produce soft structure/silhouette flags; preserve the consistent catalog format.
 - Final scans with the documentation genre: zero phrase matches, zero silhouette flags, one soft opener-repetition flag from the reference format. Preservation: all 539 extracted constraints retained. Reviewed the reduced negation count against the edited sentences; removed redundant scope statements without changing block or service behavior.
-- Date layout checked on desktop and at 320px: both dates remain on one line in a 144px column.
+- Browser checks: dates remain on one line in a 144px column at desktop and 320px; no page overflow at 320px or 390px; global search finds hidden catalog entries and leaves filters unchanged until following a hidden block link; Enter navigates below the header; Escape closes and returns focus; phone result navigation closes expanded contents.
+- Added regression tests after observing Escape being consumed by the search field and after reproducing phone contents remaining expanded. Both now pass. All 359 project tests pass; lint, documentation CSS lint and structural checks pass.
+- Fresh read-only review found no additional actionable issues. No customer-site runtime, dependency, or vendored-script changes.

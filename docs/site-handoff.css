@@ -66,7 +66,7 @@
   letter-spacing: -0.015em;
 }
 
-.author-guide :where(h3[id]) {
+.author-guide :where(h1[id], h2[id], h3[id], h4[id]) {
   scroll-margin-top: calc(var(--guide-header-offset, var(--guide-header-height)) + 80px);
 }
 
@@ -248,6 +248,137 @@
 .author-guide .header-demo:hover {
   border-color: #c5bbdd;
   background: var(--guide-soft);
+}
+
+.author-guide .guide-search-open {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 8px 12px;
+  gap: 8px;
+  border: 1px solid var(--guide-line);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--guide-muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+.author-guide .guide-search-open:hover {
+  border-color: #c5bbdd;
+  background: var(--guide-purple-soft);
+  color: var(--guide-link);
+}
+
+.author-guide .guide-search-dialog {
+  width: min(680px, calc(100% - 32px));
+  max-height: min(720px, calc(100dvh - 48px));
+  margin: max(24px, 10dvh) auto auto;
+  overflow: auto;
+  padding: 24px;
+  border: 1px solid var(--guide-line);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--guide-ink);
+  box-shadow: 0 24px 80px #17151c26;
+}
+
+.author-guide .guide-search-dialog::backdrop {
+  background: #17151c59;
+}
+
+.author-guide .guide-search-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.author-guide .guide-search-heading h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.author-guide .guide-search-close {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: var(--guide-soft);
+  color: var(--guide-muted);
+  font: 1.5rem/1 sans-serif;
+  cursor: pointer;
+}
+
+.author-guide .guide-search-form label {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--guide-muted);
+  font-size: 0.8125rem;
+}
+
+.author-guide .guide-search-form input {
+  width: 100%;
+  min-height: 48px;
+  padding: 11px 14px;
+  border: 1px solid #b4a9d0;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--guide-ink);
+  font: inherit;
+}
+
+.author-guide .guide-search-status,
+.author-guide .guide-search-help {
+  margin: 16px 0 12px;
+  color: var(--guide-muted);
+  font-size: 0.75rem;
+}
+
+.author-guide .guide-search-results {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.author-guide .guide-search-results li {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--guide-line);
+}
+
+.author-guide .guide-search-results a {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 10px;
+  gap: 3px;
+  border-radius: 6px;
+  color: var(--guide-ink);
+  text-decoration: none;
+}
+
+.author-guide .guide-search-results :where(a:hover, a:focus-visible) {
+  background: var(--guide-purple-soft);
+}
+
+.author-guide .guide-search-section {
+  color: var(--guide-link);
+  font-size: 0.6875rem;
+}
+
+.author-guide .guide-search-results strong {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.author-guide .guide-search-excerpt {
+  color: var(--guide-muted);
+  font-size: 0.8125rem;
+  line-height: 1.6;
 }
 
 .author-guide .guide-layout {
@@ -1074,6 +1205,21 @@
     display: none;
   }
 
+  .author-guide .guide-header-actions {
+    gap: 8px;
+  }
+
+  .author-guide .guide-search-open {
+    justify-content: center;
+    width: 44px;
+    min-height: 44px;
+    padding: 0;
+  }
+
+  .author-guide .guide-search-open span {
+    display: none;
+  }
+
   .author-guide .guide-brand {
     flex-shrink: 1;
     flex-basis: auto;
@@ -1099,7 +1245,7 @@
   }
 
   .author-guide .guide-brand img {
-    width: 126px;
+    width: clamp(104px, 32vw, 126px);
   }
 
   .author-guide .guide-header-actions {
@@ -1117,6 +1263,12 @@
   .author-guide .guide-navigation > summary {
     margin-inline: -20px;
     padding-inline: 20px;
+  }
+
+  .author-guide .guide-search-dialog {
+    max-height: calc(100dvh - 32px);
+    margin-top: 16px;
+    padding: 18px;
   }
 
   .author-guide main {
@@ -1192,6 +1344,7 @@
   }
 
   .author-guide .guide-sidebar,
+  .author-guide .guide-search-dialog,
   .author-guide .skip-link,
   .author-guide .guide-header-actions,
   .author-guide .quick-links,
