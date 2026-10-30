@@ -7,6 +7,8 @@ Your project's description...
 
 ## Documentation
 
+The [E*TRADE site handoff guide](docs/site-handoff.html) covers DA authoring, the 32-block catalog, page and section themes, authoring tools, disclosures, rates, preview/publish workflows and open handoff checks. Open `/docs/site-handoff.html` through the local preview; its HTML, CSS, JavaScript and screenshots are standalone documentation assets.
+
 Before using the aem-boilerplate, we recommand you to go through the documentation on https://www.aem.live/docs/ and more specifically:
 1. [Developer Tutorial](https://www.aem.live/developer/tutorial)
 2. [The Anatomy of a Project](https://www.aem.live/developer/anatomy-of-a-project)
