@@ -1,0 +1,1153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="E*TRADE site handoff: DA authoring, all 32 blocks, Purple and Charcoal design families, disclosures, rates, tools, preview and publishing.">
+<title>Site handoff guide | E*TRADE</title>
+<link rel="stylesheet" href="site-handoff.css?v=20261030-mobile-purple">
+<script src="site-handoff.js?v=20261030-sidebar" defer></script>
+</head>
+<body class="author-guide">
+<a class="skip-link" href="#main">Skip to guide</a>
+<header class="guide-header">
+<div class="guide-header-inner">
+<a class="guide-brand" href="#start" aria-label="E*TRADE — guide overview"><img src="../icons/etrade-logo-light.svg" width="217" height="54" alt="E*TRADE from Morgan Stanley"></a>
+<div class="guide-header-title"><span>Site operations</span><span class="guide-current-section" hidden>Overview</span></div>
+<div class="guide-header-actions"><a class="header-catalog" href="#block-catalog">Block catalog <span aria-hidden="true">↗</span></a><a class="header-demo" href="https://demo--etrade--adobedrago.aem.page/home" target="_blank" rel="noopener">Open demo <span aria-hidden="true">↗</span></a></div>
+</div>
+</header>
+<div class="guide-layout">
+<aside class="guide-sidebar" id="guide-sidebar">
+<nav class="guide-nav" aria-label="Guide contents">
+<details class="guide-navigation" open>
+<summary>Guide contents <span class="navigation-indicator" aria-hidden="true"></span></summary>
+<div class="guide-nav-content">
+<div class="nav-group"><p class="nav-group-label">Essentials</p>
+<a href="#start"><span class="nav-label">Overview</span></a>
+<a href="#environments"><span class="nav-label">Environments &amp; ownership</span></a>
+<a href="#block-authoring"><span class="nav-label">Authoring blocks</span></a>
+<a href="#templates"><span class="nav-label">Page patterns</span></a>
+</div>
+<div class="nav-group"><p class="nav-group-label">Authoring</p>
+<a href="#branding"><span class="nav-label">Content &amp; actions</span></a>
+<a href="#design-system"><span class="nav-label">Design families</span></a>
+<a href="#metadata-reference"><span class="nav-label">Metadata reference</span></a>
+<a href="#asset-reference"><span class="nav-label">Images &amp; assets</span></a>
+<a href="#authoring-examples"><span class="nav-label">Common mistakes</span></a>
+<a href="#adhoc"><span class="nav-label">Making an edit</span></a>
+<a href="#authoring-tools"><span class="nav-label">Authoring tools</span></a>
+<a href="#disclosures"><span class="nav-label">Shared content and disclosures</span></a>
+<a href="#rates-data"><span class="nav-label">Rates &amp; market data</span></a>
+</div>
+<div class="nav-group"><p class="nav-group-label">Operations</p>
+<a href="#template-ops"><span class="nav-label">Changes across pages</span></a>
+<a href="#chat-content"><span class="nav-label">AI assistant: content</span></a>
+<a href="#chat-structure"><span class="nav-label">AI assistant: structure</span></a>
+<a href="#custom-blocks"><span class="nav-label">Custom blocks &amp; demos</span></a>
+</div>
+<div class="nav-group"><p class="nav-group-label">Reference</p>
+<a href="#block-catalog"><span class="nav-label">Block catalog</span> <span class="nav-count">32</span></a>
+<a href="#publish"><span class="nav-label">Preview &amp; publish</span></a>
+<a href="#open-items"><span class="nav-label">Handoff checks</span></a>
+<a href="#troubleshooting"><span class="nav-label">Troubleshooting</span></a>
+<a href="#reference"><span class="nav-label">Technical reference</span></a>
+<a href="#guide-maintenance"><span class="nav-label">Guide maintenance</span></a>
+</div>
+<p class="nav-reference">Implementation reference<br><code>demo</code> <span aria-hidden="true">/</span> <code>6cac224</code></p>
+</div>
+</details>
+</nav>
+<div class="guide-resizer" role="separator" tabindex="0" aria-label="Resize guide sidebar" aria-orientation="vertical" aria-controls="guide-sidebar" aria-describedby="guide-resize-help" aria-valuemin="224" aria-valuemax="420" aria-valuenow="252" title="Drag to resize. Double-click to reset." hidden></div>
+<span id="guide-resize-help" hidden>Drag left or right, or use the Left and Right arrow keys to resize. Hold Shift for larger steps. Home and End select the minimum and maximum widths. Enter or a double-click restores the default width.</span>
+</aside>
+<main id="main" tabindex="-1">
+<section id="start">
+<p class="eyebrow"><span class="eyebrow-mark" aria-hidden="true"></span>Edge Delivery Services <span class="eyebrow-divider" aria-hidden="true">/</span> E*TRADE</p>
+<h1>Site handoff guide<span class="title-period">.</span></h1>
+<p class="lead">A practical reference for authoring pages, managing shared content, and releasing updates to the E*TRADE demo site.</p>
+<div class="guide-metadata"><div><span>Prepared for</span><strong>Authors &amp; site teams</strong></div><div><span>Guide updated</span><strong><time datetime="2026-10-30">October 30, 2026</time></strong></div><div><span>Code reference</span><strong><code>demo</code> <span aria-hidden="true">/</span> <code>6cac224</code></strong></div></div>
+<div class="quick-links">
+<a href="#new-page-checklist"><span class="quick-link-label">01 / Create &amp; edit</span><strong>Author a page <span aria-hidden="true">↗</span></strong><span>A checklist from draft to release.</span></a>
+<a href="#disclosures"><span class="quick-link-label">02 / Shared content</span><strong>Manage disclosures <span aria-hidden="true">↗</span></strong><span>Fragments, references and legal sources.</span></a>
+<a href="#block-catalog"><span class="quick-link-label">03 / Components</span><strong>Explore the catalog <span aria-hidden="true">↗</span></strong><span>Structures and options for all 32 blocks.</span></a>
+<a href="#publish"><span class="quick-link-label">04 / Delivery</span><strong>Preview &amp; publish <span aria-hidden="true">↗</span></strong><span>Review and release approved updates.</span></a>
+</div>
+<p class="guide-shortcuts"><a href="#block-selection">Choose a block</a><a href="#metadata-reference">Look up metadata</a><a href="#authoring-examples">Avoid common mistakes</a><a href="#adobe-documentation">Adobe documentation</a></p>
+<p class="overview-scope">This guide documents the <code>demo</code> implementation. DA setup, content approval, main deployment and live integrations have separate <a href="#open-items">handoff checks</a>.</p>
+</section>
+<section id="environments">
+<p class="section-label">01 / Essentials</p>
+<h2>Environments &amp; ownership</h2>
+
+<p>Page content is maintained in Adobe Document Authoring (DA / Experience Workspace). Blocks, styles and integrations are maintained in GitHub. A content save, a content preview, a content publish and a code deployment are separate operations.</p>
+<div class="table-scroll" role="region" aria-label="Sites, environments and responsibilities" tabindex="0"><table><thead><tr><th scope="col">What</th><th scope="col">Where</th><th scope="col">Use it for</th></tr></thead><tbody>
+<tr><td>Content workspace</td><td><a href="https://da.live/#/adobedrago/etrade">adobedrago/etrade in DA</a></td><td>Pages, shared fragments, disclosure documents, sheets and library examples.</td></tr>
+<tr><td>Demo editor</td><td><a href="https://da.live/canvas?ref=demo#/adobedrago/etrade/home">Home with <code>ref=demo</code></a></td><td>Review authoring with this guide’s code branch. DA source content is shared across code branches.</td></tr>
+<tr><td>Demo preview</td><td><a href="https://demo--etrade--adobedrago.aem.page/home">demo · /home</a></td><td>Review demo code with previewed content. The guide is based on the local <code>demo</code> checkout.</td></tr>
+<tr><td>Main preview</td><td><a href="https://main--etrade--adobedrago.aem.page/home">main · /home</a></td><td>Review code deployed to main with previewed content. Feature availability may differ from demo.</td></tr>
+<tr><td>Main live delivery</td><td><a href="https://main--etrade--adobedrago.aem.live/home">main · live /home</a></td><td>Published content with main code. This address alone does not establish a production-domain cutover.</td></tr>
+<tr><td>Code</td><td><a href="https://github.com/AdobeDrago/etrade">AdobeDrago/etrade</a></td><td>Code Sync deploys branch code; merging to main ships main code.</td></tr>
+<tr><td>Site configuration</td><td><a href="https://tools.aem.live/">tools.aem.live</a> and <a href="https://da.live/config#/adobedrago/etrade/">DA configuration</a></td><td>EDS configuration and DA library/extension registrations respectively.</td></tr>
+<tr><td>Style showroom</td><td><a href="../tools/style-system/style-system.html">Interactive style system</a></td><td>Preview the real family tokens, section choices and article-card styles. Changes here do not save DA content.</td></tr>
+</tbody></table></div>
+<p class="reference-link">Adobe orientation: <a href="https://www.aem.live/docs/ew/about">Experience Workspace overview</a> · <a href="https://www.aem.live/docs/ew/authoring/browsing-content">browse, copy and organize content</a>.</p>
+<h3>Who owns what</h3>
+<p><strong>Authors</strong> own wording, images and alternatives, headings, destinations, supported block options, metadata and release of content. <strong>Content and legal owners</strong> approve rates, fees, campaign dates, offer tiers, disclosures and claims. <strong>Developers</strong> own block behavior, shared design values, service adapters, identity and consent integrations, deployment and technical configuration.</p>
+<p class="note"><strong>Branch awareness matters.</strong> An editor <code>?ref=demo</code> changes the rendering code; it does not create a separate content sandbox. Use a draft path for experiments and review shared-content changes across the pages that consume them.</p>
+
+</section>
+<section id="block-authoring">
+<p class="section-label">02 / Essentials</p>
+<h2>Authoring blocks</h2>
+
+<p>A page is a document. Headings, paragraphs, lists and images outside tables are default content. A designed component is a <strong>block table</strong>: its merged first row names the block, and the following rows contain its content. Use the exact names and structures in the <a href="#block-catalog">32-block catalog</a>.</p>
+<div class="table-scroll" role="region" aria-label="Example structure: one complete Cards Article row per card" tabindex="0"><table class="authoring-example"><caption>Example structure: one complete Cards Article row per card</caption><thead><tr><th colspan="2">Cards Article</th></tr></thead><tbody>
+<tr><td>Image with meaningful alternative text</td><td><p>Optional eyebrow</p><p><strong>Heading 3: Article title</strong></p><p>Supporting copy, including any inline link.</p><p>Standalone link: Read the article</p></td></tr>
+<tr><td>Another image</td><td><p><strong>Heading 3: Another article</strong></p><p>Supporting copy.</p><p>Standalone link: Read more</p></td></tr>
+</tbody></table></div>
+<p>“Heading 3” and “Standalone link” above are instructions for formatting the cell, not text to paste into it. Insert the real image, choose the heading level, and create a real link in its own paragraph.</p>
+<h3>Rules that apply across the site</h3>
+<ul>
+<li><strong>Keep the block name exact.</strong> <code>Cards Article</code> loads <code>cards-article</code>; <code>Tabs Accounts</code> is plural. Use parentheses for options, such as <code>Hero Dark (Split, Balanced)</code>.</li>
+<li><strong>Copy a known example.</strong> Start with a reviewed page or a registered library example. Optional rows and extra cells vary by block; use its catalog entry rather than assuming every table has the same contract.</li>
+<li><strong>Keep actions separate.</strong> A standalone linked paragraph can become an action. An inline link stays in its sentence. Keep the original destination, campaign query parameters and disclosure markers.</li>
+<li><strong>Use one page H1.</strong> Use H2 for sections and H3 for cards or questions as appropriate. Do not select heading levels just to change size.</li>
+<li><strong>Choose suitable images.</strong> Follow the <a href="#asset-reference">image preparation and crop guidance</a>. Supply meaningful alternative text for informative images and empty alternative text for decorative artwork. Campaign artwork and logos must suit the selected surface.</li>
+<li><strong>Separate sections with a section break.</strong> A horizontal rule separates the document into sections. <code>Section Metadata</code> configures one section; <code>Metadata</code> configures the whole page.</li>
+</ul>
+<p class="reference-link">Adobe explains <a href="https://www.aem.live/docs/ew/authoring/editing-docs">editing in Layout, Content and Split views</a> and the underlying <a href="https://www.aem.live/developer/markup-sections-blocks">sections, blocks and block options</a>. Use this project’s catalog for the exact E*TRADE table structures and supported variants.</p>
+<h3 id="block-selection">Which block should I use?</h3>
+<p>Choose the content job and media layout first, then select a supported variant. Changing a block name can change its table structure; compare the destination entry before renaming an existing table.</p>
+<div class="table-scroll" role="region" aria-label="Choose a block for the content job" tabindex="0"><table><thead><tr><th scope="col">I need to…</th><th scope="col">Start with</th><th scope="col">How to choose</th></tr></thead><tbody>
+<tr><td>Introduce a page</td><td><a href="#block-hero-light">Hero Light</a> / <a href="#block-hero-dark">Hero Dark</a></td><td>Use Hero Light for text only. Hero Dark places copy above media by default; Split puts text beside an image on desktop.</td></tr>
+<tr><td>Put copy over background artwork</td><td><a href="#block-hero">Hero</a></td><td>Hero uses a full-width background with cropping. It is a different layout from Hero Dark (Split).</td></tr>
+<tr><td>Present a product with an offer</td><td><a href="#block-hero-product">Hero Product</a> / <a href="#block-hero-dark">Hero Dark (Split)</a></td><td>Follow the reviewed page pattern. Hero Product has named text, image and offer rows; migrating to Split requires a source-table review.</td></tr>
+<tr><td>Introduce a campaign alongside login</td><td><a href="#block-welcome-hero">Welcome Hero</a></td><td>Use only for the campaign/login presentation. The authored login destination and identity integration remain separate.</td></tr>
+<tr><td>List articles, platforms or general content</td><td><a href="#block-cards-article">Cards Article</a> / <a href="#block-cards-platform">Cards Platform</a> / <a href="#block-cards">Cards</a></td><td>Article supports eyebrows and Promo artwork. Platform supports platform/investment-choice cards and stretched actions. Cards is the general grid.</td></tr>
+<tr><td>Compare accounts, products or amounts</td><td><a href="#block-cards-account">Cards Account</a> / <a href="#block-cards-product">Cards Product</a> / <a href="#block-cards-pricing">Cards Pricing</a></td><td>Account emphasizes an account action; Product supports a product/rate hierarchy; Pricing emphasizes the first amount paragraph. Use Tabs Accounts when categories need separate panels.</td></tr>
+<tr><td>Pair an image and a story</td><td><a href="#block-columns-feature">Columns Feature</a> / <a href="#block-columns">Columns</a></td><td>Choose Columns Feature for its media, copy and action treatment. Choose Columns for simple authored columns; its cell count sets the column count.</td></tr>
+<tr><td>Publish an offer or answer questions</td><td><a href="#block-banner-offer">Banner Offer</a> / <a href="#block-accordion-faq">Accordion FAQ</a></td><td>Use Banner Offer for a compact campaign. Use FAQ for question/answer rows, including complete fee tables inside answers.</td></tr>
+<tr><td>Repeat content across pages</td><td><a href="#block-fragment">Fragment</a></td><td>Use a shared reference when one source should update every consumer. Copy a block table when each page must own independent content.</td></tr>
+</tbody></table></div>
+<p class="reference-link">Next: <a href="#block-catalog">compare the authoring structures</a> · <a href="#asset-reference">prepare images</a> · <a href="#new-page-checklist">create a new page</a></p>
+<h3>Inserting from the block library</h3>
+<p>Open the editor’s tools panel and choose <strong>Blocks</strong> when the catalog is available. In New Authoring, extensions are under the <strong>Outline dropdown → Extensions</strong>; the classic editor uses <strong>Library</strong>. Copying a block table creates local page content. Inserting a fragment through Reusable Content creates a shared reference.</p>
+<p>The repository prepares a pilot for <strong>Hero Dark</strong> (Default, Split, Balanced and Inset) and <strong>Cards Article</strong> (Default and Promo). Their preview documents currently load. Catalog registration and successful native insertion still need to be checked inside the authenticated DA editor. The repository alone does not prove every block is available in the picker.</p>
+<figure><a href="images/handoff/library-hero-dark.jpg" target="_blank" rel="noopener" aria-label="Open full-size image: Hero Dark library page with the authoring guide and rendered examples"><img src="images/handoff/library-hero-dark.jpg" width="1265" height="712" loading="lazy" decoding="async" alt="Hero Dark library page with the authoring guide and rendered examples"></a><figcaption>The Hero Dark gallery uses real block rendering. Its Theme preview control changes only the preview session. The collapsed authoring guide belongs to library metadata and should not be inserted as page content.</figcaption></figure>
+<p class="reference-link">Sources: <a href="https://github.com/AdobeDrago/etrade/blob/demo/docs/block-library-pilot.md">block library pilot</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/library-brief/README.md">library guide format</a> · <a href="https://www.aem.live/docs/ew/administering/set-up-library">Adobe library setup</a></p>
+
+</section>
+<section id="templates">
+<p class="section-label">03 / Essentials</p>
+<h2>Page patterns</h2>
+
+<p>Use a reviewed existing page as the starting point for a similar page, then replace its copy, images, links, metadata and legal dependencies. The repository contains page-layout conventions and a block-library pilot; it does not establish a registered set of DA starter templates.</p>
+<div class="table-scroll" role="region" aria-label="Page patterns and implementation notes" tabindex="0"><table><thead><tr><th scope="col">Page / pattern</th><th scope="col">Primary blocks</th><th scope="col">Handoff note</th></tr></thead><tbody>
+<tr><td><code>/home</code></td><td>Hero Dark, Columns Feature, Widget Calculator, Cards Pricing, Cards Product, Cards Award, Accordion FAQ, Separator, Floating Dock</td><td>Use Charcoal for the intended design family. Campaign details and disclosure sources remain authored.</td></tr>
+<tr><td><code>/home/welcome-back</code></td><td>Welcome Hero, Cards Icon (Welcome Back)</td><td>Use Purple for the intended family. The login presentation hands off to the authored login destination.</td></tr>
+<tr><td><code>/platforms</code></td><td>Hero, Cards Platform, Banner Offer</td><td>Use Purple for the intended family. The Hero image is a full-width background.</td></tr>
+<tr><td><code>/planning</code></td><td>Hero Dark (Split), Cards Icon (Planning / Tools), Columns Feature, Banner Offer (Compact)</td><td>Preview currently loads; verify campaign and planning content before reuse.</td></tr>
+<tr><td><code>/why-etrade</code></td><td>Hero Dark (Split, Balanced), Cards Article (Promo), Carousel Story</td><td>Verify the current source table and media rather than assuming earlier content migration notes are complete.</td></tr>
+<tr><td><code>/what-we-offer/our-accounts</code></td><td>Hero Light, Tabs Accounts, Accordion FAQ</td><td>Implemented in code; this path returned 404 on demo preview during this guide’s checks.</td></tr>
+<tr><td><code>/what-we-offer/our-accounts/brokerage-account</code></td><td>Hero Product or Hero Dark (Split, Inset), Columns Feature, supporting cards/offers</td><td>The split-hero change requires an authored table migration; inspect the actual page before changing its name.</td></tr>
+<tr><td><code>/what-we-offer/pricing-and-rates</code></td><td>Cards Pricing, Accordion FAQ (Flat)</td><td>Implemented in code; this path returned 404 on demo preview during this guide’s checks.</td></tr>
+</tbody></table></div>
+<h3>What a template change can affect</h3>
+<p>A starter document is copied content: future edits to the starter do not update its copies. A Fragment is shared content: changing its source affects consuming pages. A code change affects every page that uses that block or helper. The page-layout helper recognizes six existing routes, including Home, Welcome Back, Our Accounts, Brokerage, Planning and Why E*TRADE; duplicating one to a different address does not automatically carry its route-specific layout classes.</p>
+<p>For a new page type, ask a developer to confirm its layout behavior at the new path. Do not invent <code>Template</code> values or new block names to imitate an existing layout.</p>
+<div class="screenshot-pair">
+<figure><a href="images/handoff/home.jpg" target="_blank" rel="noopener" aria-label="Open full-size image: E*TRADE Home with the dark navigation and Hero Dark campaign"><img src="images/handoff/home.jpg" width="1265" height="712" loading="lazy" decoding="async" alt="E*TRADE Home with the dark navigation and Hero Dark campaign"></a><figcaption>Home: dark navigation, a Hero Dark heading/copy layout and full-width campaign media.</figcaption></figure><figure><a href="images/handoff/welcome-back.jpg" target="_blank" rel="noopener" aria-label="Open full-size image: Welcome Back campaign with a separate login panel"><img src="images/handoff/welcome-back.jpg" width="1265" height="712" loading="lazy" decoding="async" alt="Welcome Back campaign with a separate login panel"></a><figcaption>Welcome Back: campaign and login presentation. Credentials are not submitted or stored by this demo.</figcaption></figure>
+</div>
+<p class="reference-link">Source: <a href="https://github.com/AdobeDrago/etrade/blob/demo/scripts/page-layout.js">route-specific page layout helper</a></p>
+</section>
+<section id="branding">
+<p class="section-label">04 / Authoring</p>
+<h2>Content &amp; actions</h2>
+
+<p>The site applies the E*TRADE styling to the structure you author. Its primary typeface is GraphikETRADE, with the existing local font fallbacks. Choose the correct heading, list or link structure; use supported page, section and block options to select the presentation.</p>
+<h3>Links and actions</h3>
+<p>A link’s presentation depends on its context. Ordinary default content uses the formatting rules below; page layouts and blocks can also turn standalone links into actions.</p>
+<div class="table-scroll" role="region" aria-label="Link authoring and action rules" tabindex="0"><table><thead><tr><th scope="col">Author this</th><th scope="col">Result</th></tr></thead><tbody>
+<tr><td>A link within a sentence</td><td>An inline text link.</td></tr>
+<tr><td>A plain link alone in a paragraph in ordinary default content, outside an action group</td><td>A text link.</td></tr>
+<tr><td>A plain link alone in a paragraph in a page-level action group</td><td>Normally a primary action for the first link and secondary actions for later links. Section-specific rules can select an outline or secondary first action.</td></tr>
+<tr><td>A <strong>bold</strong> link alone in a paragraph in ordinary default content</td><td>A primary button. Page-level action groups preserve this choice.</td></tr>
+<tr><td>An <em>italic</em> link alone in a paragraph in ordinary default content</td><td>An outline button. Page-level action groups preserve this choice.</td></tr>
+<tr><td>A <strong><em>bold and italic</em></strong> link alone in a paragraph in ordinary default content</td><td>An accent button. Page-level action groups and blocks using the shared action helper normalize it to a primary action.</td></tr>
+<tr><td>Standalone links inside a block</td><td>Follow that block’s action rules. Some blocks honor bold/italic button formatting; others select action styles independently of that formatting.</td></tr>
+</tbody></table></div>
+<p><strong>Page-level actions:</strong> Home, Welcome Back, Our Accounts, Brokerage, Planning and Why E*TRADE group eligible standalone links in default content after their blocks load. Pricing introductions also group standalone links, including on other routes. In these areas, removing bold or italic formatting does not guarantee a text link. Keep a link within a sentence when it should remain inline.</p>
+<p><strong>Block actions:</strong> Hero Dark makes the first standalone link primary and later links secondary regardless of bold/italic formatting. Hero Light defaults to an outline first action and honors formatting overrides through the shared action helper. Tabs Accounts uses text actions for Learn more and outlines for other account actions. Follow each block’s contract instead of adding decorative arrows or duplicating links.</p>
+<h3>Section Metadata</h3>
+<p>Put the following table in the section it should configure. This example uses the Purple family inside a dark, standard-width section, with up to three whole blocks in a row.</p>
+<div class="table-scroll" role="region" aria-label="Section Metadata" tabindex="0"><table class="authoring-example"><thead><tr><th colspan="2">Section Metadata</th></tr></thead><tbody>
+<tr><td>Theme</td><td>Purple</td></tr>
+<tr><td>Container</td><td>standard</td></tr>
+<tr><td>Grid</td><td>3</td></tr>
+<tr><td>Gap</td><td>m</td></tr>
+<tr><td>Spacing</td><td>l</td></tr>
+<tr><td>Color Scheme</td><td>dark</td></tr>
+<tr><td>Background</td><td>inverse</td></tr>
+<tr><td>Align</td><td>center</td></tr>
+<tr><td>Anchor</td><td>featured-products</td></tr>
+</tbody></table></div><p><a href="#section-metadata-reference">See all section fields, supported values and defaults</a> in the metadata reference.</p>
+<p>A section grid arranges whole blocks. The rows inside one Cards Article table are that block’s internal cards. <code>Spacing: none</code> removes section-level vertical space; it does not remove a component’s internal padding.</p>
+<p class="reference-link">Sources: <a href="https://github.com/AdobeDrago/etrade/blob/demo/docs/style-system.md">style system and complete section settings</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/scripts/actions.js">shared action behavior</a></p>
+</section>
+<section id="design-system">
+<p class="section-label">05 / Authoring</p>
+<h2>Design families</h2>
+
+<p><strong>Theme selects a design family; Color Scheme selects a light or dark section.</strong> Purple and Charcoal are the project’s two reference treatments. Neither is an automatic operating-system dark mode.</p>
+<div class="theme-cards">
+<article class="theme-card"><h3>Purple</h3><p>Light header by default, deep-purple inverse/campaign surfaces, light footer, smaller card corners and divided FAQ rows with right-side plus/minus controls.</p></article>
+<article class="theme-card charcoal"><h3>Charcoal</h3><p>Dark header and footer, charcoal inverse surfaces, rounded cards and rounded FAQ rows with left-side chevrons.</p></article>
+</div>
+<div class="table-scroll" role="region" aria-label="Illustrative page metadata: Purple with an intentional dark-header override" tabindex="0"><table class="authoring-example"><caption>Illustrative page metadata: Purple with an intentional dark-header override</caption><thead><tr><th colspan="2">Metadata</th></tr></thead><tbody>
+<tr><td>Title</td><td>Your page title</td></tr>
+<tr><td>Description</td><td>Your page description</td></tr>
+<tr><td>Image</td><td>Your approved social image</td></tr>
+<tr><td>Theme</td><td>Purple</td></tr>
+<tr><td>Header Theme</td><td>dark</td></tr>
+<tr><td>Disclosures</td><td>/disclosures/sets/homepage</td></tr>
+</tbody></table></div>
+<p>See the <a href="#metadata-reference">complete metadata reference</a> for all supported page and section settings. Choose a disclosure set appropriate to the page; the homepage path above is an example. Omit Header Theme when the header should follow the family. Missing or unsupported family values retain the existing mixed treatment. Legacy <code>Theme: light</code> or <code>dark</code> selects only the header scheme.</p>
+<h3>What wins when options overlap</h3>
+<ol>
+<li>Header Theme metadata overrides an explicit Header Light/Dark variant, which overrides a legacy page light/dark choice, which overrides the family’s header default.</li>
+<li>A section Theme selects a local family. A section Color Scheme independently selects light/dark text and the default background.</li>
+<li>An explicit block layout or surface, such as Columns Feature (Dark) or Accordion FAQ (Flat), keeps its documented behavior. Theme changes do not replace artwork.</li>
+</ol>
+<h3>Try the design system</h3>
+<p>Open the <a href="../tools/style-system/style-system.html">style showroom</a>, switch Page family, then Section scheme, Container and Blocks per row. The preview uses the site’s real shared styles and displays equivalent authoring metadata. On individual block-library preview pages, the floating <strong>Theme</strong> control compares Purple and Charcoal; <strong>Use page default</strong> restores the authored family. Neither control saves DA metadata.</p>
+<figure><a href="images/handoff/style-system.jpg" target="_blank" rel="noopener" aria-label="Open full-size image: Interactive E*TRADE style system with family, section and grid controls"><img src="images/handoff/style-system.jpg" width="1265" height="712" loading="lazy" decoding="async" alt="Interactive E*TRADE style system with family, section and grid controls"></a><figcaption>The showroom demonstrates shared values and section layout. Its selections affect this preview only.</figcaption></figure>
+<h3>Extending the system</h3>
+<p>Developers maintain palette and semantic roles in <code>styles/brand.css</code>, family overrides in <code>styles/themes.css</code>, section composition in <code>styles/sections.css</code>, and component layouts in their owning block stylesheets. Shared action and card rules live in <code>styles/actions.css</code> and <code>styles/cards.css</code>. Text and spacing use scalable values; narrow block containers and enlarged text reduce internal column counts.</p>
+<p>Before rollout, set the intended family in DA, review both logo schemes in the shared nav, and review footer artwork and campaign images. The saved regression fixtures are examples, not evidence of the current DA metadata. Home should opt into Charcoal and Welcome Back into Purple; confirm the intended family for other imported pages.</p>
+<p class="reference-link">Source: <a href="https://github.com/AdobeDrago/etrade/blob/demo/docs/style-system.md">complete style-system guide</a></p>
+</section>
+<section id="metadata-reference">
+<p class="section-label">06 / Reference</p>
+<h2>Metadata reference</h2>
+<p>Use <strong>Metadata</strong> for page-wide settings and <strong>Section Metadata</strong> inside the section it configures. A <strong>Rate settings</strong> cell belongs to one card, panel or answer row; it is neither kind of metadata table.</p>
+<p class="reference-link">Adobe: <a href="https://www.aem.live/docs/metadata">Page Metadata</a> · <a href="https://www.aem.live/docs/bulk-metadata">Bulk Metadata</a>. A site can define shared defaults in a published metadata sheet; page-level values take precedence. Ask the content administrator to check any configured shared defaults when a value is unexpected. The custom fields and allowed values below are specific to this implementation.</p>
+<h3>Page fields</h3>
+<p>The fields below cover the delivery metadata used in this guide and the project-specific settings read by the current code. “Omitted” describes this implementation; it does not mean an unfinished page is ready for release.</p>
+<div class="table-scroll" role="region" aria-label="Page metadata fields and omitted behavior" tabindex="0"><table><thead><tr><th scope="col">Field</th><th scope="col">Value to supply</th><th scope="col">When omitted / review</th></tr></thead><tbody>
+<tr><td>Title / Description / Image</td><td>The page’s approved title, description and social-preview image.</td><td>Set these deliberately for a new page. Inspect the delivered page title, description and preview image; this guide supplies no fallback copy.</td></tr>
+<tr><td>Theme</td><td><code>Purple</code> or <code>Charcoal</code>.</td><td>No family is applied for a missing/unsupported value; existing mixed styling remains. Header/footer defaults are dark without a family. Legacy light/dark values affect the header scheme only.</td></tr>
+<tr><td>Header Theme</td><td><code>light</code> or <code>dark</code>.</td><td>Uses a block Light/Dark option, then legacy page light/dark, then the family default: Purple → light; otherwise dark.</td></tr>
+<tr><td>Nav</td><td>A local source path such as <code>/nav</code>.</td><td>Loads <code>/nav</code>, with a compatibility attempt at <code>/content/nav</code> if that default cannot load.</td></tr>
+<tr><td>Footer</td><td>A local source path such as <code>/footer</code>.</td><td>Loads <code>/footer</code>. Only its Footer block is used; an unavailable source does not generate replacement links or copy.</td></tr>
+<tr><td>Disclosures</td><td>A local disclosure document or structured set path, such as <code>/disclosures/sets/homepage</code>.</td><td>No after-footer legal source is selected by this field. Select the set required by the page’s claims; do not copy the homepage value blindly.</td></tr>
+<tr><td>Header Logo Light / Header Logo Dark</td><td>An approved image URL for the corresponding header scheme.</td><td>Uses the selected Brand image; the imported legacy logo has a bundled compatibility replacement. An override replaces that image source, not the whole Brand row.</td></tr>
+<tr><td>Nav Link Base</td><td>An absolute HTTP(S) base URL, only when the reviewed navigation needs it.</td><td>No base rewrite. When set, root-relative navigation links other than <code>/home</code> resolve against this base; review their final destinations.</td></tr>
+<tr><td>Search Action</td><td>The approved search destination URL.</td><td>Header search uses <code>https://us.etrade.com/search</code>. Changing this field does not add autocomplete.</td></tr>
+<tr><td>Bank rates source</td><td><code>direct</code> or <code>aggregate</code>.</td><td><code>direct</code> uses GET; aggregate uses POST. These settings apply to configured rate bindings, not ordinary authored fees.</td></tr>
+<tr><td>Bank rates endpoint</td><td>A verified same-origin service path, or the approved endpoint for the selected source.</td><td>Uses the real E*TRADE endpoint for that source. Bundled sample JSON is used only through an explicit test endpoint; verify host access separately.</td></tr>
+<tr><td>Market Data Mode</td><td><code>live</code> to request the live service; omit for sample mode.</td><td>Uses bundled sample data with sample notices. A failed live request stays unavailable.</td></tr>
+<tr><td>Market Data Base</td><td>A verified same-origin proxy base ending in <code>/</code>, implementing the documented service paths.</td><td>Live mode uses <code>https://us.etrade.com/phx/pros/apicontent/market/</code>. This setting is not an arbitrary-provider adapter.</td></tr>
+<tr><td>Market Data Sample</td><td>A permitted same-origin sample JSON path for a deliberate demo/test.</td><td>Sample mode uses <code>/data/market-data.json</code>. Live mode ignores this field. Test-fixture paths have additional localhost restrictions.</td></tr>
+</tbody></table></div>
+<h3 id="section-metadata-reference">Section fields</h3>
+<p>Leave a field out when the reviewed page’s existing layout should continue. Explicit fields override equivalent legacy Style options; a section family does not change the page header or footer.</p>
+<div class="table-scroll" role="region" aria-label="Section metadata fields and omitted behavior" tabindex="0"><table><thead><tr><th scope="col">Field</th><th scope="col">Supported values</th><th scope="col">When omitted / scope</th></tr></thead><tbody>
+<tr><td>Theme</td><td><code>Purple</code>, <code>Charcoal</code>. Legacy light/dark values select a scheme.</td><td>Inherits the page family unless an existing section Style selects a family.</td></tr>
+<tr><td>Container</td><td><code>narrow</code>, <code>standard</code>, <code>full</code>.</td><td>Keeps the existing block/section width. Explicit narrow/standard maximums are 800px/1200px including gutters; full removes side gutters.</td></tr>
+<tr><td>Grid</td><td><code>1</code>–<code>6</code>.</td><td>No authored whole-block grid is created. Explicit grids stack below 768px, use up to two columns from 768px, and the selected count from 1200px.</td></tr>
+<tr><td>Gap / Spacing</td><td><code>none</code>, <code>xs</code>, <code>s</code>, <code>m</code>, <code>l</code>, <code>xl</code>, <code>xxl</code>.</td><td>Gap uses existing layout spacing; Spacing leaves existing section spacing. They are different scales: between blocks versus padding above/below the section.</td></tr>
+<tr><td>Color Scheme</td><td><code>light</code>, <code>dark</code>.</td><td>Uses a legacy section scheme/Style, then the scheme inferred from a named background, otherwise existing styling. Explicit block surfaces keep their own rules.</td></tr>
+<tr><td>Background / Background Color</td><td><code>default</code>, <code>page</code>, <code>subtle</code>, <code>inverse</code>, <code>inverse-raised</code>, <code>highlight</code>; supported color tokens, CSS colors or gradients.</td><td>No authored background override. Background Color takes precedence over a text Background value. Use reviewed tokens rather than inventing campaign colors.</td></tr>
+<tr><td>Background Image</td><td>An inserted image; an image in Background also works.</td><td>No section background image is added. Images are decorative in this layer; choose readable text colors and keep essential information in page content.</td></tr>
+<tr><td>Align</td><td><code>left</code>, <code>center</code>, <code>right</code>.</td><td>Keeps existing default-content alignment. This field does not realign every block’s internal layout.</td></tr>
+<tr><td>Anchor / ID</td><td>An identifier without spaces, such as <code>featured-products</code>.</td><td>No new anchor. Anchor wins over ID; a leading # is removed. Use a unique value and preserve links to existing anchors.</td></tr>
+<tr><td>Style</td><td>Existing reviewed style names only.</td><td>No new legacy style classes. Prefer the explicit fields above for new composition; a typed style name does not implement a new design.</td></tr>
+</tbody></table></div>
+<h3>Resolve a conflicting result</h3>
+<ol>
+<li>Check page Theme first, then any local section Theme.</li>
+<li>Check an explicit Color Scheme and Background; named inverse surfaces imply dark only when a stronger scheme is absent.</li>
+<li>Check component options such as Columns Feature (Dark) or Accordion FAQ (Flat), which keep their documented behavior.</li>
+<li>For the header, follow Header Theme → block Light/Dark → legacy page light/dark → family default.</li>
+</ol>
+<p>Keep named rate markers and their separate settings cell in the same row. Use the <a href="#rates-data">rates reference</a> for mode, product, field, balance/term, override and fallback rather than adding those fields to Page Metadata.</p>
+<p class="reference-link">Sources: <a href="https://github.com/AdobeDrago/etrade/blob/demo/scripts/page-theme.js">page/header themes</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/scripts/section-authoring.js">section fields</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/header/header.js">header settings</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/scripts/market-data.js">market settings</a> · <a href="#rates-data">bank-rate settings</a></p>
+</section>
+<section id="asset-reference">
+<p class="section-label">07 / Authoring</p>
+<h2>Images &amp; assets</h2>
+<p>Choose artwork for the actual component and surface. The display rules below come from this checkout’s styles. Preparation advice is an editorial recommendation, not an upload limit: the code does not impose one universal image size or file-weight requirement.</p>
+<div class="table-scroll" role="region" aria-label="Image display rules and preparation guidance" tabindex="0"><table><thead><tr><th scope="col">Component</th><th scope="col">Implemented display</th><th scope="col">Prepare and check</th></tr></thead><tbody>
+<tr><td><a href="#block-hero-dark">Hero Dark</a>, including Split</td><td>Images fill their media column at their natural proportions; no fixed image crop ratio. The default MP4 player uses 25:14 and its media is hidden at widths up to 768px. Split is image-only.</td><td>Use a reviewed landscape source for the chosen layout. Keep captions with media and essential campaign information in text; check both a full-width and a split preview.</td></tr>
+<tr><td><a href="#block-hero-product">Hero Product</a></td><td>Images use a 680:376 display ratio with cover cropping.</td><td>Prefer a source near that ratio. Keep the subject away from edges and inspect the crop on phones and desktop.</td></tr>
+<tr><td><a href="#block-hero">Hero</a></td><td>Background fills the component with cover cropping anchored at the top left; no fixed image ratio.</td><td>Use artwork composed for copy over the image. Protect the copy area and check the phone crop; the block does not create the purple treatment inside an image.</td></tr>
+<tr><td><a href="#block-welcome-hero">Welcome Hero</a></td><td>One centered, cover-cropped background spans campaign and login. Phone layout puts login before campaign.</td><td>Choose a background that tolerates a changing component height. Keep text/logos out of areas the login panel or crop can cover.</td></tr>
+<tr><td><a href="#block-cards">Cards</a></td><td>Images use a 4:3 cover crop.</td><td>Prefer 4:3 source artwork and keep the subject clear of crop edges. Check each image after the grid reflows; media is optional.</td></tr>
+<tr><td><a href="#block-cards-article">Cards Article</a></td><td>Default images use a 16:9 cover crop. Promo artwork fills the card behind its content and may crop as the card grows.</td><td>Use consistent source proportions within a group. For Promo, leave space for the content surface and test long copy; 16:9 is not a guarantee that all artwork stays visible.</td></tr>
+<tr><td><a href="#block-cards-platform">Cards Platform</a>, <a href="#block-carousel-story">Carousel Story</a>, <a href="#block-columns-feature">Columns Feature</a></td><td>Media generally keeps natural proportions and scales to available width. Award limits Columns Feature media separately.</td><td>Use consistent proportions across related cards. Check the selected variant and reading order; Columns Feature (Media First) changes the phone order.</td></tr>
+<tr><td><a href="#block-cards-award">Cards Award</a></td><td>Artwork occupies a 4.5rem square (72px at the default text size).</td><td>Prepare square artwork with breathing room to avoid distortion. Use empty alt text only when adjacent copy already communicates the artwork’s information.</td></tr>
+<tr><td><a href="#block-banner-offer">Banner Offer</a></td><td>Media is hidden below 768px. Compact uses a square cover-cropped thumbnail on desktop.</td><td>Keep all offer details in the copy. Use a square source for Compact and check the banner without its image.</td></tr>
+<tr><td><a href="#block-header">Header</a> / <a href="#block-footer">Footer</a></td><td>Authored logos retain their colors. Header selects a Light/Dark Brand source; the page family controls the footer surface.</td><td>Use approved artwork for each surface and preserve its proportions. Check both schemes; custom logo colors are not automatically recolored.</td></tr>
+</tbody></table></div>
+<p class="reference-link">Adobe: <a href="https://www.aem.live/docs/ew/authoring/adding-media">add media to a document or select from AEM Assets</a> · <a href="https://www.aem.live/docs/limits">current delivery and media limits</a>. AEM Assets selection requires its configured integration. Use the component rules above for E*TRADE’s actual image crops.</p>
+<h3>Before inserting an asset</h3>
+<ul>
+<li>Use the approved source asset at enough resolution for its intended display; avoid enlarging a small thumbnail. Reuse established SVG logos/icons where available and suitable raster artwork for photographs.</li>
+<li>Keep essential words, rates and legal terms as authored text. Do not rely on an image that is cropped, decorative or hidden on phones to communicate them.</li>
+<li>Write alternative text for the information an image adds. A linked image needs an accessible link name; a decorative image beside equivalent copy can use empty alternative text.</li>
+<li>Insert the actual image in DA. Preserve meaningful alternative text when replacing it; the previous image’s description may no longer be correct.</li>
+</ul>
+<p><strong>Check the result:</strong> preview on phone and desktop, check the crop and surrounding text, enlarge text to 200%, and follow any image link with the keyboard. The final rendered crop is the acceptance check.</p>
+<p class="reference-link">Sources: <a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/hero/hero.css">Hero cropping</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/hero-product/hero-product.css">product image ratio</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/cards-article/cards-article.css">article/Promo artwork</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/banner-offer/banner-offer.css">banner media</a> · individual <a href="#block-catalog">block contracts</a></p>
+</section>
+<section id="authoring-examples">
+<p class="section-label">08 / Authoring</p>
+<h2>Common authoring mistakes</h2>
+<p>These examples describe what to enter in DA. The words “Heading 2”, “standalone link” and “separate cell” are instructions, not text to paste into a page.</p>
+<div class="table-scroll" role="region" aria-label="Incorrect and correct authoring examples" tabindex="0"><table><thead><tr><th scope="col">Common mistake</th><th scope="col">Use this instead</th><th scope="col">Check the result</th></tr></thead><tbody>
+<tr><td>Make a paragraph bold to imitate a heading.</td><td>Choose the actual Heading 2 or Heading 3 format appropriate to the page structure.</td><td>The outline has one page H1 and a logical heading sequence; size alone does not establish a heading.</td></tr>
+<tr><td>Put the intended card CTA inside a sentence, or remove bold expecting every button to become a text link.</td><td>For an action, give the link its own paragraph and follow the block contract. For an inline link, keep it within its sentence.</td><td>Body links remain in the copy; standalone actions use the owning block’s documented style. See <a href="#branding">link rules and exceptions</a>.</td></tr>
+<tr><td>Paste “Hero Split” or rename Hero to Hero Dark without comparing their content cells.</td><td>Use an implemented name such as <code>Hero Dark (Split)</code>, then review its native table structure.</td><td>The intended layout renders and all copy, images, links and captions remain present.</td></tr>
+<tr><td>Put <code>Rate settings</code> inside the visible rate paragraph or in a different card row.</td><td>Insert a separate cell in the same card/panel/answer row, with the settings label and one setting per paragraph.</td><td>The settings cell is consumed, the named marker resolves, and the intended units/disclosures stay in the visible copy.</td></tr>
+<tr><td>Type a displayed footnote number when the page uses a stable-ID disclosure set.</td><td>Apply superscript to the existing stable ID, for example <code>offer</code>, and include that ID in the selected set.</td><td>The marker links to the correct footer item and still resolves after reordering the set. Legacy numeric sources use their separate contract.</td></tr>
+<tr><td>Set <code>Grid: 3</code> expecting three cards inside one Cards Article table.</td><td>Use Grid for whole blocks in a section; use one complete table row per internal card.</td><td>Section layout and the component’s responsive card count both match the intended composition.</td></tr>
+<tr><td>Use <code>Theme: dark</code> expecting the Charcoal design family.</td><td>Use <code>Theme: Charcoal</code> for the family and <code>Color Scheme: dark</code> for a dark section. Use Header Theme for an intentional header override.</td><td>Header, footer and section scheme follow the intended independent choices.</td></tr>
+<tr><td>Copy a fragment’s rendered text expecting future source updates to propagate.</td><td>Insert a Fragment reference when updates must be shared. Copy a block table only for independent page content.</td><td>A source change appears on every intended consumer after the dependencies are previewed/published.</td></tr>
+<tr><td>Keep the old alt text or place essential offer terms inside banner artwork.</td><td>Describe the replacement image’s information and put offer terms in authored copy.</td><td>The image description is accurate and the message survives the phone layout and missing artwork.</td></tr>
+</tbody></table></div>
+<p class="reference-link">For a specific failure, use <a href="#troubleshooting">troubleshooting</a>. For exact table fields, use the <a href="#block-catalog">block catalog</a>.</p>
+</section>
+<section id="adhoc">
+<p class="section-label">09 / Authoring</p>
+<h2>Making an edit</h2>
+
+<ol>
+<li>Open the correct page in DA. For demo-only behavior, use <code>?ref=demo</code> before the URL’s <code>#</code>.</li>
+<li>Locate the block table and make the wording, image or link change. Preserve its heading row, row roles, tracking markers, disclosure IDs and any Rate settings cells.</li>
+<li>Save and preview the page. Review the rendered page at its <code>.aem.page</code> address on the intended code branch.</li>
+<li>Check phone and desktop layout, heading order, image alternatives, keyboard access, destination URLs and legal references.</li>
+<li>Publish through the normal content-release process, then verify the published page and shared dependencies.</li>
+</ol>
+<p>For a campaign change, treat the headline, amount, deadline, promo code, calculator tiers, rate source, CTA destinations and corresponding legal copy as one content update. A screenshot or saved example is not the approval source for current offer terms.</p>
+<p>If a change appears only in the editor, check the save and preview steps, the path and the code branch. A code merge does not publish edited DA content.</p>
+<p class="reference-link">For reviewing an edit, see Adobe’s <a href="https://www.aem.live/docs/ew/authoring/version-history">version comparison and restore workflow</a>. Compare the selected version with the current page before restoring: restoration replaces current source content. Then review the restored result and follow the preview/publish workflow for the intended release.</p>
+<h3 id="new-page-checklist">Create a new page</h3>
+<p>Use this checklist for a new page; the shorter workflow above is for changing an existing one. Treat a copied page as a starting point whose inherited settings must be reviewed.</p>
+<ol class="page-checklist">
+<li><strong>Confirm the destination.</strong> Agree the final local path and content owner. Check whether it already exists; use an agreed draft path for experiments. A draft path alone is not an access restriction.</li>
+<li><strong>Select a reviewed starting page.</strong> Choose the closest <a href="#templates">page pattern</a>. Copy its native content into the new document without replacing an existing page. Record which content is local and which is shared.</li>
+<li><strong>Choose the blocks.</strong> Use the <a href="#block-selection">selection guide</a> and exact catalog names. Preserve complete rows and required row roles; remove sample copy and unused content deliberately.</li>
+<li><strong>Set page metadata.</strong> Review Title, Description, Image, Theme, Disclosures and any Nav/Footer overrides. Remove copied campaign or service settings that do not apply; use the <a href="#metadata-reference">metadata reference</a>.</li>
+<li><strong>Prepare copy and assets.</strong> Supply approved wording, heading levels, images and alternatives. Review amounts, eligibility, dates, promo codes and action destinations together, including campaign query parameters.</li>
+<li><strong>Resolve dependencies.</strong> Confirm that shared fragments, disclosure sets and every referenced legal fragment exist. Check target pages and use a separate Rate settings cell for each configured binding.</li>
+<li><strong>Save, then preview.</strong> Use the intended code branch; remember that <code>?ref=demo</code> changes rendering code rather than creating a content sandbox. Preview dependencies as well as the page.</li>
+<li><strong>Review the rendered page.</strong> Check phone/desktop layout, 200% text, heading order, image crops, keyboard controls, final link destinations, rate/data state and the complete disclosure region. Review the delivered title, description and social image.</li>
+<li><strong>Prepare the route into the page.</strong> Review navigation, footer, campaign and other incoming links. For a replacement or renamed path, agree the old-path/redirect handling with the site owner before changing links.</li>
+<li><strong>Release and verify.</strong> Obtain the content approvals required for the page, deploy any prerequisite code, publish shared dependencies and target pages, then publish consuming pages/navigation. Open the live-delivery path and follow the real incoming links.</li>
+</ol>
+<p class="note"><strong>Done means:</strong> the intended published URL is reachable through its real entry links, shows the approved content and metadata, and loads the correct shared and legal sources. A saved draft or working demo preview alone does not meet that check.</p>
+
+
+</section>
+<section id="authoring-tools">
+<p class="section-label">10 / Authoring</p>
+<h2>Authoring tools</h2>
+
+<p>The repository provides three local extensions plus the upstream Fragment Picker. Open <strong>Outline dropdown → Extensions</strong> in New Authoring, or <strong>Library</strong> in the classic editor. Their actual availability depends on the saved DA configuration.</p>
+<div class="table-scroll" role="region" aria-label="DA authoring tools" tabindex="0"><table><thead><tr><th scope="col">Tool</th><th scope="col">Routine workflow</th><th scope="col">Scope</th></tr></thead><tbody>
+<tr><td>Link Options</td><td>Load one selected link or paste its destination; configure tracking or a route rule; Copy URL; paste it into DA’s native Edit link → URL field and save.</td><td>Reads selection and prepares a URL. It does not directly rewrite the selected link.</td></tr>
+<tr><td>Disclosure Manager</td><td>Save the page; load its stable-ID set; review/audit; reorder or insert an ID reference; save and preview the affected sources.</td><td>Save shared order writes the set. Insert reference uses the editor’s selection/undo flow.</td></tr>
+<tr><td>Reusable Content</td><td>Browse/search shared fragments, preview one, then Insert selected fragment.</td><td>Inserts a shared reference rather than an independent content copy. Hosted upstream by Adobe.</td></tr>
+<tr><td>Import &amp; Export</td><td>Save the page, Export this page, then Download page XML; or review supported XML/XHTML and create a new DA page.</td><td>Current-page import replaces all page content and metadata after its explicit comparison/confirmation. New-page import is the default.</td></tr>
+</tbody></table></div>
+<h3>Link Options: tracking and route rules</h3>
+<p>Track clicks requires a stable key; its default consent category is Advertising (<code>C0004</code>). Analytics (<code>C0002</code>), both categories or a tenant-approved custom category can be selected. Every required category must be granted.</p>
+<pre><code>/home?icid=campaign&amp;@tracking=home-hero#offer</code></pre>
+<p>The runtime removes the reserved <code>@tracking</code> markers from the visitor destination and retains the ordinary campaign query and anchor. Turning tracking off removes only those reserved settings.</p>
+<p><strong>Change this link on matching pages</strong> defines one page-path rule with alternate wording and destination together. <code>/brokerage, /what-we-offer</code> matches those paths and their descendants. Use <strong>Preview on page path</strong> to inspect both outcomes. It does not target signed-in state or campaign audiences.</p>
+<h3>Import &amp; Export: preserve a reviewable source</h3>
+<p>Page exports use the versioned <code>&lt;da-page version="1"&gt;</code> format and include the original saved source. XHTML with a main element can also be imported. Fragments and linked assets remain references, so moving a page does not copy those dependencies. The separate product XML/Structured Content demo is an illustrative record workflow, not a production XML feed.</p>
+<p class="note"><strong>Registration and verification are separate.</strong> Project setup notes use plugin URLs hosted on the <code>demo</code> branch with <code>experience=inline</code> and an empty <code>ref</code>. Verify the entries in DA configuration and test native selection, insertion and undo inside DA. Standalone demos and unit tests do not establish that registration is complete.</p>
+<p class="reference-link">Tool guides: <a href="https://github.com/AdobeDrago/etrade/blob/demo/tools/plugins/link-options/README.md">Link Options</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/tools/plugins/disclosure-manager/README.md">Disclosure Manager</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/docs/reusable-content.md">Reusable Content</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/tools/plugins/xml-tools/README.md">Import &amp; Export</a></p>
+</section>
+<section id="disclosures">
+<p class="section-label">11 / Authoring</p>
+<h2>Shared content &amp; disclosures</h2>
+
+<h3>Reusable fragments</h3>
+<p>The global header loads <code>/nav</code>; the footer loads <code>/footer</code>. Page metadata <code>Nav</code> and <code>Footer</code> can select other local fragments. Links to <code>/fragments/</code> paths can be expanded automatically; an explicit Fragment block also loads shared content. Preview/publish a changed source and review every consuming page.</p>
+<p class="reference-link">Adobe’s <a href="https://www.aem.live/docs/fragments">Fragments guide</a> explains reuse and the separate source lifecycle. For this project, follow the local-path reference format and disclosure-set contracts below; Adobe’s generic examples do not define this site’s legal schema.</p>
+<h3>Disclosure documents and sets</h3>
+<p>Page Metadata <code>Disclosures</code> selects legal content that is rendered after the global footer. It accepts a rich-text disclosure document, a document containing a Disclosures table, or a structured <code>disclosure-set</code>. Keep legal content separate from the Footer block.</p>
+<p>A structured set at <code>/disclosures/sets/homepage</code> selects individual rich-text fragments. Each numbered item has a permanent <code>disclosureId</code>; its position in the set determines its displayed number. IDs begin with a lowercase letter and contain lowercase letters or digits, such as <code>offer</code> or <code>disc1</code>.</p>
+<pre><code>Claim text with superscript: offer
+Two references in one superscript: fees,offer</code></pre>
+<p>Apply superscript formatting to the ID text in DA. When matching footer items are available, <code>offer</code> becomes a numbered link to <code>#disclosure-offer</code>. Reordering the set updates the displayed number and keeps that stable anchor. Introductory/closing fragments do not consume numbers. Legacy numeric and letter markers remain supported for legacy numeric sources; migrate those markers deliberately when changing to stable IDs.</p>
+<h3>Using Disclosure Manager</h3>
+<ol>
+<li>Save the page with its Disclosures metadata pointing to an existing ID-based set.</li>
+<li>Open Disclosure Manager and review the loaded source, IDs, excerpts and footer preview. Fix missing fragments or invalid/duplicate IDs before proceeding.</li>
+<li>Reorder with Move up/down or drag. Save shared order updates the set, preserving its stable IDs and fragment content.</li>
+<li>To insert a reference, place a cursor after the claim with no claim text selected. Choose the disclosure(s), insert, then save the page. Save any pending reorder first.</li>
+<li>Preview the set, each changed fragment and the page; then check every marker against the rendered footer before publishing dependencies.</li>
+</ol>
+<p>The Audit reads saved page content. References inside separately loaded fragments are outside that audit. If a set or referenced fragment cannot load, the legal region is hidden and a loading error is logged; no partial legal footer or substitute copy is generated. Verify the complete footer on the rendered page.</p>
+<p class="reference-link">Sources: <a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/disclosures/README.md">disclosure formats and reference contract</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/tools/plugins/disclosure-manager/README.md">Disclosure Manager</a></p>
+</section>
+<section id="rates-data">
+<p class="section-label">12 / Authoring</p>
+<h2>Rates &amp; market data</h2>
+
+<h3>Dynamic bank rates</h3>
+<p>Cards Product, Cards Account, Cards Pricing, Tabs Accounts and Accordion FAQ support selected numeric rate markers. Keep the <code>%</code>, APY wording, dates, promotional terms and disclosures in authored content. A standard balance-tier rate is not a boosted promotional APY.</p>
+<p>In a card or FAQ answer use <code>{{rate:base}}% APY</code>. Add a separate cell in the same row; its first paragraph is <strong>Rate settings</strong>, followed by one setting per paragraph:</p>
+<pre><code>Rate settings
+Name: base
+Mode: api
+Product: 3100
+Field: advertisedAPY
+Balance: 0
+Fallback: -.--</code></pre>
+<div class="table-scroll" role="region" aria-label="Bank rate settings" tabindex="0"><table><thead><tr><th scope="col">Setting</th><th scope="col">Choices / meaning</th></tr></thead><tbody>
+<tr><td>Mode</td><td><code>api</code> requests the selected rate; <code>manual</code> uses numeric Override; <code>hybrid</code> uses a populated Override before requesting a rate. Zero is valid.</td></tr>
+<tr><td>Product</td><td><code>3100</code> savings; <code>4240</code> checking; <code>3500</code> CDs.</td></tr>
+<tr><td>Name</td><td>Matches a named marker in the same row, such as <code>base</code> for <code>{{rate:base}}</code>. Omitted Name defaults to <code>rate</code> for <code>{{rate}}</code>.</td></tr>
+<tr><td>Field: savings/checking</td><td><code>advertisedAPY</code>, <code>disclosureAPY</code> or <code>finalRate</code>, with an explicit numeric Balance. Do not add Term.</td></tr>
+<tr><td>Field: CDs</td><td>For a Term such as <code>12M</code>, use <code>disclosureAPY</code> or <code>finalRate</code>. For a range endpoint use <code>minDisclosureAPY</code> or <code>maxDisclosureAPY</code> and omit both Balance and Term. CDs do not accept <code>advertisedAPY</code>.</td></tr>
+<tr><td>Override</td><td>A numeric value, required in manual mode. Hybrid uses a populated valid Override before requesting a rate; an omitted Override allows the configured API request. Zero is valid.</td></tr>
+<tr><td>Bank rates source</td><td>Page metadata: <code>direct</code> (default GET) or <code>aggregate</code> (POST).</td></tr>
+<tr><td>Bank rates endpoint</td><td>Optional page metadata for a verified same-origin route; otherwise the approved real E*TRADE endpoint is requested.</td></tr>
+<tr><td>Fallback</td><td>An approved numeric value or the literal <code>-.--</code> placeholder. Other text invalidates the settings and prevents the rate request. If omitted, an unresolved rate uses an unavailable em dash; a missing rate is not evidence of a zero rate.</td></tr>
+</tbody></table></div>
+<p>The bundled JSON under <code>/phx/pros/</code> is sample data and is selected only through an explicit endpoint. Verify real endpoint access from the delivery host before using API mode for delivery. Demo balance controls change only supported preview/local bindings; they do not read a customer account.</p>
+<h3>Market data</h3>
+<p>Market Ticker, Market Overview and Market Top Five default to <code>/data/market-data.json</code> and display sample-data notices. Page Metadata <code>Market Data Mode: live</code> selects the real-service contract; <code>Market Data Base</code> can select a verified same-origin proxy implementing the same paths. In live mode, a failed service remains unavailable rather than switching to sample prices.</p>
+<p>Before live delivery, verify browser access, quote timestamps, the Treasury scaling and Top Five’s quote/chart alignment against actual service responses. Author the stock, mutual-fund and ETF disclaimers. A configuration switch alone does not establish those integrations are ready.</p>
+<h3>Login, search, consent and analytics</h3>
+<ul>
+<li><strong>Welcome Hero</strong> is a presentation and handoff to its authored E*TRADE login URL. It does not authenticate or submit/store typed credentials, remember an ID, or implement destination/security-code choices.</li>
+<li><strong>Header search</strong> hands off to the configured search destination; production symbol autocomplete and signed-in navigation need their own integrations.</li>
+<li><strong>Tracking markers</strong> create consent-aware queued events. No Adobe analytics library or network sender is installed. “Ready” with “destination not connected” is not delivered analytics.</li>
+<li><strong>Real OneTrust mode</strong> is an explicitly selected demo on allowed hosts. Tenant/domain setup and a consent-aware production adapter need verification before adoption. Simulated consent does not grant real page-event consent.</li>
+</ul>
+<p class="reference-link">Sources: <a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/cards-product/README.md">rate settings</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/market-ticker/README.md">market service contract</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/welcome-hero/README.md">login boundary</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/README.md#authored-link-tracking">tracking contract</a></p>
+</section>
+<section id="template-ops">
+<p class="section-label">13 / Operations</p>
+<h2>Changes across pages</h2>
+
+<div class="table-scroll" role="region" aria-label="Changes across multiple pages" tabindex="0"><table><thead><tr><th scope="col">Change</th><th scope="col">Where to make it</th><th scope="col">Review scope</th></tr></thead><tbody>
+<tr><td>Site navigation or footer</td><td>The shared <code>/nav</code> or <code>/footer</code> document, unless a page overrides its source.</td><td>Every consuming page, both header schemes, desktop menus and the mobile drawer.</td></tr>
+<tr><td>Shared promotional content</td><td>The source Fragment when pages use a reference.</td><td>All consuming pages and their surrounding section schemes.</td></tr>
+<tr><td>Disclosure wording/order</td><td>The legal fragment / structured set.</td><td>All sets/pages using that fragment; complete legal footer and each claim marker.</td></tr>
+<tr><td>Repeated content copied into pages</td><td>A scoped set of page edits.</td><td>Every copy. Updating one page or a starter does not update the others.</td></tr>
+<tr><td>Design values or block layout</td><td>Code owned by a developer.</td><td>All affected blocks, families, variants, containers and enlarged text.</td></tr>
+<tr><td>A link on selected page paths</td><td>Link Options route rule when one shared text link needs a default and alternate.</td><td>Matching and nonmatching paths, including links rendered from fragments.</td></tr>
+</tbody></table></div>
+<p>For a bulk content update, first list the exact pages and dependencies, make one representative draft, and review its differences. Preserve IDs, query parameters, rate settings and approved terms unless the change explicitly includes them. Preview a small batch before applying the same transformation to the remaining pages.</p>
+<h3>Bulk operations in Experience Workspace</h3>
+<p>Collect the page URLs, open <strong>Apps → Bulk</strong>, paste the list and choose the required action. Preview, Publish, Version and Index are available operations; inspect the success and error results. A bulk preview/publish processes existing saved content—it does not rewrite every page’s wording. Use Version labels to identify a release checkpoint.</p>
+<p>Publish dependencies before the pages that require them: disclosure fragments and sets, shared fragments and target pages, then pages/navigation that reference them. Revisit dependency failures before treating the batch as complete.</p>
+<p class="reference-link"><a href="https://www.aem.live/docs/ew/authoring/bulk-operations">Adobe: bulk operations</a></p>
+
+</section>
+<section id="chat-content">
+<p class="section-label">14 / Operations</p>
+<h2>AI assistant: content</h2>
+
+<p>If enabled for the site, the Experience Workspace assistant can help with scoped content changes. Give it the exact page, the target block, replacement wording and things to preserve. Review the resulting content and preview before release. This guide does not establish that the assistant is enabled in this DA tenant.</p>
+<h3>Example: revise a paragraph</h3>
+<div class="prompt">On /drafts/home-copy-review, shorten only the supporting paragraph in the first Hero Dark block using the approved wording I provide. Keep the headline, image, image alternative text, heading levels, both CTA labels and destinations, query parameters, superscript IDs, metadata and block structure. Show the changed text and leave the page unpublished.</div>
+<h3>Example: update an article card</h3>
+<div class="prompt">In the Cards Article block on this draft page, replace the title and description of the second card with the supplied approved copy. Keep its image, standalone CTA paragraph, link destination, tracking settings and the other card rows. List exactly what changed.</div>
+<h3>Example: audit before editing</h3>
+<div class="prompt">Review this page for duplicate H1s, missing image alternatives, incomplete card rows and disclosure markers that do not match the selected disclosure set. Report the location of each issue first. Preserve financial claims, rates, fees, dates, offer tiers, legal wording and links.</div>
+<p>Supply approved financial/offer copy rather than asking the assistant to invent rates, eligibility, dates or legal terms. Compare the edited source and rendered result; use the editor’s history/version tools when reverting an unwanted change.</p>
+<p class="reference-link"><a href="https://www.aem.live/docs/ew/authoring/assistant">Adobe: assistant panel</a></p>
+
+</section>
+<section id="chat-structure">
+<p class="section-label">15 / Operations</p>
+<h2>AI assistant: structure</h2>
+
+<p>For a new page or a structural change, provide a reviewed source page or native block example, exact destination and supported table names. Treat content creation, catalog registration and code implementation as separate tasks.</p>
+<div class="prompt">Create a new draft at /drafts/planning-review using the supplied reviewed source. Use Hero Dark (Split), Cards Icon (Planning), Cards Icon (Tools) and Banner Offer (Compact) only where the source calls for them. Preserve the native table row/cell structure, standalone CTA paragraphs, links, image alternatives and stable disclosure IDs. Use the supplied approved copy and assets. Set the agreed page family in Metadata. Report missing dependencies and leave it unpublished.</div>
+<div class="prompt">Prepare a new Cards Article library example from the supplied native source. Keep the exact block name and one image/content row per card. Put author guidance in Library Metadata (Guide), outside the example tables. Check whether the destination exists before replacing it. Report the document and catalog registration status separately from preview rendering and native insertion.</div>
+<h3>Review structural changes</h3>
+<ol>
+<li>Compare table names, variants, cells, sections and metadata with a supported example.</li>
+<li>Check heading order, body links versus actions, image alternatives, tracking and disclosure references.</li>
+<li>Check rates and their settings cells together; confirm all legal and shared-content dependencies.</li>
+<li>Save/reload and test undo in DA, then preview at the new path on the required code branch.</li>
+</ol>
+<p>Developer-side agents can change code when a new behavior is required. They must inspect delivered plain markup and the existing auto-block pipeline, preserve <code>scripts/aem.js</code>, scope styles to the owning block, and validate the branch preview. Adding a table name in DA does not implement a new block.</p>
+
+</section>
+<section id="custom-blocks">
+<p class="section-label">16 / Operations</p>
+<h2>Custom blocks &amp; demos</h2>
+
+<div class="table-scroll" role="region" aria-label="Custom components and integration boundaries" tabindex="0"><table><thead><tr><th scope="col">Component / capability</th><th scope="col">Author-controlled input</th><th scope="col">Implementation boundary</th></tr></thead><tbody>
+<tr><td>Welcome Hero</td><td>Campaign, image, login destination and help links.</td><td>Presentation and navigation; identity requires a separate integration.</td></tr>
+<tr><td>Widget Calculator</td><td>Funding/credit tiers, labels, campaign copy, promo code and disclaimer.</td><td>Local calculation from authored tiers; legacy empty credits may use a dated snapshot. Author all current tiers.</td></tr>
+<tr><td>Market blocks</td><td>Labels, category selection, disclaimers and page data-mode metadata.</td><td>Sample data by default; live service contracts require browser verification.</td></tr>
+<tr><td>Dynamic bank rates</td><td>Named markers, selection settings, overrides and fallbacks.</td><td>Approved API/same-origin contract; no automatic sample-data fallback.</td></tr>
+<tr><td>Separator</td><td>Two surfaces, step position, height and optional line.</td><td>Decorative divider. Match neighboring section backgrounds separately.</td></tr>
+<tr><td>Floating Dock</td><td>Offer, login and primary links.</td><td>Public account shortcuts; it does not infer signed-in state.</td></tr>
+<tr><td>Widget loader</td><td>A link to an implemented widget asset.</td><td>Developer extension point. No widget asset directory is currently present; it is not an arbitrary embed tool.</td></tr>
+</tbody></table></div>
+<h3>Demo controls</h3>
+<p>On localhost and the exact <code>demo</code>/<code>demo-controller</code> preview hosts, <strong>Demo controls</strong> exposes Page tools, Performance and Tracking. Page tools can set a dummy rate-test balance. Performance compares an unloaded baseline with simulated third-party payloads, optional assumed processing work or the explicitly selected real OneTrust SDK. Tracking exposes sample and real page-event queues separately.</p>
+<p>These controls are for demonstration. Payload emulation does not reproduce vendor behavior or prove production performance; a local sample receiver does not establish Adobe/CJA ingestion. The controls are absent on ordinary live hosts. Screenshots in this guide may include the preview-only launcher.</p>
+<p class="reference-link">Source: <a href="https://github.com/AdobeDrago/etrade/blob/demo/README.md#third-party-performance-demo">demo controls and measurement limitations</a></p>
+</section>
+<section id="block-catalog">
+<p class="section-label">17 / Reference</p>
+<h2>Block catalog</h2>
+
+<p>Table structures and supported options for the 32 blocks in the <code>demo</code> implementation. Search by name, use or option, or choose a block family.</p>
+<p>Each entry covers purpose, required and optional content, defaults, supported variants, a common mistake and a rendered-result check. <strong>Required content</strong> describes what produces a useful component; most decorators tolerate omitted cells. Where the code needs a specific input, such as a Widget source link or a complete FAQ row, the entry says so. Examples describe structure rather than approved campaign copy.</p>
+<div class="catalog-tools" hidden>
+<div class="filter-controls">
+<div class="catalog-search"><label for="block-filter">Search the catalog</label><div class="search-input"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg><input id="block-filter" type="search" placeholder="Search names, uses or options…" autocomplete="off" aria-controls="catalog-entries" aria-describedby="block-count"></div></div>
+<div class="catalog-family"><label for="block-family">Block family</label><select id="block-family" aria-controls="catalog-entries" aria-describedby="block-count"><option value="">All families</option><option value="heroes">Heroes</option><option value="cards">Cards</option><option value="content">Content &amp; interaction</option><option value="market">Market data</option><option value="chrome">Site navigation &amp; layout</option><option value="shared">Shared content</option><option value="utilities">Utilities</option></select></div>
+<button id="clear-filter" type="button" hidden>Reset filters</button>
+</div>
+<p id="block-count" role="status" aria-live="polite" aria-atomic="true">32 blocks</p>
+</div>
+<details class="catalog-directory"><summary>Browse the block index <span aria-hidden="true">+</span></summary>
+<div class="catalog-index">
+<a href="#block-hero-dark">Hero Dark</a>
+<a href="#block-hero-light">Hero Light</a>
+<a href="#block-hero-product">Hero Product</a>
+<a href="#block-hero">Hero</a>
+<a href="#block-welcome-hero">Welcome Hero</a>
+<a href="#block-cards">Cards</a>
+<a href="#block-cards-account">Cards Account</a>
+<a href="#block-cards-article">Cards Article</a>
+<a href="#block-cards-award">Cards Award</a>
+<a href="#block-cards-icon">Cards Icon</a>
+<a href="#block-cards-numbered">Cards Numbered</a>
+<a href="#block-cards-platform">Cards Platform</a>
+<a href="#block-cards-pricing">Cards Pricing</a>
+<a href="#block-cards-product">Cards Product</a>
+<a href="#block-columns-feature">Columns Feature</a>
+<a href="#block-columns">Columns</a>
+<a href="#block-banner-offer">Banner Offer</a>
+<a href="#block-carousel-story">Carousel Story</a>
+<a href="#block-tabs-accounts">Tabs Accounts</a>
+<a href="#block-accordion-faq">Accordion FAQ</a>
+<a href="#block-widget-calculator">Widget Calculator</a>
+<a href="#block-market-ticker">Market Ticker</a>
+<a href="#block-market-overview">Market Overview</a>
+<a href="#block-market-top-five">Market Top Five</a>
+<a href="#block-separator">Separator</a>
+<a href="#block-floating-dock">Floating Dock</a>
+<a href="#block-fragment">Fragment</a>
+<a href="#block-header">Header</a>
+<a href="#block-footer">Footer</a>
+<a href="#block-disclosures">Disclosures</a>
+<a href="#block-library-brief">Library Brief</a>
+<a href="#block-widget">Widget</a>
+</div></details><p class="overview-scope">Examples describe structure; use approved copy and assets. DA registration and published usage require separate <a href="#open-items">handoff checks</a>. Follow each authoring contract for optional rows and cells, especially for Columns and Widget.</p><div id="catalog-empty" class="catalog-empty" hidden><strong>No matching blocks</strong><p>Try a different name or choose another family.</p></div><div id="catalog-entries">
+<article class="block-entry" id="block-hero-dark" data-family="heroes">
+<h3>Hero Dark <span class="tag">Hero</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Dark campaign hero with authored copy, actions and media. The default places heading and supporting copy above full-width media.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>Meaningful authored heading, copy, action or media; the code allows individual parts to be omitted.</dd></div><div><dt>Optional content</dt><dd>Image/caption, supporting copy, standalone actions; named Eyebrow and Offer rows in Split.</dd></div><div><dt>Default behavior</dt><dd>Dark component surface; copy above media. First standalone action is primary, later actions secondary.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Hero Dark" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Hero Dark</caption><thead><tr><th colspan="1">Hero Dark</th></tr></thead><tbody>
+<tr><td>Image with alternative text</td></tr>
+<tr><td>Heading 1 and supporting paragraphs</td></tr>
+<tr><td>Standalone primary link</td></tr>
+<tr><td>Standalone secondary link</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Default; <code>Split</code>; <code>Split, Balanced</code>; <code>Split, Inset</code>.</p>
+<p>The first heading/image identify the title/media; optional content can be omitted. Split also accepts named Eyebrow, Heading, Content, Image and Offer rows in any order. Balanced uses equal desktop columns; Inset adds desktop text padding. Keep captions with the media. Split supports images; the default retains its MP4 controls.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Renaming a background Hero without restructuring its content, or assuming Split supports MP4.</p><p><strong>Check the result:</strong> Check reading order, every action, caption placement, and the intended default/Split layout on phone and desktop.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/hero-dark/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/library/blocks/hero-dark">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-hero-light" data-family="heroes">
+<h3>Hero Light <span class="tag">Hero</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Text-only introduction, including the Our Accounts pattern.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>A meaningful text introduction; no fixed row count or image is required.</dd></div><div><dt>Optional content</dt><dd>Supporting paragraphs, standalone actions, inline links and disclosure markers.</dd></div><div><dt>Default behavior</dt><dd>Text-only layout; first standalone action defaults to outline and later actions to secondary, with shared formatting overrides.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Hero Light" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Hero Light</caption><thead><tr><th colspan="1">Hero Light</th></tr></thead><tbody>
+<tr><td>Heading 1</td></tr>
+<tr><td>Supporting rich-text copy</td></tr>
+<tr><td>Standalone link</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> No additional named option documented.</p>
+<p>Content is combined in authored order. The first standalone link defaults to an outline action; later ones are secondary. It does not supply an image layout. Preserve superscripts and inline links.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Adding an image expecting a media layout, or using heading size instead of the correct heading level.</p><p><strong>Check the result:</strong> Confirm the page title, readable copy, expected action treatment and one page H1.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/hero-light/README.md">Authoring contract</a></p>
+</article>
+<article class="block-entry" id="block-hero-product" data-family="heroes">
+<h3>Hero Product <span class="tag">Hero</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Dark product hero with separate text/media and an optional offer.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>Meaningful product content in named or supported legacy cells; individual rows can be omitted.</dd></div><div><dt>Optional content</dt><dd>Eyebrow, Image, Offer and standalone actions; repeated/extra value cells combine.</dd></div><div><dt>Default behavior</dt><dd>Dark desktop text/media split, with offer beneath media; phone layout stacks text, media and offer.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Hero Product" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Hero Product</caption><thead><tr><th colspan="2">Hero Product</th></tr></thead><tbody>
+<tr><td>Eyebrow</td><td>Optional eyebrow</td></tr>
+<tr><td>Heading</td><td>Heading 1 or 2 appropriate to the page</td></tr>
+<tr><td>Content</td><td>Copy and standalone CTA paragraphs</td></tr>
+<tr><td>Image</td><td>Image with alternative text</td></tr>
+<tr><td>Offer</td><td>Optional heading, terms and standalone link</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Named rows; no additional named option documented.</p>
+<p>Named rows can be reordered or omitted; extra value cells combine. Legacy unlabelled content remains supported. Moving a page to Hero Dark (Split, Inset) requires a deliberate authored table change.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Treating a change to Hero Dark (Split, Inset) as an automatic content migration.</p><p><strong>Check the result:</strong> Check named-row mapping, the product image crop, action destinations and offer/disclosure placement.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/hero-product/README.md">Authoring contract</a></p>
+</article>
+<article class="block-entry" id="block-hero" data-family="heroes">
+<h3>Hero <span class="tag">Hero</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Full-width background-image hero used by Platforms.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>Meaningful introductory content; an image is optional in code.</dd></div><div><dt>Optional content</dt><dd>Eyebrow, headings, body and standalone actions; named or separate media/copy rows.</dd></div><div><dt>Default behavior</dt><dd>Full-width, top-left anchored background; missing media leaves purple. First action is primary, later actions secondary.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Hero" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Hero</caption><thead><tr><th colspan="2">Hero</th></tr></thead><tbody>
+<tr><td>Heading 1, optional Heading 2, body and standalone CTA</td><td>Background image with appropriate alternative text</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Default; <code>Wide</code> for the Investment Choices pattern.</p>
+<p>Separate image/copy rows and named Eyebrow, Heading, Content and Image rows also work. Media is a background rather than a separate desktop column. A missing image leaves a purple surface. Use actual approved artwork; the block does not create the image treatment.</p>
+<figure><a href="images/handoff/platforms.jpg" target="_blank" rel="noopener" aria-label="Open full-size image: Platforms page using the background-image Hero layout"><img src="images/handoff/platforms.jpg" width="1265" height="712" loading="lazy" decoding="async" alt="Platforms page using the background-image Hero layout"></a><figcaption>Platforms: the ordinary Hero uses full-width background media behind the authored copy.</figcaption></figure>
+<div class="block-review"><p><strong>Common mistake:</strong> Expecting a side-by-side image or assuming the block generates the background artwork.</p><p><strong>Check the result:</strong> Inspect the crop and copy contrast at both sizes, plus preserved heading levels and links.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/hero/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/platforms">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-welcome-hero" data-family="heroes">
+<h3>Welcome Hero <span class="tag">Hero / integration</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Campaign with a separate public login presentation.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>The content needed for the intended campaign/login presentation; missing named rows are tolerated.</dd></div><div><dt>Optional content</dt><dd>Login, Campaign and Image rows; recovery/help/security links and campaign actions.</dd></div><div><dt>Default behavior</dt><dd>Campaign left, login right on desktop; login first on phones. A standalone Log on link enables the login presentation.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Welcome Hero" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Welcome Hero</caption><thead><tr><th colspan="2">Welcome Hero</th></tr></thead><tbody>
+<tr><td>Login</td><td>Heading, standalone Log on link and help/recovery/security links</td></tr>
+<tr><td>Campaign</td><td>Heading, paragraphs and standalone campaign links</td></tr>
+<tr><td>Image</td><td>Background image</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Named Login, Campaign and Image rows.</p>
+<p>Desktop campaign sits left and login right; phone layout puts login first. The authored Log on destination receives a navigation handoff. Entered credentials are cleared, not sent or stored; remember, destination and security-code choices need a separate identity integration.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Treating the displayed form as a completed identity integration.</p><p><strong>Check the result:</strong> Follow the authored login destination, inspect both reading orders and verify the campaign remains complete without its image.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/welcome-hero/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/home/welcome-back">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-cards" data-family="cards">
+<h3>Cards <span class="tag">Cards</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> General card grid with optional images.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>At least one nonempty row to show a card.</dd></div><div><dt>Optional content</dt><dd>Media, headings, rich text, inline links and standalone actions; additional content cells.</dd></div><div><dt>Default behavior</dt><dd>One row per card; responsive grid with columns based on available width. Empty blocks hide.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Cards" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Cards</caption><thead><tr><th colspan="2">Cards</th></tr></thead><tbody>
+<tr><td>Optional image</td><td>Heading, rich copy and links</td></tr>
+<tr><td>Optional image</td><td>Next card content</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> No additional named option documented.</p>
+<p>One nonempty row creates one card. Additional content cells preserve reading order; an empty block is hidden. Nested lists retain their list semantics. The internal grid responds to available width.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Using rows as separate fields for a single card, rather than one complete row per card.</p><p><strong>Check the result:</strong> Count rendered cards against nonempty rows and check media alternatives, reading order and links.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/cards/README.md">Authoring contract</a></p>
+</article>
+<article class="block-entry" id="block-cards-account" data-family="cards">
+<h3>Cards Account <span class="tag">Cards / rates</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Account cards with an accent bar and authored actions.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>At least one nonempty account-content row.</dd></div><div><dt>Optional content</dt><dd>Description, standalone actions, disclosure markers and a separate Rate settings cell.</dd></div><div><dt>Default behavior</dt><dd>Image-free account cards; the first action defaults to outline and later actions to text.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Cards Account" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Cards Account</caption><thead><tr><th colspan="1">Cards Account</th></tr></thead><tbody>
+<tr><td>Heading 3: account name; description; standalone CTA paragraph(s)</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> No additional named option documented.</p>
+<p>One row per card, without an image requirement. Additional cells combine; blank rows are skipped. Supports the shared dynamic-rate marker/settings contract. The default first action is an outline.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Placing a named rate’s settings in a different account row.</p><p><strong>Check the result:</strong> Check account titles, rate labels/disclosures and the final outlined/text action destinations.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/cards-account/README.md">Authoring contract</a></p>
+</article>
+<article class="block-entry" id="block-cards-article" data-family="cards">
+<h3>Cards Article <span class="tag">Cards</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Article or campaign cards with optional eyebrows.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>At least one nonempty article-content row; media can be omitted.</dd></div><div><dt>Optional content</dt><dd>Image, eyebrow, heading, description, inline links and standalone actions.</dd></div><div><dt>Default behavior</dt><dd>Inset 16:9 images; responsive columns, with a four-card layout when enough room exists.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Cards Article" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Cards Article</caption><thead><tr><th colspan="2">Cards Article</th></tr></thead><tbody>
+<tr><td>Image</td><td>Optional eyebrow paragraph, Heading 3, copy, standalone link</td></tr>
+<tr><td>Image</td><td>Another complete card</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Default; <code>Promo</code>.</p>
+<p>One row per card. Promo uses full-width artwork and smaller headings. Default cards use inset images. Keep body links inline and actions in separate paragraphs. Internal columns reduce in narrow containers.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Splitting an article across rows or assuming Promo artwork keeps the default crop.</p><p><strong>Check the result:</strong> Check each complete article, eyebrow placement, artwork crop and independent inline/action links.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/cards-article/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/library/blocks/cards-article">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-cards-award" data-family="cards">
+<h3>Cards Award <span class="tag">Cards</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Awards with attribution and legal references.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>At least one nonempty award row with the approved award information.</dd></div><div><dt>Optional content</dt><dd>Image/icon, description, disclosure reference and attribution as required by the claim.</dd></div><div><dt>Default behavior</dt><dd>Up to three columns when room permits; award titles normalize to H3. No award copy or attribution is generated.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Cards Award" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Cards Award</caption><thead><tr><th colspan="2">Cards Award</th></tr></thead><tbody>
+<tr><td>Optional image or :award: icon</td><td>Heading 3, description, disclosure ID and attribution</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> No additional named option documented.</p>
+<p>No award name, year, logo or attribution is generated. The homepage trophy can be decorative because adjacent copy names the award. Informative artwork needs meaningful alternative text. Up to three desktop columns when space permits.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Omitting a year or attribution because it appeared in a screenshot rather than in the table.</p><p><strong>Check the result:</strong> Verify the full approved claim and reference; check square artwork and whether its alternative text adds information.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/cards-award/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/home">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-cards-icon" data-family="cards">
+<h3>Cards Icon <span class="tag">Cards</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Audience, life-event and tool cards using editor-safe icon names.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>At least one nonempty card row; an empty icon cell is supported.</dd></div><div><dt>Optional content</dt><dd>A supported icon name/image, description, actions and disclosures; Planning can include an offer row.</dd></div><div><dt>Default behavior</dt><dd>Up to three desktop columns; named icon artwork and white card surfaces.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Cards Icon" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Cards Icon</caption><thead><tr><th colspan="2">Cards Icon</th></tr></thead><tbody>
+<tr><td>book</td><td>Heading 3, description, standalone link</td></tr>
+<tr><td>goal</td><td>Another card</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Default; <code>Welcome Back</code>; <code>Planning</code>; <code>Tools</code>.</p>
+<p>Default names include book, computer, goal, savings, tool-box-welcome-kit and umbrella. Planning uses home-lending, group-family, graduation-gift, retirement and mountain; an offer row creates its campaign card. Tools uses ira-selector, money-automatic-investing, calculator and add-funds. Images/icons are also supported. Use the names appropriate to the selected variant.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Using an icon name from another variant or pasting an empty icon-font element into DA.</p><p><strong>Check the result:</strong> Check every icon, variant-specific column treatment, campaign row and action label at narrow widths.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/cards-icon/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/planning">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-cards-numbered" data-family="cards">
+<h3>Cards Numbered <span class="tag">Cards</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Numbered reasons or benefits.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>At least one nonempty reason row.</dd></div><div><dt>Optional content</dt><dd>Headings, descriptions, standalone actions, inline links and disclosures.</dd></div><div><dt>Default behavior</dt><dd>Semantic ordered list; ordinals follow nonempty row order and up to three columns fit on desktop.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Cards Numbered" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Cards Numbered</caption><thead><tr><th colspan="1">Cards Numbered</th></tr></thead><tbody>
+<tr><td>Heading 3, description, standalone link</td></tr>
+<tr><td>Heading 3, description, standalone link</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> No additional named option documented.</p>
+<p>One row per reason. Ordinals come from nonempty row order, so reordering renumbers the cards. The semantic ordered list stacks on phones and uses up to three columns when space permits.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Typing manual ordinal numbers into the heading and duplicating the generated number.</p><p><strong>Check the result:</strong> Reorder a draft row and confirm the displayed sequence and its associated copy remain correct.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/cards-numbered/README.md">Authoring contract</a></p>
+</article>
+<article class="block-entry" id="block-cards-platform" data-family="cards">
+<h3>Cards Platform <span class="tag">Cards</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Platform or investment-choice cards.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>At least one nonempty platform/investment-choice row.</dd></div><div><dt>Optional content</dt><dd>Image, heading, description, actions, inline links and disclosure markers.</dd></div><div><dt>Default behavior</dt><dd>Natural-ratio media and responsive cards. One CTA can stretch across the card while inline links stay independent.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Cards Platform" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Cards Platform</caption><thead><tr><th colspan="2">Cards Platform</th></tr></thead><tbody>
+<tr><td>Image</td><td>Heading 3, description, standalone Learn more link</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Default; <code>Compact</code>.</p>
+<p>Compact uses full-width images, smaller left-aligned copy and a text action for Investment Choices. A single CTA can stretch across a card while inline links remain independently usable. Keep the larger ordinary variant for Platforms.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Using Compact for the larger Platforms treatment or accidentally linking the wrong card destination.</p><p><strong>Check the result:</strong> Check artwork, card/action focus, final destinations and independent inline links.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/cards-platform/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/platforms">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-cards-pricing" data-family="cards">
+<h3>Cards Pricing <span class="tag">Cards / rates</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Pricing values and optional promotional cards.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>At least one nonempty pricing or offer row; put a pricing amount in its first paragraph.</dd></div><div><dt>Optional content</dt><dd>H3 label, supporting copy, standalone action and explicitly configured bank-rate settings.</dd></div><div><dt>Default behavior</dt><dd>Up to three columns with large first-paragraph amounts and outline actions.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Cards Pricing" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Cards Pricing</caption><thead><tr><th colspan="1">Cards Pricing</th></tr></thead><tbody>
+<tr><td>First paragraph: approved amount; Heading 3: label; supporting copy; standalone link</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Default; <code>Text Links</code>; <code>Band</code>.</p>
+<p>Put the amount first; an offer row may start with a heading instead. Default actions are outlines. Text Links uses arrow text actions. Band is the blue Investment Choices summary and uses an H2 immediately before the table. Supports bank-rate settings where explicitly configured; bank rates do not supply commissions.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Moving the amount after supporting copy or expecting bank-rate data to supply commissions.</p><p><strong>Check the result:</strong> Compare every amount, unit, category, fee qualifier and disclosure with approved content.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/cards-pricing/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/home">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-cards-product" data-family="cards">
+<h3>Cards Product <span class="tag">Cards / rates</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Product cards with optional APY display.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>At least one nonempty product row.</dd></div><div><dt>Optional content</dt><dd>H3 product name, H4 rate, copy, standalone action and a separate Rate settings cell.</dd></div><div><dt>Default behavior</dt><dd>Up to two desktop columns and outlined actions by default; unconfigured values remain authored.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Cards Product" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Cards Product</caption><thead><tr><th colspan="2">Cards Product</th></tr></thead><tbody>
+<tr><td>Heading 3: product; optional Heading 4: rate; copy; standalone link</td><td>Optional separate Rate settings cell</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Default; <code>Three Columns</code>.</p>
+<p>Ordinary cards cap at two desktop columns; Three Columns caps at three when space permits. Keep units, promotional terms and disclosure IDs authored. A rate marker must have its matching settings in the same row. Fixed promotional APYs must not be substituted with base-tier rates.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Replacing a promotional APY with a standard tier rate or losing its units/disclosure.</p><p><strong>Check the result:</strong> Check the intended product/rate hierarchy, configured data state and approved surrounding terms.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/cards-product/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/home">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-columns-feature" data-family="content">
+<h3>Columns Feature <span class="tag">Content</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Image and copy feature with actions.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>Meaningful content in the media/copy cells; omitted cells and actions remain usable.</dd></div><div><dt>Optional content</dt><dd>Eyebrow, heading, image/caption, body, standalone actions and inline links.</dd></div><div><dt>Default behavior</dt><dd>Side-by-side from 768px when room permits; containers narrower than 38rem stack. Copy precedes media on phones unless Media First is selected. Surface follows the section unless overridden.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Columns Feature" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Columns Feature</caption><thead><tr><th colspan="2">Columns Feature</th></tr></thead><tbody>
+<tr><td>Image</td><td>Optional eyebrow, Heading 2, paragraphs, standalone CTA links</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> <code>Light</code>, <code>Dark</code>, <code>Image Right</code>, <code>Media First</code>, <code>Outline</code>, <code>Band</code>, <code>Award</code>; use combinations supported by the source example.</p>
+<p>Default mobile reading order is copy then image. Media First retains media before copy on phones. Explicit Light/Dark selects the component surface; otherwise it follows the section scheme. Outline changes the first action, and Award limits recognition artwork. Preserve image alternatives and inline links.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Using Image Right expecting phone media order to change; Media First controls that order.</p><p><strong>Check the result:</strong> Check desktop placement, phone reading order, chosen surface, image alternatives and actions.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/columns-feature/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/home">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-columns" data-family="content">
+<h3>Columns <span class="tag">Content</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Simple columns of authored default content.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>An authored row with the intended number of content cells.</dd></div><div><dt>Optional content</dt><dd>Images, headings, paragraphs, lists and standalone actions inside those cells.</dd></div><div><dt>Default behavior</dt><dd>Column count comes from the first row; narrow layouts stack the content.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Columns" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Columns</caption><thead><tr><th colspan="2">Columns</th></tr></thead><tbody>
+<tr><td>First column content</td><td>Second column content</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Column count comes from the first authored row.</p>
+<p>The block styles image-only columns and stacks columns in narrow containers. Use Columns Feature when the layout requires its specific image/copy/action treatment. Do not use an empty Columns table merely as a spacer.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Adding empty columns to create spacing or assuming the decorator combines multiple rows like a card grid.</p><p><strong>Check the result:</strong> Check each row’s cell count, image-only cells and the reading order after stacking.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/columns/columns.js">Implementation</a></p>
+</article>
+<article class="block-entry" id="block-banner-offer" data-family="content">
+<h3>Banner Offer <span class="tag">Content / campaign</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Campaign band with optional image and actions.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>Meaningful authored offer content; individual media/action parts are optional.</dd></div><div><dt>Optional content</dt><dd>Image, heading, description, terms, promo code and standalone links.</dd></div><div><dt>Default behavior</dt><dd>Dark banner; one CTA without media centers the offer. Phone layouts omit the image.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Banner Offer" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Banner Offer</caption><thead><tr><th colspan="2">Banner Offer</th></tr></thead><tbody>
+<tr><td>Optional image</td><td>Heading, terms, promo code and standalone CTA paragraphs</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Default; <code>Light</code>; <code>Compact</code>. Centering is also inferred for a dark offer with one CTA and no media.</p>
+<p>Cells combine and blank rows are skipped. Light is the compact homepage treatment; Compact retains a dark treatment for Planning. Images are omitted on phones. Keep campaign wording and inline legal links authored.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Putting offer terms only in artwork that disappears on phones.</p><p><strong>Check the result:</strong> Check the offer without media, all dates/codes/disclosures, and both action destinations.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/banner-offer/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/platforms">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-carousel-story" data-family="content">
+<h3>Carousel Story <span class="tag">Content / interactive</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Scrollable timeline or story cards.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>At least one nonempty story row.</dd></div><div><dt>Optional content</dt><dd>Image, year paragraph, heading, description and standalone link.</dd></div><div><dt>Default behavior</dt><dd>Two visible stories on a wide desktop, one in a narrow layout; no automatic advance.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Carousel Story" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Carousel Story</caption><thead><tr><th colspan="2">Carousel Story</th></tr></thead><tbody>
+<tr><td>Image</td><td>Year paragraph, heading, description, optional standalone link</td></tr>
+<tr><td>Image</td><td>Next story</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> No additional named option documented.</p>
+<p>One row per story. Two visible cards on desktop and one in narrow layouts. Previous/Next, dots and keyboard Left/Right, Home/End control native scrolling. There is no automatic advance; reduced-motion preferences disable animated scrolling.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Expecting autoplay or using separate rows for the image and copy of the same story.</p><p><strong>Check the result:</strong> Use Previous/Next, dots and keyboard arrows/Home/End; verify story order and native links.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/carousel-story/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/why-etrade">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-tabs-accounts" data-family="content">
+<h3>Tabs Accounts <span class="tag">Content / rates</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Account categories with tabbed panels and account lists.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>At least one category row with account content; use the exact plural block name.</dd></div><div><dt>Optional content</dt><dd>Panel heading/intro, account-list items, additional content and named Rate settings cells.</dd></div><div><dt>Default behavior</dt><dd>First category initially; desktop tabs switch to a native category select below 900px. Valid #tab_N hashes can choose an initial panel.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Tabs Accounts" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Tabs Accounts</caption><thead><tr><th colspan="3">Tabs Accounts</th></tr></thead><tbody>
+<tr><td>Category label</td><td>Heading 2, introduction, list of accounts (each with Heading 3, description and standalone actions)</td><td>Optional content or Rate settings</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> No additional named option documented.</p>
+<p>Use the plural name. Desktop tabs become a category select in narrow layouts. Learn more is a text action; application actions are outlines. Keep panel-specific rate settings with their markers. Category/account counts belong to the particular page; do not substitute the Investment Choices snapshot for Our Accounts.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Copying category counts from another page, or placing multiple named rate settings outside their panel row.</p><p><strong>Check the result:</strong> Switch every category with keyboard and phone select; verify account content, action styles and rate/disclosure mapping.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/tabs-accounts/README.md">Authoring contract</a></p>
+</article>
+<article class="block-entry" id="block-accordion-faq" data-family="content">
+<h3>Accordion FAQ <span class="tag">Content / interactive</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Question-and-answer rows with rich answers.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>Each displayed row needs a question, an answer cell and nonempty answer content.</dd></div><div><dt>Optional content</dt><dd>Rich text/native tables in answers, extra answer cells, separate Rate settings; adjacent H2 and FAQ action.</dd></div><div><dt>Default behavior</dt><dd>All answers start closed; opening one closes others. Expand all is available; presentation follows the family.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Accordion FAQ" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Accordion FAQ</caption><thead><tr><th colspan="3">Accordion FAQ</th></tr></thead><tbody>
+<tr><td>Question text</td><td>Complete rich-text answer</td></tr>
+<tr><td>Next question</td><td>Answer with optional native fee table</td><td>Optional separate Rate settings</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Default follows family; <code>Flat</code> forces divided rows; <code>Pricing</code> is a legacy alias for Flat.</p>
+<p>Place the section H2 immediately before the block, with an optional standalone FAQ link immediately after it. Questions are plain text; answers preserve rich text and tables. Individual opening closes other answers; Expand all/Collapse all remains available. In section grids, the section introduction remains outside the block. Missing questions/answers are skipped.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Putting fee-table headings in new block rows or leaving the primary answer blank.</p><p><strong>Check the result:</strong> Open each answer and Expand all; check keyboard access, native table headers, rates and complete legal copy.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/accordion-faq/README.md">Authoring contract</a></p>
+</article>
+<article class="block-entry" id="block-widget-calculator" data-family="utilities">
+<h3>Widget Calculator <span class="tag">Interactive / campaign</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Local funding-threshold and cash-credit calculator.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>At least one valid funding/credit tier; explicitly author all current offer tiers.</dd></div><div><dt>Optional content</dt><dd>Named promo/label/disclaimer rows, primary and secondary actions.</dd></div><div><dt>Default behavior</dt><dd>Local calculation; sorted funding tiers. Desktop slider and phone combobox select the same state; legacy empty credits can use a dated snapshot.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Widget Calculator" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Widget Calculator</caption><thead><tr><th colspan="2">Widget Calculator</th></tr></thead><tbody>
+<tr><td>Heading</td><td>Approved campaign heading</td></tr>
+<tr><td>Description</td><td>Eligibility and funding requirements</td></tr>
+<tr><td>Primary CTA</td><td>Authored standalone link</td></tr>
+<tr><td>Disclaimer</td><td>Approved disclosure</td></tr>
+<tr><td>$1,000</td><td>$50</td></tr>
+<tr><td>$5,000</td><td>$150</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Named promo/label rows and numeric funding/credit rows; no named variant.</p>
+<p>Amounts above are illustrative. Author all current tiers and campaign terms. Extra supported rows include Promo code, Secondary CTA, Funding label, Credit label and Select label. Numeric tiers sort by funding; explicit zero credit is valid. A desktop slider and phone dropdown select the same range. Legacy empty-credit fallback values are a dated snapshot.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Leaving credit cells blank for a new offer or treating illustrative tiers as approved campaign amounts.</p><p><strong>Check the result:</strong> Check every tier, explicit zero credits, highest + range, control labels and matching campaign terms.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/widget-calculator/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/home">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-market-ticker" data-family="market">
+<h3>Market Ticker <span class="tag">Market / integration</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> DOW, NASDAQ, S&amp;P and 10-year Treasury quotes.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>No configuration rows are required to load the default indices; live delivery needs verified service access.</dd></div><div><dt>Optional content</dt><dd>A Label row for the region name; page-level data settings.</dd></div><div><dt>Default behavior</dt><dd>Four fixed indices from bundled sample data with sample notices; label defaults to Market indices.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Market Ticker" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Market Ticker</caption><thead><tr><th colspan="2">Market Ticker</th></tr></thead><tbody>
+<tr><td>Label</td><td>Market indices</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Optional label row; data mode is page metadata.</p>
+<p>Defaults to bundled sample data with visible notices. Live mode uses the configured quote service and keeps unavailable values unavailable. Direction includes signed text rather than relying on color. Confirm timestamps and Treasury scaling before live delivery.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Removing sample notices or switching to live without checking the actual service response.</p><p><strong>Check the result:</strong> Check mode notices, quote timestamps, signed changes and Refresh/unavailable behavior.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/market-ticker/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/home/welcome-back">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-market-overview" data-family="market">
+<h3>Market Overview <span class="tag">Market / integration</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Index chart, quote lookup and recently searched symbols.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>No configuration rows are required for the default chart/search presentation.</dd></div><div><dt>Optional content</dt><dd>Heading and Search label rows; page-level data settings.</dd></div><div><dt>Default behavior</dt><dd>Market overview heading, Get quotes label, first index selected and bundled sample mode. Recent symbols use tab-session storage.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Market Overview" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Market Overview</caption><thead><tr><th colspan="2">Market Overview</th></tr></thead><tbody>
+<tr><td>Heading</td><td>Market overview</td></tr>
+<tr><td>Search label</td><td>Get quotes</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Optional named rows; data mode is page metadata.</p>
+<p>Four index tabs, keyboard point inspection and a complete observation table support chart access. Suggestions and valid symbols navigate to existing E*TRADE quote pages. Recent symbols persist in the tab’s session. Sample data is the default; live access and response contracts need verification.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Assuming sample charts establish a live feed or that symbol search supplies site-wide autocomplete.</p><p><strong>Check the result:</strong> Switch indices, inspect points/table with the keyboard, try a valid quote destination and review unavailable states.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/market-overview/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/home/welcome-back">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-market-top-five" data-family="market">
+<h3>Market Top Five <span class="tag">Market / integration</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Selectable delayed stocks, mutual funds and ETFs.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>No rows are needed for the default sample listing; supply all three category disclaimers before delivery.</dd></div><div><dt>Optional content</dt><dd>Heading, Default, category labels and category-specific disclaimers.</dd></div><div><dt>Default behavior</dt><dd>Stocks are selected unless a valid category is authored; sample data is shown with notices. Missing disclaimers remain hidden and flagged.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Market Top Five" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Market Top Five</caption><thead><tr><th colspan="2">Market Top Five</th></tr></thead><tbody>
+<tr><td>Heading</td><td>Top five</td></tr>
+<tr><td>Default</td><td>TopDivYieldStocks</td></tr>
+<tr><td>TopDivYieldStocks disclaimer</td><td>Approved stock disclosure</td></tr>
+<tr><td>MostSearchedMFs disclaimer</td><td>Approved mutual-fund disclosure</td></tr>
+<tr><td>TopETFs disclaimer</td><td>Approved ETF disclosure</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Category keys: <code>TopDivYieldStocks</code>, <code>MostSearchedMFs</code>, <code>TopETFs</code>; each also accepts a label row.</p>
+<p>Keep all three disclaimers authored. At most five unique valid quotes display, with chart/unavailable states. Bundled samples are the default. Live quote/chart positional alignment needs verification; no synthetic production fallback is supplied.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Approving a single category while the other category disclosures are missing.</p><p><strong>Check the result:</strong> Review stocks, mutual funds and ETFs separately, including disclaimers, timestamps, quote links and chart alignment.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/market-top-five/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/home/welcome-back">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-separator" data-family="chrome">
+<h3>Separator <span class="tag">Layout</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Decorative stepped divider between section surfaces.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>No setting rows are required; place it in its own section for an edge-to-edge divider.</dd></div><div><dt>Optional content</dt><dd>Surface colors, step location, Height, Mobile height and Line color.</dd></div><div><dt>Default behavior</dt><dd>Dark/light surfaces, 50% step, 81px desktop / 45px phone height when neither height is authored.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Separator" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Separator</caption><thead><tr><th colspan="2">Separator</th></tr></thead><tbody>
+<tr><td>First section color</td><td>dark</td></tr>
+<tr><td>Second section color</td><td>light</td></tr>
+<tr><td>Line break location</td><td>50%</td></tr>
+<tr><td>Height</td><td>81px</td></tr>
+<tr><td>Mobile height</td><td>45px</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Optional <code>Line color</code>; settings may be omitted or reordered.</p>
+<p>Put the table in its own section, with a break before and after it. Match the neighboring section backgrounds separately. Line break values are clamped to 0–100%; valid heights are positive. The SVG is decorative and has no interaction. Light/Dark shortcuts use the shared surface roles; explicit colors remain available.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Expecting its surface settings to recolor neighboring sections.</p><p><strong>Check the result:</strong> Check the divider bounds, both neighboring section backgrounds and the step position at phone/desktop sizes.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/separator/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/home">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-floating-dock" data-family="chrome">
+<h3>Floating Dock <span class="tag">Navigation</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Floating public account shortcuts.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>At least one labeled action link to show the dock; use one dock per page.</dd></div><div><dt>Optional content</dt><dd>Offer, login, primary and additional secondary action rows; a custom navigation label.</dd></div><div><dt>Default behavior</dt><dd>First primary link wins; phone layout keeps the primary visible and puts other actions behind a disclosure.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Floating Dock" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Floating Dock</caption><thead><tr><th colspan="2">Floating Dock</th></tr></thead><tbody>
+<tr><td>offer</td><td>Limited-time-offer link</td></tr>
+<tr><td>login</td><td>Log on link</td></tr>
+<tr><td>primary</td><td>Open an account link</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Named offer, login and primary rows.</p>
+<p>Keep the destinations and campaign parameters authored. The imported homepage’s legacy sticky-CTA paragraphs can also auto-build this block. Avoid adding a second dock to a page that already auto-builds one. It is not an authenticated account menu.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Duplicating the dock or using an unlabeled icon link that is skipped.</p><p><strong>Check the result:</strong> Check destinations, phone disclosure/Escape behavior and that focused page links remain clear of the fixed dock.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/floating-dock/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/home">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-fragment" data-family="shared">
+<h3>Fragment <span class="tag">Shared content</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Loads a shared local content document.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>A local root-relative source path, such as <code>/fragments/example</code>, as a link or text.</dd></div><div><dt>Optional content</dt><dd>The content and blocks maintained inside the referenced source.</dd></div><div><dt>Default behavior</dt><dd>Loads the shared source. A fragment alone in a section replaces that section; a mixed section receives its content.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Fragment" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Fragment</caption><thead><tr><th colspan="1">Fragment</th></tr></thead><tbody>
+<tr><td>Single link to /fragments/your-reviewed-source</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> No additional named option.</p>
+<p>Use a local document path. Changes to the source affect every consumer. A fragment alone in a section can supply its own sections; alongside other content its wrappers are flattened into the section. Reusable Content provides the picker workflow. Preview/publish the source separately.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Copying rendered markup instead of a reference, or using an external URL rather than a local path.</p><p><strong>Check the result:</strong> Preview the source and every consumer; check surrounding sections and repeated content after the source changes.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/fragment/fragment.js">Implementation</a></p>
+</article>
+<article class="block-entry" id="block-header" data-family="chrome">
+<h3>Header <span class="tag">Global navigation</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Global navigation from the shared /nav document.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>A reachable navigation source. Preserve its four ordered section positions, including empty sections for omitted roles.</dd></div><div><dt>Optional content</dt><dd>Utility links, Light/Dark Brand variants, nested navigation columns/promos and account action.</dd></div><div><dt>Default behavior</dt><dd>Loads /nav; Purple uses a light header, otherwise dark, subject to explicit scheme overrides.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Header" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Header</caption><thead><tr><th colspan="1">Header</th></tr></thead><tbody>
+<tr><td>Configured by four sections in /nav, rather than a generic page-content row.</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Page Header Theme; explicit <code>Light</code>/<code>Dark</code> Header options; page Nav override.</p>
+<p>Keep four ordered sections: utility links, Brand variants, main navigation, account action. Preserve empty sections for omitted roles. Brand uses Light/Dark linked-image variants; nested navigation lists can use Column and Promo markers. Mobile drawer, search, keyboard focus and public login handoff are implemented. Shared nav content still needs its documented migration/verification.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Omitting an empty source section and shifting Brand/navigation into the wrong role.</p><p><strong>Check the result:</strong> Check both logo schemes, desktop menus, mobile drawer, search destination and account action with keyboard focus.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/header/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/home">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-footer" data-family="chrome">
+<h3>Footer <span class="tag">Global navigation</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Contact, social and navigation content from /footer.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>A reachable footer source containing a Footer block with recognized nonempty content rows.</dd></div><div><dt>Optional content</dt><dd>Contact, Social, repeated Column and Brand rows; each may be omitted or reordered.</dd></div><div><dt>Default behavior</dt><dd>Loads /footer; Purple uses a light surface, otherwise dark. No missing-source business copy is supplied.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Footer" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Footer</caption><thead><tr><th colspan="2">Footer</th></tr></thead><tbody>
+<tr><td>Contact</td><td>Heading 2 and a telephone link</td></tr>
+<tr><td>Social</td><td>List of labelled social links with optional icons</td></tr>
+<tr><td>Column</td><td>Heading 3 and navigation list</td></tr>
+<tr><td>Brand</td><td>Optional linked logo image</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Repeat Column rows; page Footer metadata can choose another source.</p>
+<p>Only the Footer block inside its source is rendered. Legal copy is a separate Disclosures source. Contact, Social, Column and Brand rows can be omitted/reordered. Supply accessible labels; unlabeled icon-only social links are omitted. Custom artwork must suit the page-family surface.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Putting disclosure copy outside Footer expecting the footer loader to include it, or omitting social link labels.</p><p><strong>Check the result:</strong> Check every contact/social/navigation destination and accessible name; review legal content separately after the footer.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/footer/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/home">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-disclosures" data-family="shared">
+<h3>Disclosures <span class="tag">Legal / shared content</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Legal region and automatically linked claim markers.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>For inline use, complete disclosure content rows; for shared legal content, a reachable source selected by page Disclosures metadata.</dd></div><div><dt>Optional content</dt><dd>Intro/closing copy and numbered items according to the source schema; structured sets reference individual fragments.</dd></div><div><dt>Default behavior</dt><dd>Preserves the selected numeric/ID-based contract. A failed referenced legal source hides the region rather than showing a partial substitute.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Disclosures" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Disclosures</caption><thead><tr><th colspan="2">Disclosures</th></tr></thead><tbody>
+<tr><td>Introduction</td><td>Approved introductory rich text</td></tr>
+<tr><td>1</td><td>Legacy numbered disclosure copy</td></tr>
+<tr><td>Closing</td><td>Approved closing copy</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Inline legacy table; single document-link cell; page Disclosures metadata; structured stable-ID set.</p>
+<p>The example shows the legacy numeric table format. Prefer an existing stable-ID set for Disclosure Manager. Keep permanent IDs, legal wording and all dependencies. Do not define duplicate entries with both inline content and page metadata. Failed referenced sources hide the region and log an error.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Mixing inline and metadata definitions or replacing permanent IDs with displayed numbers.</p><p><strong>Check the result:</strong> Follow every claim marker, check set order and back-links, and confirm the entire legal region is present.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/disclosures/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/home">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-library-brief" data-family="utilities">
+<h3>Library Brief <span class="tag">Library documentation</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Collapsed author guidance in block-library preview documents.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>At least one complete nonempty documentation row after the guide settings.</dd></div><div><dt>Optional content</dt><dd>Title, Description and additional labeled rich-text documentation sections.</dd></div><div><dt>Default behavior</dt><dd>Collapsed native disclosure titled Authoring guide; no description when omitted. Empty guides hide.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Library Metadata (Guide)" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Library Metadata (Guide)</caption><thead><tr><th colspan="2">Library Metadata (Guide)</th></tr></thead><tbody>
+<tr><td>Title</td><td>Authoring guide</td></tr>
+<tr><td>Description</td><td>Structure, properties &amp; options</td></tr>
+<tr><td>Table structure</td><td>Documentation in ordinary rich text</td></tr>
+<tr><td>Supported options</td><td>Reviewed list of implemented options</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Author the table heading as <code>Library Metadata (Guide)</code>.</p>
+<p>This is documentation rather than a page component to insert. The preview helper converts that heading to Library Brief; native pickers exclude Library Metadata tables. Keep example block tables outside the guide and in their own sections. Older Library Brief source headings require migration.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Inserting guide metadata as a customer-page component or placing real example tables inside the guide.</p><p><strong>Check the result:</strong> Check the gallery guide opens and the native picker lists actual examples rather than the authoring guide.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/library-brief/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/library/blocks/hero-dark">Preview example</a></p>
+</article>
+<article class="block-entry" id="block-widget" data-family="utilities">
+<h3>Widget <span class="tag">Developer extension</span></h3>
+<p class="block-purpose"><strong>Purpose:</strong> Loads an implemented widget from /widgets/ assets.</p>
+<dl class="block-facts"><div><dt>Required content</dt><dd>A source link for an implemented widget asset; the loader expects a link.</dd></div><div><dt>Optional content</dt><dd>Query parameters supported by that specific widget.</dd></div><div><dt>Default behavior</dt><dd>Loads matching HTML, CSS and JavaScript under /widgets/. No widget asset directory is currently provided.</dd></div></dl>
+<div class="table-scroll" role="region" aria-label="Authoring structure: Widget" tabindex="0"><table class="authoring-example"><caption>Authoring structure: Widget</caption><thead><tr><th colspan="1">Widget</th></tr></thead><tbody>
+<tr><td>A single link to /widgets/{implemented-name}.html</td></tr>
+</tbody></table></div>
+<p><strong>Supported variants:</strong> Widget link query parameters provide data attributes.</p>
+<p>The loader expects matching HTML, CSS and JavaScript at the widget asset path. No widgets directory is currently present in this checkout. Use the dedicated Widget Calculator block for the funding calculator; do not invent a widget URL or paste an arbitrary external embed.</p>
+
+<div class="block-review"><p><strong>Common mistake:</strong> Treating a Widget table as an arbitrary external embed or deleting its required source link.</p><p><strong>Check the result:</strong> Have the developer verify the asset contract and loading before authors use it; a table name alone cannot create a widget.</p></div>
+<p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/widget/widget.js">Implementation</a></p>
+</article>
+</div>
+</section>
+<section id="publish">
+<p class="section-label">18 / Reference</p>
+<h2>Preview &amp; publish</h2>
+
+<h3>Single-page release</h3>
+<ol>
+<li>Save the page and required shared sources in DA.</li>
+<li>In Experience Workspace, open <strong>Send</strong>, select <strong>Preview</strong> and choose <strong>Update</strong>. Review the resulting preview URL using the required code branch.</li>
+<li>Verify phone/desktop rendering, keyboard interaction, headings, images, destinations, rate state and the complete legal footer.</li>
+<li>When the content is ready for release and the required code is deployed, use <strong>Preview &amp; Publish</strong> and <strong>Update</strong>. Verify the live-delivery page.</li>
+</ol>
+<p>Preview updates the preview instance; Preview &amp; Publish updates both preview and published content. The <a href="https://www.aem.live/docs/sidekick">AEM Sidekick</a> also exposes actions on rendered pages according to permissions and page state. See <a href="https://www.aem.live/docs/ew/authoring/publishing">Adobe’s publishing guide</a> for the current UI.</p>
+<p class="reference-link">Adobe also documents <a href="https://www.aem.live/docs/ew/administering/preflight">Preflight</a> for automated checks before release. Where available, review its findings alongside the manual page, data and legal checks above; this guide does not establish this tenant’s Preflight configuration.</p>
+<h3>Dependency and code checks</h3>
+<ul>
+<li>Preview/publish shared fragments and disclosure sets/fragments, not just the page referencing them.</li>
+<li>Check that the code branch contains the blocks, options and metadata behavior used by the page. Content is shared across branches; unpublished content and undeployed code are independent.</li>
+<li>For a code pull request, include a branch preview link such as <code>https://{branch}--etrade--adobedrago.aem.page/home</code>. A local screenshot does not replace branch review.</li>
+<li>Check the published result after release. A working <code>demo</code> preview does not establish that main or the public E*TRADE domain has the same code/content.</li>
+</ul>
+<h3>Taking a page down</h3>
+<p>Use the editor’s <strong>Prepare → Unpublish</strong> flow when removal is intended. It removes preview and published delivery. Review incoming navigation links and any redirect requirement with the site owner before removing a page from an active journey.</p>
+
+</section>
+<section id="open-items">
+<p class="section-label">19 / Reference</p>
+<h2>Handoff checks</h2>
+
+<p>These items are based on repository contracts and the limited URL checks performed for this guide on October 29, 2026. DA configuration, native editor integration, production-domain routing and live-service access were not audited.</p>
+<div class="table-scroll" role="region" aria-label="Handoff verification tasks" tabindex="0"><table><thead><tr><th scope="col">Item</th><th scope="col">Evidence / impact</th><th scope="col">Next check</th><th scope="col">Owner</th></tr></thead><tbody>
+<tr><td>Code promotion</td><td>The guide describes <code>demo</code> at <code>6cac224</code>, not a verified main release.</td><td>Compare/promote the required code and review the branch preview before enabling dependent content.</td><td>Developer</td></tr>
+<tr><td>Our Accounts and Pricing preview paths</td><td>Both documented <code>/what-we-offer/...</code> paths returned HTTP 404 through the demo content preview.</td><td>Confirm the intended DA paths, preview the documents and recheck their navigation links.</td><td>Lead author</td></tr>
+<tr><td>Block library registration</td><td>Two pilot preview documents load; source tables and tests are prepared.</td><td>Check the Blocks catalog and insert all six pilot examples through DA; verify editing, save/reload and undo.</td><td>Lead author / developer</td></tr>
+<tr><td>Library guide migration</td><td>Library Metadata (Guide) prevents author guidance from becoming an insertable example.</td><td>Rename older Library Brief source headings and remove only obsolete naming metadata; review picker results.</td><td>Lead author</td></tr>
+<tr><td>Page-family rollout</td><td>Code supports Purple/Charcoal; saved fixtures do not establish current DA family selection.</td><td>Set intended page families and review header logos, footer artwork and explicit overrides.</td><td>Design / author</td></tr>
+<tr><td>Navigation source migration</td><td>Header documentation retains a compatibility path for the imported flat-list source.</td><td>Review current /nav, migrate explicit roles/columns/promos and both logo schemes, then remove fallback only after verification.</td><td>Author / developer</td></tr>
+<tr><td>Detailed Pricing content</td><td>Repository notes identify incomplete historical preview categories/tables and missing rate settings.</td><td>Once the page is restored, reconcile approved fee tables, categories, rate bindings and disclosure IDs.</td><td>Content / legal</td></tr>
+<tr><td>Campaign and rate consistency</td><td>The current Home preview contains authored campaign dates and rate/legal fragments with their own values.</td><td>Review each displayed claim, selected rate source and corresponding legal terms together; obtain current approved values.</td><td>Content / legal</td></tr>
+<tr><td>Live market and rate access</td><td>Clients implement approved service contracts; bundled samples do not verify live access.</td><td>Verify host access, timestamps, tier/term selection and Top Five chart alignment with actual responses.</td><td>Integration developer</td></tr>
+<tr><td>Login / search / analytics</td><td>Login is a handoff, header autocomplete is absent, and tracking has no production sender.</td><td>Define and test identity, search and consent-aware analytics integrations before relying on them in production.</td><td>Integration developer</td></tr>
+<tr><td>DA extensions</td><td>Registration rows are documented; standalone tools/tests do not prove enabled DA configuration.</td><td>Verify Link Options, Disclosure Manager, Reusable Content and Import &amp; Export in the authenticated editor.</td><td>DA administrator</td></tr>
+<tr><td>Shared-content/legal review</td><td>The Home source includes a disclosure-fragment reference before its hero; its intended placement needs review.</td><td>Confirm that page body references and the after-footer disclosure source produce the intended content without stray or duplicated copy.</td><td>Author / legal</td></tr>
+</tbody></table></div>
+<p>Preview availability checks succeeded for Home, Welcome Back, Platforms, Planning, Why E*TRADE, the Hero Dark and Cards Article library documents, and the style showroom. This confirms page availability only, not content approval, completeness or native DA insertion.</p>
+
+</section>
+<section id="troubleshooting">
+<p class="section-label">20 / Reference</p>
+<h2>Troubleshooting</h2>
+<div class="table-scroll" role="region" aria-label="Troubleshooting guide" tabindex="0"><table><thead><tr><th scope="col">Symptom</th><th scope="col">Author check</th><th scope="col">Developer / admin check</th></tr></thead><tbody>
+<tr><td>Block appears unstyled</td><td>Exact block name and supported parentheses/options; correct preview branch.</td><td>Block files exist on the selected branch; check loading errors.</td></tr>
+<tr><td>Missing or misplaced card content</td><td>Complete row per card; image/copy cell order; CTA in its own paragraph.</td><td>Compare delivered plain markup with the decorator’s contract.</td></tr>
+<tr><td>Correct in editor, stale on preview/live</td><td>Save, preview/publish, exact path, branch and shared dependencies.</td><td>Delivery response and content status for the failing path.</td></tr>
+<tr><td>Page returns 404</td><td>Document’s actual DA path and preview status.</td><td>Content mapping, path routing and branch environment.</td></tr>
+<tr><td>Theme looks inconsistent</td><td>Theme family versus Color Scheme; explicit block/header options; suitable artwork.</td><td>Semantic role inheritance and component-owned surfaces.</td></tr>
+<tr><td>Rate is a marker or unavailable</td><td>Marker name and separate settings cell in the same row; product, field and balance/term.</td><td>Approved endpoint response/browser access; do not silently replace with sample rates.</td></tr>
+<tr><td>Claim marker remains letters or IDs</td><td>Matching ID in the rendered set; preview the set and every fragment.</td><td>Failed disclosure source; mixed legacy-number/stable-ID schema.</td></tr>
+<tr><td>No legal footer</td><td>Disclosures metadata and published/previewed dependencies; avoid duplicate definitions.</td><td>Set/fragment request errors; failure intentionally hides the region.</td></tr>
+<tr><td>Extension is missing</td><td>Correct Outline → Extensions / classic Library entry and editor ref.</td><td>Saved library registration, plugin URL branch, inline experience and ref visibility.</td></tr>
+<tr><td>Tracked click is Ready, not Sent</td><td>Tracking key/categories and actual category consent.</td><td>A real sender/Adobe integration must be connected. Demo sample consent does not grant real consent.</td></tr>
+<tr><td>Assistant made an unwanted change</td><td>Review history/version recovery, narrow the scope and supply the exact supported structure.</td><td>Correct recurring guidance or implement behavior missing from code.</td></tr>
+</tbody></table></div>
+<p class="reference-link">For a toolbar failure, match the displayed message with Adobe’s <a href="https://www.aem.live/docs/sidekick-errors">Sidekick error reference</a>. For an unwanted source edit, use the <a href="https://www.aem.live/docs/ew/authoring/version-history">version history and restoration guide</a>.</p>
+</section>
+<section id="reference">
+<p class="section-label">21 / Reference</p>
+<h2>Technical reference</h2>
+
+<p>This is a static HTML guide with a small catalog filter. It does not load the customer page scripts. Maintain <code>docs/site-handoff.html</code>, <code>docs/site-handoff.css</code>, <code>docs/site-handoff.js</code> and the local screenshots in <code>docs/images/handoff/</code> together. The full content remains readable without JavaScript and all catalog entries are included in print.</p>
+<p>After code deployment, open <code>/docs/site-handoff.html</code> with its extension on the intended branch. Repository Markdown is excluded by <code>.hlxignore</code>, so technical links in this guide point to GitHub. These documentation assets are served with committed code; do not add credentials or private customer information to them.</p>
+<pre><code>npm install
+npx -y @adobe/aem-cli up --url https://demo--etrade--adobedrago.aem.page
+# Inspect actual source before changing a block:
+curl http://localhost:3000/home.plain.html
+
+npm run lint
+npm test</code></pre>
+<p>There is no site build step and dependencies are development-only. Do not edit the vendored <code>scripts/aem.js</code>. Shared helpers belong in <code>/scripts/</code>; Fragment is the only cross-block import exception. Inspect <code>buildAutoBlocks</code> because it can transform markup before a block runs. Keep retired <code>fstab.yaml</code>, <code>helix-query.yaml</code> and <code>paths.json</code> out of new setup instructions; EDS configuration is managed at tools.aem.live.</p>
+<div class="table-scroll" role="region" aria-label="Technical references" tabindex="0"><table><thead><tr><th scope="col">Reference</th><th scope="col">What it documents</th></tr></thead><tbody>
+<tr><td><a href="https://github.com/AdobeDrago/etrade/blob/demo/docs/style-system.md">Style system</a></td><td>Tokens, page/section families, responsive composition and developer ownership.</td></tr>
+<tr><td><a href="https://github.com/AdobeDrago/etrade/blob/demo/docs/block-library-pilot.md">Block library pilot</a></td><td>Native source fixtures, catalog setup and DA acceptance checks.</td></tr>
+<tr><td><a href="https://github.com/AdobeDrago/etrade/blob/demo/docs/reusable-content.md">Reusable Content</a></td><td>Upstream fragment picker registration and shared-reference workflow.</td></tr>
+<tr><td><a href="https://github.com/AdobeDrago/etrade/blob/demo/scripts/scripts.js">Page pipeline</a></td><td>Auto-blocking, block decoration, actions, eager/lazy/delayed loading.</td></tr>
+<tr><td><a href="https://github.com/AdobeDrago/etrade/blob/demo/scripts/page-theme.js">Page theme</a> / <a href="https://github.com/AdobeDrago/etrade/blob/demo/scripts/section-authoring.js">Section authoring</a></td><td>Family/scheme selection and metadata interpretation.</td></tr>
+<tr><td><a href="https://github.com/AdobeDrago/etrade/blob/demo/scripts/bank-rates.js">Bank rates</a> / <a href="https://github.com/AdobeDrago/etrade/blob/demo/scripts/market-data.js">Market data</a></td><td>Approved service contracts, source selection and failure behavior.</td></tr>
+<tr><td><a href="https://github.com/AdobeDrago/etrade/blob/demo/README.md">Project README</a></td><td>Existing implementation notes, test commands, demo and integration details.</td></tr>
+</tbody></table></div>
+<h3 id="adobe-documentation">Adobe documentation</h3>
+<p>Official references checked on <time datetime="2026-10-30">October 30, 2026</time>. Use these for platform workflows and the E*TRADE references above for this project’s contracts. Feature descriptions do not establish that an integration, library or service is enabled for this tenant.</p>
+<div class="table-scroll" role="region" aria-label="Official Adobe documentation by task" tabindex="0"><table><thead><tr><th scope="col">Task</th><th scope="col">Adobe documentation</th><th scope="col">Use it for</th></tr></thead><tbody>
+<tr><td>Get oriented</td><td><a href="https://www.aem.live/docs/ew/about">Experience Workspace</a> · <a href="https://www.aem.live/docs/ew/authoring/browsing-content">Browsing content</a></td><td>Understand the editor environment, locate documents, and manage the content hierarchy.</td></tr>
+<tr><td>Edit a page</td><td><a href="https://www.aem.live/docs/ew/authoring/editing-docs">Authoring pages</a></td><td>Use Layout, Content and Split views, formatting tools, and configured block libraries.</td></tr>
+<tr><td>Insert images and files</td><td><a href="https://www.aem.live/docs/ew/authoring/adding-media">Adding media</a> · <a href="https://www.aem.live/docs/limits">Delivery limits</a></td><td>Review direct document uploads, configured AEM Assets selection, supported delivery types and limits.</td></tr>
+<tr><td>Set metadata</td><td><a href="https://www.aem.live/docs/metadata">Page Metadata</a> · <a href="https://www.aem.live/docs/bulk-metadata">Bulk Metadata</a></td><td>Understand metadata tables and shared defaults. Use this guide for E*TRADE-specific field names, values and behavior.</td></tr>
+<tr><td>Reuse shared content</td><td><a href="https://www.aem.live/docs/fragments">Fragments</a></td><td>Decide when shared references help and understand their independent preview/publish lifecycle.</td></tr>
+<tr><td>Compare or recover edits</td><td><a href="https://www.aem.live/docs/ew/authoring/version-history">Versioning and history</a></td><td>View, compare, create and restore content versions.</td></tr>
+<tr><td>Release content</td><td><a href="https://www.aem.live/docs/ew/authoring/publishing">Publishing content</a> · <a href="https://www.aem.live/docs/sidekick">Using AEM Sidekick</a></td><td>Follow the workflow for the interface in use; Experience Workspace and Sidekick actions can differ.</td></tr>
+<tr><td>Review before release</td><td><a href="https://www.aem.live/docs/ew/administering/preflight">Preflight</a></td><td>Understand automated document checks and review their findings where configured.</td></tr>
+<tr><td>Process a batch</td><td><a href="https://www.aem.live/docs/ew/authoring/bulk-operations">Bulk operations</a></td><td>Collect URLs and review results for batch preview, publish, version and index operations.</td></tr>
+<tr><td>Configure the library</td><td><a href="https://www.aem.live/docs/ew/administering/set-up-library">Set up library</a></td><td>For administrators: register blocks, templates, icons and authoring options. Availability still needs tenant verification.</td></tr>
+<tr><td>Use the assistant</td><td><a href="https://www.aem.live/docs/ew/authoring/assistant">Assistant panel</a></td><td>Find the assistant, supply context and understand the review/confirmation workflow.</td></tr>
+<tr><td>Investigate a Sidekick error</td><td><a href="https://www.aem.live/docs/sidekick-errors">Sidekick Errors</a></td><td>Match a displayed error with Adobe’s explanation before escalating the failing path and environment.</td></tr>
+<tr><td>Understand block markup</td><td><a href="https://www.aem.live/developer/markup-sections-blocks">Markup, Sections, Blocks, and Auto Blocking</a></td><td>For developers: understand how authored content becomes delivered markup and decorated blocks.</td></tr>
+</tbody></table></div>
+
+<p class="reference-link">Guide structure adapted from the <a href="https://github.com/AdobeDrago/nrg/blob/develop/docs/site-handoff.html">Everything Energy / NRG handoff guide</a>. E*TRADE behavior was checked against this repository’s <code>demo</code> checkout at <code>6cac224</code>. Rendered screenshots show local code with demo preview content at the browser’s desktop viewport on October 29, 2026; they are not authenticated DA screenshots or approval records. Recheck open items when the handoff changes; record the guide revision and verification scope in <a href="#guide-maintenance">Guide maintenance</a>.</p>
+
+</section>
+<section id="guide-maintenance">
+<p class="section-label">22 / Reference</p>
+<h2>Maintaining this guide</h2>
+<p>Update the guide when the authoring workflow or implementation changes. The guide revision date is separate from the date a preview, native editor workflow or live integration was actually verified.</p>
+<div class="guide-maintenance-summary"><p><strong>Guide owner:</strong> to be assigned by the site team.</p><p><strong>Technical reviewer:</strong> to be assigned by the site team.</p><p><strong>Documentation revision:</strong> <time datetime="2026-10-30">October 30, 2026</time>.</p><p><strong>Implementation reference:</strong> <code>demo / 6cac224</code>; preview screenshots/checks dated October 29, 2026.</p></div>
+<h3>Maintenance responsibilities</h3>
+<p>Recommended assignment: a lead author maintains task instructions and examples; the owning developer verifies block, metadata and integration contracts; content/legal owners review approved wording and claim dependencies. Record the actual owners in the team’s internal handoff tracker. Do not add credentials or private contact details to this publicly served guide.</p>
+<h3>How to read the evidence</h3>
+<div class="table-scroll" role="region" aria-label="Guide evidence labels and their meaning" tabindex="0"><table><thead><tr><th scope="col">Evidence</th><th scope="col">What it establishes</th><th scope="col">What still needs a check</th></tr></thead><tbody>
+<tr><td>Code reference</td><td>A behavior exists in the named checkout and can be traced to its source contract.</td><td>Current DA content, deployment, service access and approval are separate.</td></tr>
+<tr><td>Authoring example</td><td>A table or value illustrates the supported structure.</td><td>Replace sample copy, amounts, paths and artwork with reviewed content appropriate to the page.</td></tr>
+<tr><td>Preview checked</td><td>The identified path rendered or was reachable on the recorded date and branch.</td><td>Native editor insertion, complete content, content approval and live delivery are not established by that alone.</td></tr>
+<tr><td>Pending verification</td><td>A named check has not been completed in the relevant environment.</td><td>Keep the corresponding <a href="#open-items">handoff item</a> open until evidence is recorded; do not turn an assumption into a completion claim.</td></tr>
+</tbody></table></div>
+<h3>When to review</h3>
+<ul>
+<li>A block name, row contract, supported variant, action rule or image treatment changes.</li>
+<li>A metadata field/default, shared source path, DA extension or publishing workflow changes. Recheck the linked Adobe workflow documentation at the same time.</li>
+<li>Code is promoted to another branch, a live service is connected, or a handoff check is resolved.</li>
+<li>A campaign example, screenshot or documented page path no longer represents the intended content.</li>
+</ul>
+<p>For each update, compare the prose with the owning source, review affected examples, check links, and inspect desktop/phone rendering. Recheck any workflow you label verified, record the environment/date, and update the code reference only after comparing it with that implementation. Preserve existing section anchors when possible.</p>
+<h3>Change record</h3>
+<div class="table-scroll" role="region" aria-label="Documentation change record" tabindex="0"><table><thead><tr><th scope="col">Date</th><th scope="col">Change</th><th scope="col">Verification scope</th></tr></thead><tbody>
+<tr><td><time datetime="2026-10-30">October 30, 2026</time></td><td>Added block selection, consistent 32-block summaries, image guidance, a consolidated metadata reference, correct/incorrect examples, a new-page checklist and maintenance guidance. Added contextual Adobe references and a task-based documentation index. Added a resizable desktop sidebar and stable navigation selection.</td><td>Documentation compared with the local implementation; official Adobe reference pages reviewed on October 30, 2026. This revision does not establish authenticated DA acceptance, new content approvals or production integration readiness.</td></tr>
+<tr><td><time datetime="2026-10-29">October 29, 2026</time></td><td>Initial E*TRADE handoff guide, block catalog, screenshots and handoff checks; refined guide presentation and aligned header width.</td><td>Implementation reference and limited preview checks are documented in <a href="#open-items">Handoff checks</a> and <a href="#reference">Technical reference</a>.</td></tr>
+</tbody></table></div>
+</section>
+</main>
+</div>
+<footer class="guide-footer"><span>E*TRADE from Morgan Stanley <span aria-hidden="true">/</span> Site handoff guide</span><span>Updated October 30, 2026 <a href="#start">Back to top <span aria-hidden="true">↑</span></a></span></footer>
+</body>
+</html>
