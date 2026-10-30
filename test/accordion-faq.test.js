@@ -278,6 +278,55 @@ test('Purple initializes the reference layout and explicit Flat retains preceden
   assert.ok(explicit.block.querySelector('.accordion-faq-icon-vertical'));
 });
 
+test('section families override the page presentation while preserving open answers and explicit Flat', async () => {
+  const { block, document } = await render(row('Question', fees), '', '', 'data-section-family="purple"', 'charcoal');
+  const section = block.closest('.section');
+  const button = block.querySelector('.accordion-faq-item-label');
+  const answer = block.querySelector('.accordion-faq-item-body');
+  assert.equal(block.dataset.faqLayout, 'flat');
+  button.click();
+  document.documentElement.dataset.pageTheme = 'purple';
+  section.dataset.sectionFamily = 'charcoal';
+  await new Promise((resolve) => { setImmediate(resolve); });
+  assert.equal(block.dataset.faqLayout, 'cards');
+  assert.equal(button.getAttribute('aria-expanded'), 'true');
+  assert.equal(block.querySelector('.accordion-faq-item-body'), answer);
+  assert.equal(block.querySelector('.accordion-faq-icon-vertical'), null);
+  section.removeAttribute('data-section-family');
+  await new Promise((resolve) => { setImmediate(resolve); });
+  assert.equal(block.dataset.faqLayout, 'flat', 'removing the override restores the page family');
+  assert.equal(button.getAttribute('aria-expanded'), 'true');
+  const explicit = await render(row('Question', fees), 'flat', '', 'data-section-family="charcoal"', 'purple');
+  assert.equal(explicit.block.dataset.faqLayout, 'flat');
+});
+
+test('detached fragment FAQs adopt their shared parent family and keep answers open after insertion', async () => {
+  await Promise.all([
+    ['purple', 'charcoal', 'cards'],
+    ['charcoal', 'purple', 'flat'],
+  ].map(async ([fragmentFamily, parentFamily, expected]) => {
+    const { block, document, decorate } = await render(row('Existing question', fees), '', '', `data-section-family="${parentFamily}"`, fragmentFamily);
+    const parent = block.closest('.section');
+    const fragment = document.createElement('main');
+    fragment.innerHTML = `<div class="section" data-section-family="${fragmentFamily}"><div class="accordion-faq-wrapper"><div class="accordion-faq">${row('Fragment question', fees)}</div></div></div>`;
+    const faq = fragment.querySelector('.accordion-faq');
+    // Fragments decorate their blocks before their wrappers move into the parent section.
+    await decorate(faq);
+    const button = faq.querySelector('.accordion-faq-item-label');
+    const answer = faq.querySelector('.accordion-faq-item-body');
+    button.click();
+    parent.append(...fragment.firstElementChild.childNodes);
+    await new Promise((resolve) => { setImmediate(resolve); });
+    assert.equal(faq.dataset.faqLayout, expected);
+    assert.equal(button.getAttribute('aria-expanded'), 'true');
+    assert.equal(faq.querySelector('.accordion-faq-item-body'), answer);
+    parent.dataset.sectionFamily = fragmentFamily;
+    await new Promise((resolve) => { setImmediate(resolve); });
+    assert.equal(faq.dataset.faqLayout, fragmentFamily === 'purple' ? 'flat' : 'cards');
+    assert.equal(button.getAttribute('aria-expanded'), 'true');
+  }));
+});
+
 test('grid accordions retain shared section content and use its heading level for every block', async () => {
   const adjacent = '<div class="default-content-wrapper"><h3 id="shared-faq">Shared heading</h3><p>Shared introduction with <a href="/details?track=1">details</a>.</p></div>';
   const { block, document, decorate } = await render(row('First question', '<p>Answer.</p>'), '', adjacent, 'data-section-layout="authored" data-section-grid="2"');

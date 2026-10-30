@@ -7,14 +7,23 @@ let themeObserver;
 function watchPageTheme(block, update) {
   themeLayouts.set(block, update);
   if (themeObserver || typeof MutationObserver === 'undefined') return;
-  themeObserver = new MutationObserver(() => {
+  themeObserver = new MutationObserver((mutations) => {
+    // Fragments decorate off-document and can discard their section on insertion.
+    const changed = mutations.some((mutation) => mutation.type === 'attributes'
+      || [...mutation.addedNodes, ...mutation.removedNodes].some((node) => (
+        node.nodeType === Node.ELEMENT_NODE
+        && (node.matches('.accordion-faq') || node.querySelector('.accordion-faq'))
+      )));
+    if (!changed) return;
     document.querySelectorAll('.accordion-faq').forEach((accordion) => {
       themeLayouts.get(accordion)?.();
     });
   });
   themeObserver.observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ['data-page-theme'],
+    attributeFilter: ['data-page-theme', 'data-section-family'],
+    childList: true,
+    subtree: true,
   });
 }
 
@@ -125,7 +134,9 @@ export default async function decorate(block) {
   // Preserve content authored with the former variant name.
   if (block.classList.contains('pricing')) block.classList.add('flat');
   const authoredFlat = block.classList.contains('flat');
-  const usesFlatLayout = () => authoredFlat || document.documentElement.dataset.pageTheme === 'purple';
+  const usesFlatLayout = () => authoredFlat
+    || (block.closest('.section[data-section-family]')?.dataset.sectionFamily
+      || document.documentElement.dataset.pageTheme) === 'purple';
   const flat = usesFlatLayout();
   const {
     heading, sectionHeading, introduction, action, auxiliary,

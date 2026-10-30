@@ -35,6 +35,10 @@ export default function decorateSectionBoundaries(main) {
       || next.querySelector('.separator')) return;
     const section = document.createElement('div');
     section.className = 'section separator-container';
+    // This sibling must resolve surface tokens in the source section's family.
+    if (previous.dataset.sectionFamily) {
+      section.dataset.sectionFamily = previous.dataset.sectionFamily;
+    }
     section.dataset.sectionStatus = 'initialized';
     section.style.display = 'none';
     const wrapper = document.createElement('div');

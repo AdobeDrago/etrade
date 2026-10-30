@@ -75,6 +75,7 @@ test('section options preserve authored content and direct block wrappers', asyn
     row('Grid', '3'),
     row('Gap', 'L'),
     row('Spacing', 'XL'),
+    row('Theme', 'Purple'),
     row('Color Scheme', 'Dark'),
     row('Align', 'center'),
     row('Anchor', '#review'),
@@ -87,6 +88,7 @@ test('section options preserve authored content and direct block wrappers', asyn
   assert.equal(section.dataset.sectionGrid, '3');
   assert.equal(section.dataset.sectionGap, 'l');
   assert.equal(section.dataset.sectionSpacing, 'xl');
+  assert.equal(section.dataset.sectionFamily, 'purple');
   assert.equal(section.dataset.sectionTheme, 'dark');
   assert.equal(section.dataset.sectionAlign, 'center');
   assert.equal(section.querySelectorAll(':scope > .cards-wrapper > .cards.block').length, 2);
@@ -100,7 +102,7 @@ test('section options preserve authored content and direct block wrappers', asyn
 });
 
 test('delivery-pipeline section attributes apply without a remaining metadata block', async () => {
-  const page = await harness(`<div data-container="narrow" data-grid="3" data-gap="l" data-spacing="xl" data-color-scheme="dark" data-align="center" id="delivered-section">${content}${card}${card}</div>`);
+  const page = await harness(`<div data-container="narrow" data-grid="3" data-gap="l" data-spacing="xl" data-theme="Charcoal" data-color-scheme="dark" data-align="center" id="delivered-section">${content}${card}${card}</div>`);
   page.decorate();
   page.blocks();
   const section = page.main.firstElementChild;
@@ -112,6 +114,7 @@ test('delivery-pipeline section attributes apply without a remaining metadata bl
   assert.equal(section.dataset.sectionAlign, 'center');
   assert.equal(section.dataset.sectionLayout, 'authored');
   assert.equal(section.id, 'delivered-section');
+  assert.equal(section.dataset.sectionFamily, 'charcoal');
   assert.equal(section.querySelectorAll(':scope > .cards-wrapper > .cards.block').length, 2);
   const before = page.main.innerHTML;
   page.decorate();
@@ -156,12 +159,13 @@ test('all six grid counts and named gap and spacing options are accepted', async
 });
 
 test('style aliases work while legacy style classes retain their behavior', async () => {
-  const page = await harness(`<div>${content}${metadata(row('Style', 'grid-4, gap-m, spacing-l, container-narrow, dark-scheme, center, campaign-special'))}</div><div>${content}${metadata(row('Style', 'dark, legacy-campaign'))}</div>`);
+  const page = await harness(`<div>${content}${metadata(row('Style', 'grid-4, gap-m, spacing-l, container-narrow, dark-scheme, theme-purple, center, campaign-special'))}</div><div>${content}${metadata(row('Style', 'dark, legacy-campaign'))}</div>`);
   page.decorate();
   const [modern, legacy] = page.main.children;
   assert.equal(modern.dataset.sectionGrid, '4');
   assert.equal(modern.dataset.sectionContainer, 'narrow');
   assert.equal(modern.dataset.sectionTheme, 'dark');
+  assert.equal(modern.dataset.sectionFamily, 'purple');
   assert.ok(modern.classList.contains('campaign-special'));
   assert.ok(legacy.classList.contains('dark'));
   assert.ok(legacy.classList.contains('legacy-campaign'));
@@ -175,6 +179,23 @@ test('explicit schemes override legacy scheme classes and background defaults', 
   assert.equal(section.classList.contains('dark'), false);
   assert.equal(section.dataset.sectionTheme, 'light');
   assert.equal(section.style.backgroundColor, 'var(--color-surface-inverse)');
+});
+
+test('section families preserve the page family, neighboring sections and independent color schemes', async () => {
+  const page = await harness(`<div>${content}${card}${metadata(row('Theme', 'THEME-PURPLE'))}</div><div data-theme="charcoal" data-background="inverse">${card}</div><div>${content}${metadata(row('Theme', 'Dark'))}</div><div>${card}</div>`);
+  page.document.documentElement.dataset.pageTheme = 'charcoal';
+  page.decorate();
+  const [purple, charcoal, legacy, inherited] = page.main.children;
+  assert.equal(purple.dataset.sectionFamily, 'purple');
+  assert.equal(purple.dataset.sectionTheme, undefined);
+  assert.equal(purple.dataset.sectionLayout, undefined, 'a family alone preserves existing section layout');
+  assert.equal(charcoal.dataset.sectionFamily, 'charcoal');
+  assert.equal(charcoal.dataset.sectionTheme, 'dark', 'a family does not suppress the background scheme');
+  assert.equal(legacy.dataset.sectionTheme, 'dark');
+  assert.equal(legacy.dataset.sectionFamily, undefined);
+  assert.equal(inherited.dataset.sectionFamily, undefined);
+  assert.equal(page.document.documentElement.dataset.pageTheme, 'charcoal');
+  assert.equal(purple.querySelector('h2').id, 'authored-heading');
 });
 
 test('surface tokens choose matching schemes and custom tokens and CSS backgrounds are retained', async () => {
@@ -219,6 +240,7 @@ test('missing and extra metadata cells and unknown options never become visible 
   assert.equal(section.dataset.sectionGap, undefined);
   assert.equal(section.dataset.sectionSpacing, undefined);
   assert.equal(section.dataset.sectionTheme, undefined);
+  assert.equal(section.dataset.sectionFamily, undefined);
   assert.equal(section.dataset.sectionBackground, undefined);
   assert.equal(section.textContent.includes('invalid'), false);
   await Promise.all(['0', '7', '2.5'].map(async (grid) => {

@@ -1,20 +1,34 @@
-/* Opt-in page design families. Section schemes and block variants remain independent.
-   Resolve theme values on the root so semantic and compatibility aliases follow them. */
-:root[data-page-theme="charcoal"] {
+/* Section families override inherited design values; color schemes remain independent. */
+:root[data-page-theme="charcoal"],
+.section[data-section-family="charcoal"] {
   --color-surface-inverse: var(--palette-neutral-950);
   --color-surface-inverse-raised: var(--palette-neutral-900);
+  --color-surface-campaign: var(--palette-purple-950);
   --radius-card: 16px;
 }
 
-:root[data-page-theme="purple"] {
+:root[data-page-theme="purple"],
+.section[data-section-family="purple"] {
   --color-surface-inverse: var(--palette-purple-900);
   --color-surface-inverse-raised: var(--palette-purple-900);
   --color-surface-campaign: var(--palette-purple-900);
+  --radius-card: var(--radius-control);
+}
+
+/* Rebind aliases here: values inherited from the root have already resolved there. */
+.section[data-section-family] {
+  --dark-color: var(--color-surface-inverse);
+  --brand-dark-bg: var(--color-surface-inverse);
+  --brand-dark-bg-alt: var(--color-surface-inverse-raised);
+  --color-surface-overlay-inverse: color-mix(in srgb, var(--color-surface-inverse-raised) 90%, transparent);
+}
+
+/* Global footer roles follow the page family, independently of section overrides. */
+:root[data-page-theme="purple"] {
   --color-footer-surface: var(--palette-neutral-150);
   --color-footer-text: var(--color-text-primary);
   --color-footer-link: var(--color-link);
   --color-footer-link-hover: var(--color-link-hover);
   --footer-color-scheme: light;
   --footer-icon-filter: brightness(0);
-  --radius-card: var(--radius-control);
 }
