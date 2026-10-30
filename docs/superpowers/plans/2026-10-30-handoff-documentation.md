@@ -69,5 +69,4 @@ Implementation continues directly under the user's instruction to implement the 
 
 Verification: all 32 catalog entries have all seven reference fields; all 65 IDs are unique and internal anchors resolve; local assets and repository source links exist. Desktop, 390px mobile, 320px with 200% text and no JavaScript, catalog filtering/reset, mobile menu selection, checklist navigation and 1920px centered-header alignment were inspected. A fresh read-only reviewer identified breakpoint/action/fallback inaccuracies and image/rate-reference omissions; all were corrected against source. Guide ownership remains explicitly unassigned pending the site team’s assignment. No authenticated DA or live-service acceptance was performed.
 
-
-Follow-up: added contextual official Adobe references and a task-based index. The project test suite passed all 352 tests.
+Follow-up: added contextual official Adobe references and a task-based index. Added a resizable desktop sidebar with saved widths and keyboard controls; selection preserves menu position and label geometry. The mobile contents bar uses the guide's light purple. Browser checks covered dragging, reload persistence, 224–420px limits, reset, stable selection, and the collapsed 390px menu. A fresh sidebar review found no actionable issues. The project test suite passed all 352 tests.

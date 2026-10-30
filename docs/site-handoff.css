@@ -251,8 +251,10 @@
 }
 
 .author-guide .guide-layout {
+  --guide-sidebar-default: 252px;
+
   display: grid;
-  grid-template-columns: 252px minmax(0, 1fr);
+  grid-template-columns: var(--guide-sidebar-width, var(--guide-sidebar-default)) minmax(0, 1fr);
   max-width: var(--guide-max-width);
   margin: auto;
 }
@@ -273,6 +275,49 @@
   scrollbar-gutter: stable;
   scrollbar-width: thin;
   overflow-anchor: none;
+}
+
+.author-guide .guide-resizer {
+  position: absolute;
+  z-index: 9;
+  top: 0;
+  right: -5px;
+  bottom: 0;
+  width: 11px;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+.author-guide .guide-resizer::after {
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  width: 3px;
+  height: 40px;
+  border-radius: 3px;
+  background: #d5d0dd;
+  content: "";
+  transform: translateY(-50%);
+}
+
+.author-guide .guide-resizer:is(:hover, :focus-visible),
+.author-guide.guide-resizing .guide-resizer {
+  background: var(--guide-purple-soft);
+}
+
+.author-guide .guide-resizer:is(:hover, :focus-visible)::after,
+.author-guide.guide-resizing .guide-resizer::after {
+  background: var(--guide-link);
+}
+
+.author-guide .guide-resizer:focus-visible {
+  outline-offset: 0;
+}
+
+.author-guide.guide-resizing,
+.author-guide.guide-resizing * {
+  cursor: col-resize;
+  user-select: none;
 }
 
 .author-guide .guide-navigation > summary {
@@ -930,7 +975,7 @@
   }
 
   .author-guide .guide-layout {
-    grid-template-columns: 224px minmax(0, 1fr);
+    --guide-sidebar-default: 224px;
   }
 
   .author-guide main {
@@ -958,6 +1003,10 @@
     max-height: none;
   }
 
+  .author-guide .guide-resizer {
+    display: none;
+  }
+
   .author-guide .guide-nav {
     overflow: visible;
     padding: 0 24px;
@@ -970,8 +1019,10 @@
     align-items: center;
     justify-content: space-between;
     min-height: 48px;
-    padding: 12px 0;
-    color: var(--guide-ink);
+    margin-inline: -24px;
+    padding: 12px 24px;
+    background: var(--guide-purple-soft);
+    color: var(--guide-link);
     font-size: 0.8125rem;
     font-weight: 550;
     list-style: none;
@@ -1054,6 +1105,11 @@
   }
 
   .author-guide .guide-nav {
+    padding-inline: 20px;
+  }
+
+  .author-guide .guide-navigation > summary {
+    margin-inline: -20px;
     padding-inline: 20px;
   }
 

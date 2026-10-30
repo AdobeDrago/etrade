@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="E*TRADE site handoff: DA authoring, all 32 blocks, Purple and Charcoal design families, disclosures, rates, tools, preview and publishing.">
 <title>Site handoff guide | E*TRADE</title>
-<link rel="stylesheet" href="site-handoff.css">
-<script src="site-handoff.js" defer></script>
+<link rel="stylesheet" href="site-handoff.css?v=20261030-mobile-purple">
+<script src="site-handoff.js?v=20261030-sidebar" defer></script>
 </head>
 <body class="author-guide">
 <a class="skip-link" href="#main">Skip to guide</a>
@@ -58,6 +58,8 @@
 </div>
 </details>
 </nav>
+<div class="guide-resizer" role="separator" tabindex="0" aria-label="Resize guide sidebar" aria-orientation="vertical" aria-controls="guide-sidebar" aria-describedby="guide-resize-help" aria-valuemin="224" aria-valuemax="420" aria-valuenow="252" title="Drag to resize. Double-click to reset." hidden></div>
+<span id="guide-resize-help" hidden>Drag left or right, or use the Left and Right arrow keys to resize. Hold Shift for larger steps. Home and End select the minimum and maximum widths. Enter or a double-click restores the default width.</span>
 </aside>
 <main id="main" tabindex="-1">
 <section id="start">
@@ -1140,7 +1142,7 @@ npm test</code></pre>
 <p>For each update, compare the prose with the owning source, review affected examples, check links, and inspect desktop/phone rendering. Recheck any workflow you label verified, record the environment/date, and update the code reference only after comparing it with that implementation. Preserve existing section anchors when possible.</p>
 <h3>Change record</h3>
 <div class="table-scroll" role="region" aria-label="Documentation change record" tabindex="0"><table><thead><tr><th scope="col">Date</th><th scope="col">Change</th><th scope="col">Verification scope</th></tr></thead><tbody>
-<tr><td><time datetime="2026-10-30">October 30, 2026</time></td><td>Added block selection, consistent 32-block summaries, image guidance, a consolidated metadata reference, correct/incorrect examples, a new-page checklist and maintenance guidance. Added contextual Adobe references and a task-based documentation index.</td><td>Documentation compared with the local implementation; official Adobe reference pages reviewed on October 30, 2026. This revision does not establish authenticated DA acceptance, new content approvals or production integration readiness.</td></tr>
+<tr><td><time datetime="2026-10-30">October 30, 2026</time></td><td>Added block selection, consistent 32-block summaries, image guidance, a consolidated metadata reference, correct/incorrect examples, a new-page checklist and maintenance guidance. Added contextual Adobe references and a task-based documentation index. Added a resizable desktop sidebar and stable navigation selection.</td><td>Documentation compared with the local implementation; official Adobe reference pages reviewed on October 30, 2026. This revision does not establish authenticated DA acceptance, new content approvals or production integration readiness.</td></tr>
 <tr><td><time datetime="2026-10-29">October 29, 2026</time></td><td>Initial E*TRADE handoff guide, block catalog, screenshots and handoff checks; refined guide presentation and aligned header width.</td><td>Implementation reference and limited preview checks are documented in <a href="#open-items">Handoff checks</a> and <a href="#reference">Technical reference</a>.</td></tr>
 </tbody></table></div>
 </section>
