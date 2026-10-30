@@ -1,4 +1,4 @@
-/* Standalone documentation. The customer site's runtime remains independent. */
+/* Site handoff guide. */
 .author-guide {
   --guide-ink: #242329;
   --guide-heading: #17151c;
@@ -592,6 +592,12 @@
   border-collapse: collapse;
   font-size: 0.8125rem;
   line-height: 1.65;
+}
+
+.author-guide .guide-change-record :is(th, td):first-child {
+  width: 9rem;
+  min-width: 9rem;
+  white-space: nowrap;
 }
 
 .author-guide caption {

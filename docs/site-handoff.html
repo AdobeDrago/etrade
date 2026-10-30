@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="E*TRADE site handoff: DA authoring, all 32 blocks, Purple and Charcoal design families, disclosures, rates, tools, preview and publishing.">
 <title>Site handoff guide | E*TRADE</title>
-<link rel="stylesheet" href="site-handoff.css?v=20261030-mobile-purple">
+<link rel="stylesheet" href="site-handoff.css?v=20261030-review-copy">
 <script src="site-handoff.js?v=20261030-sidebar" defer></script>
 </head>
 <body class="author-guide">
@@ -74,7 +74,7 @@
 <a href="#publish"><span class="quick-link-label">04 / Delivery</span><strong>Preview &amp; publish <span aria-hidden="true">↗</span></strong><span>Review and release approved updates.</span></a>
 </div>
 <p class="guide-shortcuts"><a href="#block-selection">Choose a block</a><a href="#metadata-reference">Look up metadata</a><a href="#authoring-examples">Avoid common mistakes</a><a href="#adobe-documentation">Adobe documentation</a></p>
-<p class="overview-scope">This guide documents the <code>demo</code> implementation. DA setup, content approval, main deployment and live integrations have separate <a href="#open-items">handoff checks</a>.</p>
+<p class="overview-scope">Use the <a href="#open-items">handoff checks</a> to track DA setup, content approval, deployment and live integrations.</p>
 </section>
 <section id="environments">
 <p class="section-label">01 / Essentials</p>
@@ -133,8 +133,8 @@
 <p class="reference-link">Next: <a href="#block-catalog">compare the authoring structures</a> · <a href="#asset-reference">prepare images</a> · <a href="#new-page-checklist">create a new page</a></p>
 <h3>Inserting from the block library</h3>
 <p>Open the editor’s tools panel and choose <strong>Blocks</strong> when the catalog is available. In New Authoring, extensions are under the <strong>Outline dropdown → Extensions</strong>; the classic editor uses <strong>Library</strong>. Copying a block table creates local page content. Inserting a fragment through Reusable Content creates a shared reference.</p>
-<p>The repository prepares a pilot for <strong>Hero Dark</strong> (Default, Split, Balanced and Inset) and <strong>Cards Article</strong> (Default and Promo). Their preview documents currently load. Catalog registration and successful native insertion still need to be checked inside the authenticated DA editor. The repository alone does not prove every block is available in the picker.</p>
-<figure><a href="images/handoff/library-hero-dark.jpg" target="_blank" rel="noopener" aria-label="Open full-size image: Hero Dark library page with the authoring guide and rendered examples"><img src="images/handoff/library-hero-dark.jpg" width="1265" height="712" loading="lazy" decoding="async" alt="Hero Dark library page with the authoring guide and rendered examples"></a><figcaption>The Hero Dark gallery uses real block rendering. Its Theme preview control changes only the preview session. The collapsed authoring guide belongs to library metadata and should not be inserted as page content.</figcaption></figure>
+<p>Pilot library examples cover <strong>Hero Dark</strong> (Default, Split, Balanced and Inset) and <strong>Cards Article</strong> (Default and Promo). The preview documents load; registration and insertion in the DA editor remain on the <a href="#open-items">handoff checklist</a>.</p>
+<figure><a href="images/handoff/library-hero-dark.jpg" target="_blank" rel="noopener" aria-label="Open full-size image: Hero Dark library page with the authoring guide and rendered examples"><img src="images/handoff/library-hero-dark.jpg" width="1265" height="712" loading="lazy" decoding="async" alt="Hero Dark library page with the authoring guide and rendered examples"></a><figcaption>Hero Dark library gallery. Theme preview applies to the current session. Keep the collapsed authoring guide in library metadata; insert the example block tables as page content.</figcaption></figure>
 <p class="reference-link">Sources: <a href="https://github.com/AdobeDrago/etrade/blob/demo/docs/block-library-pilot.md">block library pilot</a> · <a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/library-brief/README.md">library guide format</a> · <a href="https://www.aem.live/docs/ew/administering/set-up-library">Adobe library setup</a></p>
 
 </section>
@@ -142,7 +142,7 @@
 <p class="section-label">03 / Essentials</p>
 <h2>Page patterns</h2>
 
-<p>Use a reviewed existing page as the starting point for a similar page, then replace its copy, images, links, metadata and legal dependencies. The repository contains page-layout conventions and a block-library pilot; it does not establish a registered set of DA starter templates.</p>
+<p>Start with a reviewed page, then replace its copy, images, links, metadata and legal dependencies. DA starter-template registration remains on the <a href="#open-items">handoff checklist</a>.</p>
 <div class="table-scroll" role="region" aria-label="Page patterns and implementation notes" tabindex="0"><table><thead><tr><th scope="col">Page / pattern</th><th scope="col">Primary blocks</th><th scope="col">Handoff note</th></tr></thead><tbody>
 <tr><td><code>/home</code></td><td>Hero Dark, Columns Feature, Widget Calculator, Cards Pricing, Cards Product, Cards Award, Accordion FAQ, Separator, Floating Dock</td><td>Use Charcoal for the intended design family. Campaign details and disclosure sources remain authored.</td></tr>
 <tr><td><code>/home/welcome-back</code></td><td>Welcome Hero, Cards Icon (Welcome Back)</td><td>Use Purple for the intended family. The login presentation hands off to the authored login destination.</td></tr>
@@ -233,9 +233,9 @@
 <p>Use <strong>Metadata</strong> for page-wide settings and <strong>Section Metadata</strong> inside the section it configures. A <strong>Rate settings</strong> cell belongs to one card, panel or answer row; it is neither kind of metadata table.</p>
 <p class="reference-link">Adobe: <a href="https://www.aem.live/docs/metadata">Page Metadata</a> · <a href="https://www.aem.live/docs/bulk-metadata">Bulk Metadata</a>. A site can define shared defaults in a published metadata sheet; page-level values take precedence. Ask the content administrator to check any configured shared defaults when a value is unexpected. The custom fields and allowed values below are specific to this implementation.</p>
 <h3>Page fields</h3>
-<p>The fields below cover the delivery metadata used in this guide and the project-specific settings read by the current code. “Omitted” describes this implementation; it does not mean an unfinished page is ready for release.</p>
+<p>The fields below cover delivery metadata and E*TRADE settings. The “When omitted / review” column lists fallback behavior and checks before release.</p>
 <div class="table-scroll" role="region" aria-label="Page metadata fields and omitted behavior" tabindex="0"><table><thead><tr><th scope="col">Field</th><th scope="col">Value to supply</th><th scope="col">When omitted / review</th></tr></thead><tbody>
-<tr><td>Title / Description / Image</td><td>The page’s approved title, description and social-preview image.</td><td>Set these deliberately for a new page. Inspect the delivered page title, description and preview image; this guide supplies no fallback copy.</td></tr>
+<tr><td>Title / Description / Image</td><td>The page’s approved title, description and social-preview image.</td><td>Set these for each new page and inspect the delivered title, description and preview image.</td></tr>
 <tr><td>Theme</td><td><code>Purple</code> or <code>Charcoal</code>.</td><td>No family is applied for a missing/unsupported value; existing mixed styling remains. Header/footer defaults are dark without a family. Legacy light/dark values affect the header scheme only.</td></tr>
 <tr><td>Header Theme</td><td><code>light</code> or <code>dark</code>.</td><td>Uses a block Light/Dark option, then legacy page light/dark, then the family default: Purple → light; otherwise dark.</td></tr>
 <tr><td>Nav</td><td>A local source path such as <code>/nav</code>.</td><td>Loads <code>/nav</code>, with a compatibility attempt at <code>/content/nav</code> if that default cannot load.</td></tr>
@@ -423,7 +423,7 @@ Fallback: -.--</code></pre>
 <p>The bundled JSON under <code>/phx/pros/</code> is sample data and is selected only through an explicit endpoint. Verify real endpoint access from the delivery host before using API mode for delivery. Demo balance controls change only supported preview/local bindings; they do not read a customer account.</p>
 <h3>Market data</h3>
 <p>Market Ticker, Market Overview and Market Top Five default to <code>/data/market-data.json</code> and display sample-data notices. Page Metadata <code>Market Data Mode: live</code> selects the real-service contract; <code>Market Data Base</code> can select a verified same-origin proxy implementing the same paths. In live mode, a failed service remains unavailable rather than switching to sample prices.</p>
-<p>Before live delivery, verify browser access, quote timestamps, the Treasury scaling and Top Five’s quote/chart alignment against actual service responses. Author the stock, mutual-fund and ETF disclaimers. A configuration switch alone does not establish those integrations are ready.</p>
+<p>Before live delivery, verify browser access, quote timestamps, the Treasury scaling and Top Five’s quote/chart alignment against actual service responses. Author the stock, mutual-fund and ETF disclaimers.</p>
 <h3>Login, search, consent and analytics</h3>
 <ul>
 <li><strong>Welcome Hero</strong> is a presentation and handoff to its authored E*TRADE login URL. It does not authenticate or submit/store typed credentials, remember an ID, or implement destination/security-code choices.</li>
@@ -456,7 +456,7 @@ Fallback: -.--</code></pre>
 <p class="section-label">14 / Operations</p>
 <h2>AI assistant: content</h2>
 
-<p>If enabled for the site, the Experience Workspace assistant can help with scoped content changes. Give it the exact page, the target block, replacement wording and things to preserve. Review the resulting content and preview before release. This guide does not establish that the assistant is enabled in this DA tenant.</p>
+<p>If enabled for the site, the Experience Workspace assistant can help with scoped content changes. Specify the page, target block, replacement wording and content to preserve. Review the edited source and preview before release.</p>
 <h3>Example: revise a paragraph</h3>
 <div class="prompt">On /drafts/home-copy-review, shorten only the supporting paragraph in the first Hero Dark block using the approved wording I provide. Keep the headline, image, image alternative text, heading levels, both CTA labels and destinations, query parameters, superscript IDs, metadata and block structure. Show the changed text and leave the page unpublished.</div>
 <h3>Example: update an article card</h3>
@@ -499,7 +499,7 @@ Fallback: -.--</code></pre>
 </tbody></table></div>
 <h3>Demo controls</h3>
 <p>On localhost and the exact <code>demo</code>/<code>demo-controller</code> preview hosts, <strong>Demo controls</strong> exposes Page tools, Performance and Tracking. Page tools can set a dummy rate-test balance. Performance compares an unloaded baseline with simulated third-party payloads, optional assumed processing work or the explicitly selected real OneTrust SDK. Tracking exposes sample and real page-event queues separately.</p>
-<p>These controls are for demonstration. Payload emulation does not reproduce vendor behavior or prove production performance; a local sample receiver does not establish Adobe/CJA ingestion. The controls are absent on ordinary live hosts. Screenshots in this guide may include the preview-only launcher.</p>
+<p>These demonstration controls appear only on preview and local hosts. Emulated payloads do not reproduce vendor behavior or measure production performance, and the sample receiver does not verify Adobe/CJA ingestion. Some screenshots include the preview launcher.</p>
 <p class="reference-link">Source: <a href="https://github.com/AdobeDrago/etrade/blob/demo/README.md#third-party-performance-demo">demo controls and measurement limitations</a></p>
 </section>
 <section id="block-catalog">
@@ -992,7 +992,7 @@ Fallback: -.--</code></pre>
 <p><strong>Supported variants:</strong> Author the table heading as <code>Library Metadata (Guide)</code>.</p>
 <p>This is documentation rather than a page component to insert. The preview helper converts that heading to Library Brief; native pickers exclude Library Metadata tables. Keep example block tables outside the guide and in their own sections. Older Library Brief source headings require migration.</p>
 
-<div class="block-review"><p><strong>Common mistake:</strong> Inserting guide metadata as a customer-page component or placing real example tables inside the guide.</p><p><strong>Check the result:</strong> Check the gallery guide opens and the native picker lists actual examples rather than the authoring guide.</p></div>
+<div class="block-review"><p><strong>Common mistake:</strong> Inserting library metadata as page content or placing example tables inside the authoring guide.</p><p><strong>Check the result:</strong> Open the gallery guide and confirm the block picker lists the examples.</p></div>
 <p class="reference-link"><a href="https://github.com/AdobeDrago/etrade/blob/demo/blocks/library-brief/README.md">Authoring contract</a> · <a href="https://demo--etrade--adobedrago.aem.page/library/blocks/hero-dark">Preview example</a></p>
 </article>
 <article class="block-entry" id="block-widget" data-family="utilities">
@@ -1022,7 +1022,7 @@ Fallback: -.--</code></pre>
 <li>When the content is ready for release and the required code is deployed, use <strong>Preview &amp; Publish</strong> and <strong>Update</strong>. Verify the live-delivery page.</li>
 </ol>
 <p>Preview updates the preview instance; Preview &amp; Publish updates both preview and published content. The <a href="https://www.aem.live/docs/sidekick">AEM Sidekick</a> also exposes actions on rendered pages according to permissions and page state. See <a href="https://www.aem.live/docs/ew/authoring/publishing">Adobe’s publishing guide</a> for the current UI.</p>
-<p class="reference-link">Adobe also documents <a href="https://www.aem.live/docs/ew/administering/preflight">Preflight</a> for automated checks before release. Where available, review its findings alongside the manual page, data and legal checks above; this guide does not establish this tenant’s Preflight configuration.</p>
+<p class="reference-link">Where <a href="https://www.aem.live/docs/ew/administering/preflight">Preflight</a> is configured, review its automated findings alongside the page, data and legal checks above.</p>
 <h3>Dependency and code checks</h3>
 <ul>
 <li>Preview/publish shared fragments and disclosure sets/fragments, not just the page referencing them.</li>
@@ -1078,8 +1078,8 @@ Fallback: -.--</code></pre>
 <p class="section-label">21 / Reference</p>
 <h2>Technical reference</h2>
 
-<p>This is a static HTML guide with a small catalog filter. It does not load the customer page scripts. Maintain <code>docs/site-handoff.html</code>, <code>docs/site-handoff.css</code>, <code>docs/site-handoff.js</code> and the local screenshots in <code>docs/images/handoff/</code> together. The full content remains readable without JavaScript and all catalog entries are included in print.</p>
-<p>After code deployment, open <code>/docs/site-handoff.html</code> with its extension on the intended branch. Repository Markdown is excluded by <code>.hlxignore</code>, so technical links in this guide point to GitHub. These documentation assets are served with committed code; do not add credentials or private customer information to them.</p>
+<p>Maintain <code>docs/site-handoff.html</code>, <code>docs/site-handoff.css</code>, <code>docs/site-handoff.js</code> and the screenshots in <code>docs/images/handoff/</code> together. The guide remains readable without JavaScript, and all catalog entries are included in print.</p>
+<p>After deployment, open <code>/docs/site-handoff.html</code> on the intended branch. Source links point to GitHub because <code>.hlxignore</code> excludes repository Markdown from delivery. Keep credentials and private information out of published files.</p>
 <pre><code>npm install
 npx -y @adobe/aem-cli up --url https://demo--etrade--adobedrago.aem.page
 # Inspect actual source before changing a block:
@@ -1098,7 +1098,7 @@ npm test</code></pre>
 <tr><td><a href="https://github.com/AdobeDrago/etrade/blob/demo/README.md">Project README</a></td><td>Existing implementation notes, test commands, demo and integration details.</td></tr>
 </tbody></table></div>
 <h3 id="adobe-documentation">Adobe documentation</h3>
-<p>Official references checked on <time datetime="2026-10-30">October 30, 2026</time>. Use these for platform workflows and the E*TRADE references above for this project’s contracts. Feature descriptions do not establish that an integration, library or service is enabled for this tenant.</p>
+<p>Official Adobe workflow references, reviewed on <time datetime="2026-10-30">October 30, 2026</time>. Use the E*TRADE references above for block structures, supported options and site configuration.</p>
 <div class="table-scroll" role="region" aria-label="Official Adobe documentation by task" tabindex="0"><table><thead><tr><th scope="col">Task</th><th scope="col">Adobe documentation</th><th scope="col">Use it for</th></tr></thead><tbody>
 <tr><td>Get oriented</td><td><a href="https://www.aem.live/docs/ew/about">Experience Workspace</a> · <a href="https://www.aem.live/docs/ew/authoring/browsing-content">Browsing content</a></td><td>Understand the editor environment, locate documents, and manage the content hierarchy.</td></tr>
 <tr><td>Edit a page</td><td><a href="https://www.aem.live/docs/ew/authoring/editing-docs">Authoring pages</a></td><td>Use Layout, Content and Split views, formatting tools, and configured block libraries.</td></tr>
@@ -1115,22 +1115,22 @@ npm test</code></pre>
 <tr><td>Understand block markup</td><td><a href="https://www.aem.live/developer/markup-sections-blocks">Markup, Sections, Blocks, and Auto Blocking</a></td><td>For developers: understand how authored content becomes delivered markup and decorated blocks.</td></tr>
 </tbody></table></div>
 
-<p class="reference-link">Guide structure adapted from the <a href="https://github.com/AdobeDrago/nrg/blob/develop/docs/site-handoff.html">Everything Energy / NRG handoff guide</a>. E*TRADE behavior was checked against this repository’s <code>demo</code> checkout at <code>6cac224</code>. Rendered screenshots show local code with demo preview content at the browser’s desktop viewport on October 29, 2026; they are not authenticated DA screenshots or approval records. Recheck open items when the handoff changes; record the guide revision and verification scope in <a href="#guide-maintenance">Guide maintenance</a>.</p>
+<p class="reference-link">Adapted from the <a href="https://github.com/AdobeDrago/nrg/blob/develop/docs/site-handoff.html">Everything Energy / NRG handoff guide</a>. Implementation reference: <code>demo / 6cac224</code>. Screenshots show local code with demo preview content on October 29, 2026. Track DA acceptance, approvals and live-service verification in <a href="#open-items">Handoff checks</a>; record revisions in <a href="#guide-maintenance">Guide maintenance</a>.</p>
 
 </section>
 <section id="guide-maintenance">
 <p class="section-label">22 / Reference</p>
 <h2>Maintaining this guide</h2>
-<p>Update the guide when the authoring workflow or implementation changes. The guide revision date is separate from the date a preview, native editor workflow or live integration was actually verified.</p>
+<p>Record documentation revisions separately from preview, editor and live-service checks. Include the date and environment for each check.</p>
 <div class="guide-maintenance-summary"><p><strong>Guide owner:</strong> to be assigned by the site team.</p><p><strong>Technical reviewer:</strong> to be assigned by the site team.</p><p><strong>Documentation revision:</strong> <time datetime="2026-10-30">October 30, 2026</time>.</p><p><strong>Implementation reference:</strong> <code>demo / 6cac224</code>; preview screenshots/checks dated October 29, 2026.</p></div>
 <h3>Maintenance responsibilities</h3>
-<p>Recommended assignment: a lead author maintains task instructions and examples; the owning developer verifies block, metadata and integration contracts; content/legal owners review approved wording and claim dependencies. Record the actual owners in the team’s internal handoff tracker. Do not add credentials or private contact details to this publicly served guide.</p>
+<p>Assign a lead author to task instructions and examples, a developer to block, metadata and integration details, and content/legal owners to wording and claim dependencies. Record assignments in the team’s handoff tracker.</p>
 <h3>How to read the evidence</h3>
 <div class="table-scroll" role="region" aria-label="Guide evidence labels and their meaning" tabindex="0"><table><thead><tr><th scope="col">Evidence</th><th scope="col">What it establishes</th><th scope="col">What still needs a check</th></tr></thead><tbody>
 <tr><td>Code reference</td><td>A behavior exists in the named checkout and can be traced to its source contract.</td><td>Current DA content, deployment, service access and approval are separate.</td></tr>
 <tr><td>Authoring example</td><td>A table or value illustrates the supported structure.</td><td>Replace sample copy, amounts, paths and artwork with reviewed content appropriate to the page.</td></tr>
-<tr><td>Preview checked</td><td>The identified path rendered or was reachable on the recorded date and branch.</td><td>Native editor insertion, complete content, content approval and live delivery are not established by that alone.</td></tr>
-<tr><td>Pending verification</td><td>A named check has not been completed in the relevant environment.</td><td>Keep the corresponding <a href="#open-items">handoff item</a> open until evidence is recorded; do not turn an assumption into a completion claim.</td></tr>
+<tr><td>Preview checked</td><td>The identified path rendered or was reachable on the recorded date and branch.</td><td>Check editor insertion, content completeness, approval and live delivery separately.</td></tr>
+<tr><td>Pending verification</td><td>A named check has not been completed in the relevant environment.</td><td>Keep the <a href="#open-items">handoff item</a> open until verification is recorded.</td></tr>
 </tbody></table></div>
 <h3>When to review</h3>
 <ul>
@@ -1141,9 +1141,9 @@ npm test</code></pre>
 </ul>
 <p>For each update, compare the prose with the owning source, review affected examples, check links, and inspect desktop/phone rendering. Recheck any workflow you label verified, record the environment/date, and update the code reference only after comparing it with that implementation. Preserve existing section anchors when possible.</p>
 <h3>Change record</h3>
-<div class="table-scroll" role="region" aria-label="Documentation change record" tabindex="0"><table><thead><tr><th scope="col">Date</th><th scope="col">Change</th><th scope="col">Verification scope</th></tr></thead><tbody>
-<tr><td><time datetime="2026-10-30">October 30, 2026</time></td><td>Added block selection, consistent 32-block summaries, image guidance, a consolidated metadata reference, correct/incorrect examples, a new-page checklist and maintenance guidance. Added contextual Adobe references and a task-based documentation index. Added a resizable desktop sidebar and stable navigation selection.</td><td>Documentation compared with the local implementation; official Adobe reference pages reviewed on October 30, 2026. This revision does not establish authenticated DA acceptance, new content approvals or production integration readiness.</td></tr>
-<tr><td><time datetime="2026-10-29">October 29, 2026</time></td><td>Initial E*TRADE handoff guide, block catalog, screenshots and handoff checks; refined guide presentation and aligned header width.</td><td>Implementation reference and limited preview checks are documented in <a href="#open-items">Handoff checks</a> and <a href="#reference">Technical reference</a>.</td></tr>
+<div class="table-scroll" role="region" aria-label="Documentation change record" tabindex="0"><table class="guide-change-record"><thead><tr><th scope="col">Date</th><th scope="col">Change</th><th scope="col">Verification scope</th></tr></thead><tbody>
+<tr><td><time datetime="2026-10-30">Oct 30, 2026</time></td><td>Added block selection, 32-block summaries, image and metadata references, authoring examples, a new-page checklist, maintenance guidance and Adobe references. Added sidebar resizing and stable menu selection. Simplified the wording and date layout after review.</td><td>Compared documentation with the local implementation and reviewed official Adobe references. DA acceptance, content approvals and live integrations remain in <a href="#open-items">Handoff checks</a>.</td></tr>
+<tr><td><time datetime="2026-10-29">Oct 29, 2026</time></td><td>Created the handoff guide, block catalog, screenshots and handoff checks. Refined the layout and aligned the header width.</td><td>Code reference and preview checks are recorded in <a href="#open-items">Handoff checks</a> and <a href="#reference">Technical reference</a>.</td></tr>
 </tbody></table></div>
 </section>
 </main>
