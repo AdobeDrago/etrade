@@ -19,4 +19,10 @@ The demo selects quotes and sparkline histories from same-origin `data/market-da
 
 At most five unique valid quotes are shown; a shorter valid list remains usable. Missing charts are labeled unavailable. Requests and disclosures track the current selector; late older responses cannot overwrite it. Refresh retries failures. Prices are never authored or fabricated as a production fallback. Quote links hand off to E*TRADE's existing research destination.
 
-Layout: one column on narrow screens, two from 600px, five from 1100px. Data timestamps, delay notice, signed changes and accessible chart summaries are visible. Author category disclaimers and page metadata in DA using the keys above.
+Layout: one column below 768px. From 768px, the grid fits up to five columns, with a 10rem minimum per quote and shared 16-unit gaps; available width and enlarged text can reduce the column count. Data timestamps, delay notice, signed changes and accessible chart summaries are visible. Author category disclaimers and page metadata in DA using the keys above.
+
+## Shared style system
+
+Prices, changes, chart colors and controls use shared roles. The five-column cap reduces to fewer columns when available width or enlarged text requires it. Symbols and prices can wrap independently; category selection and authored disclosures are unchanged. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.
+
+`--market-top-five-grid-columns` stays local to this block because its five-quote cap, 10rem minimum, and gap differ from the shared card and ticker grids.

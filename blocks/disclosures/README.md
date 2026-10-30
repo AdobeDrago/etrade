@@ -2,6 +2,16 @@
 
 Keep homepage disclosures in a separate DA document, such as `/homepage-disclosures`. Set page Metadata `Disclosures` to that document path. The loader places its authored content after the global footer. The global footer document remains independent.
 
+The same Metadata row or a one-cell Disclosures block can select any of these formats automatically:
+
+- A structured fragment set at `/disclosures/sets/homepage`, or an explicit site `.json` file.
+- A document containing an authored **Disclosures** table.
+- A rich-text disclosure page, such as `/disclosures/docs/homepage`, with headings, paragraphs, tables, media, and an optional numbered list.
+
+For a rich-text page, top-level ordered lists become the numbered disclosure items. Nested lists remain inside their legal copy. Authored list starts, item values, reversed numbering, anchors, formatting, and content order are preserved. Items without an authored anchor receive `disclosure-N` IDs. Numeric markers and the legacy `a`–`z` markers link to matching displayed numbers; content without a numbered list still renders without creating footnote targets. Content before the first list uses the introduction styles, and content after it uses the closing styles. If the document contains a Disclosures table, only that block is consumed.
+
+Document paths may be extensionless or end in `.html` or `.plain.html`, including full site URLs. Legal documents load without page auto-block or button transformations. Preview the referenced document before testing on `.aem.page`, and publish it before testing on `.aem.live` or production. Empty documents stay hidden; unavailable documents are hidden and log a loading error.
+
 ## Fragment sets
 
 The **Disclosures** row in the page's **Metadata** table can also point to a structured disclosure set:
@@ -63,3 +73,7 @@ Authored content is transferred separately. Existing sandbox integration and cam
 ## Style ownership
 
 The block stylesheet owns the disclosure region and `.disclosures-reference` markers in page content. The shared `/scripts/disclosure-references.js` helper runs in `buildAutoBlocks` for content added after the footer is ready, and the block decorator runs it after the authored disclosure items are available. Automatically loaded fragments receive another pass after insertion. Shared homepage section spacing remains in `styles/styles.css`.
+
+## Shared style system
+
+The owned light surface, links, typography, spacing and focus use shared tokens. Inner gutters are bounded in narrow containers and with enlarged text. Legal IDs, ordered entries, authored rich content and the logged, hidden loading-failure behavior are unchanged. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

@@ -19,3 +19,7 @@ matching the live introduction. The ordinary Hero keeps the Platforms layout.
 Use **Hero Dark (Split)** for the existing separate text/media design and **Hero Light** for the text-only introduction. Those are different layouts.
 
 Save and preview content separately from shipping code. Local preview with the working tree: http://127.0.0.1:3030/platforms.
+
+## Shared style system
+
+This block consumes the shared color, typography, spacing, border, focus and applicable motion tokens. Narrow section cells and enlarged text reflow within the block. Authored Section Metadata takes precedence over legacy surrounding section styles; content, links and existing interactions are preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

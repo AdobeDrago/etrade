@@ -1,8 +1,8 @@
 .cards-product {
-  color: #242424;
-  letter-spacing: -0.21px;
-  font-size: 16px;
-  line-height: 20px;
+  color: var(--card-text-color);
+  letter-spacing: var(--tracking-tight);
+  font-size: var(--font-size-16);
+  line-height: 1.25;
   overflow-wrap: anywhere;
 }
 
@@ -12,8 +12,11 @@
 
 .cards-product > ul {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 20px;
+
+  --card-columns: 1;
+  --card-gap: var(--space-20);
+
+  gap: var(--card-gap);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -24,10 +27,11 @@
   flex-direction: column;
   box-sizing: border-box;
   min-width: 0;
-  border: 1px solid #e2e2e2;
-  border-radius: 16px;
-  padding: 16px;
-  background: #fff;
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+  padding: var(--space-16);
+  padding-inline: min(var(--space-16), 12%);
+  background: var(--card-surface-color);
 }
 
 .cards-product .cards-product-body {
@@ -35,37 +39,37 @@
 }
 
 .cards-product .cards-product-body :is(h1, h2, h3, h4, h5, h6) {
-  margin: 0 0 26px;
+  margin: 0 0 1.625rem;
   color: inherit;
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 28px;
-  letter-spacing: -0.25px;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-semibold);
+  line-height: calc(28 / 24);
+  letter-spacing: var(--tracking-tight);
 }
 
 .cards-product .cards-product-body p {
-  margin: 0 0 9.1px;
-  color: #666;
+  margin: 0 0 0.5687rem;
+  color: var(--card-copy-color);
 }
 
 .cards-product .cards-product-body .cards-product-value {
-  margin-bottom: 14px;
-  font-size: 48px;
-  font-weight: 400;
-  line-height: 52px;
-  letter-spacing: -1px;
+  margin-bottom: 0.875rem;
+  font-size: var(--font-size-48);
+  font-weight: var(--font-weight-regular);
+  line-height: calc(52 / 48);
+  letter-spacing: var(--tracking-display);
 }
 
 .cards-product .cards-product-has-value h3 {
-  font-size: 20px;
-  line-height: 24px;
+  font-size: var(--font-size-20);
+  line-height: 1.2;
 }
 
 .cards-product .cards-product-body .cards-product-rate {
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 24px;
-  letter-spacing: -0.21px;
+  font-size: var(--font-size-20);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  letter-spacing: var(--tracking-tight);
 }
 
 .cards-product .cards-product-body > p:last-child {
@@ -74,41 +78,42 @@
 
 .cards-product .cards-product-actions {
   margin-top: auto;
-  padding-top: 16px;
+  padding-top: var(--space-16);
 }
 
 @media (width >= 768px) {
   .cards-product > ul {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    --card-columns: 2;
   }
 }
 
 @media (width >= 768px) {
   .cards-product > ul > li {
-    padding: 24px;
+    padding: var(--space-24);
+    padding-inline: min(var(--space-24), 12%);
   }
 
   .cards-product .cards-product-body :is(h1, h2, h3, h4, h5, h6) {
-    font-size: 28px;
-    line-height: 32px;
+    font-size: var(--font-size-28);
+    line-height: calc(32 / 28);
   }
 }
 
 @media (width >= 768px) {
   .cards-product .cards-product-body .cards-product-rate {
-    font-size: 18px;
-    line-height: 22px;
+    font-size: var(--font-size-18);
+    line-height: calc(22 / 18);
   }
 }
 
 @media (width < 768px) {
   .cards-product .cards-product-actions {
-    padding-top: 21px;
+    padding-top: 1.3125rem;
   }
 }
 
 @media (width >= 768px) {
   .cards-product.three-columns > ul {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    --card-columns: 3;
   }
 }

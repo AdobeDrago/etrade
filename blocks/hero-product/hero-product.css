@@ -1,12 +1,34 @@
-.hero-product {
-  --action-link-color: #ab80ff;
+main .section > .hero-product-wrapper {
+  min-width: 0;
+  container: block-layout / inline-size;
+}
 
+body.etrade-page:where(:not(.homepage, .welcome-back, .brokerage)) main > .section.hero-product-container:not([data-section-layout="authored"]) {
+  margin: var(--space-40) 0;
+  padding: 0;
+}
+
+:where(.hero-product) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
+.hero-product {
+  --text-color: var(--color-text-inverse);
+  --link-color: var(--color-link-inverse);
+  --link-hover-color: var(--color-link-inverse-hover);
+  --action-outline-hover-text: var(--color-text-primary);
+  --action-link-color: var(--color-link-inverse);
+
+  color-scheme: dark;
+  min-width: 0;
+  overflow-wrap: anywhere;
   display: grid;
-  gap: 24px;
-  background: #121213;
-  color: #fff;
+  gap: var(--space-24);
+  background: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
   text-align: center;
-  letter-spacing: -0.21px;
+  letter-spacing: var(--tracking-tight);
 }
 
 .hero-product > div {
@@ -14,37 +36,37 @@
 }
 
 .hero-product .hero-product-content p {
-  margin: 0 0 20px;
-  font-size: 16px;
-  line-height: 20px;
+  margin: 0 0 var(--space-20);
+  font-size: var(--font-size-16);
+  line-height: calc(20 / 16);
 }
 
 .hero-product .hero-product-content .hero-product-eyebrow {
-  margin: 0 0 16px;
+  margin: 0 0 var(--space-16);
   color: inherit;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 20px;
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-regular);
+  line-height: calc(20 / 16);
 }
 
 .hero-product .hero-product-heading {
-  margin: 0 0 20px;
+  margin: 0 0 var(--space-20);
   color: inherit;
-  font-size: 36px;
-  line-height: 39.6px;
-  letter-spacing: -0.4px;
+  font-size: var(--font-size-36);
+  line-height: calc(39.6 / 36);
+  letter-spacing: var(--tracking-tight);
 }
 
 .hero-product .hero-product-actions {
   justify-content: center;
-  margin-top: 30px;
+  margin-top: var(--space-30);
 }
 
 .hero-product .hero-product-media :is(picture, img) {
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 16px;
+  border-radius: var(--radius-card);
 }
 
 .hero-product .hero-product-media img {
@@ -53,7 +75,7 @@
 }
 
 .hero-product .hero-product-offer a:any-link:not(.etrade-action) {
-  color: #ab80ff;
+  color: var(--color-link-inverse);
 }
 
 .hero-product .hero-product-offer {
@@ -61,45 +83,49 @@
 }
 
 .hero-product .hero-product-offer :is(h2, h3, h4) {
-  margin: 0 0 12px;
+  margin: 0 0 var(--space-12);
   color: inherit;
-  font-size: 20px;
-  line-height: 24px;
+  font-size: var(--font-size-20);
+  line-height: calc(24 / 20);
 }
 
 .hero-product .hero-product-offer p {
-  margin: 0 0 12px;
-  font-size: 13px;
-  line-height: 18px;
+  margin: 0 0 var(--space-12);
+  font-size: var(--font-size-13);
+  line-height: calc(18 / 13);
 }
 
 .hero-product .hero-product-offer-actions {
-  margin-top: 12px;
+  margin-top: var(--space-12);
 }
 
-body.brokerage main > .section.hero-product-container {
+body.brokerage main > .section:not([data-section-layout="authored"]).hero-product-container {
   margin: 0;
-  padding: 20px 0 40px;
-  background: #121213;
-  color: #fff;
+  padding: var(--space-20) 0 var(--space-40);
+  background: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+}
+
+body.etrade-page:where(:not(.homepage, .welcome-back, .brokerage)) main > .section.hero-product-container:not([data-section-layout="authored"]):first-of-type {
+  margin-top: 0;
 }
 
 @media (width >= 768px) {
   .hero-product {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: 20px;
+    gap: var(--space-20);
     text-align: left;
   }
 
   .hero-product .hero-product-content {
     grid-row: span 2;
     align-self: center;
-    padding: 0 40px;
+    padding: 0 var(--space-40);
   }
 
   .hero-product .hero-product-heading {
-    font-size: 48px;
-    line-height: 52px;
+    font-size: var(--font-size-48);
+    line-height: calc(52 / 48);
   }
 
   .hero-product .hero-product-actions {
@@ -114,7 +140,7 @@ body.brokerage main > .section.hero-product-container {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
     align-items: center;
-    gap: 20px;
+    gap: var(--space-20);
     grid-column: 2;
   }
 
@@ -133,4 +159,43 @@ body.brokerage main > .section.hero-product-container {
   .hero-product.no-image .hero-product-offer {
     grid-column: 1;
   }
+}
+
+/* Adapt to the space provided by the section, including enlarged text. */
+@container block-layout (width < 38rem) {
+  main .section .hero-product {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  main .section .hero-product .hero-product-content {
+    grid-area: auto;
+    width: 100%;
+    max-width: 100%;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  main .section .hero-product .hero-product-media {
+    grid-area: auto;
+  }
+
+  main .section .hero-product .hero-product-offer {
+    grid-area: auto;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  main .section .hero-product.copy-only-offer .hero-product-offer {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+
+body.etrade-page:where(:not(.homepage, .welcome-back, .brokerage)) main > .section.hero-product-container:not([data-section-layout="authored"]):is(.light, .highlight) {
+  margin: 0;
+  padding: var(--space-40) 0;
+}
+
+body.etrade-page:where(:not(.homepage, .welcome-back, .brokerage)) main > .section.hero-product-container:not([data-section-layout="authored"]).dark {
+  margin: 0;
+  padding: var(--space-48) 0;
 }

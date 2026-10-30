@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" data-page-theme="charcoal">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>E*TRADE style system</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="/blocks/cards-article/cards-article.css">
+    <link rel="stylesheet" href="./style-system.css">
+    <script type="module" src="./style-system.js"></script>
+  </head>
+  <body class="appear style-system-demo">
+    <header class="showroom-header">
+      <div><p class="showroom-eyebrow">E*TRADE · Design foundation</p><h1>One system. Many expressions.</h1><p>Shared design values, page families, section choices, and reusable blocks.</p></div>
+      <a href="/home?perf=off">Open demo homepage</a>
+    </header>
+    <aside class="showroom-controls" aria-label="Style system controls">
+      <label>Page family<select id="family"><option value="charcoal">Charcoal</option><option value="purple">Purple</option></select></label>
+      <label>Section scheme<select id="scheme"><option value="dark">Dark</option><option value="light">Light</option></select></label>
+      <label>Container<select id="container"><option value="standard">Standard</option><option value="narrow">Narrow</option><option value="full">Full</option></select></label>
+      <label>Blocks per row<select id="grid"><option value="3">3</option><option value="2">2</option><option value="1">1</option></select></label>
+      <label>Section spacing<select id="spacing"><option value="l">Large</option><option value="m">Medium</option><option value="none">None</option></select></label>
+      <button id="reset" type="button">Reset</button>
+    </aside>
+    <main>
+      <div id="preview" class="section" data-section-layout="authored" data-section-container="standard" data-section-grid="3" data-section-gap="l" data-section-spacing="l" data-section-theme="dark" style="--section-grid-count:3">
+        <div class="default-content-wrapper"><p class="showroom-eyebrow">Live preview · shared production styles</p><h2>Build with a common language.</h2><p>Change the family to remap shared values. Change the section to compose the page. Each card keeps a readable surface of its own.</p><div class="etrade-actions"><a class="etrade-action etrade-action-primary" href="#authoring">Primary action</a><a class="etrade-action etrade-action-outline" href="#authoring">Outline action</a><a class="etrade-action etrade-action-secondary" href="#authoring">Text action</a></div></div>
+        <div class="cards-article-wrapper"><div class="cards-article block"><ul><li class="cards-article-card"><div class="cards-article-body"><p class="cards-article-eyebrow">01 / Foundation</p><h3 class="cards-article-heading">Shared values</h3><p>Color roles, typography, spacing, shape, focus, and motion start from a common source.</p></div><div class="cards-article-actions etrade-actions"><a class="etrade-action etrade-action-secondary" href="#roles">See the roles</a></div></li></ul></div></div>
+        <div class="cards-article-wrapper"><div class="cards-article block"><ul><li class="cards-article-card"><div class="cards-article-body"><p class="cards-article-eyebrow">02 / Composition</p><h3 class="cards-article-heading">Author choices</h3><p>Authors choose the page family, section layout and supported block options using metadata.</p></div><div class="cards-article-actions etrade-actions"><a class="etrade-action etrade-action-secondary" href="#authoring">See the metadata</a></div></li></ul></div></div>
+        <div class="cards-article-wrapper"><div class="cards-article block"><ul><li class="cards-article-card"><div class="cards-article-body"><p class="cards-article-eyebrow">03 / Components</p><h3 class="cards-article-heading">Local ownership</h3><p>Blocks share the foundation while owning their internal layout, surfaces, and responsive behavior.</p></div><div class="cards-article-actions etrade-actions"><a class="etrade-action etrade-action-secondary" href="#roles">Follow a value</a></div></li></ul></div></div>
+      </div>
+      <section id="authoring" class="showroom-explanation">
+        <div><p class="showroom-eyebrow">What an author selects</p><h2>Options become metadata.</h2><p>These controls preview the same attributes used by the site's section helpers. They change only this showroom; they do not save DA content.</p><pre id="metadata" aria-label="Equivalent DA metadata"></pre></div>
+        <div id="roles"><p class="showroom-eyebrow">What a developer maintains</p><h2>Values have a purpose.</h2><dl class="showroom-roles"><div><dt>Inverse surface</dt><dd><span class="showroom-swatch inverse"></span><code id="inverse-value"></code></dd></div><div><dt>Primary action</dt><dd><span class="showroom-swatch action"></span><code id="action-value"></code></dd></div><div><dt>Card radius</dt><dd><code id="radius-value"></code></dd></div></dl><p>Palette → semantic role → page family → section → block.</p><p>A familiar design-system pattern, ready to map to your team's design language.</p></div>
+      </section>
+    </main>
+    <footer class="showroom-footer"><p id="summary" role="status" aria-live="polite"></p><p>Actual site tokens, section styles, article cards and shared actions. No alternate theme engine or build step.</p></footer>
+  </body>
+</html>

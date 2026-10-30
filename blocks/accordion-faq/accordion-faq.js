@@ -1,7 +1,42 @@
+import decorateCardRates from '../../scripts/card-rates.js';
+
 let accordionCount = 0;
+const themeLayouts = new WeakMap();
+let themeObserver;
+
+function watchPageTheme(block, update) {
+  themeLayouts.set(block, update);
+  if (themeObserver || typeof MutationObserver === 'undefined') return;
+  themeObserver = new MutationObserver((mutations) => {
+    // Fragments decorate off-document and can discard their section on insertion.
+    const changed = mutations.some((mutation) => mutation.type === 'attributes'
+      || [...mutation.addedNodes, ...mutation.removedNodes].some((node) => (
+        node.nodeType === Node.ELEMENT_NODE
+        && (node.matches('.accordion-faq') || node.querySelector('.accordion-faq'))
+      )));
+    if (!changed) return;
+    document.querySelectorAll('.accordion-faq').forEach((accordion) => {
+      themeLayouts.get(accordion)?.();
+    });
+  });
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-page-theme', 'data-section-family'],
+    childList: true,
+    subtree: true,
+  });
+}
 
 function takeAdjacentContent(block) {
   const wrapper = block.closest('.accordion-faq-wrapper');
+  const section = wrapper?.parentElement;
+  if (section?.hasAttribute('data-section-grid')) {
+    const siblings = [...section.children];
+    const preceding = siblings.slice(0, siblings.indexOf(wrapper));
+    const sectionHeading = preceding.flatMap((node) => (node.matches('.default-content-wrapper')
+      ? [...node.children] : [])).findLast((node) => node.matches('h1, h2, h3, h4, h5, h6'));
+    return { sectionHeading };
+  }
   const previous = wrapper?.previousElementSibling;
   const next = wrapper?.nextElementSibling;
   const before = previous?.matches('.default-content-wrapper') ? [...previous.children] : [];
@@ -51,7 +86,7 @@ function answerContent(cells) {
   content.className = 'accordion-faq-item-content';
   let paragraph;
   cells.forEach((cell) => {
-    [...cell.cloneNode(true).childNodes].forEach((node) => {
+    [...cell.childNodes].forEach((node) => {
       if (node.nodeType === Node.COMMENT_NODE) return;
       if (node.nodeType === Node.TEXT_NODE && !node.textContent.trim() && !paragraph) return;
       if (node.nodeType === Node.ELEMENT_NODE
@@ -71,16 +106,16 @@ function answerContent(cells) {
   return content;
 }
 
-function disclosureIcon(pricing) {
+function disclosureIcon(flat) {
   const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   icon.classList.add('accordion-faq-item-icon');
   icon.setAttribute('viewBox', '0 0 24 24');
   icon.setAttribute('aria-hidden', 'true');
   icon.setAttribute('focusable', 'false');
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('d', pricing ? 'M5 11h14v2H5z' : 'M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z');
+  path.setAttribute('d', flat ? 'M5 11h14v2H5z' : 'M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z');
   icon.append(path);
-  if (pricing) {
+  if (flat) {
     const vertical = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     vertical.classList.add('accordion-faq-icon-vertical');
     vertical.setAttribute('d', 'M11 5h2v14h-2z');
@@ -90,15 +125,24 @@ function disclosureIcon(pricing) {
 }
 
 /** One authored question/answer row per item. No FAQ copy is supplied by the block. */
-export default function decorate(block) {
+export default async function decorate(block) {
+  // Keep the original marker nodes so asynchronous rate updates reach the rendered answers.
+  const rates = decorateCardRates(block, { contentStart: 1, settingsStart: 2 });
   accordionCount += 1;
   const prefix = `accordion-faq-${accordionCount}`;
   const rows = [...block.children];
-  const pricing = block.classList.contains('pricing');
+  // Preserve content authored with the former variant name.
+  if (block.classList.contains('pricing')) block.classList.add('flat');
+  const authoredFlat = block.classList.contains('flat');
+  const usesFlatLayout = () => authoredFlat
+    || (block.closest('.section[data-section-family]')?.dataset.sectionFamily
+      || document.documentElement.dataset.pageTheme) === 'purple';
+  const flat = usesFlatLayout();
   const {
-    heading, introduction, action, auxiliary,
+    heading, sectionHeading, introduction, action, auxiliary,
   } = takeAdjacentContent(block);
-  const level = heading ? Math.min(Number(heading.tagName.slice(1)) + 1, 6) : 3;
+  const labelHeading = heading || sectionHeading;
+  const level = labelHeading ? Math.min(Number(labelHeading.tagName.slice(1)) + 1, 6) : 3;
   const items = [];
   const group = document.createElement('div');
   group.className = 'accordion-faq-items';
@@ -125,17 +169,15 @@ export default function decorate(block) {
     if (!title || !answers.length) return;
     const content = answerContent(answers);
     if (!content.textContent.trim() && !content.querySelector('img, picture, video, audio, iframe')) return;
-    if (pricing) {
-      content.querySelectorAll('table').forEach((table) => {
-        const scroll = document.createElement('div');
-        scroll.className = 'accordion-faq-table';
-        scroll.tabIndex = 0;
-        scroll.setAttribute('role', 'region');
-        scroll.setAttribute('aria-label', `${title} fee table`);
-        table.replaceWith(scroll);
-        scroll.append(table);
-      });
-    }
+    content.querySelectorAll('table').forEach((table) => {
+      const scroll = document.createElement('div');
+      scroll.className = 'accordion-faq-table';
+      scroll.tabIndex = 0;
+      scroll.setAttribute('role', 'region');
+      scroll.setAttribute('aria-label', `${title} table`);
+      table.replaceWith(scroll);
+      scroll.append(table);
+    });
     const index = items.length + 1;
     const element = document.createElement('div');
     element.className = 'accordion-faq-item';
@@ -149,7 +191,7 @@ export default function decorate(block) {
     const text = document.createElement('span');
     text.className = 'accordion-faq-item-text';
     text.textContent = title;
-    button.append(disclosureIcon(pricing), text);
+    button.append(disclosureIcon(flat), text);
     label.append(button);
     const panel = document.createElement('div');
     panel.className = 'accordion-faq-item-body';
@@ -186,4 +228,24 @@ export default function decorate(block) {
   if (action) block.append(action);
   if (auxiliary) block.append(auxiliary);
   block.hidden = !block.children.length;
+
+  let currentLayout;
+  function updateLayout() {
+    const nextFlat = usesFlatLayout();
+    const layout = nextFlat ? 'flat' : 'cards';
+    if (layout === currentLayout) return;
+    currentLayout = layout;
+    block.dataset.faqLayout = layout;
+    items.forEach(({ button }) => {
+      button.querySelector('.accordion-faq-item-icon').replaceWith(disclosureIcon(nextFlat));
+    });
+    if (action) {
+      if (nextFlat && toggle.parentElement === block) toggle.before(action);
+      else block.append(action);
+    }
+    if (auxiliary) block.append(auxiliary);
+  }
+  updateLayout();
+  watchPageTheme(block, updateLayout);
+  await rates;
 }

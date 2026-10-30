@@ -1,0 +1,120 @@
+.style-system-demo .showroom-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 32px;
+  min-height: 0;
+  padding: 40px max(24px, calc((100% - 1200px) / 2));
+  background: var(--color-surface-page);
+}
+
+.style-system-demo .showroom-header h1 {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 48px);
+}
+
+.style-system-demo .showroom-header p {
+  margin-bottom: 0;
+}
+
+.style-system-demo .showroom-eyebrow {
+  margin-top: 0;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.style-system-demo .showroom-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 16px;
+  padding: 24px max(24px, calc((100% - 1200px) / 2));
+  border-block: 1px solid var(--color-border-default);
+}
+
+.style-system-demo .showroom-controls label {
+  display: grid;
+  gap: 6px;
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+}
+
+.style-system-demo .showroom-controls :is(select, button) {
+  min-height: 44px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-control);
+  padding: 8px 12px;
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
+  font: inherit;
+}
+
+.style-system-demo .showroom-controls :is(select, button):focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-link);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.style-system-demo .showroom-explanation {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 48px;
+  max-width: 1200px;
+  margin: auto;
+  padding: 48px 24px;
+}
+
+.style-system-demo .showroom-explanation h2 {
+  font-size: var(--font-size-28);
+}
+
+.style-system-demo main .section h2 {
+  font-size: clamp(28px, 3.5vw, 44px);
+}
+
+.style-system-demo pre {
+  padding: 24px;
+  background: var(--color-surface-page);
+  font: 14px/1.7 monospace;
+  white-space: pre-wrap;
+}
+
+.style-system-demo .showroom-roles > div,
+.style-system-demo .showroom-roles dd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0;
+  padding-block: 8px;
+}
+
+.style-system-demo .showroom-swatch {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.style-system-demo .showroom-swatch.inverse {
+  background: var(--color-surface-inverse);
+}
+
+.style-system-demo .showroom-swatch.action {
+  background: var(--color-action-primary);
+}
+
+.style-system-demo .showroom-footer {
+  padding: 32px max(24px, calc((100% - 1200px) / 2));
+  background: var(--color-footer-surface);
+  color: var(--color-footer-text);
+  font-size: var(--font-size-14);
+}
+
+@media (width < 768px) {
+  .style-system-demo .showroom-header,
+  .style-system-demo .showroom-explanation {
+    display: block;
+  }
+}
