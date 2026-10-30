@@ -4,9 +4,18 @@ import { loadFragment } from '../fragment/fragment.js';
 
 const ROLES = new Set(['brand', 'contact', 'social', 'column']);
 
+/** Links leaving E*TRADE open in a new tab; preview hosts count as E*TRADE. */
+function isExternal(link) {
+  if (!/^https?:$/.test(link.protocol)) return false;
+  const { hostname } = link;
+  return hostname !== window.location.hostname
+    && hostname !== 'etrade.com' && !hostname.endsWith('.etrade.com');
+}
+
 function cleanLinks(content) {
   content.querySelectorAll('a[href]').forEach((link) => {
     link.classList.remove('button', 'primary', 'secondary', 'accent');
+    if (isExternal(link)) link.target = '_blank';
     if (link.getAttribute('target') === '_blank') {
       link.rel = [...new Set([...link.relList, 'noopener', 'noreferrer'])].join(' ');
     }
