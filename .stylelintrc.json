@@ -1,3 +1,39 @@
 {
-  "extends": ["stylelint-config-standard"]
+  "extends": ["stylelint-config-standard"],
+  "plugins": ["./tools/lint/block-scope.mjs", "./tools/lint/unitless-line-height.mjs"],
+  "reportDescriptionlessDisables": true,
+  "reportInvalidScopeDisables": true,
+  "reportNeedlessDisables": true,
+  "rules": {
+    "declaration-no-important": true,
+    "selector-max-id": 0,
+    "selector-max-specificity": "0,10,5",
+    "etrade/unitless-line-height": true,
+    "declaration-property-unit-disallowed-list": {
+      "/^(font|font-size|letter-spacing|(?:margin|padding)(?:-.+)?|(?:row-|column-)?gap)$/": ["px"],
+      "/^--(?:(?:space|spacing|font-size|tracking)-.*|.*-(?:gap|padding|margin|spacing))$/": ["px"]
+    }
+  },
+  "overrides": [
+    {
+      "files": ["blocks/**/*.css"],
+      "rules": { "etrade/block-scope": true }
+    },
+    {
+      "files": ["blocks/**/*.css", "styles/**/*.css"],
+      "rules": {
+        "color-no-hex": true,
+        "color-named": "never",
+        "function-disallowed-list": ["rgb", "rgba", "hsl", "hsla", "hwb", "lab", "lch", "oklab", "oklch", "color"]
+      }
+    },
+    {
+      "files": ["styles/brand.css", "styles/themes.css"],
+      "rules": {
+        "color-no-hex": null,
+        "color-named": null,
+        "function-disallowed-list": null
+      }
+    }
+  ]
 }
