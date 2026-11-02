@@ -1,24 +1,24 @@
 /* Section styling belongs to the block present in that section. */
-body.homepage main > .section.pricing-cards:where(:has(.cards-pricing)) {
+body.homepage main > .section:not([data-section-layout="authored"]).pricing-cards:where(:has(.cards-pricing)) {
   padding-top: 0;
 }
 
-body.homepage .pricing-cards:where(:has(.cards-pricing)) > div + div {
-  margin-top: 20px;
+body.homepage .pricing-cards:not([data-section-layout="authored"]):where(:has(.cards-pricing)) > div + div {
+  margin-top: var(--space-20);
 }
 
-body.homepage .pricing-cards:where(:has(.cards-pricing)) .default-content-wrapper {
-  margin-top: 24px;
-  font-size: 13px;
-  line-height: 18px;
+body.homepage .pricing-cards:not([data-section-layout="authored"]):where(:has(.cards-pricing)) .default-content-wrapper {
+  margin-top: var(--space-24);
+  font-size: var(--font-size-13);
+  line-height: calc(18 / 13);
   text-align: center;
 }
 
 .cards-pricing {
-  color: #242424;
-  letter-spacing: -0.21px;
-  font-size: 16px;
-  line-height: 20px;
+  color: var(--card-text-color);
+  letter-spacing: var(--tracking-tight);
+  font-size: var(--font-size-16);
+  line-height: 1.25;
   overflow-wrap: anywhere;
 }
 
@@ -28,8 +28,11 @@ body.homepage .pricing-cards:where(:has(.cards-pricing)) .default-content-wrappe
 
 .cards-pricing > ul {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 20px;
+
+  --card-columns: 1;
+  --card-gap: var(--space-20);
+
+  gap: var(--card-gap);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -40,10 +43,11 @@ body.homepage .pricing-cards:where(:has(.cards-pricing)) .default-content-wrappe
   flex-direction: column;
   box-sizing: border-box;
   min-width: 0;
-  border: 1px solid #e2e2e2;
-  border-radius: 16px;
-  padding: 16px;
-  background: #fff;
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+  padding: var(--space-16);
+  padding-inline: min(var(--space-16), 8%);
+  background: var(--card-surface-color);
 }
 
 .cards-pricing .cards-pricing-body {
@@ -51,67 +55,70 @@ body.homepage .pricing-cards:where(:has(.cards-pricing)) .default-content-wrappe
 }
 
 .cards-pricing .cards-pricing-body :is(h1, h2, h3, h4, h5, h6) {
-  margin: 0 0 26px;
+  margin: 0 0 1.625rem;
   color: inherit;
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 28px;
-  letter-spacing: -0.25px;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-semibold);
+  line-height: calc(28 / 24);
+  letter-spacing: var(--tracking-tight);
 }
 
 .cards-pricing .cards-pricing-body p {
-  margin: 0 0 9.1px;
-  color: #666;
+  margin: 0 0 0.5687rem;
+  color: var(--card-copy-color);
 }
 
 .cards-pricing .cards-pricing-body .cards-pricing-value {
-  margin-bottom: 25.1px;
-  padding: 48px 0;
-  font-size: 48px;
-  font-weight: 600;
-  line-height: 52px;
-  letter-spacing: -0.8px;
-  color: #242424;
+  --card-paragraph-color: var(--card-text-color);
+
+  margin-bottom: 1.5688rem;
+  padding: var(--space-48) 0;
+  font-size: var(--font-size-48);
+  font-weight: var(--font-weight-semibold);
+  line-height: calc(52 / 48);
+  letter-spacing: var(--tracking-display);
+  color: var(--card-text-color);
 }
 
 .cards-pricing .cards-pricing-has-value h3 {
-  font-size: 24px;
-  line-height: 28px;
+  font-size: var(--font-size-24);
+  line-height: calc(28 / 24);
 }
 
 .cards-pricing .cards-pricing-body .cards-pricing-rate {
-  font-size: 28px;
-  line-height: 32px;
-  letter-spacing: -0.5px;
+  font-size: var(--font-size-28);
+  line-height: calc(32 / 28);
+  letter-spacing: var(--tracking-tight);
 }
 
 .cards-pricing .cards-pricing-actions {
   margin-top: auto;
-  padding-top: 25.0938px;
+  padding-top: 1.5684rem;
 }
 
 @media (width >= 768px) {
   .cards-pricing > ul {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    --card-columns: 3;
   }
 }
 
 @media (width >= 768px) {
   .cards-pricing > ul > li {
-    padding: 24px;
+    padding: var(--space-24);
+    padding-inline: min(var(--space-24), 8%);
   }
 
   .cards-pricing .cards-pricing-body :is(h1, h2, h3, h4, h5, h6) {
-    font-size: 28px;
-    line-height: 32px;
+    font-size: var(--font-size-28);
+    line-height: calc(32 / 28);
   }
 }
 
 @media (width >= 768px) {
   .cards-pricing .cards-pricing-body .cards-pricing-value {
-    padding: 60px 0;
-    font-size: 64px;
-    line-height: 64px;
+    padding: var(--space-60) 0;
+    font-size: var(--font-size-64);
+    line-height: 1;
   }
 }
 
@@ -121,86 +128,94 @@ body.homepage .pricing-cards:where(:has(.cards-pricing)) .default-content-wrappe
 
 @media (width < 768px) {
   .cards-pricing .cards-pricing-actions {
-    padding-top: 21px;
+    padding-top: 1.3125rem;
   }
 }
 
 @media (width >= 768px) {
   .cards-pricing .cards-pricing-body h3.cards-pricing-compact-title {
-    font-size: 28px;
-    line-height: 32px;
+    font-size: var(--font-size-28);
+    line-height: calc(32 / 28);
   }
 }
 
-main .section:has(.cards-pricing) > .default-content-wrapper.pricing-intro {
-  margin-bottom: 40px;
+main .section:not([data-section-layout="authored"]):has(.cards-pricing) > .default-content-wrapper.pricing-intro {
+  margin-bottom: var(--space-40);
   text-align: left;
 }
 
-main .section:has(.cards-pricing) .pricing-intro > h2 {
-  margin: 0 0 30px;
-  font-size: 32px;
-  line-height: 36px;
-  letter-spacing: -0.4px;
+main .section:not([data-section-layout="authored"]):has(.cards-pricing) .pricing-intro > h2 {
+  margin: 0 0 var(--space-30);
+  font-size: var(--font-size-32);
+  line-height: calc(36 / 32);
+  letter-spacing: var(--tracking-tight);
 }
 
-main .section:has(.cards-pricing) .pricing-intro-copy p {
-  margin: 0 0 30px;
-  font-size: 16px;
-  line-height: 20px;
+main .section:not([data-section-layout="authored"]):has(.cards-pricing) .pricing-intro-copy p {
+  margin: 0 0 var(--space-30);
+  font-size: var(--font-size-16);
+  line-height: 1.25;
 }
 
 @media (width >= 768px) {
-  main .section:has(.cards-pricing) > .default-content-wrapper.pricing-intro {
+  main .section:not([data-section-layout="authored"]):has(.cards-pricing) > .default-content-wrapper.pricing-intro {
     display: grid;
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    gap: 20px;
+    gap: var(--space-20);
     align-items: center;
   }
 
-  main .section:has(.cards-pricing) .pricing-intro > h2 {
+  main .section:not([data-section-layout="authored"]):has(.cards-pricing) .pricing-intro > h2 {
     margin: 0;
-    font-size: 44px;
-    line-height: 48px;
+    font-size: var(--font-size-44);
+    line-height: calc(48 / 44);
   }
 }
 
-body.homepage main > .section.cards-pricing-container:has(.cards-pricing) {
+body.homepage main > .section:not([data-section-layout="authored"]).cards-pricing-container:has(.cards-pricing) {
   padding-top: 0;
-  padding-bottom: 20px;
+  padding-bottom: var(--space-20);
 }
 
-body.brokerage .section:has(.cards-pricing) .default-content-wrapper > h2 {
+body.brokerage .section:not([data-section-layout="authored"]):has(.cards-pricing) .default-content-wrapper > h2 {
   max-width: 680px;
 }
 
 
 /* The authored Band variant owns its heading and shared pricing action. */
-main .section:has(.cards-pricing.band) {
+main .section:not([data-section-layout="authored"]):has(.cards-pricing.band) {
   box-sizing: border-box;
   max-width: 980px;
-  margin: 30px auto 60px;
-  padding: 35px 20px 30px;
-  background: #19223c;
-  color: #fff;
+  margin: var(--space-30) auto var(--space-60);
+  padding: 2.1875rem var(--space-20) var(--space-30);
+  background: var(--color-surface-feature);
+  color: var(--color-text-inverse);
 }
 
-main .section:has(.cards-pricing.band) > div {
+main .section:not([data-section-layout="authored"]):has(.cards-pricing.band) > div {
   max-width: none;
   padding: 0;
 }
 
-main .section:has(.cards-pricing.band) .default-content-wrapper h2 {
-  margin: 0 0 30px;
-  color: #6ccdf6;
+main .section:not([data-section-layout="authored"]):has(.cards-pricing.band) .default-content-wrapper h2 {
+  margin: 0 0 var(--space-30);
+  color: var(--color-text-feature-accent);
   text-align: center;
-  font-size: 32px;
-  font-weight: 500;
-  line-height: 36px;
+  font-size: var(--font-size-32);
+  font-weight: var(--font-weight-medium);
+  line-height: calc(36 / 32);
 }
 
 .cards-pricing.band {
-  color: #fff;
+  --card-text-color: var(--color-text-inverse);
+  --card-copy-color: var(--color-text-inverse-secondary);
+  --card-link-color: var(--color-link-inverse);
+  --link-color: var(--color-link-inverse);
+  --action-link-color: var(--color-link-inverse);
+
+  background: var(--color-surface-feature);
+  color: var(--card-text-color);
+  color-scheme: dark;
 }
 
 .cards-pricing.band sup a:any-link {
@@ -216,31 +231,36 @@ main .section:has(.cards-pricing.band) .default-content-wrapper h2 {
 }
 
 .cards-pricing.band .cards-pricing-body h3 {
-  margin-bottom: 10px;
-  font-size: 22px;
-  font-weight: 500;
-  line-height: 28px;
+  margin-bottom: var(--space-10);
+  font-size: var(--font-size-22);
+  font-weight: var(--font-weight-medium);
+  line-height: calc(28 / 22);
   letter-spacing: normal;
 }
 
 .cards-pricing.band .cards-pricing-body .cards-pricing-value {
-  margin: 0 0 10px;
+  margin: 0 0 var(--space-10);
   padding: 0;
-  font-size: 46px;
-  font-weight: 500;
-  line-height: 54px;
+  font-size: var(--font-size-46);
+  font-weight: var(--font-weight-medium);
+  line-height: calc(54 / 46);
   letter-spacing: normal;
 }
 
 .cards-pricing.band .cards-pricing-actions {
   justify-content: center;
-  margin-top: 30px;
+  margin-top: var(--space-30);
   padding-top: 0;
 }
 
 @media (width >= 768px) {
-  main .section:has(.cards-pricing.band) {
-    padding-right: 90px;
-    padding-left: 90px;
+  main .section:not([data-section-layout="authored"]):has(.cards-pricing.band) {
+    padding-right: 5.625rem;
+    padding-left: 5.625rem;
   }
+}
+
+main .section[data-section-layout="authored"] .cards-pricing.band {
+  box-sizing: border-box;
+  padding: var(--space-24);
 }

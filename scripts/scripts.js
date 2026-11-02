@@ -1,9 +1,13 @@
 import { groupActions } from './actions.js';
 import decorateSectionBoundaries from './section-layout.js';
+import decorateSectionAuthoring from './section-authoring.js';
+import decoratePageTheme from './page-theme.js';
 import decorateDisclosureReferences from './disclosure-references.js';
 import decoratePageLayout, {
   localizePageLinks, decoratePricingIntroductions, decoratePageActions,
 } from './page-layout.js';
+import isDemoHelperHost from './demo-host.js';
+import startTracking, { decorateTrackingLinks } from './tracking.js';
 import {
   loadHeader,
   loadFooter,
@@ -131,6 +135,23 @@ function buildAutoBlocks(main) {
 }
 
 /**
+ * Whether every nonempty text node has the requested formatting.
+ * DA can put marks either inside or outside the anchor, depending on editing order.
+ */
+function hasLinkFormatting(link, paragraph, selector) {
+  for (let parent = link.parentElement; parent && parent !== paragraph;
+    parent = parent.parentElement) {
+    if (parent.matches(selector)) return true;
+  }
+  const formatted = (node) => {
+    if (node.nodeType === 3) return !node.textContent.trim();
+    if (node.nodeType === 1 && node.matches(selector)) return true;
+    return [...node.childNodes].every(formatted);
+  };
+  return formatted(link);
+}
+
+/**
  * Decorates formatted links to style them as buttons.
  * @param {HTMLElement} main The main container element
  */
@@ -141,30 +162,30 @@ function decorateButtons(main) {
     const text = a.textContent.trim();
 
     // quick structural checks
-    if (a.querySelector('img') || p.textContent.trim() !== text) return;
+    if (!text || p.querySelector('img, picture') || p.querySelectorAll('a[href]').length !== 1
+      || p.textContent.trim() !== text) return;
 
     // skip URL display links
     try {
-      if (new URL(a.href).href === new URL(text, window.location).href) return;
+      if (new URL(a.getAttribute('href'), window.location).href
+        === new URL(text, window.location).href) return;
     } catch { /* continue */ }
 
     // require authored formatting for buttonization
-    const strong = a.closest('strong');
-    const em = a.closest('em');
+    const strong = hasLinkFormatting(a, p, 'strong, b');
+    const em = hasLinkFormatting(a, p, 'em, i');
     if (!strong && !em) return;
 
-    p.className = 'button-wrapper';
-    a.className = 'button';
-    if (strong && em) { // high-impact call-to-action
-      a.classList.add('accent');
-      const outer = strong.contains(em) ? strong : em;
-      outer.replaceWith(a);
-    } else if (strong) {
-      a.classList.add('primary');
-      strong.replaceWith(a);
-    } else {
-      a.classList.add('secondary');
-      em.replaceWith(a);
+    p.classList.add('button-wrapper');
+    a.classList.remove('primary', 'secondary', 'accent');
+    const variant = strong ? 'primary' : 'secondary';
+    a.classList.add('button', strong && em ? 'accent' : variant);
+    // Consume formatting without replacing the anchor or discarding adjacent nodes.
+    a.querySelectorAll('strong, b, em, i').forEach((mark) => mark.replaceWith(...mark.childNodes));
+    for (let parent = a.parentElement; parent && parent !== p;) {
+      const next = parent.parentElement;
+      if (parent.matches('strong, b, em, i')) parent.replaceWith(...parent.childNodes);
+      parent = next;
     }
   });
 }
@@ -175,9 +196,11 @@ function decorateButtons(main) {
  */
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
+  decorateTrackingLinks(main, window.location.href);
   decorateIcons(main);
   buildAutoBlocks(main);
   decorateSections(main);
+  decorateSectionAuthoring(main);
   decorateSectionBoundaries(main);
   decorateBlocks(main);
   decorateButtons(main);
@@ -190,6 +213,13 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  decoratePageTheme();
+  if (/^\/library\/blocks\/[^/]+\/?$/.test(window.location.pathname)) {
+    const { default: mountLibraryPreview } = await import('./library-preview.js');
+    if (mountLibraryPreview(doc, window)) {
+      await loadCSS(`${window.hlx.codeBasePath}/styles/library-preview.css`);
+    }
+  }
   decoratePageLayout();
   const main = doc.querySelector('main');
   if (main) {
@@ -256,21 +286,31 @@ async function loadLazy(doc) {
  * Loads everything that happens a lot later,
  * without impacting the user experience.
  */
-function loadDelayed() {
-  import('./consent-check.js');
-  // This helper exists only on demo; its host guard also prevents accidental exposure.
-  import('./demo-helper.js').then(async ({ default: mountDemoHelper, isDemoHelperHost }) => {
-    if (!isDemoHelperHost(window.location.hostname)) return;
-    await loadCSS(`${window.hlx.codeBasePath}/styles/demo-helper.css`);
-    mountDemoHelper();
-  });
+function loadDelayed(realConsent = false) {
+  if (!realConsent) import('./consent-check.js');
+  // Load controls only on the explicitly enabled demo preview and development hosts.
+  if (isDemoHelperHost(window.location.hostname)) {
+    import('./demo-helper.js').then(async ({ default: mountDemoHelper }) => {
+      await loadCSS(`${window.hlx.codeBasePath}/styles/demo-helper.css`);
+      mountDemoHelper();
+    });
+  }
   // load anything that can be postponed to the latest here
 }
 
 async function loadPage() {
+  startTracking(document, window);
+  let performanceDemo;
+  if (isDemoHelperHost(window.location.hostname)) {
+    const { default: startPerformanceDemo } = await import('./demo-performance.js');
+    performanceDemo = startPerformanceDemo(document, window);
+    // Only the observed blocking bootstrap stage delays EDS decoration.
+    await performanceDemo?.ready;
+  }
   await loadEager(document);
   await loadLazy(document);
-  loadDelayed();
+  performanceDemo?.afterContent();
+  loadDelayed(performanceDemo?.config.profile === 'onetrust-real');
 }
 
 // Standalone block reviews own their lifecycle; fragments can still use decorateMain.

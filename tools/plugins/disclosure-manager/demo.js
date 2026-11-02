@@ -15,16 +15,25 @@ export default function demoSdk(insert) {
       </div></main></body>`],
     [setPath, JSON.stringify({
       id: 'homepage',
+      introduction: [{ fragment: `${fragments}/introduction`, kind: 'notice' }],
       disclosures: [
         { disclosureId: 'offer', fragment: `${fragments}/brokerage-offer` },
         { disclosureId: 'fees', fragment: `${fragments}/trading-fees` },
         { disclosureId: 'apy', fragment: `${fragments}/savings-rate` },
         { disclosureId: 'risk', fragment: `${fragments}/investment-risk` },
       ],
+      closing: [{ fragment: `${fragments}/closing` }],
     })],
   ]);
-  ['brokerage-offer', 'trading-fees', 'savings-rate', 'investment-risk'].forEach((name) => {
-    source.set(`${fragments}/${name}.html`, `<body><main><div><p>Demo ${name} disclosure.</p></div></main></body>`);
+  [
+    ['brokerage-offer', 'Account offer', 'Illustrative offer terms appear here. Open the source document to edit the approved wording.'],
+    ['trading-fees', 'Trading fees', 'Illustrative fee information appears here, including any applicable qualifications.'],
+    ['savings-rate', 'Savings rate terms', 'Illustrative rate qualifications and effective dates appear here.'],
+    ['investment-risk', 'Investment risk', 'Illustrative investment risk information appears here.'],
+    ['introduction', 'Important information', 'This is a sample footer for authoring practice.'],
+    ['closing', 'Additional information', 'Sample closing information. No approved disclosure content is changed in this demo.'],
+  ].forEach(([name, title, text]) => {
+    source.set(`${fragments}/${name}.html`, `<body><main><div><p><strong>${title}</strong></p><p>${text}</p></div></main></body>`);
   });
   return {
     context,

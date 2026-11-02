@@ -8,6 +8,7 @@ import {
   auditReferences, orderedEntries, pageDisclosurePath, parseSetSource,
   referenceMarkup, reorderedSource, resolveSetPath, saveOrder, sourceUrl, validateSet,
 } from '../tools/plugins/disclosure-manager/model.js';
+import { footerEntries, footerPreview, previewContent } from '../tools/plugins/disclosure-manager/preview.js';
 
 // linkedom needs an explicit html wrapper; browser DOMParser adds one automatically.
 class BrowserParser {
@@ -95,6 +96,54 @@ test('HTML reordering preserves all other blocks, metadata, attributes and rich 
   assert.match(html, /Preserve &amp; protect this field/);
   assert.equal(model.source, source);
   assert.deepEqual(model.data.disclosures, entries);
+});
+
+test('footer previews preserve rich text while removing active content and external requests', () => {
+  const content = previewContent(`<body><main><div><h2 onclick="alert(1)">Trading terms</h2>
+    <p>Read <strong>all terms</strong> and <a href="https://example.com" target="_top">details</a>.</p>
+    <picture><source srcset="https://example.com/photo"><img src="https://example.com/logo" alt="Company logo" onerror="alert(1)"></picture>
+    <iframe src="https://example.com"></iframe><script>alert(1)</script><style>body{display:none}</style>
+    <div class="metadata">Hidden metadata</div><table style="background:url(https://example.com)"><tr><th scope="col">Fees</th><td colspan="2">Terms</td></tr></table>
+  </div></main></body>`);
+  assert.equal(content.title, 'Trading terms');
+  assert.match(content.html, /<strong>all terms<\/strong>/);
+  assert.match(content.html, /\[Company logo\]/);
+  assert.match(content.html, /scope="col"/);
+  assert.match(content.html, /colspan="2"/);
+  assert.doesNotMatch(content.html, /onclick|onerror|https:|<script|<iframe|<style|Hidden metadata/);
+  assert.equal(content.empty, false);
+  assert.equal(previewContent('<body><main><div class="metadata">Metadata only</div></main></body>').empty, true);
+  assert.equal(previewContent('<body><main><img src="/logo.svg"></main></body>').empty, false);
+});
+
+test('footer preview includes supporting content, numbers visible items and highlights stable IDs', () => {
+  const model = parseSetSource(source, path);
+  const fragments = new Map([
+    ['/disclosures/fragments/intro', previewContent('<body><main><p>Introduction</p></main></body>')],
+    ['/disclosures/fragments/offer', previewContent('<body><main><p>Offer terms</p></main></body>')],
+    ['/disclosures/fragments/fees', previewContent('<body><main><p>Fee terms</p></main></body>')],
+    ['/disclosures/fragments/end', previewContent('<body><main><p>Closing</p></main></body>')],
+  ]);
+  assert.deepEqual(footerEntries(model, [1, 0]).map((entry) => entry.path), [
+    '/disclosures/fragments/intro', '/disclosures/fragments/fees', '/disclosures/fragments/offer', '/disclosures/fragments/end',
+  ]);
+  const html = footerPreview(model, [1, 0], fragments, new Set(['offer']), 'https://demo--etrade--adobedrago.aem.live');
+  const doc = new BrowserParser().parseFromString(html, 'text/html');
+  const items = [...doc.querySelectorAll('li')];
+  assert.deepEqual(items.map((item) => [item.dataset.disclosureId, item.getAttribute('value')]), [['fees', '1'], ['offer', '2']]);
+  assert.equal(doc.querySelector('.preview-selected').dataset.disclosureId, 'offer');
+  assert.equal(doc.querySelector('.disclosures-intro').textContent, 'Introduction');
+  assert.equal(doc.querySelector('.disclosures-closing').textContent, 'Closing');
+  assert.match(doc.querySelector('meta[http-equiv]').content, /default-src 'none'/);
+  assert.equal(doc.querySelectorAll('link').length, 2);
+  fragments.set('/disclosures/fragments/fees', { html: '', empty: true });
+  const skipped = new BrowserParser().parseFromString(footerPreview(model, [1, 0], fragments, new Set(), 'http://localhost:3000'), 'text/html');
+  assert.equal(skipped.querySelectorAll('li').length, 1);
+  assert.equal(skipped.querySelector('li').getAttribute('value'), '1');
+  assert.equal(model.source, source);
+  assert.deepEqual(model.data.disclosures, entries);
+  const invalid = parseSetSource(source.replace('/disclosures/fragments/intro', 'https://outside.example/intro'), path);
+  assert.match(validateSet(invalid)[0].message, /introduction entry 1/);
 });
 
 test('JSON reordering preserves schema envelope and unknown fields', () => {
@@ -210,23 +259,31 @@ async function uiHarness() {
     console,
   });
   const modules = new Map();
-  const moduleFor = async (pathname) => {
-    if (modules.has(pathname)) return modules.get(pathname);
-    const code = await readFile(new URL(`.${pathname}`, base), 'utf8');
-    const module = new vm.SourceTextModule(code, {
-      context: contextVm,
-      identifier: `http://localhost:3000${pathname}`,
-      importModuleDynamically: async (specifier, parent) => {
-        const child = await moduleFor(new URL(specifier, parent.identifier).pathname);
-        await child.evaluate();
-        return child;
-      },
-    });
-    modules.set(pathname, module);
-    await module.link((specifier) => moduleFor(new URL(specifier, module.identifier).pathname));
-    return module;
+  const moduleFor = (pathname) => {
+    if (!modules.has(pathname)) {
+      // Cache creation before reading so parallel imports share one module instance.
+      modules.set(pathname, readFile(new URL(`.${pathname}`, base), 'utf8').then((code) => (
+        new vm.SourceTextModule(code, {
+          context: contextVm,
+          identifier: `http://localhost:3000${pathname}`,
+          importModuleDynamically: async (specifier, parent) => {
+            const child = await moduleFor(new URL(specifier, parent.identifier).pathname);
+            if (child.status === 'unlinked') {
+              await child.link((name, ref) => moduleFor(new URL(name, ref.identifier).pathname));
+            }
+            await child.evaluate();
+            return child;
+          },
+        })
+      )));
+    }
+    return modules.get(pathname);
   };
   const controller = await moduleFor(entry);
+  // Let the VM link the static graph instead of linking shared dependencies concurrently.
+  await controller.link((specifier, parent) => (
+    moduleFor(new URL(specifier, parent.identifier).pathname)
+  ));
   await controller.evaluate();
   await controller.namespace.default;
   return { document, window };

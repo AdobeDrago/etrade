@@ -22,15 +22,21 @@
         <button type="button" data-panel="audit" aria-pressed="false" aria-controls="audit">Audit</button>
       </nav>
       <section id="manage" aria-label="Manage disclosures">
-        <p class="hint">Drag to reorder, or use the arrow buttons. Select disclosures to insert a reference at the editor’s cursor.</p>
+        <p class="hint">Arrange the disclosures and check the resulting footer. Select items to highlight them in the preview or insert their references.</p>
+        <p class="shared-notice">This is a shared disclosure set. Saving its order affects every page that uses it; the disclosure text and page content stay in their source documents.</p>
+        <div class="manage-workspace">
+        <div><h2>Disclosure order</h2><p id="order-state" class="hint" role="status"></p><p class="hint">Drag a row or use Move up/down. Numbers update automatically.</p>
         <ol id="disclosure-list" class="disclosure-list"></ol>
         <div class="actions">
           <button id="insert" class="primary" type="button" disabled>Insert reference</button>
-          <button id="save" type="button" disabled>Save order</button>
+          <button id="save" type="button" disabled>Save shared order</button>
           <button id="reset" type="button" disabled>Reset order</button>
         </div>
         <p class="hint">Saving updates the disclosure set. Preview or publish the set in DA to make the new numbers visible on the site.</p>
         <p id="demo-reference" class="example" hidden></p>
+        </div>
+        <section class="footer-preview" aria-labelledby="footer-preview-heading"><h2 id="footer-preview-heading">Footer preview</h2><p class="hint">Saved source text in the proposed order, using the site’s disclosure styles. Links are inactive and images show their text alternatives.</p><iframe id="footer-preview" title="Disclosure footer preview" sandbox="" referrerpolicy="no-referrer"></iframe></section>
+        </div>
       </section>
       <section id="audit" aria-label="Audit disclosures" hidden>
         <p class="hint">Checks the saved page and disclosure fragments. References inside separately loaded page content are outside this audit.</p>

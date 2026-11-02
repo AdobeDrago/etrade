@@ -4,7 +4,7 @@ The global EDS header block loads `/nav` as a fragment. Set page metadata `nav` 
 
 ## Theme
 
-Set page Metadata `Theme: light` or `Theme: dark` to choose the header palette. `Header Theme: light` or `Header Theme: dark` overrides that choice for the header only. Values are case insensitive; `theme-light` / `theme-dark` aliases are also supported. Missing or unsupported values retain the existing dark header default.
+Page Metadata `Theme: Purple` defaults to a light header; `Theme: Charcoal` defaults to a dark header. These select [page design families](../../README.md#page-themes). Legacy `Theme: light` or `Theme: dark` continues to choose only the header palette. `Header Theme: light` or `Header Theme: dark` overrides either choice for the header only. Explicit Header block Light/Dark variants take precedence over legacy page schemes and family defaults. Values are case insensitive; `theme-light` / `theme-dark` aliases are also supported. Missing or unsupported values retain the existing dark header default.
 
 Both the outer strip and rounded bar use the selected palette, including menus, search, and focus styles. In the new format, logo variants come from the Brand section of `/nav` without image-filename recognition or automatic asset substitution. Optional `Header Logo Light` and `Header Logo Dark` page metadata override the selected image without changing its authored link or alternative text.
 
@@ -15,7 +15,7 @@ Example page Metadata:
 | Theme | dark |
 | Header Theme | light |
 
-This gives the header a light palette. Color styles for the rest of the page and component theme inheritance are deferred; this change is scoped to the header.
+This gives the header a light palette through the legacy header scheme. Use `Theme: Purple` or `Theme: Charcoal` to select the page family, with `Header Theme` only for an intentional exception. Check that `/nav` contains an appropriate logo for each scheme in use; shared-fragment updates affect all pages that use it. See the [authoring rollout](../../README.md#authoring-rollout).
 
 ## Authoring
 
@@ -96,3 +96,7 @@ This component is migrated on `et-header`. Review its changes against `develop`;
 Preview: https://et-header--etrade--AdobeDrago.aem.page/home
 
 Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
+
+## Shared style system
+
+Both themes use shared color, typography, radius, focus, layer and motion tokens. The bar can wrap when text is enlarged; drawer and dropdown height is bounded by measured viewport space. Existing disclosure, search and focus-return behavior is preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

@@ -64,9 +64,9 @@ export default function decorate(block) {
         change.replaceChildren(amount, percent);
         card.append(change);
         card.append(element('p', 'market-top-five-asof', `As of ${timeText(quote.asOf)}`));
-        let color = '#777';
-        if (quote.change < 0) color = '#bf315d';
-        else if (quote.change > 0) color = '#218557';
+        let color = 'var(--color-text-secondary)';
+        if (quote.change < 0) color = 'var(--color-status-negative)';
+        else if (quote.change > 0) color = 'var(--color-status-positive)';
         card.append(lineChart(quote.points, {
           prefix: 'market-top-five',
           label: quote.symbol,

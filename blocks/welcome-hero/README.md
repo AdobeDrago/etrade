@@ -17,3 +17,7 @@ The presentation form still hands off to the authored E*TRADE login URL. It does
 Content target: `/home/welcome-back`. Preview after code push and content preview: https://demo--etrade--AdobeDrago.aem.page/home/welcome-back
 
 Campaign card icons are named `ira-selector` and `idea` in the first cell; do not paste relative SVG images into DA.
+
+## Shared style system
+
+This block consumes the shared color, typography, spacing, border, focus and applicable motion tokens. Narrow section cells and enlarged text reflow within the block. Authored Section Metadata takes precedence over legacy surrounding section styles; content, links and existing interactions are preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

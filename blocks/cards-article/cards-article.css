@@ -1,8 +1,11 @@
 /* Layout selectors target only the card list, preserving authored nested lists. */
 .cards-article > ul {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 20px;
+
+  --card-columns: 1;
+  --card-gap: var(--space-20);
+
+  gap: var(--card-gap);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -12,43 +15,44 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-16);
   min-width: 0;
-  padding: 16px;
-  border: 1px solid #e2e2e2;
-  border-radius: 16px;
-  background: #fff;
-  color: #242424;
-  font-size: 13px;
-  line-height: 18px;
-  letter-spacing: -0.21px;
+  padding: var(--space-16);
+  padding-inline: min(var(--space-16), 12%);
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+  background: var(--card-surface-color);
+  color: var(--card-text-color);
+  font-size: var(--font-size-13);
+  line-height: calc(18 / 13);
+  letter-spacing: var(--tracking-tight);
 }
 
 .cards-article .cards-article-body {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-16);
   min-width: 0;
 }
 
 .cards-article .cards-article-heading {
-  margin: 0 0 10px;
+  margin: 0 0 var(--space-10);
   color: inherit;
-  font-size: 24px;
-  line-height: 28px;
-  letter-spacing: -0.25px;
+  font-size: var(--font-size-24);
+  line-height: calc(28 / 24);
+  letter-spacing: var(--tracking-tight);
 }
 
 .cards-article .cards-article-body p {
   margin: 0;
-  color: #666;
-  font-size: 16px;
-  line-height: 20px;
+  color: var(--card-copy-color);
+  font-size: var(--font-size-16);
+  line-height: 1.25;
 }
 
 .cards-article .cards-article-eyebrow {
-  font-size: 14px;
-  line-height: 18px;
+  font-size: var(--font-size-14);
+  line-height: calc(18 / 14);
 }
 
 .cards-article .cards-article-actions {
@@ -58,7 +62,7 @@
 .cards-article .cards-article-image {
   margin: 0;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 0.625rem;
 }
 
 .cards-article .cards-article-image :is(picture, img) {
@@ -74,25 +78,29 @@
 
 @media (width >= 768px) {
   .cards-article > ul {
-    grid-template-columns: repeat(var(--card-count, 3), minmax(0, 1fr));
+    --card-columns: var(--card-count, 3);
   }
 
   .cards-article .cards-article-heading {
-    font-size: 28px;
-    line-height: 32px;
+    font-size: var(--font-size-28);
+    line-height: calc(32 / 28);
   }
 }
 
 @media (width >= 768px) {
   .cards-article .cards-article-card {
-    padding: 24px;
+    padding: var(--space-24);
+    padding-inline: min(var(--space-24), 12%);
   }
 }
 
 .cards-article.promo .cards-article-card {
-  padding: 0;
+  box-sizing: border-box;
+  justify-content: flex-end;
+  padding: var(--space-12);
+  padding-inline: min(var(--space-12), 12%);
   overflow: hidden;
-  min-height: 382px;
+  min-height: 23.875rem;
   border: 0;
 }
 
@@ -100,7 +108,7 @@
   margin: 0;
   position: absolute;
   inset: 0;
-  border-radius: 16px;
+  border-radius: var(--radius-card);
 }
 
 .cards-article.promo .cards-article-image :is(picture, img) {
@@ -108,16 +116,14 @@
 }
 
 .cards-article.promo .cards-article-content {
-  position: absolute;
-  right: 12px;
-  bottom: 12px;
-  left: 12px;
+  position: relative;
+  margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  border-radius: 8px;
-  padding: 16px;
-  background: #fff;
+  gap: var(--space-16);
+  border-radius: var(--radius-medium);
+  padding: var(--space-16);
+  background: var(--card-surface-color);
 }
 
 .cards-article.promo .cards-article-body {
@@ -126,44 +132,44 @@
 }
 
 .cards-article.promo .cards-article-eyebrow {
-  color: #6e3df5;
+  --card-paragraph-color: var(--color-link);
+
+  color: var(--color-link);
 }
 
 .cards-article.promo .cards-article-heading {
-  font-size: 20px;
-  line-height: 24px;
+  font-size: var(--font-size-20);
+  line-height: 1.2;
 }
 
 .cards-article.promo .cards-article-actions {
   padding: 0;
 }
 
+.cards-article.four-up {
+  --card-min-width: 10rem;
+}
+
 .cards-article.four-up .cards-article-heading {
-  font-size: 18px;
-  line-height: 22px;
+  font-size: var(--font-size-18);
+  line-height: calc(22 / 18);
 }
 
-body.brokerage .section:has(.cards-article) .default-content-wrapper > h2 {
-  margin-bottom: 30px;
+body.brokerage .section:not([data-section-layout="authored"]):has(.cards-article) .default-content-wrapper > h2 {
+  margin-bottom: var(--space-30);
 }
 
-body.brokerage .section:has(.cards-article) .default-content-wrapper > p:first-child {
-  margin-bottom: 16px;
+body.brokerage .section:not([data-section-layout="authored"]):has(.cards-article) .default-content-wrapper > p:first-child {
+  margin-bottom: var(--space-16);
 }
 
 @media (width >= 768px) {
   .cards-article.four-up > ul {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-body.why-etrade .section:has(.cards-article.promo) .default-content-wrapper {
-  max-width: 820px;
-  text-align: center;
-}
-
-@media (width >= 768px) {
-  body.why-etrade .section:has(.cards-article.promo) .default-content-wrapper {
-    max-width: 800px;
+    --card-columns: 4;
   }
-}
+
+  body.why-etrade .section:not([data-section-layout="authored"]):has(.cards-article.promo) .default-content-wrapper {
+    max-width: var(--layout-copy-max);
+    text-align: center;
+  }
 }

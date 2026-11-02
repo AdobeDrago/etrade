@@ -31,9 +31,9 @@ function browser(hostname = 'demo--etrade--adobedrago.aem.page') {
   };
 }
 
-function page(markup = '', head = '') {
+function page(markup = '', head = '', hostname = 'demo--etrade--adobedrago.aem.page') {
   const { document, window } = parseHTML(`<html><head>${head}</head><body><main>${markup}</main></body></html>`);
-  const context = browser();
+  const context = browser(hostname);
   const root = mountDemoHelper(document, context.win);
   let focused;
   Object.defineProperty(document, 'activeElement', { get: () => focused });
@@ -48,9 +48,23 @@ function page(markup = '', head = '') {
   };
 }
 
-test('helper guard accepts only local hosts and the exact demo preview host', () => {
-  ['localhost', '127.0.0.1', '[::1]', 'DEMO--ETRADE--ADOBEDRAGO.AEM.PAGE'].forEach((host) => assert.equal(isDemoHelperHost(host), true));
-  ['', 'us.etrade.com', 'demo--etrade--adobedrago.aem.live', 'main--etrade--adobedrago.aem.page', 'et-hero-2--etrade--adobedrago.aem.page', 'demo--etrade--adobedrago.aem.page.example.com'].forEach((host) => assert.equal(isDemoHelperHost(host), false));
+test('helper guard accepts only local hosts and the exact demo preview hosts', () => {
+  ['localhost', '127.0.0.1', '[::1]', 'DEMO--ETRADE--ADOBEDRAGO.AEM.PAGE',
+    'DEMO-CONTROLLER--ETRADE--ADOBEDRAGO.AEM.PAGE']
+    .forEach((host) => assert.equal(isDemoHelperHost(host), true));
+  ['', 'us.etrade.com', 'demo--etrade--adobedrago.aem.live',
+    'demo-controller--etrade--adobedrago.aem.live', 'main--etrade--adobedrago.aem.page',
+    'et-hero-2--etrade--adobedrago.aem.page', 'demo--etrade--adobedrago.aem.page.example.com',
+    'demo-controller--etrade--adobedrago.aem.page.example.com']
+    .forEach((host) => assert.equal(isDemoHelperHost(host), false));
+});
+
+test('demo-controller preview mounts the controls and can save a demo balance', () => {
+  const context = page('', '', 'demo-controller--etrade--adobedrago.aem.page');
+  assert.equal(context.root.querySelector('.demo-helper-toggle').textContent, 'Demo controls');
+  assert.ok(context.root.querySelector('#demo-helper-performance-profile'));
+  assert.deepEqual(saveDemoBalance('100000', context.win), { balance: '100000' });
+  assert.equal(context.reloads(), 1);
 });
 
 test('balance save persists zero and reload state; reset removes only the balance', () => {
@@ -64,6 +78,21 @@ test('balance save persists zero and reload state; reset removes only the balanc
   assert.equal(context.storage.has('userBalance'), false);
   assert.equal(context.storage.get('unrelated'), 'keep');
   assert.equal(context.reloads(), 2);
+});
+
+test('six balance pills apply immediately and secondary information starts collapsed', () => {
+  const context = page('<div class="hero-dark block" data-block-status="loaded"></div>');
+  const { root, window } = context;
+  assert.equal(root.querySelector('.demo-helper-content').firstElementChild.textContent.startsWith('Try a balance'), true);
+  const pills = [...root.querySelectorAll('.demo-helper-preset')];
+  assert.deepEqual(pills.map((pill) => pill.textContent), ['50k', '100k', '150k', '200k', '250k', '500k']);
+  pills[2].dispatchEvent(new window.Event('click'));
+  assert.equal(context.storage.get('userBalance'), '150000');
+  assert.equal(context.reloads(), 1);
+  assert.equal(root.querySelector('.demo-helper-custom-balance').hasAttribute('open'), false);
+  assert.equal(root.querySelector('.demo-helper-features').parentElement.hasAttribute('open'), false);
+  assert.equal(root.querySelector('.demo-helper-feature-state').getAttribute('aria-label'), 'Ready');
+  assert.equal(root.querySelector('.demo-helper-feature-state').dataset.state, 'ready');
 });
 
 test('invalid balances, blocked storage and non-demo hosts never save or reload', () => {
@@ -101,7 +130,7 @@ test('expand and Escape maintain disclosure semantics and return focus to the tr
   toggle.dispatchEvent(new window.Event('click'));
   assert.equal(toggle.getAttribute('aria-expanded'), 'true');
   assert.equal(panel.hidden, false);
-  assert.equal(document.activeElement.id, 'demo-helper-balance');
+  assert.equal(document.activeElement, root.querySelector('.demo-helper-preset'));
   const escape = new window.Event('keydown', { bubbles: true, cancelable: true });
   escape.key = 'Escape';
   document.activeElement.dispatchEvent(escape);
@@ -110,17 +139,48 @@ test('expand and Escape maintain disclosure semantics and return focus to the tr
   assert.equal(document.activeElement, toggle);
 });
 
+test('page, performance and tracking views support keyboard switching and preserve the chosen view', () => {
+  const {
+    root, document, window, session,
+  } = page();
+  const tabs = [...root.querySelectorAll('.demo-helper-view-tab')];
+  const views = [...root.querySelectorAll('.demo-helper-view')];
+  assert.equal(tabs[0].getAttribute('aria-selected'), 'true');
+  assert.equal(views[0].hidden, false);
+  assert.equal(views[1].hidden, true);
+  const right = new window.Event('keydown', { bubbles: true, cancelable: true });
+  right.key = 'ArrowRight';
+  tabs[0].dispatchEvent(right);
+  assert.equal(tabs[1].getAttribute('aria-selected'), 'true');
+  assert.equal(views[0].hidden, true);
+  assert.equal(views[1].hidden, false);
+  assert.equal(document.activeElement, tabs[1]);
+  assert.equal(session.get('etrade:demo-helper-view'), 'performance');
+  tabs[0].dispatchEvent(new window.Event('click'));
+  assert.equal(session.get('etrade:demo-helper-view'), 'page');
+  assert.equal(views[0].hidden, false);
+  const end = new window.Event('keydown', { bubbles: true, cancelable: true });
+  end.key = 'End';
+  tabs[0].dispatchEvent(end);
+  assert.equal(views[2].hidden, false);
+  assert.equal(document.activeElement, tabs[2]);
+  assert.equal(session.get('etrade:demo-helper-view'), 'tracking');
+  tabs[2].dispatchEvent(right);
+  assert.equal(views[0].hidden, false);
+  assert.equal(document.activeElement, tabs[0]);
+});
+
 test('insights distinguish sample responses, authored overrides, failures and market state', async () => {
   const { document, window, root } = page('<div class="cards-product block"><li><h3>Savings</h3><span data-rate-name="rate" data-rate-source="api" data-rate-balance="100000" data-rate-balance-source="demo">4.15</span></li><li><h3>Manual</h3><span data-rate-name="rate" data-rate-source="override">6.50</span></li><li><h3>Failed rate</h3><span data-rate-name="rate" data-rate-source="fallback" data-rate-error="http-status">1.11</span></li></div><div class="market-ticker block" data-market-state="loading"></div>', '<meta name="bank-rates-endpoint" content="/phx/pros/apicontent/init/bankRates.json">');
   assert.ok(root.textContent.includes('Sample response'));
   assert.ok(root.textContent.includes('$100,000 · demo balance'));
   assert.ok(root.textContent.includes('Author override'));
   assert.ok(root.textContent.includes('Fallback · Reason: http-status'));
-  assert.ok(root.textContent.includes('Loading data'));
+  assert.ok(root.querySelector('.demo-helper-feature-state[aria-label="Loading data"]'));
   document.querySelector('.market-ticker').dataset.marketState = 'unavailable';
   document.dispatchEvent(new window.CustomEvent('bank-rates:updated'));
   await new Promise((resolve) => { setTimeout(resolve, 130); });
-  assert.ok(root.textContent.includes('Data unavailable'));
+  assert.ok(root.querySelector('.demo-helper-feature-state[data-state="error"][aria-label="Data unavailable"]'));
 });
 
 test('locate scrolls to real content and collapses the helper without changing content', () => {
@@ -137,6 +197,8 @@ test('locate scrolls to real content and collapses the helper without changing c
   assert.equal(root.querySelector('.demo-helper-panel').hidden, true);
   assert.equal(root.querySelector('.demo-helper-highlight').hidden, false);
   assert.equal(target.textContent, 'Authored title');
+  root.querySelector('.demo-helper-toggle').dispatchEvent(new window.Event('click'));
+  assert.equal(root.querySelector('.demo-helper-highlight').hidden, true);
   assert.equal(mountDemoHelper(document, browser().win), null);
   assert.equal(mountDemoHelper(document, browser('main--etrade--adobedrago.aem.page').win), null);
 });

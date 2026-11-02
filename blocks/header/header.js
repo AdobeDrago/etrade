@@ -1,4 +1,5 @@
 import { getMetadata } from '../../scripts/aem.js';
+import { getColorScheme, getHeaderTheme } from '../../scripts/page-theme.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 const desktop = window.matchMedia('(min-width: 1085px)');
@@ -52,14 +53,9 @@ function itemLabel(item) {
   return copy.textContent.trim();
 }
 
-function normalizeTheme(value) {
-  return String(value || '').trim().toLowerCase().replace(/^theme-/, '')
-    .match(/^(light|dark)$/)?.[0] || '';
-}
-
 function selectBrand(section, theme) {
   const variants = [...(section?.querySelector('ul')?.children || [])];
-  const match = variants.find((item) => normalizeTheme(item.querySelector('p')?.textContent)
+  const match = variants.find((item) => getColorScheme(item.querySelector('p')?.textContent)
     === theme);
   return match?.querySelector('a:has(img)') || section?.querySelector('a:has(img)');
 }
@@ -190,9 +186,7 @@ function makePanel(list) {
 }
 
 export default async function decorate(block) {
-  const theme = normalizeTheme(getMetadata('header-theme'))
-    || [...block.classList].map(normalizeTheme).find(Boolean)
-    || getMetadata('theme').split(',').map(normalizeTheme).find(Boolean) || 'dark';
+  const theme = getHeaderTheme(block.classList);
   block.classList.remove('light', 'dark', 'theme-light', 'theme-dark');
   block.classList.add(theme);
   const navPath = getMetadata('nav') || '/nav';
@@ -248,7 +242,16 @@ export default async function decorate(block) {
   let menuOpen = false;
   let searchOpen = false;
 
+  // Wrapping and enlarged text can make the bar taller than its original reserve.
+  function fitPanels() {
+    const rootSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const available = Math.max(0, window.innerHeight - bar.getBoundingClientRect().bottom
+      - rootSize * 1.5);
+    block.style.setProperty('--header-panel-space', `${available}px`);
+  }
+
   const setPanel = (panel, expanded) => {
+    if (expanded) fitPanels();
     // Desktop panels stay rendered to animate out, but closed links are inert immediately.
     panel.inert = !expanded;
     panel.setAttribute('aria-hidden', String(!expanded));
@@ -419,6 +422,10 @@ export default async function decorate(block) {
   // The global EDS header reserves 64px; this block supplies its measured height.
   const owner = block.closest('header');
   if (owner) owner.style.height = 'auto';
+
+  new ResizeObserver(fitPanels).observe(nav);
+  window.addEventListener('resize', fitPanels);
+  fitPanels();
 
   const setMenu = (expanded, restoreFocus = false) => {
     closeDisclosure();

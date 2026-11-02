@@ -4,7 +4,8 @@ export default function decorate(block) {
   const section = block.closest('.section');
   // Explicit block options override section metadata. A neutral section uses light.
   if (!block.classList.contains('light') && !block.classList.contains('dark')) {
-    block.classList.add(section?.classList.contains('dark') ? 'dark' : 'light');
+    const dark = section?.dataset.sectionTheme === 'dark' || section?.classList.contains('dark');
+    block.classList.add(dark ? 'dark' : 'light');
   }
   [...block.children].forEach((row) => {
     [...row.children].forEach((cell) => {

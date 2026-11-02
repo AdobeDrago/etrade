@@ -58,3 +58,7 @@ Authored content is transferred separately. Existing sandbox integration and cam
 ## Style ownership
 
 The block stylesheet owns the component itself. Common homepage gutters, dedicated divider/overlay section spacing, and superscript typography remain in `styles/styles.css`; `scripts/section-layout.js` only identifies section boundaries. These shared rules are identical across the layout-dependent PRs.
+
+## Shared style system
+
+This block consumes the shared color, typography, spacing, border, focus and applicable motion tokens. Narrow section cells and enlarged text reflow within the block. Authored Section Metadata takes precedence over legacy surrounding section styles; content, links and existing interactions are preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

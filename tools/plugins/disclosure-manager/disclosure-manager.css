@@ -34,7 +34,7 @@
 }
 
 .disclosure-manager main {
-  max-width: 880px;
+  max-width: 1440px;
   margin: auto;
   padding: 16px 20px 32px;
 }
@@ -162,6 +162,7 @@
 .disclosure-manager .entry-content {
   flex: 1;
   min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .disclosure-manager .entry-id {
@@ -220,5 +221,79 @@
   .disclosure-manager .disclosure-item {
     gap: 6px;
     padding: 10px 8px;
+  }
+}
+
+
+.disclosure-manager h2 {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+
+.disclosure-manager .shared-notice {
+  border: 1px solid #dedbe8;
+  border-radius: 6px;
+  padding: 12px;
+  background: #fff;
+}
+
+.disclosure-manager .manage-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 24px;
+  align-items: start;
+  margin-top: 24px;
+}
+
+.disclosure-manager .manage-workspace > * {
+  min-width: 0;
+}
+
+.disclosure-manager .entry-title {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.disclosure-manager .entry-excerpt {
+  margin: 0 0 8px;
+  color: #625a73;
+}
+
+.disclosure-manager summary {
+  color: #5627d8;
+  cursor: pointer;
+}
+
+.disclosure-manager .footer-preview {
+  position: sticky;
+  top: 16px;
+}
+
+.disclosure-manager #footer-preview {
+  width: 100%;
+  height: 680px;
+  border: 1px solid #dedbe8;
+  border-radius: 6px;
+  background: #fff;
+}
+
+@media (width < 850px) {
+  .disclosure-manager .manage-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .disclosure-manager .footer-preview {
+    position: static;
+  }
+}
+
+@media (width < 450px) {
+  .disclosure-manager .move-actions {
+    flex-direction: column;
+  }
+
+  .disclosure-manager .move-actions button {
+    min-width: 44px;
+    min-height: 44px;
   }
 }

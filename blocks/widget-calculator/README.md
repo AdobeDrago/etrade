@@ -60,3 +60,7 @@ Authored content is transferred separately. Existing sandbox integration and cam
 ## Style ownership
 
 The block stylesheet owns both the component and its feature-specific surrounding section styles. Section selectors require this block to be present; `:where()` preserves their existing specificity. Shared homepage section spacing remains in `styles/styles.css`.
+
+## Shared style system
+
+Typography, colors, shapes, focus, shadows and spacing use shared tokens. The existing dropdown is also used below 38rem of available block width, including desktop section grids and enlarged text. Paired cards stack at that width; native slider and dropdown retain the same authored funding/credit state. Labels and selected amounts wrap. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Import &amp; Export · E*TRADE</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="./xml-tools.css">
+    <script type="module" src="./xml-tools.js"></script>
+  </head>
+  <body class="xml-tools">
+    <header class="toolbar">
+      <div><p class="eyebrow">E*TRADE · Authoring</p><h1>Import &amp; Export</h1></div>
+      <span id="connection" class="badge">Standalone</span>
+    </header>
+    <main>
+      <p class="intro">Export the saved page you are editing, or review an XML page before importing it into DA.</p>
+      <p id="status" class="status" role="status" aria-live="polite">Open inside DA to export this page, or upload page XML to review an import.</p>
+      <section class="panel page-export" aria-labelledby="page-export-heading">
+        <h2 id="page-export-heading">Export a page</h2>
+        <button id="export-current-page" type="button" class="primary" disabled>Export this page</button>
+        <p class="hint">Export any saved page in this site. Save your editor changes first; unsaved changes and separately referenced fragments are not included.</p>
+        <label for="page-path">Page path</label>
+        <input id="page-path" type="text" value="/home" placeholder="/home" spellcheck="false">
+        <button id="export-page" type="button" class="primary" disabled>Prepare XML export</button>
+        <p id="page-export-status" class="hint" role="status">Open Import &amp; Export inside DA to load an existing page.</p>
+        <div id="page-export-result" hidden>
+          <details><summary>Page XML</summary><textarea id="page-xml-output" aria-label="Page XML" rows="12" readonly spellcheck="false"></textarea></details>
+        </div>
+        <button id="download-page" type="button" disabled>Download page XML</button>
+        <p class="hint">The general da-page format includes a section and block inventory plus the complete saved HTML in source-html. Import this XML below to create a new DA page or replace the current page after confirmation. Linked assets stay referenced; product XML uses a separate schema.</p>
+      </section>
+      <section class="panel page-import" aria-labelledby="page-import-heading">
+        <div class="panel-heading"><h2 id="page-import-heading">Import an XML page</h2><button id="page-sample" type="button">Try page sample</button></div>
+        <p class="hint">Import a da-page XML export or an XHTML page with a main content element. Sections, blocks, rich text, links, and metadata become an editable DA page.</p>
+        <div class="workspace">
+          <div>
+            <label for="page-file">Upload a page XML file</label>
+            <input id="page-file" type="file" accept=".xml,.xhtml,application/xml,text/xml,application/xhtml+xml" aria-describedby="page-format-help">
+            <p id="page-format-help" class="hint">Up to 12 MB of XML and 5 MB of page source. Linked assets remain referenced by their original URLs.</p>
+            <label for="page-xml-input">Or paste page XML</label>
+            <textarea id="page-xml-input" rows="10" spellcheck="false" placeholder="Paste your da-page XML export or XHTML page here"></textarea>
+            <button id="import-page" type="button" class="primary">Review page XML</button>
+          </div>
+          <div>
+            <p id="page-import-status" class="hint" role="status">Import XML to preview the page content.</p>
+            <p id="page-import-connection" class="hint">Standalone mode: download the imported HTML, or open this tool inside DA to create a page or import onto the current page.</p>
+          </div>
+        </div>
+        <div id="page-import-result" hidden>
+          <h3 id="page-import-summary" class="import-summary"></h3>
+          <p class="hint">Content preview. EDS applies the site’s block styling after preview or publication. External images are hidden here.</p>
+          <iframe id="page-preview" title="Imported page content preview" sandbox="" referrerpolicy="no-referrer"></iframe>
+          <details><summary>Imported DA HTML</summary><textarea id="page-html-output" aria-label="Imported DA HTML" rows="10" readonly spellcheck="false"></textarea></details>
+          <label for="page-import-target">Import destination</label>
+          <select id="page-import-target">
+            <option value="new">Create a new DA page</option>
+            <option value="current">Import content onto current page</option>
+          </select>
+          <div id="new-page-options">
+            <label for="page-destination">New DA page path</label>
+            <input id="page-destination" type="text" value="/xml-demo/pages/imported-page-copy" spellcheck="false" aria-describedby="destination-help">
+            <p id="destination-help" class="hint">Choose a new destination. Creating a page stops if that path already exists.</p>
+          </div>
+          <div id="current-page-options" hidden>
+            <p>Current DA page: <strong id="current-page-path">Unavailable outside a DA page editor</strong></p>
+            <p class="overwrite-warning">Importing will overwrite all existing content and page metadata on this page. You will be asked to confirm before anything is replaced.</p>
+          </div>
+          <div class="actions"><button id="create-page" type="button" class="primary" disabled>Create new DA page</button><button id="import-current-page" type="button" class="primary" disabled hidden>Import content onto current page</button><button id="download-html" type="button" disabled>Download DA HTML</button></div>
+          <div id="page-import-links" class="saved-links" hidden><a id="page-import-edit" target="_blank" rel="noopener">Open imported page in DA</a></div>
+          <p class="hint">After importing, review the page in DA, then use Send → Preview / Publish. Page imports use the regular page editor.</p>
+        </div>
+        <dialog id="page-overwrite-dialog" aria-labelledby="page-overwrite-heading" aria-describedby="page-overwrite-warning">
+          <h2 id="page-overwrite-heading" tabindex="-1" autofocus>Overwrite current page content?</h2>
+          <p id="page-overwrite-warning">Are you sure? This will overwrite all existing content and page metadata on <strong id="page-overwrite-path"></strong> with the imported content.</p>
+          <p id="page-compare-summary"></p>
+          <div class="comparison-content">
+            <section><h3>Saved page content</h3><pre id="page-compare-before"></pre></section>
+            <section><h3>Incoming content</h3><pre id="page-compare-after"></pre></section>
+          </div>
+          <h3>Page metadata</h3>
+          <p id="page-metadata-empty" class="hint" hidden>No page metadata in either source.</p>
+          <div class="comparison-table" role="region" aria-label="Page metadata comparison" tabindex="0"><table><thead><tr><th scope="col">Field</th><th scope="col">Saved</th><th scope="col">Incoming</th><th scope="col">Change</th></tr></thead><tbody id="page-compare-metadata"></tbody></table></div>
+          <p class="hint">The content comparison shows wording, destinations and image descriptions. Review the imported preview for formatting. Block counts exclude page metadata blocks.</p>
+          <button id="download-page-backup" type="button">Download saved page backup</button>
+          <div class="actions"><button id="cancel-page-overwrite" type="button">Cancel</button><button id="confirm-page-overwrite" type="button" class="danger">Overwrite and import</button></div>
+        </dialog>
+      </section>
+      <details class="product-tools">
+        <summary>Advanced: product XML demo</summary>
+      <div class="workspace">
+        <section class="panel" aria-labelledby="import-heading">
+          <div class="panel-heading"><h2 id="import-heading">1. Import XML</h2><button id="sample" type="button">Try sample</button></div>
+          <label for="file">Upload a product XML file</label>
+          <input id="file" type="file" accept=".xml,application/xml,text/xml" aria-describedby="format-help">
+          <p id="format-help" class="hint">One product per file, up to 250 KB. The sample shows the supported fields.</p>
+          <label for="xml-input">Or paste XML</label>
+          <textarea id="xml-input" rows="12" spellcheck="false" placeholder="Paste your product XML here"></textarea>
+          <button id="import" type="button" class="primary">Import XML</button>
+        </section>
+        <section class="panel" aria-labelledby="edit-heading">
+          <h2 id="edit-heading">2. Review and edit</h2>
+          <fieldset id="fields" disabled>
+            <legend class="sr-only">Product fields</legend>
+            <label for="product-id">Product ID</label><input id="product-id" data-field="id" type="text" maxlength="80" spellcheck="false">
+            <label for="product-name">Product name</label><input id="product-name" data-field="name" type="text" maxlength="10000">
+            <div class="field-pair">
+              <div><label for="product-rate">Display rate</label><input id="product-rate" data-field="rate" type="text" maxlength="10000" placeholder="e.g. 4.10%"></div>
+              <div><label for="product-date">Effective date</label><input id="product-date" data-field="effectiveDate" type="date"></div>
+            </div>
+            <label for="product-disclosure">Disclosure</label><textarea id="product-disclosure" data-field="disclosure" rows="3" maxlength="10000"></textarea>
+          </fieldset>
+          <p id="field-status" class="hint" role="status">Import XML to enable editing.</p>
+        </section>
+        <section class="panel" aria-labelledby="preview-heading">
+          <h2 id="preview-heading">3. Preview</h2>
+          <p class="hint">Illustrative page preview. All values are sample content.</p>
+          <article id="product-preview" class="product-preview" hidden>
+            <p class="eyebrow">Product</p><h3 id="preview-name"></h3><p id="preview-rate" class="rate"></p>
+            <p id="preview-date"></p><p id="preview-disclosure" class="hint"></p>
+          </article>
+          <p id="preview-empty" class="empty">Your imported product will appear here.</p>
+          <details><summary>Generated XML</summary><textarea id="xml-output" aria-label="Generated XML" rows="12" readonly spellcheck="false"></textarea></details>
+          <button id="download" type="button" disabled>Download XML</button>
+        </section>
+        <section class="panel" aria-labelledby="save-heading">
+          <h2 id="save-heading">4. Save in DA</h2>
+          <p id="save-help" class="hint">Open this tool from the DA Library to enable saving. You can import, edit, and download XML in this standalone demo.</p>
+          <label for="document-path">Demo document path</label>
+          <input id="document-path" type="text" value="/xml-demo/products/sample-cash" spellcheck="false" aria-describedby="path-help">
+          <p id="path-help" class="hint">Saved documents stay under /xml-demo/products/. Existing content must be loaded before updating.</p>
+          <div class="actions"><button id="save" type="button" class="primary" disabled>Save in DA</button><button id="load" type="button" disabled>Load saved content</button></div>
+          <div id="saved-links" class="saved-links" hidden><a id="edit-link" target="_blank" rel="noopener">Open SC editor</a><a id="preview-link" target="_blank" rel="noopener">Preview JSON</a><a id="live-link" target="_blank" rel="noopener">Published JSON</a></div>
+          <p class="hint">Saving creates an editable SC document and its demo schema. Use DA’s Send → Preview / Publish afterward. XML download reflects the fields above; a public XML feed is a separate integration.</p>
+        </section>
+      </div>
+      </details>
+
+    </main>
+  </body>
+</html>

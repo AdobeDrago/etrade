@@ -2,6 +2,8 @@ import {
   auditReferences, orderedEntries, pageDisclosurePath, parseSetSource,
   readSource, referenceMarkup, resolveSetPath, saveOrder, validateSet,
 } from './model.js';
+import { footerEntries, footerPreview, previewContent } from './preview.js';
+import { disclosureFragmentPath } from '../../../scripts/disclosure-sets.js';
 
 const demo = new URLSearchParams(window.location.search).get('demo') === '1';
 const byId = (id) => document.getElementById(id);
@@ -14,6 +16,7 @@ let dragIndex;
 let setIssues = [];
 const selected = new Set();
 const emptyFragments = new Set();
+const fragmentContents = new Map();
 
 function status(message, error = false) {
   byId('status').textContent = message;
@@ -23,7 +26,13 @@ function status(message, error = false) {
 const dirty = () => order.some((index, position) => index !== position);
 const valid = () => model && !setIssues.some((issue) => issue.type === 'error');
 const entries = () => orderedEntries(model, order)
-  .filter((item) => !emptyFragments.has(item.fragment));
+  .filter((item) => !emptyFragments.has(disclosureFragmentPath(item.fragment)));
+
+function renderPreview() {
+  byId('footer-preview').srcdoc = model
+    ? footerPreview(model, order, fragmentContents, selected, window.location.origin) : '';
+  byId('order-state').textContent = model ? `${dirty() ? 'Unsaved order' : 'Saved order'} · ${entries().length} numbered disclosures` : '';
+}
 
 function updateControls() {
   byId('refresh').disabled = busy || !sdk;
@@ -73,7 +82,7 @@ function render() {
   order.forEach((index, position) => {
     const entry = model.data.disclosures[index] || {};
     const { disclosureId, fragment } = entry;
-    const available = valid() && !emptyFragments.has(fragment);
+    const available = valid() && !emptyFragments.has(disclosureFragmentPath(fragment));
     if (available) number += 1;
     const item = document.createElement('li');
     item.className = 'disclosure-item';
@@ -94,16 +103,28 @@ function render() {
       if (checkbox.checked) selected.add(disclosureId);
       else selected.delete(disclosureId);
       updateControls();
+      renderPreview();
     });
     const content = document.createElement('div');
     content.className = 'entry-content';
+    const fragmentContent = fragmentContents.get(disclosureFragmentPath(fragment));
+    const title = document.createElement('strong');
+    title.className = 'entry-title';
+    title.textContent = fragmentContent?.title || disclosureId || 'Unavailable disclosure';
+    const excerpt = document.createElement('p');
+    excerpt.className = 'entry-excerpt';
+    excerpt.textContent = fragmentContent?.excerpt || 'No disclosure text is available.';
     const id = document.createElement('span');
     id.className = 'entry-id';
     id.textContent = disclosureId || 'Missing stable ID';
     const path = document.createElement('span');
     path.className = 'entry-path';
     path.textContent = fragment || 'Missing fragment';
-    content.append(id, path);
+    const details = document.createElement('details');
+    const summary = document.createElement('summary');
+    summary.textContent = 'Source and stable ID';
+    details.append(summary, id, path);
+    content.append(title, excerpt, details);
     const controls = document.createElement('div');
     controls.className = 'move-actions';
     [-1, 1].forEach((direction) => {
@@ -139,6 +160,7 @@ function render() {
     list.append(item);
   });
   renderAudit();
+  renderPreview();
   updateControls();
 }
 
@@ -147,6 +169,9 @@ async function load() {
   model = undefined;
   selected.clear();
   emptyFragments.clear();
+  fragmentContents.clear();
+  byId('footer-preview').srcdoc = '';
+  byId('order-state').textContent = '';
   byId('disclosure-list').replaceChildren();
   byId('audit-output').replaceChildren();
   byId('audit-summary').textContent = '';
@@ -163,16 +188,15 @@ async function load() {
     order = model.data.disclosures.map((_, index) => index);
     setIssues = validateSet(model);
     if (valid()) {
-      const paths = [...new Set(model.data.disclosures.map((item) => item.fragment))];
+      const paths = [...new Set(footerEntries(model, order).map((item) => item.path))];
       const checks = await Promise.all(paths.map(async (fragment) => {
         try {
           const html = await readSource(context, fragment, actions.daFetch);
-          const doc = new DOMParser().parseFromString(html, 'text/html');
-          const main = doc.querySelector('main');
-          main?.querySelectorAll('.metadata, .da-metadata').forEach((item) => item.remove());
-          if (!main || (!main.textContent.trim() && !main.querySelector('img, picture, .icon'))) {
+          const content = previewContent(html);
+          fragmentContents.set(fragment, content);
+          if (content.empty) {
             emptyFragments.add(fragment);
-            return { type: 'warn', message: `Fragment ${fragment} is empty. Its disclosures will not receive a number.` };
+            return { type: 'warn', message: `Fragment ${fragment} is empty and will be omitted from the footer.` };
           }
           return null;
         } catch (error) {

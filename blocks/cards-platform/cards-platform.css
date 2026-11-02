@@ -1,8 +1,14 @@
+.cards-platform {
+  --card-copy-color: var(--color-text-primary);
+}
+
 /* Layout selectors target only the card list, preserving authored nested lists. */
 .cards-platform > ul {
+  --card-columns: 1;
+  --card-gap: var(--space-20);
+
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 20px;
+  gap: var(--card-gap);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -13,12 +19,13 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: 15px;
-  border: 1px solid #e4e4e4;
-  border-radius: 2px;
+  padding: 0.9375rem;
+  padding-inline: min(0.9375rem, 12%);
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-control);
   text-align: center;
-  background: #fff;
-  color: #242424;
+  background: var(--card-surface-color);
+  color: var(--card-text-color);
 }
 
 .cards-platform .cards-platform-body {
@@ -27,31 +34,31 @@
 }
 
 .cards-platform .cards-platform-heading {
-  margin: 0 0 10px;
+  margin: 0 0 var(--space-10);
   color: inherit;
-  font-size: 24px;
-  line-height: 28px;
-  letter-spacing: -0.4px;
+  font-size: var(--font-size-24);
+  line-height: calc(28 / 24);
+  letter-spacing: var(--tracking-tight);
 }
 
 .cards-platform .cards-platform-body p {
-  margin: 0 0 16px;
-  font-size: 16px;
-  line-height: 20px;
+  margin: 0 0 var(--space-16);
+  font-size: var(--font-size-16);
+  line-height: 1.25;
 }
 
 .cards-platform .cards-platform-eyebrow {
-  font-size: 14px;
-  line-height: 18px;
+  font-size: var(--font-size-14);
+  line-height: calc(18 / 14);
 }
 
 .cards-platform .cards-platform-actions {
-  margin-top: 8px;
+  margin-top: var(--space-8);
   justify-content: center;
 }
 
 .cards-platform .cards-platform-image {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-20);
 }
 
 .cards-platform .cards-platform-image :is(picture, img) {
@@ -62,18 +69,18 @@
 
 @media (width >= 600px) {
   .cards-platform > ul {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    --card-columns: 2;
   }
 }
 
 @media (width >= 900px) {
   .cards-platform > ul {
-    grid-template-columns: repeat(var(--card-count, 3), minmax(0, 1fr));
+    --card-columns: var(--card-count, 3);
   }
 
   .cards-platform .cards-platform-heading {
-    font-size: 32px;
-    line-height: 36px;
+    font-size: var(--font-size-32);
+    line-height: calc(36 / 32);
   }
 }
 
@@ -90,102 +97,103 @@
 }
 
 /* Investment-choice cards use a compact, full-width image treatment. */
-main .section:has(.cards-platform.compact) {
+main .section:not([data-section-layout="authored"]):has(.cards-platform.compact) {
   margin: 0;
-  padding: 60px 0 30px;
-  background: #fff;
+  padding: var(--space-60) 0 var(--space-30);
+  background: var(--card-surface-color);
 }
 
-main .section:has(.cards-platform.compact) > div {
+main .section:not([data-section-layout="authored"]):has(.cards-platform.compact) > div {
   box-sizing: border-box;
-  max-width: 1200px;
-  padding: 0 20px;
+  max-width: var(--layout-container-max);
+  padding: 0 var(--space-20);
 }
 
-main .section:has(.cards-platform.compact) .default-content-wrapper {
-  margin-bottom: 30px;
+main .section:not([data-section-layout="authored"]):has(.cards-platform.compact) .default-content-wrapper {
+  margin-bottom: var(--space-30);
   text-align: center;
 }
 
-main .section:has(.cards-platform.compact) :where(.default-content-wrapper h2) {
-  margin: 0 0 15px;
-  font-size: 37px;
-  font-weight: 500;
-  line-height: 42px;
+main .section:not([data-section-layout="authored"]):has(.cards-platform.compact) :where(.default-content-wrapper h2) {
+  margin: 0 0 0.9375rem;
+  font-size: var(--font-size-37);
+  font-weight: var(--font-weight-medium);
+  line-height: calc(42 / 37);
 }
 
-main .section:has(.cards-platform.compact) :where(.default-content-wrapper p) {
+main .section:not([data-section-layout="authored"]):has(.cards-platform.compact) :where(.default-content-wrapper p) {
   max-width: 760px;
   margin: 0 auto;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 21px;
+  font-size: var(--font-size-15);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.4;
 }
 
-main .section:has(.cards-platform.compact) :where(.default-content-wrapper h4) {
-  margin: 30px 0 0;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 21px;
+main .section:not([data-section-layout="authored"]):has(.cards-platform.compact) :where(.default-content-wrapper h4) {
+  margin: var(--space-30) 0 0;
+  font-size: var(--font-size-15);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.4;
 }
 
 .cards-platform.compact .cards-platform-card {
+  padding-inline: 0.9375rem;
   text-align: left;
 }
 
 .cards-platform.compact .cards-platform-image {
-  margin: -15px -15px 15px;
+  margin: -0.9375rem -0.9375rem 0.9375rem;
 }
 
 .cards-platform.compact .cards-platform-heading {
-  font-size: 22px;
-  font-weight: 500;
-  line-height: 28px;
+  font-size: var(--font-size-22);
+  font-weight: var(--font-weight-medium);
+  line-height: calc(28 / 22);
   letter-spacing: normal;
 }
 
 .cards-platform.compact .cards-platform-body p {
-  margin-bottom: 9px;
-  font-size: 13px;
-  line-height: 18px;
+  margin-bottom: 0.5625rem;
+  font-size: var(--font-size-13);
+  line-height: calc(18 / 13);
 }
 
 .cards-platform.compact .cards-platform-actions {
   justify-content: flex-start;
   margin-top: 0;
-  padding-bottom: 24px;
+  padding-bottom: var(--space-24);
 }
 
 .cards-platform.compact .cards-platform-actions a:any-link {
-  min-height: 33px;
-  padding: 9px 0;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 13px;
+  min-height: 2.0625rem;
+  padding: 0.5625rem 0;
+  font-size: var(--font-size-13);
+  font-weight: var(--font-weight-regular);
+  line-height: 1;
 }
 
 .cards-platform.compact .etrade-action-icon {
-  flex-basis: 16px;
-  width: 16px;
-  height: 16px;
+  flex-basis: var(--space-16);
+  width: var(--space-16);
+  height: var(--space-16);
 }
 
 @media (width >= 768px) {
-  main .section:has(.cards-platform.compact) > div {
-    padding: 0 10px;
+  main .section:not([data-section-layout="authored"]):has(.cards-platform.compact) > div {
+    padding: 0 var(--space-10);
   }
 
-  main .section:has(.cards-platform.compact) :where(.default-content-wrapper h2) {
-    font-size: 46px;
-    line-height: 54px;
+  main .section:not([data-section-layout="authored"]):has(.cards-platform.compact) :where(.default-content-wrapper h2) {
+    font-size: var(--font-size-46);
+    line-height: calc(54 / 46);
   }
 }
 
 .cards-platform .cards-platform-card:has(.cards-platform-link):hover {
-  border-color: #5627d8;
+  border-color: var(--color-action-primary);
 }
 
 .cards-platform .cards-platform-card:has(.cards-platform-link:focus-visible) {
-  outline: 2px solid #5627d8;
-  outline-offset: 3px;
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
 }

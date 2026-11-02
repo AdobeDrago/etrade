@@ -1,24 +1,41 @@
-main .section.hero-container {
+main .section > .hero-wrapper {
+  min-width: 0;
+  container: block-layout / inline-size;
+}
+
+:where(.hero) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
+main .section:not([data-section-layout="authored"]).hero-container {
   margin: 0;
   padding: 0;
 }
 
-main .section.hero-container > .hero-wrapper {
+main .section:not([data-section-layout="authored"]).hero-container > .hero-wrapper {
   max-width: none;
   padding: 0;
 }
 
 .hero {
-  --action-link-color: #fff;
+  --text-color: var(--color-text-inverse);
+  --link-color: var(--color-link-inverse);
+  --link-hover-color: var(--color-link-inverse-hover);
+  --action-outline-hover-text: var(--color-text-primary);
+  --action-link-color: var(--color-text-inverse);
 
+  color-scheme: dark;
+  min-width: 0;
+  overflow-wrap: anywhere;
   position: relative;
   isolation: isolate;
   box-sizing: border-box;
-  min-height: 400px;
-  padding: 50px 0;
-  background: #24134b;
-  color: #fff;
-  letter-spacing: -0.21px;
+  min-height: 25rem;
+  padding: 3.125rem 0;
+  background: var(--color-surface-campaign);
+  color: var(--color-text-inverse);
+  letter-spacing: var(--tracking-tight);
 }
 
 .hero .hero-media {
@@ -45,32 +62,32 @@ main .section.hero-container > .hero-wrapper {
   box-sizing: border-box;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 var(--space-20);
 }
 
 .hero h1,
 .hero h2,
 .hero p {
-  margin: 0 0 10px;
-  color: #fff;
-  font-weight: 500;
+  margin: 0 0 var(--space-10);
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-medium);
 }
 
 .hero h1 {
-  font-size: 37px;
-  line-height: 42px;
+  font-size: var(--font-size-37);
+  line-height: calc(42 / 37);
   letter-spacing: inherit;
 }
 
 .hero h2 {
-  font-size: 20px;
-  line-height: 26px;
+  font-size: var(--font-size-20);
+  line-height: calc(26 / 20);
 }
 
 .hero p {
-  margin-bottom: 40px;
-  font-size: 17px;
-  line-height: 24px;
+  margin-bottom: var(--space-40);
+  font-size: var(--font-size-17);
+  line-height: calc(24 / 17);
 }
 
 .hero h1 strong,
@@ -79,7 +96,7 @@ main .section.hero-container > .hero-wrapper {
 }
 
 .hero a:any-link {
-  color: #fff;
+  color: var(--color-text-inverse);
 }
 
 .hero .hero-actions {
@@ -88,7 +105,7 @@ main .section.hero-container > .hero-wrapper {
 
 @media (width >= 768px) {
   .hero .hero-content {
-    padding: 0 10px;
+    padding: 0 var(--space-10);
   }
 
   .hero h1,
@@ -97,26 +114,26 @@ main .section.hero-container > .hero-wrapper {
   }
 
   .hero h1 {
-    font-size: 46px;
-    line-height: 54px;
+    font-size: var(--font-size-46);
+    line-height: calc(54 / 46);
   }
 
   .hero h2 {
-    font-size: 22px;
-    line-height: 28px;
+    font-size: var(--font-size-22);
+    line-height: calc(28 / 22);
   }
 
   .hero p {
     max-width: 380px;
-    font-size: 15px;
-    line-height: 21px;
+    font-size: var(--font-size-15);
+    line-height: calc(21 / 15);
   }
 }
 
 @media (width >= 768px) {
   .hero.wide {
-    min-height: 415px;
-    padding: 100px 0;
+    min-height: 25.9375rem;
+    padding: 6.25rem 0;
   }
 
   .hero.wide :is(h1, h2, p) {
@@ -124,6 +141,6 @@ main .section.hero-container > .hero-wrapper {
   }
 
   .hero.wide p {
-    margin-bottom: 25px;
+    margin-bottom: 1.5625rem;
   }
 }

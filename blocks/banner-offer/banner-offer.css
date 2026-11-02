@@ -1,23 +1,48 @@
-.banner-offer {
-  --action-link-color: #ab80ff;
+main .section > .banner-offer-wrapper {
+  min-width: 0;
+  container: block-layout / inline-size;
+}
 
+:where(.banner-offer) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
+body.homepage .hero-dark-container:not([data-section-layout="authored"]) > .banner-offer-wrapper {
+  margin-top: var(--space-40);
+}
+
+.banner-offer {
+  --text-color: var(--color-text-inverse);
+  --link-color: var(--color-link-inverse);
+  --link-hover-color: var(--color-link-inverse-hover);
+  --action-outline-hover-text: var(--color-text-primary);
+  --action-link-color: var(--color-link-inverse);
+
+  color-scheme: dark;
+  min-width: 0;
   display: grid;
   box-sizing: border-box;
-  border-radius: 16px;
-  padding: 20px 20px 30px;
-  background: #121213;
-  color: #fff;
-  font-size: 16px;
-  line-height: 20px;
-  letter-spacing: -0.21px;
+  border-radius: var(--radius-card);
+  padding: var(--space-20) var(--space-20) var(--space-30);
+  background: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-16);
+  line-height: calc(20 / 16);
+  letter-spacing: var(--tracking-tight);
   overflow-wrap: anywhere;
 }
 
 .banner-offer.light {
-  --action-link-color: #5627d8;
+  --text-color: var(--color-text-primary);
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --action-outline-hover-text: var(--color-action-primary-text);
+  --action-link-color: var(--color-link);
 
-  background: #fff;
-  color: #242424;
+  color-scheme: light;
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
 }
 
 .banner-offer[hidden] {
@@ -29,12 +54,12 @@
 }
 
 main .banner-offer :is(h1, h2, h3, h4, h5, h6).banner-offer-heading {
-  margin: 0 0 10px;
+  margin: 0 0 var(--space-10);
   color: inherit;
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 28px;
-  letter-spacing: -0.4px;
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-semibold);
+  line-height: calc(28 / 24);
+  letter-spacing: var(--tracking-tight);
 }
 
 main .banner-offer .banner-offer-copy p {
@@ -43,7 +68,7 @@ main .banner-offer .banner-offer-copy p {
 }
 
 .banner-offer .banner-offer-actions {
-  margin-top: 20px;
+  margin-top: var(--space-20);
 }
 
 .banner-offer .banner-offer-actions a {
@@ -53,7 +78,6 @@ main .banner-offer .banner-offer-copy p {
 .banner-offer sup a:any-link {
   color: inherit;
 }
-
 
 .banner-offer a:any-link:not(.etrade-action) {
   color: var(--action-link-color);
@@ -70,15 +94,15 @@ main .banner-offer.light sup a:any-link {
 .banner-offer .banner-offer-media :is(picture, img) {
   display: block;
   width: 100%;
-  border-radius: 16px;
+  border-radius: var(--radius-card);
 }
 
 @media (width >= 768px) {
   .banner-offer:is(.light, .compact) {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     align-items: center;
-    column-gap: 20px;
-    padding: 20px;
+    column-gap: var(--space-20);
+    padding: var(--space-20);
   }
 
   .banner-offer:is(.light, .compact) .banner-offer-media {
@@ -89,8 +113,8 @@ main .banner-offer.light sup a:any-link {
   main .banner-offer:is(.light, .compact) .banner-offer-heading {
     grid-column: span 5;
     margin: 0;
-    font-size: 20px;
-    line-height: 24px;
+    font-size: var(--font-size-20);
+    line-height: calc(24 / 20);
   }
 
   .banner-offer:is(.light, .compact).no-media .banner-offer-heading {
@@ -108,43 +132,50 @@ main .banner-offer.light sup a:any-link {
 }
 
 .banner-offer .banner-offer-copy p + p {
-  margin-top: 16px;
+  margin-top: var(--space-16);
 }
 
 .banner-offer.compact .banner-offer-heading {
-  font-size: 24px;
-  line-height: 28px;
+  font-size: var(--font-size-24);
+  line-height: calc(28 / 24);
 }
-
 
 .banner-offer.centered {
   border-radius: 0;
-  background: #24134b;
+  background: var(--color-surface-campaign);
   text-align: center;
-  padding: 30px 24px;
-  font-size: 15px;
-  line-height: 21px;
+  padding: var(--space-30) var(--space-24);
+  font-size: var(--font-size-15);
+  line-height: calc(21 / 15);
 }
 
 main .banner-offer.centered .banner-offer-heading {
-  margin-bottom: 20px;
-  font-weight: 500;
+  margin-bottom: var(--space-20);
+  font-weight: var(--font-weight-medium);
 }
 
 .banner-offer.centered .banner-offer-copy p + p {
-  margin-top: 10px;
+  margin-top: var(--space-10);
 }
 
-main .section.banner-offer-container:has(.banner-offer.centered) {
+main .section:not([data-section-layout="authored"]).banner-offer-container:has(.banner-offer.centered) {
+  --text-color: var(--color-text-primary);
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --action-link-color: var(--color-link);
+  --action-outline-hover-text: var(--color-action-primary-text);
+
   margin: 0;
-  padding: 30px 0;
-  background: #fff;
+  padding: var(--space-30) 0;
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
+  color-scheme: light;
 }
 
-main .section.banner-offer-container:has(.banner-offer.centered) > div {
+main .section:not([data-section-layout="authored"]).banner-offer-container:has(.banner-offer.centered) > div {
   box-sizing: border-box;
   max-width: 1200px;
-  padding: 0 20px;
+  padding: 0 var(--space-20);
 }
 
 .banner-offer.centered .banner-offer-actions {
@@ -152,13 +183,13 @@ main .section.banner-offer-container:has(.banner-offer.centered) > div {
 }
 
 @media (width >= 768px) {
-  main .section.banner-offer-container:has(.banner-offer.centered) > div {
-    padding: 0 10px;
+  main .section:not([data-section-layout="authored"]).banner-offer-container:has(.banner-offer.centered) > div {
+    padding: 0 var(--space-10);
   }
 
   .banner-offer:not(.light, .compact) .banner-offer-heading {
-  font-size: 32px;
-  line-height: 36px;
+  font-size: var(--font-size-32);
+  line-height: calc(36 / 32);
 }
 
   .banner-offer:not(.light, .compact) .banner-offer-actions a {
@@ -167,8 +198,8 @@ main .section.banner-offer-container:has(.banner-offer.centered) > div {
 
   .banner-offer:not(.light, .compact, .no-media) {
   grid-template-columns: 1fr 1fr;
-  column-gap: 40px;
-  padding: 40px;
+  column-gap: var(--space-40);
+  padding: var(--space-40);
 }
 
   .banner-offer:not(.light, .compact) .banner-offer-media {
@@ -183,15 +214,15 @@ main .section.banner-offer-container:has(.banner-offer.centered) > div {
 }
 
 .banner-offer.compact {
-  background: #121213;
-  padding: 24px;
+  background: var(--color-surface-inverse);
+  padding: var(--space-24);
 }
 
 /* Slim content banners keep headline and description together beside the thumbnail. */
 @media (width >= 768px) {
   .banner-offer.compact {
     grid-template-columns: 56px minmax(0, 1fr) auto;
-    gap: 0 32px;
+    gap: 0 var(--space-32);
   }
 
   .banner-offer.compact .banner-offer-media {
@@ -199,18 +230,18 @@ main .section.banner-offer-container:has(.banner-offer.centered) > div {
   }
 
   .banner-offer.compact .banner-offer-media img {
-    width: 56px;
-    height: 56px;
-    border-radius: 8px;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--radius-medium);
     object-fit: cover;
   }
 
   main .banner-offer.compact .banner-offer-heading {
     grid-area: 1 / 2;
     align-self: end;
-    margin: 0 0 10px;
-    font-size: 24px;
-    line-height: 28px;
+    margin: 0 0 var(--space-10);
+    font-size: var(--font-size-24);
+    line-height: calc(28 / 24);
   }
 
   .banner-offer.compact .banner-offer-copy {
@@ -222,4 +253,36 @@ main .section.banner-offer-container:has(.banner-offer.centered) > div {
     grid-area: 1 / 3 / span 2;
   }
 
+}
+
+/* Adapt to the space provided by the section, including enlarged text. */
+@container block-layout (width < 38rem) {
+  main .section .banner-offer,
+main .section .banner-offer:is(.light, .compact),
+main .section .banner-offer:not(.light, .compact, .no-media) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-20);
+  }
+
+  main .section .banner-offer > :is(div, h1, h2, h3, h4, h5, h6),
+main .section .banner-offer :is(.banner-offer-heading, .banner-offer-copy, .banner-offer-media, .banner-offer-actions) {
+    grid-area: auto;
+  }
+
+  main .section .banner-offer.compact .banner-offer-media img {
+    width: min(3.5rem, 100%);
+    height: auto;
+  }
+}
+
+@container block-layout (width < 22rem) {
+  main .section .banner-offer {
+    padding-inline: min(var(--space-20), 8%);
+  }
+}
+
+@media (width < 768px) {
+  body.homepage .hero-dark-container:not([data-section-layout="authored"]) > .banner-offer-wrapper {
+    margin-top: var(--space-60);
+  }
 }

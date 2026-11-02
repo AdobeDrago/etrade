@@ -1,3 +1,8 @@
+:where(.disclosures) a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--action-link-color, var(--link-color));
+  outline-offset: var(--focus-ring-offset);
+}
+
 /* Inline disclosure references are auto-linked after the footer is available. */
 .disclosures-reference a:any-link {
   color: inherit;
@@ -5,19 +10,27 @@
 }
 
 .disclosures-reference a:focus-visible {
-  outline: 2px solid currentcolor;
-  outline-offset: 2px;
+  outline: var(--focus-ring-width) solid currentcolor;
+  outline-offset: var(--focus-ring-offset);
 }
 
 .disclosures {
+  --text-color: var(--color-text-primary);
+  --link-color: var(--color-link);
+  --link-hover-color: var(--color-link-hover);
+  --action-link-color: var(--color-link);
+  --action-outline-hover-text: var(--color-action-primary-text);
+
+  color-scheme: light;
+  min-width: 0;
   box-sizing: border-box;
   width: 100%;
   margin: 0 auto;
-  padding: 0 20px 48px;
-  background: #f5f5f5;
-  color: #242424;
-  font-size: 13px;
-  line-height: 18px;
+  padding: 0 min(var(--space-20), 5%) var(--space-48);
+  background: var(--color-surface-subtle);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-13);
+  line-height: calc(18 / 13);
   overflow-wrap: anywhere;
 }
 
@@ -31,30 +44,30 @@
 }
 
 .disclosures .disclosures-items > li {
-  margin-bottom: 24px;
-  padding-left: 8px;
-  scroll-margin-top: 32px;
+  margin-bottom: var(--space-24);
+  padding-left: var(--space-8);
+  scroll-margin-top: var(--space-32);
 }
 
-.disclosures :is(h2, h3, h4) {
-  margin: 0 0 16px;
-  font-size: 20px;
-  line-height: 24px;
+.disclosures :is(h1, h2, h3, h4) {
+  margin: 0 0 var(--space-16);
+  font-size: var(--font-size-20);
+  line-height: calc(24 / 20);
 }
 
 .disclosures p {
-  margin: 0 0 12px;
+  margin: 0 0 var(--space-12);
 }
 
 .disclosures a:any-link {
-  color: #5627d8;
+  color: var(--color-link);
   text-decoration: underline;
 }
 
 .disclosures a:focus-visible,
 .disclosures li:focus {
-  outline: 2px solid #5627d8;
-  outline-offset: 3px;
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
 }
 
 .disclosures :is(img, table) {
@@ -63,13 +76,13 @@
 
 .disclosures img {
   width: auto;
-  max-height: 48px;
+  max-height: var(--space-48);
 }
 
 @media (width < 768px) {
   .disclosures {
-    font-size: 15px;
-    line-height: 22px;
+    font-size: var(--font-size-15);
+    line-height: calc(22 / 15);
   }
 }
 
@@ -80,8 +93,8 @@
 }
 
 .disclosures :is(th, td) {
-  border: 1px solid #ccc;
-  padding: 8px;
+  border: var(--border-width-thin) solid var(--color-border-strong);
+  padding: var(--space-8);
 }
 
 .disclosures .disclosures-intro,
@@ -91,31 +104,32 @@
   max-width: 1180px;
   margin-right: auto;
   margin-left: auto;
-  padding: 24px 20px;
-  background: #f5f5f5;
+  padding: var(--space-24) var(--space-20);
+  padding-inline: min(var(--space-20), 5%);
+  background: var(--color-surface-subtle);
 }
 
 .disclosures .disclosures-intro {
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
   text-align: center;
 }
 
 .disclosures .disclosures-items {
   margin-top: 0;
-  padding-left: 44px;
+  padding-left: min(2.75rem, 20%);
 }
 
 .disclosures .disclosures-closing {
   margin-top: 0;
-  border-radius: 0 0 16px 16px;
+  border-radius: 0 0 var(--radius-card) var(--radius-card);
 }
 
 .disclosures .disclosures-notice {
   width: fit-content;
   max-width: 100%;
-  margin: 20px auto;
-  border: 1px solid #dbdbdb;
-  padding: 10px 20px;
+  margin: var(--space-20) auto;
+  border: var(--border-width-thin) solid var(--color-border-default);
+  padding: var(--space-10) var(--space-20);
 }
 
 .disclosures .disclosures-notice p {
@@ -127,7 +141,7 @@
   display: block;
   width: 100%;
   height: auto;
-  margin: 20px auto;
+  margin: var(--space-20) auto;
 }
 
 .disclosures .icon-sipc-mark {
@@ -145,10 +159,10 @@
 }
 
 .disclosures .disclosures-intro > div + div {
-  margin-top: 20px;
+  margin-top: var(--space-20);
 }
 
 .disclosures .disclosures-intro img:not(.icon img) {
-  height: 16px;
+  height: var(--space-16);
   vertical-align: middle;
 }

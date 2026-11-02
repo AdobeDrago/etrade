@@ -1,8 +1,11 @@
 /* Layout selectors target only the card list, preserving authored nested lists. */
 .cards-numbered > ol {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 20px;
+
+  --card-columns: 1;
+  --card-gap: var(--space-20);
+
+  gap: var(--card-gap);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -12,43 +15,44 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-16);
   min-width: 0;
-  padding: 16px;
-  border: 1px solid #e2e2e2;
-  border-radius: 16px;
-  background: #fff;
-  color: #242424;
-  font-size: 13px;
-  line-height: 18px;
-  letter-spacing: -0.21px;
+  padding: var(--space-16);
+  padding-inline: min(var(--space-16), 12%);
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+  background: var(--card-surface-color);
+  color: var(--card-text-color);
+  font-size: var(--font-size-13);
+  line-height: calc(18 / 13);
+  letter-spacing: var(--tracking-tight);
 }
 
 .cards-numbered .cards-numbered-body {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-16);
   min-width: 0;
 }
 
 .cards-numbered .cards-numbered-heading {
-  margin: 0 0 10px;
+  margin: 0 0 var(--space-10);
   color: inherit;
-  font-size: 24px;
-  line-height: 28px;
-  letter-spacing: -0.25px;
+  font-size: var(--font-size-24);
+  line-height: calc(28 / 24);
+  letter-spacing: var(--tracking-tight);
 }
 
 .cards-numbered .cards-numbered-body p {
   margin: 0;
-  color: #666;
-  font-size: 16px;
-  line-height: 20px;
+  color: var(--card-copy-color);
+  font-size: var(--font-size-16);
+  line-height: 1.25;
 }
 
 .cards-numbered .cards-numbered-eyebrow {
-  font-size: 14px;
-  line-height: 18px;
+  font-size: var(--font-size-14);
+  line-height: calc(18 / 14);
 }
 
 .cards-numbered .cards-numbered-actions {
@@ -56,7 +60,7 @@
 }
 
 .cards-numbered .cards-numbered-image {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-20);
 }
 
 .cards-numbered .cards-numbered-image :is(picture, img) {
@@ -67,53 +71,54 @@
 
 @media (width >= 768px) {
   .cards-numbered > ol {
-    grid-template-columns: repeat(var(--card-count, 3), minmax(0, 1fr));
+    --card-columns: var(--card-count, 3);
   }
 
   .cards-numbered .cards-numbered-heading {
-    font-size: 28px;
-    line-height: 32px;
+    font-size: var(--font-size-28);
+    line-height: calc(32 / 28);
   }
 }
 
 .cards-numbered .cards-numbered-ordinal {
-  margin: 0 0 9.1px;
-  padding: 48px 0;
-  font-size: 48px;
-  font-weight: 600;
-  line-height: 52px;
-  letter-spacing: -0.8px;
+  margin: 0 0 0.5687rem;
+  padding: var(--space-48) 0;
+  font-size: var(--font-size-48);
+  font-weight: var(--font-weight-semibold);
+  line-height: calc(52 / 48);
+  letter-spacing: var(--tracking-display);
 }
 
 @media (width >= 768px) {
   .cards-numbered .cards-numbered-card {
-    padding: 24px;
+    padding: var(--space-24);
+    padding-inline: min(var(--space-24), 12%);
   }
 
   .cards-numbered .cards-numbered-ordinal {
-    padding: 60px 0;
-    font-size: 64px;
-    line-height: 64px;
+    padding: var(--space-60) 0;
+    font-size: var(--font-size-64);
+    line-height: 1;
   }
 }
 
-body.brokerage .section:has(.cards-numbered) .default-content-wrapper {
+body.brokerage .section:not([data-section-layout="authored"]):has(.cards-numbered) .default-content-wrapper {
   max-width: 820px;
   text-align: center;
 }
 
-body.brokerage .section:has(.cards-numbered) .default-content-wrapper > h2 {
-  font-size: 32px;
-  line-height: 36px;
+body.brokerage .section:not([data-section-layout="authored"]):has(.cards-numbered) .default-content-wrapper > h2 {
+  font-size: var(--font-size-32);
+  line-height: calc(36 / 32);
 }
 
 @media (width >= 768px) {
-  body.brokerage .section:has(.cards-numbered) .default-content-wrapper {
-    max-width: 800px;
+  body.brokerage .section:not([data-section-layout="authored"]):has(.cards-numbered) .default-content-wrapper {
+    max-width: var(--layout-copy-max);
   }
 
-  body.brokerage .section:has(.cards-numbered) .default-content-wrapper > h2 {
-    font-size: 44px;
-    line-height: 48px;
+  body.brokerage .section:not([data-section-layout="authored"]):has(.cards-numbered) .default-content-wrapper > h2 {
+    font-size: var(--font-size-44);
+    line-height: calc(48 / 44);
   }
 }

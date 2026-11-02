@@ -1,0 +1,152 @@
+/* Authored section controls are opt-in; existing page and block layouts stay in place. */
+body main .section[data-section-layout="authored"] {
+  --section-container-width: var(--layout-container-max);
+  --section-gutter: var(--layout-gutter);
+  --section-gap: var(--layout-grid-gap);
+}
+
+body main .section[data-section-container="narrow"] {
+  --section-container-width: var(--layout-copy-max);
+}
+
+body main .section[data-section-container="full"] {
+  --section-container-width: 100%;
+  --section-gutter: var(--space-0);
+}
+
+body main .section[data-section-layout][data-section-container] > div {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--section-container-width);
+  margin-inline: auto;
+  padding-inline: var(--section-gutter);
+}
+
+body main .section[data-section-layout][data-section-grid] {
+  --section-grid-columns: 1;
+
+  display: grid;
+  grid-template-columns: repeat(var(--section-grid-columns), minmax(0, 1fr));
+  gap: var(--section-gap);
+  padding-inline: max(var(--section-gutter), calc((100% - var(--section-container-width)) / 2 + var(--section-gutter)));
+}
+
+body main .section[data-section-layout][data-section-grid] > div {
+  min-width: 0;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding-inline: 0;
+  overflow-wrap: anywhere;
+}
+
+body main .section[data-section-align="left"] > .default-content-wrapper { text-align: left; }
+body main .section[data-section-align="center"] > .default-content-wrapper { text-align: center; }
+body main .section[data-section-align="right"] > .default-content-wrapper { text-align: right; }
+
+body main .section[data-section-layout][data-section-grid] > .default-content-wrapper {
+  grid-column: 1 / -1;
+}
+
+body main .section[data-section-gap="none"] { --section-gap: var(--space-0); }
+body main .section[data-section-gap="xs"] { --section-gap: var(--spacing-xs); }
+body main .section[data-section-gap="s"] { --section-gap: var(--spacing-s); }
+body main .section[data-section-gap="m"] { --section-gap: var(--spacing-m); }
+body main .section[data-section-gap="l"] { --section-gap: var(--spacing-l); }
+body main .section[data-section-gap="xl"] { --section-gap: var(--spacing-xl); }
+body main .section[data-section-gap="xxl"] { --section-gap: var(--spacing-xxl); }
+
+body main .section[data-section-spacing="none"] { --section-spacing: var(--space-0); }
+body main .section[data-section-spacing="xs"] { --section-spacing: calc(2 * var(--spacing-xs)); }
+body main .section[data-section-spacing="s"] { --section-spacing: calc(2 * var(--spacing-s)); }
+body main .section[data-section-spacing="m"] { --section-spacing: calc(2 * var(--spacing-m)); }
+body main .section[data-section-spacing="l"] { --section-spacing: calc(2 * var(--spacing-l)); }
+body main .section[data-section-spacing="xl"] { --section-spacing: calc(2 * var(--spacing-xl)); }
+body main .section[data-section-spacing="xxl"] { --section-spacing: calc(2 * var(--spacing-xxl)); }
+
+body main .section[data-section-layout][data-section-spacing] {
+  margin-block: 0;
+  padding-block: var(--section-spacing);
+}
+
+body main .section[data-section-theme="light"] {
+  --action-outline-hover-text: var(--color-action-primary-text);
+  --section-text-color: var(--color-text-primary);
+  --section-link-color: var(--color-link);
+  --section-link-hover-color: var(--color-link-hover);
+  --section-surface-color: var(--color-surface-default);
+}
+
+body main .section[data-section-theme="dark"] {
+  --action-outline-hover-text: var(--color-text-primary);
+  --section-text-color: var(--color-text-inverse);
+  --section-link-color: var(--color-link-inverse);
+  --section-link-hover-color: var(--color-link-inverse-hover);
+  --section-surface-color: var(--color-surface-inverse);
+}
+
+body main .section[data-section-layout][data-section-theme] {
+  --text-color: var(--section-text-color);
+  --link-color: var(--section-link-color);
+  --link-hover-color: var(--section-link-hover-color);
+  --action-link-color: var(--section-link-color);
+
+  background-color: var(--section-surface-color);
+  color: var(--section-text-color);
+  color-scheme: light;
+}
+
+body main .section[data-section-layout][data-section-theme="dark"] {
+  color-scheme: dark;
+}
+
+body main .section[data-section-layout][data-section-theme] > .default-content-wrapper :is(h1, h2, h3, h4, h5, h6, p) {
+  color: inherit;
+}
+
+body main .section[data-section-layout][data-section-theme] > .default-content-wrapper a:any-link:not(.button, .etrade-action) {
+  color: var(--section-link-color);
+}
+
+body main .section[data-section-layout][data-section-theme] > .default-content-wrapper a:any-link:focus-visible {
+  outline: var(--focus-ring-width) solid var(--section-link-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+body main .section[data-section-layout][data-section-theme] > .default-content-wrapper a:any-link:not(.button, .etrade-action):hover {
+  color: var(--section-link-hover-color);
+}
+
+body main .section[data-section-layout][data-section-background] {
+  position: relative;
+  isolation: isolate;
+}
+
+body main .section[data-section-layout][data-section-background] > .section-background {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  display: block;
+  margin: 0;
+  pointer-events: none;
+}
+
+body main .section[data-section-layout][data-section-background] > .section-background img {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (width >= 768px) {
+  body main .section[data-section-grid]:not([data-section-grid="1"]) {
+    --section-grid-columns: 2;
+  }
+}
+
+@media (width >= 1200px) {
+  body main .section[data-section-layout][data-section-grid] {
+    --section-grid-columns: var(--section-grid-count);
+  }
+}

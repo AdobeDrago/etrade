@@ -303,7 +303,7 @@ test('inline Disclosures tables keep their existing labels, numbers and footnote
   assert.equal(app.document.querySelector('sup:last-child').textContent, '8');
 });
 
-test('legacy document references still load and fragment decoration remains the default', async () => {
+test('legacy rendered documents still load without page transformations', async () => {
   const app = await harness(new Map([
     ['/homepage-disclosures.plain.html', '<div><div class="disclosures"><ol class="disclosures-items"><li id="disclosure-7">Legacy document</li></ol></div></div>'],
   ]), '<p><sup>7</sup></p>');
@@ -311,8 +311,127 @@ test('legacy document references still load and fragment decoration remains the 
   await app.decorate(app.block);
   assert.equal(app.block.hidden, false);
   assert.equal(app.block.querySelector('#disclosure-7').textContent, 'Legacy document');
-  assert.equal(app.state.decorated, 1);
+  assert.equal(app.state.decorated, 0);
   assert.equal(app.document.querySelector('sup a').getAttribute('href'), '#disclosure-7');
+});
+
+test('linked authored Disclosures tables render their rows and ignore surrounding page copy', async () => {
+  const app = await harness(new Map([
+    ['/homepage-disclosures.plain.html', `<div><h1>Document title</h1>
+      <div class="disclosures">
+        <div><div>Introduction</div><div><p>Authored introduction</p></div></div>
+        <div><div>Notice</div><div><p>Investment risk</p></div></div>
+        <div><div>7</div><div><p><strong>Legacy terms</strong></p></div></div>
+        <div><div>Closing</div><div><p>Authored closing</p></div></div>
+        <div><div>Incomplete row</div></div>
+      </div><p>Other page copy</p></div>`],
+  ]), '<p><sup>g</sup></p>');
+  app.block.querySelector('a').href = new URL('/homepage-disclosures.html', preview).href;
+  await app.decorate(app.block);
+  assert.equal(app.block.hidden, false);
+  assert.equal(app.block.querySelector('#disclosure-7 strong').textContent, 'Legacy terms');
+  assert.equal(app.block.querySelector('.disclosures-notice').textContent, 'Investment risk');
+  assert.equal(app.block.querySelector('.disclosures-closing').textContent, 'Authored closing');
+  assert.doesNotMatch(app.block.textContent, /Document title|Other page copy|Incomplete row/);
+  assert.equal(app.document.querySelector('sup a').textContent, '7');
+  assert.equal(app.requests.length, 1);
+  assert.equal(app.state.decorated, 0);
+});
+
+test('rich-text disclosure pages preserve legal copy and link the homepage letter markers', async () => {
+  const path = '/disclosures/docs/homepage';
+  const app = await harness(new Map([
+    [`${path}.plain.html`, `<div>
+      <h1 id="homepage-disclosures">Homepage Disclosures</h1>
+      <h2>Please read all the important disclosures below.</h2>
+      <p>Investing: <strong>Investment risk</strong></p>
+      <table><tbody><tr><td>Not FDIC insured</td></tr></tbody></table>
+      <picture><source srcset="./media_sipc.webp"><img src="./media_sipc.png" alt="Member SIPC"></picture>
+      <ol>${Array.from({ length: 13 }, (_, index) => `<li>
+        <p id="terms-${index + 1}"><strong>Terms ${index + 1}</strong></p>
+        <ul><li>Nested condition</li></ul>
+        <ol><li>Nested numbered condition</li></ol>
+        <p><a href="/disclosures/fragments/conditions" class="button primary">Full conditions</a>
+          <a href="#terms-${index + 1}">Terms anchor</a> <em>Emphasis</em></p>
+      </li>`).join('')}</ol>
+      <p>Corporate closing</p>
+    </div><div></div><div></div>`],
+  ]), '<p>Offer <sup>a</sup>, fees <sup>b</sup>, awards <sup>l,m,k</sup>, missing <sup>n</sup>.</p>');
+  app.block.querySelector('a').href = new URL(`${path}.plain.html`, preview).href;
+  await app.decorate(app.block);
+  assert.equal(app.block.hidden, false);
+  assert.equal(app.block.querySelectorAll('.disclosures-items > li').length, 13);
+  assert.equal(app.block.querySelector('.disclosures-intro h1').id, 'homepage-disclosures');
+  assert.ok(app.block.querySelector('.disclosures-intro table'));
+  assert.equal(app.block.querySelector('img').src, new URL('/disclosures/docs/media_sipc.png', preview).href);
+  assert.equal(app.block.querySelector('source').getAttribute('srcset'), new URL('/disclosures/docs/media_sipc.webp', preview).href);
+  assert.equal(app.block.querySelector('#disclosure-1').tabIndex, -1);
+  assert.equal(app.block.querySelector('#disclosure-1 #terms-1 strong').textContent, 'Terms 1');
+  assert.equal(app.block.querySelector('#disclosure-1 ul > li').id, '');
+  assert.equal(app.block.querySelector('#disclosure-1 ol > li').id, '');
+  assert.equal(app.block.querySelector('a[href="/disclosures/fragments/conditions"]').className, '');
+  assert.ok(app.block.querySelector('a[href="#terms-1"]'));
+  assert.ok(app.block.querySelector('#disclosure-1 em'));
+  assert.equal(app.block.querySelector('.disclosures-closing').textContent, 'Corporate closing');
+  assert.deepEqual([...app.document.querySelectorAll('main sup')].map((sup) => sup.textContent), ['1', '2', '12,13,11', 'n']);
+  assert.equal(app.document.querySelector('sup a').getAttribute('href'), '#disclosure-1');
+  assert.deepEqual(app.requests, [`${path}.plain.html`]);
+  assert.equal(app.state.decorated, 0);
+  assert.equal(app.errors.length, 0);
+});
+
+test('page list numbering, authored anchors and content order survive across sections', async () => {
+  const app = await harness(new Map([
+    ['/legal.plain.html', `<div><p>Introduction</p><ol start="5">
+      <li id="authored-terms"><p>Five</p></li><li value="9"><p>Nine</p></li><li><p>Ten</p></li>
+      </ol><p>Between lists</p></div>
+      <div><ol reversed start="3"><li>Three</li><li>Two</li></ol><p>Closing</p></div>`],
+  ]), '<p><sup>e,i,j</sup> <sup>c,b</sup></p>');
+  app.block.querySelector('a').href = new URL('/legal', preview).href;
+  await app.decorate(app.block);
+  assert.deepEqual([...app.block.querySelectorAll('.disclosures-items > li')]
+    .map((item) => [item.id, item.getAttribute('value')]), [
+    ['authored-terms', '5'], ['disclosure-9', '9'], ['disclosure-10', '10'],
+    ['disclosure-3', '3'], ['disclosure-2', '2'],
+  ]);
+  assert.deepEqual([...app.block.children].map((node) => node.textContent.replace(/\s/g, '')), [
+    'Introduction', 'FiveNineTen', 'Betweenlists', 'ThreeTwo', 'Closing',
+  ]);
+  assert.equal(app.document.querySelector('sup a').getAttribute('href'), '#authored-terms');
+  assert.deepEqual([...app.document.querySelectorAll('main sup')].map((sup) => sup.textContent), ['5,9,10', '3,2']);
+  const link = app.document.querySelector('sup a');
+  app.decorateReferences(app.document.querySelector('main'));
+  assert.equal(app.document.querySelector('sup a'), link);
+});
+
+test('disclosure pages without numbered lists still render their authored content', async () => {
+  const app = await harness(new Map([
+    ['/legal.plain.html', '<div><h2>Important disclosures</h2><p>Unnumbered legal copy.</p></div>'],
+  ]), '<p><sup>a</sup></p>');
+  app.block.querySelector('a').href = new URL('/legal', preview).href;
+  await app.decorate(app.block);
+  assert.equal(app.block.hidden, false);
+  assert.equal(app.block.querySelector('p').textContent, 'Unnumbered legal copy.');
+  assert.equal(app.block.querySelectorAll('.disclosures-items').length, 0);
+  assert.equal(app.document.querySelectorAll('main sup a').length, 0);
+});
+
+test('missing or empty disclosure documents stay hidden without dangling references', async () => {
+  const cases = [undefined, new Error('Network unavailable'), '<div><p> </p></div>'];
+  await Promise.all(cases.map(async (body) => {
+    const app = await harness(new Map([['/legal.plain.html', body]]), '<p><sup>a</sup></p>');
+    app.block.querySelector('a').href = new URL('/legal', preview).href;
+    await app.decorate(app.block);
+    assert.equal(app.block.hidden, true);
+    assert.equal(app.document.querySelectorAll('main sup a').length, 0);
+    assert.equal(app.errors.length, typeof body === 'string' ? 0 : 1);
+  }));
+});
+
+test('ordinary fragment loading still decorates the page by default', async () => {
+  const app = await harness(new Map([['/fragment.plain.html', '<div><p>Fragment copy</p></div>']]));
+  await app.loadFragment('/fragment');
+  assert.equal(app.state.decorated, 1);
 });
 
 test('reordering the set renumbers repeated references while retaining ID anchors', async () => {

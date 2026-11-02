@@ -63,7 +63,7 @@ export function quoteLink(symbol, prefix) {
 
 /** A dependency-free chart. Full data remain available in a native disclosure table. */
 export function lineChart(points, {
-  prefix, color = '#0065e3', label, compact = false,
+  prefix, color = 'var(--color-chart-index-1)', label, compact = false,
 }) {
   const wrapper = element('div', `${prefix}-plot`);
   if (!points.length) {
@@ -76,7 +76,6 @@ export function lineChart(points, {
   const span = high - low || 1;
   const first = points[0].time;
   const duration = points[points.length - 1].time - first || 1;
-  const height = compact ? 60 : 300;
   let coordinates = [];
   let update;
   const ns = 'http://www.w3.org/2000/svg';
@@ -91,11 +90,15 @@ export function lineChart(points, {
   path.setAttribute('vector-effect', 'non-scaling-stroke');
   svg.append(axes, path);
   const draw = () => {
-    const width = wrapper.getBoundingClientRect?.().width || 640;
-    const left = compact ? 0 : 8;
-    const right = width - (compact ? 0 : 60);
-    const top = compact ? 2 : 12;
-    const bottom = height - (compact ? 2 : 32);
+    const rootFontSize = window.getComputedStyle?.(document.documentElement).fontSize;
+    const unit = compact ? 1 : (Number.parseFloat(rootFontSize) || 16) / 16;
+    const height = (compact ? 60 : 300) * unit;
+    const width = svg.getBoundingClientRect?.().width
+      || wrapper.getBoundingClientRect?.().width || 640;
+    const left = compact ? 0 : 8 * unit;
+    const right = width - (compact ? 0 : 60 * unit);
+    const top = compact ? 2 : 12 * unit;
+    const bottom = height - (compact ? 2 : 32 * unit);
     const magnitude = 10 ** Math.floor(Math.log10(span / 4));
     const step = Math.ceil((span / 4) / magnitude) * magnitude;
     const floor = compact ? low : Math.floor(low / step) * step;
@@ -120,9 +123,9 @@ export function lineChart(points, {
       node.setAttribute('x', x);
       node.setAttribute('y', y);
       node.setAttribute('text-anchor', anchor);
-      node.setAttribute('fill', '#999');
-      node.setAttribute('font-family', 'Arial, sans-serif');
-      node.setAttribute('font-size', '12');
+      node.setAttribute('fill', 'var(--color-text-secondary)');
+      node.setAttribute('font-family', 'var(--font-family-body)');
+      node.setAttribute('font-size', 'var(--font-size-12)');
       axes.append(node);
     };
     if (!compact) {
@@ -130,14 +133,15 @@ export function lineChart(points, {
         const y = bottom - ((value - floor) / (ceiling - floor || 1)) * (bottom - top);
         const grid = document.createElementNS(ns, 'path');
         grid.setAttribute('d', `M${left},${y} H${right}`);
-        grid.setAttribute('stroke', '#e6e6e6');
+        grid.classList.add('market-chart-grid');
+        grid.setAttribute('stroke', 'var(--color-border-default)');
         axes.append(grid);
-        text(new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(value), right + 6, y + 4);
+        text(new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(value), right + 6 * unit, y + 4 * unit);
       }
       for (let hour = 10; hour <= 16; hour += 1) {
         const time = midnight + hour * 3600000;
         const x = left + ((time - start) / (end - start)) * (right - left);
-        text(`${hour > 12 ? hour - 12 : hour} ${hour < 12 ? 'AM' : 'PM'}`, x, height - 5, 'middle');
+        text(`${hour > 12 ? hour - 12 : hour} ${hour < 12 ? 'AM' : 'PM'}`, x, height - 5 * unit, 'middle');
       }
     }
     path.setAttribute('d', coordinates.map(([x, y], index) => `${index ? 'L' : 'M'}${x.toFixed(2)},${y.toFixed(2)}`).join(' '));
