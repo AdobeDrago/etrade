@@ -6,12 +6,14 @@ body > header {
   --header-background: var(--color-surface-inverse);
   --header-surface: var(--color-surface-inverse-raised);
   --header-panel-background: var(--color-surface-overlay-inverse);
+  --header-panel-border: var(--color-border-inverse);
   --header-search-background: var(--color-surface-inverse);
   --header-muted-color: var(--color-text-inverse-secondary);
   --header-text-color: var(--color-text-inverse);
   --header-link-color: var(--color-link-inverse);
-  --header-link-hover-color: var(--color-link-inverse-hover);
+  --header-link-hover-color: var(--palette-purple-250);
   --header-focus-color: var(--color-link-inverse-hover);
+  --header-utility-focus-color: var(--palette-purple-250);
 
   position: relative;
   z-index: var(--layer-header);
@@ -32,12 +34,14 @@ body > header {
   --header-background: var(--color-surface-page);
   --header-surface: var(--color-surface-default);
   --header-panel-background: var(--color-surface-overlay);
+  --header-panel-border: var(--color-border-default);
   --header-search-background: var(--color-surface-subtle);
   --header-muted-color: var(--color-text-secondary);
   --header-text-color: var(--color-text-primary);
   --header-link-color: var(--color-link);
-  --header-link-hover-color: var(--color-link-hover);
+  --header-link-hover-color: var(--color-link);
   --header-focus-color: var(--color-link);
+  --header-utility-focus-color: var(--palette-purple-400);
 
   color-scheme: light;
 }
@@ -281,22 +285,63 @@ body > header {
     transform: translateY(1.58px);
   }
 
-  .header .nav-trigger .nav-chevron {
-    margin-left: auto;
+  .header .nav-submenu-open .nav-mobile-utility:has(.nav-utility-panel[aria-hidden='false']) {
+    margin-top: 0;
   }
+
+  .header .nav-sections .nav-back {
+    padding-bottom: 0.6875rem;
+  }
+
+  .header .nav-column + .nav-column {
+    margin-top: var(--space-16);
+  }
+
+  .header .nav-utility-panel .nav-column {
+    margin-top: 1.3rem;
+  }
+
+  .header .nav-utility-panel .nav-column-title {
+    margin: 0 0.3125rem;
+    padding: 0;
+    line-height: calc(24 / 20);
+    letter-spacing: calc(-0.21rem / 16);
+  }
+
+  .header .nav-utility-panel .nav-column-links {
+    margin: 1.3rem 0 0 var(--space-8);
+  }
+
+  .header .nav-utility-panel .nav-column-links li {
+    padding: 0;
+  }
+
+  .header .nav-utility-panel .nav-column-links a {
+    padding: 0.875rem 0;
+    letter-spacing: var(--tracking-normal);
+  }
+
+  .header.light .nav-back {
+    color: var(--header-text-color);
+  }
+}
+
+/* The live light header reserves a transparent border around utility links. */
+.header.light :is(.nav-mobile-utility :where(li) > a, .nav-utility-panel .nav-column-links a) {
+  border: 1px solid transparent;
 }
 
 .header .nav-trigger,
 .header .nav-link {
   display: flex;
   align-items: center;
-  gap: var(--space-16);
+  gap: var(--space-12);
   width: 100%;
   padding: var(--space-8);
   font-size: var(--font-size-22);
   font-weight: var(--font-weight-semibold);
   line-height: calc(45 / 22);
-  letter-spacing: var(--tracking-tight);
+  letter-spacing: var(--tracking-normal);
   text-align: left;
   white-space: normal;
 }
@@ -319,7 +364,7 @@ body > header {
   font-size: var(--font-size-15);
   font-weight: var(--font-weight-regular);
   line-height: 3;
-  letter-spacing: var(--tracking-tight);
+  letter-spacing: var(--tracking-normal);
 }
 
 .header .nav-mobile-utility :where(li) > a {
@@ -366,7 +411,6 @@ body > header {
 .header .nav-back {
   display: flex;
   align-items: center;
-  gap: var(--space-8);
   padding: var(--space-8) 0;
   color: var(--header-link-hover-color);
   font-size: var(--font-size-16);
@@ -381,13 +425,14 @@ body > header {
 }
 
 .header .nav-column {
-  margin-top: var(--space-24);
+  margin-top: 0;
 }
 
 .header .nav-column-title {
+  padding: var(--space-8);
   font-size: var(--font-size-20);
   font-weight: var(--font-weight-semibold);
-  line-height: calc(24 / 20);
+  line-height: calc(45 / 20);
   letter-spacing: var(--tracking-tight);
 }
 
@@ -400,7 +445,7 @@ body > header {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  margin: var(--space-16) 0 0 var(--space-24);
+  margin: 0 0 0 var(--space-8);
 }
 
 .header .nav-column-links li {
@@ -419,6 +464,7 @@ body > header {
 .header .nav-column-links em,
 .header .nav-link-description {
   display: none;
+  color: var(--header-muted-color);
   font-size: var(--font-size-12);
   font-style: normal;
   font-weight: var(--font-weight-regular);
@@ -568,9 +614,9 @@ body > header {
     gap: var(--space-32);
   }
 
+  /* Like the live bar, a full-width basis lets the logo shrink beside the menu. */
   .header .nav-content {
-    flex: 1;
-    width: auto;
+    flex: 0 1 100%;
     gap: var(--space-8);
   }
 
@@ -683,6 +729,11 @@ body > header {
     margin: 0;
   }
 
+  .header .nav-column-title {
+    padding: 0.5625rem 0;
+    line-height: calc(24 / 20);
+  }
+
   .header .nav-column-title a::after {
     content: none;
   }
@@ -690,14 +741,13 @@ body > header {
   .header .nav-column-description {
     display: block;
     margin-top: var(--space-4);
-    color: var(--header-muted-color);
     font-size: var(--font-size-12);
     font-weight: var(--font-weight-regular);
     line-height: calc(16 / 12);
   }
 
   .header .nav-column-links {
-    margin: var(--space-24) 0 0;
+    margin: var(--space-16) 0 0;
   }
 
   .header .nav-column-links em,
@@ -716,7 +766,6 @@ body > header {
     display: flex;
     position: relative;
     flex-direction: column;
-    justify-content: flex-end;
     min-height: 23.6875rem;
     overflow: hidden;
     border-radius: var(--radius-card);
@@ -733,8 +782,13 @@ body > header {
   }
 
   .header .nav-promo-content {
+    display: flex;
     position: relative;
-    margin: 7rem var(--space-12) var(--space-12);
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-16);
+    margin: 7.0625rem var(--space-12) var(--space-12);
     border-radius: var(--radius-medium);
     padding: var(--space-16);
     background: var(--color-surface-default);
@@ -742,6 +796,7 @@ body > header {
   }
 
   .header .nav-promo-content h3 {
+    margin-bottom: 0.625rem;
     font-size: var(--font-size-20);
     font-weight: var(--font-weight-semibold);
     line-height: calc(24 / 20);
@@ -749,22 +804,19 @@ body > header {
   }
 
   .header .nav-promo-content p {
-    margin-top: var(--space-24);
-    color: var(--color-text-secondary);
     font-size: var(--font-size-14);
     line-height: calc(18 / 14);
   }
 
   .header .nav-promo-cta {
     display: inline-flex;
-    margin-top: var(--space-24);
     border: var(--border-width-thin) solid var(--color-link);
     border-radius: var(--radius-control);
     padding: var(--space-8) 0.9375rem;
     color: var(--color-link);
-    font-size: var(--font-size-12);
+    font-size: var(--font-size-15);
     font-weight: var(--font-weight-medium);
-    line-height: calc(15 / 12);
+    line-height: 1;
     letter-spacing: var(--tracking-normal);
   }
 
@@ -818,22 +870,28 @@ body > header {
   .header .nav-utility-panel {
     z-index: 1;
     top: 1.75rem;
-    right: -0.375rem;
-    left: auto;
+    right: auto;
+    left: -3rem;
     width: max-content;
-    min-width: 14.375rem;
     max-width: none;
+    border: 1px solid var(--header-panel-border);
     border-radius: var(--radius-medium);
-    padding: var(--space-24);
+    padding: var(--space-12);
+  }
+
+  .header .nav-utility-panel .nav-column {
+    max-width: none;
   }
 
   .header .nav-utility-panel .nav-column-title {
+    padding: 0.5625rem 0.375rem;
     font-size: var(--font-size-14);
     line-height: calc(18 / 14);
   }
 
   .header .nav-utility-panel .nav-column-links {
-    margin-top: var(--space-8);
+    gap: 0;
+    margin-top: 0;
   }
 
   .header .nav-utility-panel .nav-column-links li {
@@ -841,8 +899,15 @@ body > header {
   }
 
   .header .nav-utility-panel .nav-column-links a {
-    padding: var(--space-12) 0;
+    padding: var(--space-12);
+    font-size: var(--font-size-12);
     font-weight: var(--font-weight-medium);
+    line-height: 1;
+    letter-spacing: var(--tracking-normal);
+  }
+
+  .header.light .nav-utility-panel .nav-column-links a {
+    color: var(--header-link-color);
   }
 
   .header .nav-search-open .nav-drawer {
@@ -904,6 +969,35 @@ body > header {
 
 .header .nav-panel a:is(:hover, :focus-visible) {
   text-decoration: underline;
+}
+
+/* Main menu links keep a hover-colored outline after a click in both themes. */
+.header .nav-sections .nav-panel a:focus {
+  border-radius: 1px;
+  color: var(--header-link-hover-color);
+  outline: 1px solid var(--header-link-hover-color);
+  outline-offset: 0;
+  text-decoration: none;
+}
+
+.header .nav-sections .nav-panel a:active {
+  outline-color: transparent;
+}
+
+/* Clicked utility links keep focus; the dark header outlines them like the live site. */
+.header .nav-utility-panel .nav-column-links a:focus {
+  color: var(--header-utility-focus-color);
+  text-decoration: underline;
+}
+
+.header:not(.light) .nav-utility-panel .nav-column-links a:focus {
+  border-radius: 1px;
+  outline: 1px solid var(--header-utility-focus-color);
+  outline-offset: 0;
+}
+
+.header:not(.light) .nav-utility-panel .nav-column-links a:active {
+  outline-color: transparent;
 }
 
 /* Keep the logo and every mobile control available with enlarged text. */
