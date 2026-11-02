@@ -124,6 +124,36 @@
   --color-chart-index-3: var(--palette-olive-700);
   --color-chart-index-4: var(--palette-amber-700);
 
+  /* Existing FAQ and shared library/preview surfaces; preserve their reference values. */
+  --color-faq-divider: #ebebeb;
+  --color-faq-question: #333;
+  --color-faq-control: #63c;
+  --color-library-text: #292330;
+  --color-library-border: #e8e3ef;
+  --color-library-surface: #faf9fc;
+  --color-library-control: #64596f;
+  --color-library-hover: #f2eef9;
+  --color-library-focus: #7344d8;
+  --color-library-muted: #6d6378;
+  --color-library-overlay: #fffffff5;
+  --color-library-tray: #f4f1f8;
+  --color-library-selected-border: #e3d8f6;
+  --color-library-selected-text: #48238d;
+  --color-library-charcoal: #29252f;
+  --color-library-switch: #622bd9;
+  --color-library-description: #50465c;
+  --color-library-mixed-purple: #7846d8;
+  --color-library-purple-start: #9565f4;
+  --color-library-purple-end: #4a20b8;
+  --color-library-charcoal-start: #62606a;
+  --color-library-charcoal-end: #1c1a1e;
+  --color-library-shadow-strong: #2410561a;
+  --color-library-shadow-soft: #2410560d;
+  --color-library-icon-shadow: #0000000d;
+  --color-library-selected-shadow: #24105612;
+  --color-shadow-subtle: rgb(0 0 0 / 6%);
+  --color-shadow-raised: rgb(0 0 0 / 12%);
+
   /* Typography. Size suffixes give pixel equivalents at a 16px browser default.
      Keep the root font size unset so rem values respect browser preferences. */
   --font-family-body: graphiketrade, 'Helvetica Neue', helvetica, arial, sans-serif;
