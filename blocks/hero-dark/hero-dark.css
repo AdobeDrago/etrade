@@ -241,17 +241,35 @@ main .hero-dark .hero-dark-media p,
     column-gap: var(--space-20);
   }
 
+  /* Live columns: heading offset by one, copy from column eight, five columns each. */
   main .hero-dark :is(h1, h2, h3).hero-dark-heading {
-    grid-area: 1 / 1 / auto / span 6;
-    margin-bottom: var(--space-30);
+    grid-area: 1 / 2 / auto / span 5;
+    margin-bottom: var(--space-40);
   }
 
   .hero-dark .hero-dark-copy {
     grid-area: 1 / 8 / auto / span 5;
+    margin-bottom: var(--space-30);
   }
 
+  main .hero-dark .hero-dark-copy p {
+    margin-bottom: var(--space-30);
+  }
+
+  /* Actions share the copy width 7:5 with the live 20px gutter. */
   .hero-dark .hero-dark-actions {
-    gap: var(--space-16) 2.25rem;
+    display: grid;
+    grid-template-columns: calc((100% + var(--space-20)) * 7 / 12 - var(--space-20)) minmax(0, 1fr);
+    gap: var(--space-16) var(--space-20);
+  }
+
+  .hero-dark .hero-dark-action:only-child {
+    grid-column: 1 / -1;
+  }
+
+  main .hero-dark a.hero-dark-secondary:any-link {
+    padding: 0.5625rem 0;
+    line-height: 1;
   }
 
   .hero-dark .hero-dark-media {
@@ -318,25 +336,6 @@ main .hero-dark .hero-dark-copy sup a:any-link {
   }
 }
 
-@media (width < 768px) {
-  .hero-dark.has-video .hero-dark-actions {
-    flex-wrap: nowrap;
-    gap: var(--space-20);
-  }
-
-  .hero-dark.has-video .hero-dark-action {
-    flex: 1;
-    margin-bottom: 0;
-  }
-
-  .hero-dark.has-video .hero-dark-action:first-child {
-    flex: 0 0 calc(58.3333% - 0.5208rem);
-  }
-
-  main .hero-dark.has-video a.hero-dark-primary:any-link {
-    width: 100%;
-  }
-}
 
 @media (width >= 992px) {
   .hero-dark.has-video .hero-dark-actions {
@@ -453,6 +452,11 @@ body.homepage main > .section.hero-dark-container:not([data-section-layout="auth
   padding-top: var(--space-20);
 }
 
+/* An offer authored after the hero in the same section starts 40px below the hero image. */
+main .section.hero-dark-container:not([data-section-layout="authored"]) > .hero-dark-wrapper + .widget-calculator-wrapper {
+  margin-top: var(--space-40);
+}
+
 @media (width >= 992px) {
   .hero-dark.split .hero-dark-offer {
     grid-template-columns: minmax(0, 5fr) minmax(0, 5fr) auto;
@@ -509,5 +513,32 @@ main .section .hero-dark .hero-dark-media {
 @media (width >= 768px) {
   main .section > .hero-dark-wrapper {
     padding: 0 var(--space-10);
+  }
+}
+
+/* Live phones keep both hero actions on one 7:5 row; the primary wraps inside its column. */
+@media (width < 768px) {
+  main .section .hero-dark:not(.split) .hero-dark-copy p {
+    margin-bottom: 1.5625rem;
+  }
+
+  main .section .hero-dark:not(.split) .hero-dark-actions {
+    display: grid;
+    grid-template-columns: calc((100% + var(--space-20)) * 7 / 12 - var(--space-20)) minmax(0, 1fr);
+    align-items: center;
+    gap: 0 var(--space-20);
+  }
+
+  main .section .hero-dark:not(.split) .hero-dark-action {
+    margin-bottom: 0;
+  }
+
+  main .section .hero-dark:not(.split) .hero-dark-action:only-child {
+    grid-column: 1 / -1;
+  }
+
+  main .section .hero-dark:not(.split) a.hero-dark-primary:any-link {
+    width: 100%;
+    padding-inline: var(--space-30);
   }
 }
