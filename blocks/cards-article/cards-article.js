@@ -1,6 +1,9 @@
+import loadStructuredCards from '../../scripts/structured-cards.js';
 import buildCards from '../../scripts/media-cards.js';
 
-export default function decorate(block) {
+export default async function decorate(block) {
+  const structured = loadStructuredCards(block);
+  if (structured) await structured;
   const cards = buildCards(block);
   if (cards.children.length === 4) block.classList.add('four-up');
   if (block.classList.contains('promo')) {

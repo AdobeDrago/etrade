@@ -1,5 +1,7 @@
 # Cards Platform
 
+Structured card references are optional: keep ordinary authored rows, or mix in one `/cards/...` link per row. See [structured card authoring](../../docs/structured-cards.md) for schemas, field behavior and delivery.
+
 One row per platform: `[image | heading, description, standalone Learn more link]`.
 Images may be pictures or raw images; their sources and alternative text are preserved.
 Three cards use up to three columns from 900px; two cards stay at two. Cards stack on mobile, with up to two columns from 600px.

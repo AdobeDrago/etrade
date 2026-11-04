@@ -8,6 +8,7 @@ export function standaloneAction(paragraph) {
   const links = [...paragraph.querySelectorAll('a[href]')];
   const [link] = links;
   if (!link || paragraph.querySelector('img, picture') || !label(link.textContent)) return null;
+  if (link.closest('sup')) return null;
   if (/^(?:https?:\/\/|www\.|[\w-]+\.(?:com|org|net)\/)/i.test(link.textContent.trim())) return null;
   const icons = links.slice(1).every((other) => other.getAttribute('href') === link.getAttribute('href')
     && /^\s*:?(?:arrow_forward|→)[:\s]*$/.test(other.textContent));
