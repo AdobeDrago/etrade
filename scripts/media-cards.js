@@ -1,6 +1,6 @@
 import { groupActions } from './actions.js';
 
-const glyphs = new Set([
+export const cardGlyphs = new Set([
   'book', 'computer', 'goal', 'savings', 'tool-box-welcome-kit', 'umbrella',
   'home-lending', 'group-family', 'graduation-gift', 'retirement', 'mountain',
   'ira-selector', 'money-automatic-investing', 'calculator', 'add-funds', 'idea',
@@ -35,7 +35,7 @@ export default function buildCards(block, { icon = false, numbered = false, acti
     const token = row.children.length > 1 ? row.firstElementChild.textContent.trim() : '';
     const offer = icon && token.toLowerCase() === 'offer';
     if (offer) row.firstElementChild.replaceChildren();
-    if (icon && glyphs.has(token)) {
+    if (icon && cardGlyphs.has(token)) {
       row.firstElementChild.replaceChildren();
       const glyph = document.createElement('span');
       glyph.className = `${name}-glyph ${name}-glyph-${token}`;

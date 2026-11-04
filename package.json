@@ -13,7 +13,7 @@
     "test": "node --experimental-vm-modules --test test/*.test.js",
     "test:accordion": "node --experimental-vm-modules --test test/accordion-faq.test.js",
     "test:blocks": "node --experimental-vm-modules --test test/remaining-blocks.test.js",
-    "test:cards": "node --experimental-vm-modules --test test/card-blocks.test.js test/remaining-blocks.test.js test/bank-rates.test.js test/card-rates.test.js",
+    "test:cards": "node --experimental-vm-modules --test test/card-blocks.test.js test/remaining-blocks.test.js test/bank-rates.test.js test/card-rates.test.js test/structured-cards.test.js",
     "test:demo-helper": "node --experimental-vm-modules --test test/demo-helper.test.js",
     "test:demo-session": "node --experimental-vm-modules --test test/demo-session.test.js",
     "test:disclosure-manager": "node --experimental-vm-modules --test test/disclosure-manager.test.js",
