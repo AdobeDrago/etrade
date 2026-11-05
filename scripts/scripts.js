@@ -194,7 +194,6 @@ function decorateButtons(main) {
  * Decorates the main element.
  * @param {Element} main The main element
  */
-// eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
   decorateTrackingLinks(main, window.location.href);
   decorateIcons(main);
@@ -204,6 +203,14 @@ export function decorateMain(main) {
   decorateSectionBoundaries(main);
   decorateBlocks(main);
   decorateButtons(main);
+}
+
+/** DA calls this for settled inline edits and scoped view updates, including detached DOM. */
+export async function reloadEditable(main) {
+  decorateMain(main);
+  await loadSections(main);
+  // Newly loaded disclosure blocks must exist before table and section citations resolve.
+  decorateDisclosureReferences(main);
 }
 
 /**
