@@ -4,7 +4,7 @@ import {
 } from '../../../scripts/tracking-attributes.js';
 import { authorRouteHref, cleanRouteHref, routeSettings } from '../../../scripts/route-links.js';
 import {
-  authorActionHref, cleanActionHref, linkAction, PRIVACY_ACTION,
+  authorActionHref, cleanActionHref, linkAction, PRIVACY_ACTION, PRIVACY_ACTION_HREF,
 } from '../../../scripts/link-actions.js';
 
 function fail(field, message) {
@@ -30,7 +30,7 @@ export function readSelectedLink(html) {
     tracking.category = link.dataset.trackingCategory ?? DEFAULT_CATEGORY;
   }
   return {
-    href: cleanActionHref(cleanRouteHref(cleanTrackingHref(href))),
+    href: action ? '' : cleanActionHref(cleanRouteHref(cleanTrackingHref(href))),
     label: link.textContent.trim() || link.querySelector('img')?.alt || 'Image link',
     target: link.getAttribute('target') || '_self',
     action,
@@ -50,10 +50,10 @@ export function linkSummary(options) {
   if (options.action === PRIVACY_ACTION) opening = 'Opens OneTrust cookie preferences on this page';
   return {
     label: options.label || 'Load a selected link to see its wording',
-    destination: options.href.trim() || 'Add a destination below',
+    destination: options.action === PRIVACY_ACTION ? 'No destination — stays on this page' : options.href.trim() || 'Add a destination below',
     opening,
     action: options.action === PRIVACY_ACTION ? 'Open cookie preferences (OneTrust)' : 'Normal link',
-    condition: options.route?.enabled
+    condition: options.action !== PRIVACY_ACTION && options.route?.enabled
       ? `Alternate wording and destination under ${options.route.paths || 'the paths below'}; default everywhere else`
       : 'Same wording and destination on every page',
     tracking: options.enabled ? `Reports clicks using “${options.key.trim() || 'add a tracking key'}”` : 'Link click tracking is off',
@@ -64,7 +64,11 @@ export function linkSummary(options) {
 }
 
 export function composeLinkURL(options) {
-  const href = options.href.trim();
+  if (options.action && options.action !== PRIVACY_ACTION) {
+    fail('link-action', 'Choose a supported link action.');
+  }
+  const isAction = options.action === PRIVACY_ACTION;
+  const href = isAction ? PRIVACY_ACTION_HREF : cleanActionHref(options.href.trim());
   const hasControls = [...href]
     .some((char) => char.charCodeAt(0) < 32 || char.charCodeAt(0) === 127);
   if (!href || hasControls) fail('url', 'Enter a valid destination URL.');
@@ -74,16 +78,6 @@ export function composeLinkURL(options) {
   }
   if (!['http:', 'https:', 'mailto:', 'tel:'].includes(url.protocol)) {
     fail('url', 'Use a web address, relative path, email address or telephone link.');
-  }
-  if (options.action && (options.action !== PRIVACY_ACTION || !['http:', 'https:'].includes(url.protocol))) {
-    fail('link-action', 'Choose a supported action with a web address as its fallback URL.');
-  }
-  if (options.action === PRIVACY_ACTION && options.route?.enabled) {
-    let alternate;
-    try { alternate = new URL(options.route.href.trim(), 'https://authoring.example/'); } catch { /* Route validation supplies the error below. */ }
-    if (alternate && !['http:', 'https:'].includes(alternate.protocol)) {
-      fail('route-url', 'Cookie preferences needs a web address as the fallback on matching pages.');
-    }
   }
   const key = options.key.trim();
   if (options.enabled && !validTrackingKey(key)) {
@@ -96,7 +90,7 @@ export function composeLinkURL(options) {
   try {
     return authorActionHref(authorRouteHref(authorTrackingHref(href, {
       enabled: options.enabled, key, category: required || DEFAULT_CATEGORY,
-    }), options.route), options.action);
+    }), isAction ? null : options.route), options.action);
   } catch (error) {
     const field = { label: 'route-label', href: 'route-url' }[error.field] || 'route-paths';
     throw Object.assign(error, { field });

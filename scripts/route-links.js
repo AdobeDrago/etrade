@@ -73,14 +73,12 @@ export function authorRouteHref(href, rule) {
 
 export function resolveRouteLink(href, pageUrl) {
   const fallback = cleanRouteHref(href);
+  const action = linkAction(fallback);
+  if (action) return { href: authorActionHref(fallback, action), matched: false };
   const settings = routeSettings(href);
   if (!settings.enabled) return { href: fallback, matched: false };
   try {
     const rule = validateRouteRule(settings);
-    const action = linkAction(fallback);
-    if (action && !['http:', 'https:'].includes(new URL(rule.href, 'https://authoring.example/').protocol)) {
-      return { href: fallback, matched: false };
-    }
     const path = new URL(pageUrl).pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
     const matched = rule.paths.some((prefix) => prefix === '/' || path === prefix || path.startsWith(`${prefix}/`));
     if (matched) {

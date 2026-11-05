@@ -64,26 +64,40 @@ test('reads image labels and explicit data attributes, and exposes invalid setti
   assert.equal(invalid.category, 'ads');
 });
 
-test('privacy action round trips independently of icons, tracking and fallback query spelling', () => {
+test('privacy actions need no destination and migrate legacy links to a reserved action token', () => {
   const selected = readSelectedLink('<a href="/privacy?sig=a%20b%2f&amp;%40action=privacy-preferences#cookies" target="_blank">Cookie settings</a>');
   assert.equal(selected.action, 'privacy-preferences');
-  assert.equal(selected.href, '/privacy?sig=a%20b%2f#cookies');
-  assert.equal(composeLinkURL({ ...selected, action: 'privacy-preferences' }), '/privacy?sig=a%20b%2f&@action=privacy-preferences#cookies');
-  assert.equal(composeLinkURL({ ...selected, href: '/privacy?@action=privacy-preferences#cookies', action: '' }), '/privacy#cookies');
-  assert.equal(linkSummary(selected).action, 'Open cookie preferences (OneTrust)');
+  assert.equal(selected.href, '');
+  assert.equal(composeLinkURL(selected), '@privacy-preferences');
+  assert.equal(composeLinkURL(settings({ href: '', action: 'privacy-preferences', enabled: false })), '@privacy-preferences');
+  assert.equal(composeLinkURL(settings({ href: 'https://www.morganstanley.com/privacy-pledge', action: 'privacy-preferences', enabled: false })), '@privacy-preferences');
+  assert.equal(linkSummary(selected).destination, 'No destination — stays on this page');
   assert.equal(linkSummary(selected).opening, 'Opens OneTrust cookie preferences on this page');
-  const decorated = readSelectedLink('<a href="/privacy" data-link-action="privacy-preferences">Cookies</a>');
+  const marker = readSelectedLink('<a href="@privacy-preferences">Cookies</a>');
+  assert.equal(marker.action, 'privacy-preferences');
+  assert.equal(marker.href, '');
+  const decorated = readSelectedLink('<a href="@privacy-preferences" data-link-action="privacy-preferences">Cookies</a>');
   assert.equal(decorated.action, 'privacy-preferences');
   assert.throws(() => composeLinkURL(settings({ action: 'unknown' })), (error) => error.field === 'link-action');
-  assert.throws(() => composeLinkURL(settings({ href: 'mailto:a@example.com', action: 'privacy-preferences' })), (error) => error.field === 'link-action');
-  ['mailto:help@example.com', 'tel:123'].forEach((href) => {
-    assert.throws(() => composeLinkURL(settings({
-      action: 'privacy-preferences',
-      route: {
-        enabled: true, paths: '/brokerage', label: 'Cookie settings', href,
-      },
-    })), (error) => error.field === 'route-url');
-  });
+  assert.throws(() => composeLinkURL({ ...marker, action: '' }), (error) => error.field === 'url');
+});
+
+test('action-only links retain optional tracking without a fallback or page condition', () => {
+  const href = composeLinkURL(settings({
+    href: '',
+    action: 'privacy-preferences',
+    key: 'cookie settings',
+    category: 'C0002',
+    route: {
+      enabled: true, paths: '/brokerage', label: 'Other link', href: '/privacy',
+    },
+  }));
+  assert.equal(href, '@privacy-preferences?@tracking=cookie%20settings&@tracking-category=C0002');
+  const selected = readSelectedLink(`<a href="${href.replaceAll('&', '&amp;')}">Cookies</a>`);
+  assert.equal(selected.href, '');
+  assert.equal(selected.key, 'cookie settings');
+  assert.equal(selected.category, 'C0002');
+  assert.equal(selected.action, 'privacy-preferences');
 });
 
 test('composed URLs preserve real query bytes, relative paths and fragments through runtime decoration', () => {
@@ -180,21 +194,28 @@ test('URL helper can work without DA, including pasted markers, toggling off and
   assert.equal(byId('tracking-fields').hidden, true);
 });
 
-test('the helper loads, copies and removes an explicit privacy action through its dropdown', async () => {
+test('the helper copies an action with no URL and restores normal-link fields when changed back', async () => {
   const copies = [];
   const { byId, edit, submit } = await ui(async (value) => { copies.push(value); });
-  assert.ok(byId('link-action'), 'Authors need an explicit action dropdown');
-  edit('url', '/privacy?campaign=footer&@action=privacy-preferences#cookies', 'change');
-  assert.equal(byId('link-action').value, 'privacy-preferences');
-  assert.equal(byId('url').value, '/privacy?campaign=footer#cookies');
-  assert.match(byId('summary-action').textContent, /Open cookie preferences/);
-  await submit();
-  assert.equal(copies[0], '/privacy?campaign=footer&@action=privacy-preferences#cookies');
-  edit('link-action', '', 'change');
-  await submit();
-  assert.equal(copies[1], '/privacy?campaign=footer#cookies');
+  edit('url', 'https://www.morganstanley.com/privacy-pledge');
   edit('link-action', 'privacy-preferences', 'change');
-  assert.equal(byId('output-url').value, '/privacy?campaign=footer&@action=privacy-preferences#cookies');
+  assert.equal(byId('destination-fields').hidden, true);
+  assert.equal(byId('url').disabled, true);
+  assert.equal(byId('route-options').hidden, true);
+  assert.match(byId('summary-destination').textContent, /No destination/);
+  await submit();
+  assert.equal(copies[0], '@privacy-preferences');
+  edit('link-action', '', 'change');
+  assert.equal(byId('destination-fields').hidden, false);
+  assert.equal(byId('url').disabled, false);
+  assert.equal(byId('route-options').hidden, false);
+  await submit();
+  assert.equal(copies[1], 'https://www.morganstanley.com/privacy-pledge');
+  edit('url', '@privacy-preferences', 'change');
+  assert.equal(byId('link-action').value, 'privacy-preferences');
+  assert.equal(byId('url').value, '');
+  await submit();
+  assert.equal(copies[2], '@privacy-preferences');
 });
 
 test('route options reload from authored URLs and preview wording and destination together', async () => {

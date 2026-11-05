@@ -67,7 +67,7 @@ test('the footer loads ETRADE OneTrust on demand and opens its center after init
   assert.equal(opened, 1);
   assert.equal(context.window.etradeOneTrust.hasConsent(), false);
   assert.equal(context.document.querySelector('dialog'), null);
-  assert.equal(context.link.getAttribute('href'), 'https://www.morganstanley.com/privacy-pledge');
+  assert.equal(context.link.getAttribute('href'), '#');
 });
 
 test('an installed OneTrust API opens once without injecting another script', async () => {
@@ -94,11 +94,11 @@ test('an icon alone never turns an ordinary link into a OneTrust action', async 
   assert.equal(context.document.querySelector('script'), null);
 });
 
-test('encoded action markers retain the fallback query bytes and fragment without relying on wording', async () => {
+test('legacy action markers become destination-free controls without relying on wording', async () => {
   const context = await browser('/privacy?sig=a%20b%2f&%40action=privacy-preferences#cookies');
   context.link.textContent = 'Manage cookies';
   assert.equal(context.click().defaultPrevented, true);
-  assert.equal(context.link.getAttribute('href'), '/privacy?sig=a%20b%2f#cookies');
+  assert.equal(context.link.getAttribute('href'), '#');
   assert.equal(context.link.dataset.linkAction, 'privacy-preferences');
   assert.equal(context.link.getAttribute('aria-haspopup'), 'dialog');
 });
@@ -115,4 +115,60 @@ test('unsupported and duplicate query actions and markers in fragments do not op
     assert.equal(context.link.getAttribute('href'), clean);
     assert.equal(context.document.querySelector('script'), null);
   }));
+});
+
+test('a same-page action is keyboard accessible and never retains a new-tab destination', async () => {
+  const context = await browser('@privacy-preferences');
+  assert.equal(context.link.dataset.linkAction, 'privacy-preferences');
+  assert.equal(context.link.getAttribute('role'), 'button');
+  assert.equal(context.link.hasAttribute('target'), false);
+  assert.equal(context.link.getAttribute('aria-haspopup'), 'dialog');
+  let opened = 0;
+  context.window.OneTrust = { ToggleInfoDisplay: () => { opened += 1; } };
+  const event = new context.window.CustomEvent('keydown', { bubbles: true, cancelable: true });
+  Object.defineProperty(event, 'key', { value: ' ' });
+  context.link.dispatchEvent(event);
+  assert.equal(event.defaultPrevented, true);
+  assert.equal(opened, 1);
+  const clone = context.link.cloneNode(true);
+  context.root.append(clone);
+  context.bind();
+  context.bind();
+  context.click(clone);
+  assert.equal(opened, 2);
+  assert.equal(clone.getAttribute('href'), '#');
+});
+
+test('SDK load failure leaves an action on the same page with no privacy-page fallback', async () => {
+  const context = await browser('@privacy-preferences');
+  assert.equal(context.click().defaultPrevented, true);
+  const script = context.document.querySelector('script');
+  script.dispatchEvent(new context.window.CustomEvent('error'));
+  assert.equal(context.window.etradeOneTrust.snapshot().sdkStatus, 'error');
+  assert.equal(context.click().defaultPrevented, true);
+  assert.equal(context.link.getAttribute('href'), '#');
+});
+
+test('a section fragment named privacy-preferences remains an ordinary section link', async () => {
+  const context = await browser('#privacy-preferences');
+  assert.equal(context.click().defaultPrevented, false);
+  assert.equal(context.link.getAttribute('href'), '#privacy-preferences');
+  assert.equal(context.link.dataset.linkAction, undefined);
+  assert.equal(context.document.querySelector('script'), null);
+});
+
+test('redecoration does not write href again or feed the tracking mutation observer', async () => {
+  const context = await browser();
+  let writes = 0;
+  const observer = new context.document.defaultView.MutationObserver((records) => {
+    writes += records.length;
+    if (writes > 20) observer.disconnect();
+    else context.bind();
+  });
+  observer.observe(context.link, { attributes: true, attributeFilter: ['href'] });
+  context.bind();
+  await new Promise((resolve) => { setImmediate(resolve); });
+  observer.disconnect();
+  assert.equal(writes, 0, 'Decorating an action again must not trigger another href mutation');
+  assert.equal(context.link.getAttribute('href'), '#');
 });

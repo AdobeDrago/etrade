@@ -1,7 +1,7 @@
 import { composeLinkURL, linkSummary, readSelectedLink } from './model.js';
 import { cleanTrackingHref, trackingCategories, trackingParameters } from '../../../scripts/tracking-attributes.js';
 import { cleanRouteHref, resolveRouteLink, routeSettings } from '../../../scripts/route-links.js';
-import { cleanActionHref, linkAction } from '../../../scripts/link-actions.js';
+import { cleanActionHref, linkAction, PRIVACY_ACTION } from '../../../scripts/link-actions.js';
 
 export default function mountLinkOptions(doc, {
   copy = (value) => navigator.clipboard.writeText(value),
@@ -18,6 +18,11 @@ export default function mountLinkOptions(doc, {
     byId('status').classList.toggle('error', error);
   }
   function toggleTracking() {
+    const isAction = byId('link-action').value === PRIVACY_ACTION;
+    byId('destination-fields').hidden = isAction;
+    byId('url').disabled = isAction;
+    byId('route-options').hidden = isAction;
+    byId('route-enabled').disabled = isAction;
     byId('tracking-fields').hidden = !byId('track-clicks').checked;
     byId('custom-category-field').hidden = byId('category').value !== 'custom';
     byId('route-fields').hidden = !byId('route-enabled').checked;
@@ -38,7 +43,7 @@ export default function mountLinkOptions(doc, {
       category: byId('category').value === 'custom'
         ? byId('custom-category').value : byId('category').value,
       route: {
-        enabled: byId('route-enabled').checked,
+        enabled: byId('link-action').value !== PRIVACY_ACTION && byId('route-enabled').checked,
         paths: byId('route-paths').value,
         label: byId('route-label').value,
         href: byId('route-url').value,
@@ -115,7 +120,7 @@ export default function mountLinkOptions(doc, {
   byId('category').addEventListener('change', render);
   byId('track-clicks').addEventListener('change', render);
   byId('route-enabled').addEventListener('change', render);
-  byId('link-action').addEventListener('change', render);
+  byId('link-action').addEventListener('change', () => { dirty = true; revision += 1; render(); });
   byId('url').addEventListener('change', () => {
     const settings = trackingParameters(byId('url').value);
     const route = routeSettings(byId('url').value);
@@ -126,7 +131,7 @@ export default function mountLinkOptions(doc, {
         ...settings,
         route,
         action,
-        href: cleanActionHref(cleanRouteHref(cleanTrackingHref(byId('url').value))),
+        href: action ? '' : cleanActionHref(cleanRouteHref(cleanTrackingHref(byId('url').value))),
       });
     }
   });

@@ -14,20 +14,23 @@ export default function bindPrivacyChoices(root) {
     bound.add(link);
     link.addEventListener('click', (event) => {
       if (link.dataset.linkAction !== PRIVACY_ACTION) return;
+      event.preventDefault();
       if (window.etradeOneTrust) {
-        event.preventDefault();
         window.etradeOneTrust.openPreferences();
         return;
       }
       if (typeof window.OneTrust?.ToggleInfoDisplay === 'function') {
-        event.preventDefault();
         window.OneTrust.ToggleInfoDisplay();
         return;
       }
       // Existing consent integrations can claim the request before OneTrust is loaded.
       const request = new CustomEvent('privacy:open', { bubbles: true, cancelable: true });
-      event.preventDefault();
       if (link.dispatchEvent(request)) startOneTrust().openPreferences();
+    });
+    link.addEventListener('keydown', (event) => {
+      if (link.dataset.linkAction !== PRIVACY_ACTION || event.key !== ' ') return;
+      event.preventDefault();
+      if (!event.repeat) link.click();
     });
   });
 }

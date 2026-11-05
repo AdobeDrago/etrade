@@ -16,7 +16,7 @@
     </header>
     <main>
       <p class="hint">Configure the link, copy its URL, then paste into DA’s Edit link dialog. Select a link before opening this tool to load its current settings.</p>
-      <p id="status" class="status" role="status" aria-live="polite">Paste a destination URL below, or open this tool inside DA to load a selected link.</p>
+      <p id="status" class="status" role="status" aria-live="polite">Choose an action, enter a destination URL, or load a selected link from DA.</p>
       <p id="demo-notice" class="hint" hidden>Home example · This helper copies a URL. It does not change or publish DA content.</p>
       <p id="selection-label" class="hint"></p>
       <section class="link-summary" aria-labelledby="link-summary-heading">
@@ -35,15 +35,17 @@
       <form id="link-form" novalidate>
         <fieldset id="fields">
           <legend>Link details</legend>
-          <label for="url">URL</label>
-          <input id="url" name="url" type="text" placeholder="/home or https://…" autocomplete="off" spellcheck="false" aria-describedby="url-help">
-          <p id="url-help" class="hint">Enter the destination. For cookie preferences, use a privacy-page URL as the fallback for visitors without JavaScript.</p>
           <label for="link-action">Link action</label>
           <select id="link-action" aria-describedby="link-action-help">
             <option value="">Normal link</option>
             <option value="privacy-preferences">Open cookie preferences</option>
           </select>
-          <p id="link-action-help" class="hint">Cookie preferences opens the site’s OneTrust preference center. The wording and icon can be changed independently.</p>
+          <p id="link-action-help" class="hint">Cookie preferences opens OneTrust on the current page and needs no destination URL. The wording and icon can be changed independently.</p>
+          <div id="destination-fields">
+            <label for="url">URL</label>
+            <input id="url" name="url" type="text" placeholder="/home or https://…" autocomplete="off" spellcheck="false" aria-describedby="url-help">
+            <p id="url-help" class="hint">Enter the destination for a normal link.</p>
+          </div>
           <section class="tracking" aria-label="Tracking options">
             <label class="switch" for="track-clicks">
               <span><strong>Track clicks</strong><small>Add a reporting key to this link.</small></span>
@@ -70,7 +72,7 @@
               </details>
             </div>
           </section>
-          <section class="route-options" aria-label="Page path condition">
+          <section id="route-options" class="route-options" aria-label="Page path condition">
             <label class="switch" for="route-enabled">
               <span><strong>Change this link on matching pages</strong><small>One path rule with a default everywhere else.</small></span>
               <input id="route-enabled" type="checkbox" role="switch" aria-controls="route-fields">
