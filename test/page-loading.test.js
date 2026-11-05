@@ -72,9 +72,26 @@ async function harness(body, loadSection, theme = '', realCMP = false) {
   });
   await module.evaluate();
   return {
-    document, loadEager: module.namespace.loadEager, loadPage: module.namespace.loadPage, imports,
+    document,
+    loadEager: module.namespace.loadEager,
+    loadPage: module.namespace.loadPage,
+    decorateMain: module.namespace.decorateMain,
+    imports,
   };
 }
+
+test('structured card reference rows survive page auto-blocking intact', async () => {
+  const body = '<main><div><div class="cards-product"><div><div><p><a href="/cards/product/savings">Shared savings</a></p></div></div></div></div></main>';
+  const page = await harness(body, () => {});
+  const block = page.document.querySelector('.cards-product');
+  const link = block.querySelector('a');
+  const row = link.closest('p').parentElement.parentElement;
+  page.decorateMain(page.document.querySelector('main'));
+  assert.equal(block.querySelector('a'), link);
+  assert.equal(link.getAttribute('href'), '/cards/product/savings');
+  assert.equal(block.firstElementChild, row);
+  assert.equal(page.imports.length, 0);
+});
 
 test('the page stays hidden until its first section and image are ready', async () => {
   let release;

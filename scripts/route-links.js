@@ -1,4 +1,5 @@
 import { authorTrackingHref, trackingParameters } from './tracking-attributes.js';
+import { rememberLinkSource } from './link-source.js';
 
 const PARAMETERS = ['@link-paths', '@link-label', '@link-url'];
 const hasControls = (value) => [...value]
@@ -93,6 +94,7 @@ export default function decorateRouteLinks(root, pageUrl) {
   links.forEach((link) => {
     const authored = link.getAttribute('href');
     if (!routeSettings(authored).enabled) return;
+    rememberLinkSource(link);
     const textNodes = [];
     const visit = (node) => {
       if (node.nodeType === 3 && node.textContent.trim()) textNodes.push(node);

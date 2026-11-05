@@ -4,6 +4,7 @@ import {
 } from './tracking-attributes.js';
 import { readDemoSession, watchDemoNavigation, writeDemoSession } from './demo-session.js';
 import decorateRouteLinks from './route-links.js';
+import { rememberLinkSource } from './link-source.js';
 
 const CATEGORY = /^C\d{4,}$/;
 const STATES = new Set(['pending', 'granted', 'denied']);
@@ -44,6 +45,7 @@ export function decorateTrackingLinks(root, base = root.baseURI || root.ownerDoc
     const href = link.getAttribute('href');
     const { enabled, key, category } = trackingParameters(href);
     if (!enabled) return;
+    rememberLinkSource(link);
     let url;
     try { url = new URL(href, base); } catch { return; }
     if (!['http:', 'https:', 'mailto:', 'tel:'].includes(url.protocol)) return;

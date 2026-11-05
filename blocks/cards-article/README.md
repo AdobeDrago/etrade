@@ -1,5 +1,7 @@
 # Cards Article
 
+Structured card references are optional: keep ordinary authored rows, or mix in one `/cards/...` link per row. See [structured card authoring](../../docs/structured-cards.md) for schemas, field behavior and delivery.
+
 One row per article: `[image | optional eyebrow paragraph, heading, copy, standalone link]`.
 Default cards have inset images and 1.75rem desktop headings. Four cards use up to four
 columns from 768px when space permits. `Cards Article (Promo)` uses full-width images and smaller
