@@ -1,15 +1,43 @@
-name: Build
-on: [push]
+name: Code checks
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+
+permissions:
+  contents: read
+
+env:
+  HUSKY: 0
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
     - name: Use Node.js 24
       uses: actions/setup-node@v6
       with:
         node-version: 24
+        cache: npm
     - run: npm ci
-    - run: npm test
-    - run: npm run lint
+    - run: npm run check
+    - name: Validate pushed commit message
+      if: github.event_name == 'push'
+      run: npm run commitlint -- --last
+    - name: Validate pull request commit messages
+      if: github.event_name == 'pull_request'
+      env:
+        COMMIT_BASE: ${{ github.event.pull_request.base.sha }}
+        COMMIT_HEAD: ${{ github.event.pull_request.head.sha }}
+      run: npm run commitlint -- --from "$COMMIT_BASE" --to "$COMMIT_HEAD"
+    - name: Validate pull request title
+      if: github.event_name == 'pull_request'
+      env:
+        PR_TITLE: ${{ github.event.pull_request.title }}
+      run: printf '%s\n' "$PR_TITLE" | npm run commitlint
+    - name: Validate branch preview URL
+      if: github.event_name == 'pull_request'
+      run: npm run check:pr

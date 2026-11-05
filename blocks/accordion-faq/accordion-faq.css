@@ -295,9 +295,9 @@ main .section:not([data-section-layout="authored"]) > .accordion-faq-wrapper:has
   --accordion-faq-question-padding: 0.9375rem;
   --accordion-faq-answer-padding: 0.9375rem;
   --accordion-faq-paragraph-spacing: 0.5625rem;
-  --accordion-faq-divider-color: #ebebeb;
-  --accordion-faq-question-color: #333;
-  --accordion-faq-control-color: #63c;
+  --accordion-faq-divider-color: var(--color-faq-divider);
+  --accordion-faq-question-color: var(--color-faq-question);
+  --accordion-faq-control-color: var(--color-faq-control);
 
   position: static;
   width: 100%;

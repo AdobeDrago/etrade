@@ -27,6 +27,8 @@ npm i
 npm run lint
 ```
 
+Run `npm run check` for full lint and regression tests. `npm ci` installs shared pre-commit and commit-message hooks. See [the guardrail policy](docs/lint-guardrails.md) and [contribution workflow](CONTRIBUTING.md) for scalable CSS, block boundaries, Conventional Commits and PR preview requirements.
+
 ## Local development
 
 1. Create a new repository based on the `aem-boilerplate` template
