@@ -103,7 +103,7 @@ body.our-accounts .hero-light {
   padding: var(--space-30) 0 var(--space-60);
 }
 
-body.our-accounts .hero-light-content {
+body.our-accounts .hero-light .hero-light-content {
   max-width: 780px;
 }
 

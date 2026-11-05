@@ -1,13 +1,13 @@
 .library-brief {
-  margin: 24px 0;
-  color: #292330;
-  font: 14px/1.6 Arial, sans-serif;
+  margin: var(--space-24) 0;
+  color: var(--color-library-text);
+  font: var(--font-size-14)/1.6 Arial, sans-serif;
 }
 
 .library-brief .library-brief-disclosure {
-  border: 1px solid #e8e3ef;
+  border: 1px solid var(--color-library-border);
   border-radius: 16px;
-  background: #faf9fc;
+  background: var(--color-library-surface);
 }
 
 .library-brief summary {
@@ -15,9 +15,9 @@
   box-sizing: border-box;
   align-items: center;
   flex-wrap: wrap;
-  gap: 4px 16px;
+  gap: var(--space-4) var(--space-16);
   min-height: 52px;
-  padding: 12px 20px;
+  padding: var(--space-12) var(--space-20);
   border-radius: inherit;
   list-style: none;
   cursor: pointer;
@@ -32,8 +32,8 @@
   width: 8px;
   height: 8px;
   margin-left: auto;
-  border-right: 1.5px solid #64596f;
-  border-bottom: 1.5px solid #64596f;
+  border-right: 1.5px solid var(--color-library-control);
+  border-bottom: 1.5px solid var(--color-library-control);
   content: '';
   transform: rotate(45deg);
 }
@@ -43,11 +43,11 @@
 }
 
 .library-brief summary:hover {
-  background: #f2eef9;
+  background: var(--color-library-hover);
 }
 
 .library-brief summary:focus-visible {
-  outline: 3px solid #7344d8;
+  outline: 3px solid var(--color-library-focus);
   outline-offset: 3px;
 }
 
@@ -56,23 +56,23 @@
 }
 
 .library-brief .library-brief-description {
-  color: #6d6378;
-  font-size: 12px;
+  color: var(--color-library-muted);
+  font-size: var(--font-size-12);
 }
 
 .library-brief .library-brief-content {
-  padding: 0 20px 20px;
-  border-top: 1px solid #e8e3ef;
+  padding: 0 var(--space-20) var(--space-20);
+  border-top: 1px solid var(--color-library-border);
 }
 
 .library-brief .library-brief-section-label {
-  margin: 24px 0 8px;
-  font: 600 16px/1.4 Arial, sans-serif;
+  margin: var(--space-24) 0 var(--space-8);
+  font: 600 var(--font-size-16)/1.4 Arial, sans-serif;
 }
 
 .library-brief :is(p, ul, ol, li) {
-  margin-top: 8px;
-  margin-bottom: 8px;
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-8);
   color: inherit;
   font: inherit;
 }
@@ -94,7 +94,7 @@
   .library-brief summary {
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 2px 12px;
+    gap: var(--space-2) var(--space-12);
   }
 
   .library-brief .library-brief-description {
