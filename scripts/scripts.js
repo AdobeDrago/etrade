@@ -310,9 +310,9 @@ async function loadPage() {
     await performanceDemo?.ready;
   }
   await loadEager(document);
+  if (cookieBanner) startCookieBanner(document, window);
   await loadLazy(document);
   performanceDemo?.afterContent();
-  if (cookieBanner) startCookieBanner(document, window);
   loadDelayed(cookieBanner || performanceDemo?.config.profile === 'onetrust-real');
 }
 

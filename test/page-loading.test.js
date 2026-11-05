@@ -14,9 +14,10 @@ async function harness(body, loadSection, theme = '', realCMP = false, cookieBan
     document, window, URL, URLSearchParams, sessionStorage: { getItem: () => null },
   });
   const noop = () => {};
+  const events = [];
   const helpers = {
     loadHeader: noop,
-    loadFooter: noop,
+    loadFooter: () => events.push('footer'),
     decorateIcons: noop,
     decorateSections: noop,
     decorateBlocks: noop,
@@ -44,7 +45,7 @@ async function harness(body, loadSection, theme = '', realCMP = false, cookieBan
     },
     './demo-host.js': { default: () => realCMP },
     './tracking.js': { default: noop, decorateTrackingLinks: noop },
-    './cookie-banner.js': { default: noop, cookieBannerRequested: () => cookieBanner },
+    './cookie-banner.js': { default: () => events.push('cookie-banner'), cookieBannerRequested: () => cookieBanner },
   };
   const source = await readFile(new URL('../scripts/scripts.js', import.meta.url), 'utf8');
   const themeModule = new vm.SourceTextModule(await readFile(new URL('../scripts/page-theme.js', import.meta.url), 'utf8'), { context });
@@ -73,7 +74,11 @@ async function harness(body, loadSection, theme = '', realCMP = false, cookieBan
   });
   await module.evaluate();
   return {
-    document, loadEager: module.namespace.loadEager, loadPage: module.namespace.loadPage, imports,
+    document,
+    loadEager: module.namespace.loadEager,
+    loadPage: module.namespace.loadPage,
+    imports,
+    events,
   };
 }
 
@@ -133,4 +138,5 @@ test('the explicit cookie banner takes priority over simulated performance and c
   assert.equal(page.document.body.classList.contains('appear'), true);
   assert.equal(page.imports.includes('./demo-performance.js'), false);
   assert.equal(page.imports.includes('./consent-check.js'), false);
+  assert.deepEqual(page.events, ['cookie-banner', 'footer']);
 });
