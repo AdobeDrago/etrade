@@ -5,6 +5,7 @@ import { authoredLinkHref } from './link-source.js';
 
 const DELIVERY = 'https://da-sc.adobeaem.workers.dev';
 const SITE = '/adobedrago/etrade';
+const TIMEOUT = 10000;
 const requests = new WeakMap();
 const mediaBlocks = new Set(['cards', 'cards-article', 'cards-platform', 'cards-award', 'cards-icon', 'carousel-story']);
 const rateBlocks = new Set(['cards-account', 'cards-product', 'cards-pricing']);
@@ -59,7 +60,7 @@ function request(doc, url, json) {
   const cache = requests.get(doc);
   if (!cache.has(url)) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 10000);
+    const timer = setTimeout(() => controller.abort(), TIMEOUT);
     cache.set(url, (async () => {
       try {
         const response = await fetch(url, { signal: controller.signal, credentials: json ? 'omit' : 'same-origin' });
