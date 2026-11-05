@@ -1,4 +1,5 @@
 import { authorTrackingHref, trackingParameters } from './tracking-attributes.js';
+import { authorActionHref, linkAction } from './link-actions.js';
 
 const PARAMETERS = ['@link-paths', '@link-label', '@link-url'];
 const hasControls = (value) => [...value]
@@ -72,6 +73,8 @@ export function authorRouteHref(href, rule) {
 
 export function resolveRouteLink(href, pageUrl) {
   const fallback = cleanRouteHref(href);
+  const action = linkAction(fallback);
+  if (action) return { href: authorActionHref(fallback, action), matched: false };
   const settings = routeSettings(href);
   if (!settings.enabled) return { href: fallback, matched: false };
   try {
@@ -80,7 +83,11 @@ export function resolveRouteLink(href, pageUrl) {
     const matched = rule.paths.some((prefix) => prefix === '/' || path === prefix || path.startsWith(`${prefix}/`));
     if (matched) {
       const tracking = trackingParameters(fallback);
-      return { href: authorTrackingHref(rule.href, tracking), label: rule.label, matched: true };
+      return {
+        href: authorActionHref(authorTrackingHref(rule.href, tracking), action),
+        label: rule.label,
+        matched: true,
+      };
     }
   } catch { /* Incomplete or invalid rules keep the default destination and wording. */ }
   return { href: fallback, matched: false };

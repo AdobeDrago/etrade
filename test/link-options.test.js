@@ -26,6 +26,7 @@ test('reads a single selected link inside DA table wrappers without changing mar
     href: '../home?tracking=real#offer',
     label: 'Home',
     target: '_self',
+    action: '',
     enabled: true,
     key: 'hero-home',
     category: 'C0002,C0004',
@@ -52,6 +53,16 @@ test('link inspector describes selected opening behavior and consent without cha
   assert.match(linkSummary(settings()).opening, /Keep the opening behavior/);
 });
 
+test('None is an explicit consent choice that round trips through authoring and decoration', () => {
+  const href = composeLinkURL(settings({ category: 'none' }));
+  assert.equal(href, '/home?@tracking=home-link&@tracking-category=none');
+  assert.equal(readSelectedLink(`<a href="${href}">Home</a>`).category, 'none');
+  assert.equal(linkSummary(settings({ category: 'none' })).consent, 'None');
+  const { document } = parseHTML(`<html><body><a href="${href}">Home</a></body></html>`);
+  decorateTrackingLinks(document, 'https://example.com/home');
+  assert.equal(document.querySelector('a').dataset.trackingCategory, 'none');
+});
+
 test('reads image labels and explicit data attributes, and exposes invalid settings for correction', () => {
   const image = readSelectedLink('<a href="/home" data-tracking-key="logo" data-tracking-category="C0002"><img src="/logo.svg" alt="Home logo"></a>');
   assert.equal(image.label, 'Home logo');
@@ -61,6 +72,42 @@ test('reads image labels and explicit data attributes, and exposes invalid setti
   assert.equal(invalid.enabled, true);
   assert.equal(invalid.key, '');
   assert.equal(invalid.category, 'ads');
+});
+
+test('privacy actions need no destination and migrate legacy links to a reserved action token', () => {
+  const selected = readSelectedLink('<a href="/privacy?sig=a%20b%2f&amp;%40action=privacy-preferences#cookies" target="_blank">Cookie settings</a>');
+  assert.equal(selected.action, 'privacy-preferences');
+  assert.equal(selected.href, '');
+  assert.equal(composeLinkURL(selected), '@privacy-preferences');
+  assert.equal(composeLinkURL(settings({ href: '', action: 'privacy-preferences', enabled: false })), '@privacy-preferences');
+  assert.equal(composeLinkURL(settings({ href: 'https://www.morganstanley.com/privacy-pledge', action: 'privacy-preferences', enabled: false })), '@privacy-preferences');
+  assert.equal(linkSummary(selected).destination, 'No destination — stays on this page');
+  assert.equal(linkSummary(selected).opening, 'Opens OneTrust cookie preferences on this page');
+  const marker = readSelectedLink('<a href="@privacy-preferences">Cookies</a>');
+  assert.equal(marker.action, 'privacy-preferences');
+  assert.equal(marker.href, '');
+  const decorated = readSelectedLink('<a href="@privacy-preferences" data-link-action="privacy-preferences">Cookies</a>');
+  assert.equal(decorated.action, 'privacy-preferences');
+  assert.throws(() => composeLinkURL(settings({ action: 'unknown' })), (error) => error.field === 'link-action');
+  assert.throws(() => composeLinkURL({ ...marker, action: '' }), (error) => error.field === 'url');
+});
+
+test('action-only links retain optional tracking without a fallback or page condition', () => {
+  const href = composeLinkURL(settings({
+    href: '',
+    action: 'privacy-preferences',
+    key: 'cookie settings',
+    category: 'C0002',
+    route: {
+      enabled: true, paths: '/brokerage', label: 'Other link', href: '/privacy',
+    },
+  }));
+  assert.equal(href, '@privacy-preferences?@tracking=cookie%20settings&@tracking-category=C0002');
+  const selected = readSelectedLink(`<a href="${href.replaceAll('&', '&amp;')}">Cookies</a>`);
+  assert.equal(selected.href, '');
+  assert.equal(selected.key, 'cookie settings');
+  assert.equal(selected.category, 'C0002');
+  assert.equal(selected.action, 'privacy-preferences');
 });
 
 test('composed URLs preserve real query bytes, relative paths and fragments through runtime decoration', () => {
@@ -113,7 +160,7 @@ async function ui(copy = async () => {}) {
   const { document, window } = parseHTML(html);
   const byId = (id) => document.getElementById(id);
   // linkedom exposes select.value as a getter; browsers also provide this setter.
-  Object.defineProperty(byId('category'), 'value', {
+  document.querySelectorAll('select').forEach((select) => Object.defineProperty(select, 'value', {
     get() { return this.querySelector('option[selected]')?.value || this.querySelector('option').value; },
     set(value) {
       this.querySelectorAll('option').forEach((option) => {
@@ -121,7 +168,7 @@ async function ui(copy = async () => {}) {
         else option.removeAttribute('selected');
       });
     },
-  });
+  }));
   const controller = mountLinkOptions(document, { copy });
   const edit = (id, value, type = 'input') => {
     const input = byId(id);
@@ -155,6 +202,30 @@ test('URL helper can work without DA, including pasted markers, toggling off and
   await submit();
   assert.equal(copies[1], '/home?tracking=campaign');
   assert.equal(byId('tracking-fields').hidden, true);
+});
+
+test('the helper copies an action with no URL and restores normal-link fields when changed back', async () => {
+  const copies = [];
+  const { byId, edit, submit } = await ui(async (value) => { copies.push(value); });
+  edit('url', 'https://www.morganstanley.com/privacy-pledge');
+  edit('link-action', 'privacy-preferences', 'change');
+  assert.equal(byId('destination-fields').hidden, true);
+  assert.equal(byId('url').disabled, true);
+  assert.equal(byId('route-options').hidden, true);
+  assert.match(byId('summary-destination').textContent, /No destination/);
+  await submit();
+  assert.equal(copies[0], '@privacy-preferences');
+  edit('link-action', '', 'change');
+  assert.equal(byId('destination-fields').hidden, false);
+  assert.equal(byId('url').disabled, false);
+  assert.equal(byId('route-options').hidden, false);
+  await submit();
+  assert.equal(copies[1], 'https://www.morganstanley.com/privacy-pledge');
+  edit('url', '@privacy-preferences', 'change');
+  assert.equal(byId('link-action').value, 'privacy-preferences');
+  assert.equal(byId('url').value, '');
+  await submit();
+  assert.equal(copies[2], '@privacy-preferences');
 });
 
 test('route options reload from authored URLs and preview wording and destination together', async () => {
@@ -243,6 +314,86 @@ test('DA integration reads a selection and closes only; it never writes editor o
   assert.equal(closed, false);
   document.getElementById('close').dispatchEvent(new window.Event('click'));
   assert.equal(closed, true);
+});
+
+test('Apply updates a loaded block link through DA with a live-document guard', async () => {
+  const context = await ui();
+  const {
+    controller, byId, document, window,
+  } = context;
+  const html = '<main><div><div class="footer" data-block-index="0"><div><div><p>Before <a href="/privacy">Privacy</a> after</p></div></div></div></div></main>';
+  const writes = [];
+  await controller.connect({
+    capabilities: { liveDocument: 1, sendHTMLReplace: 1 },
+    actions: {
+      getSelection: async () => '<a href="/privacy">Privacy</a>',
+      subscribeLiveDocument: (callback) => {
+        callback({ html, selection: { blockIndex: 0 }, editable: true });
+        return () => {};
+      },
+      sendHTML: async (replacement, options) => {
+        writes.push({ replacement, options });
+        return { ok: true };
+      },
+    },
+  });
+  assert.ok(byId('apply'), 'The panel needs a direct Apply action');
+  assert.equal(byId('apply').disabled, false);
+  context.edit('link-action', 'privacy-preferences', 'change');
+  byId('apply').dispatchEvent(new window.Event('click'));
+  await settle();
+  assert.equal(writes.length, 1);
+  assert.deepEqual(writes[0].options, { replace: true, expected: { html, blockIndex: 0 } });
+  assert.match(writes[0].replacement, /href="@privacy-preferences"/);
+  assert.match(writes[0].replacement, /Before/);
+  assert.match(document.getElementById('status').textContent, /updated/i);
+});
+
+test('Apply refuses a different selected link and a stale document without writing', async () => {
+  const context = await ui();
+  let selection = '<a href="/privacy">Privacy</a>';
+  let notify;
+  const html = '<main><div><div class="footer" data-block-index="0"><div><div><a href="/privacy">Privacy</a><a href="/other">Other</a></div></div></div></div></main>';
+  await context.controller.connect({
+    capabilities: { liveDocument: 1, sendHTMLReplace: 1 },
+    actions: {
+      getSelection: async () => selection,
+      subscribeLiveDocument: (callback) => {
+        notify = callback;
+        callback({ html, selection: { blockIndex: 0 }, editable: true });
+        return () => {};
+      },
+      sendHTML: () => assert.fail('Must not write a stale link'),
+    },
+  });
+  assert.ok(context.byId('apply'));
+  context.edit('url', '/changed');
+  selection = '<a href="/other">Other</a>';
+  context.byId('apply').dispatchEvent(new context.window.Event('click'));
+  await settle();
+  assert.match(context.byId('status').textContent, /selection|selected|changed/i);
+  notify({ html: html.replace('Privacy', 'Updated'), selection: { blockIndex: 0 }, editable: true });
+  assert.equal(context.byId('apply').disabled, true);
+});
+
+test('an asynchronous first live snapshot enables Apply without a second manual load', async () => {
+  const context = await ui();
+  let notify;
+  await context.controller.connect({
+    capabilities: { liveDocument: 1, sendHTMLReplace: 1 },
+    actions: {
+      getSelection: async () => '<a href="/privacy">Privacy</a>',
+      subscribeLiveDocument: (callback) => { notify = callback; return () => {}; },
+      sendHTML: async () => ({ ok: true }),
+    },
+  });
+  notify({
+    html: '<main><div><div class="footer" data-block-index="0"><div><div><a href="/privacy">Privacy</a></div></div></div></div></main>',
+    selection: { blockIndex: 0 },
+    editable: true,
+  });
+  await settle();
+  assert.equal(context.byId('apply').disabled, false);
 });
 
 test('late SDK connections and delayed selection responses preserve manual edits', async () => {
