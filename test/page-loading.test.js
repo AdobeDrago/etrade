@@ -5,7 +5,7 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { parseHTML } from 'linkedom';
 
-async function harness(body, loadSection, theme = '', realCMP = false) {
+async function harness(body, loadSection, theme = '', realCMP = false, overrides = {}) {
   const { document, window } = parseHTML(`<html data-block-review><head></head><body>${body}</body></html>`);
   window.location = new URL(`http://localhost:3000/home${realCMP ? '?perf=onetrust-real&consent=accept' : ''}`);
   window.hlx = { codeBasePath: '' };
@@ -29,6 +29,7 @@ async function harness(body, loadSection, theme = '', realCMP = false) {
     decorateBlock: noop,
     loadBlock: noop,
     getMetadata: (name) => (name === 'theme' ? theme : ''),
+    ...overrides,
   };
   const dependencies = {
     './aem.js': helpers,
@@ -47,6 +48,7 @@ async function harness(body, loadSection, theme = '', realCMP = false) {
   };
   const source = await readFile(new URL('../scripts/scripts.js', import.meta.url), 'utf8');
   const themeModule = new vm.SourceTextModule(await readFile(new URL('../scripts/page-theme.js', import.meta.url), 'utf8'), { context });
+  const referencesModule = new vm.SourceTextModule(await readFile(new URL('../scripts/disclosure-references.js', import.meta.url), 'utf8'), { context });
   const imports = [];
   const module = new vm.SourceTextModule(`${source}\nexport { loadEager, loadPage };`, {
     context,
@@ -65,6 +67,7 @@ async function harness(body, loadSection, theme = '', realCMP = false) {
   });
   await module.link((specifier) => {
     if (specifier === './page-theme.js') return themeModule;
+    if (specifier === './disclosure-references.js') return referencesModule;
     const values = dependencies[specifier];
     return new vm.SyntheticModule(Object.keys(values), function define() {
       Object.entries(values).forEach(([name, value]) => this.setExport(name, value));
@@ -72,7 +75,15 @@ async function harness(body, loadSection, theme = '', realCMP = false) {
   });
   await module.evaluate();
   return {
-    document, loadEager: module.namespace.loadEager, loadPage: module.namespace.loadPage, imports,
+    document,
+    loadEager: module.namespace.loadEager,
+    loadPage: module.namespace.loadPage,
+    imports,
+    // DA uses these exports when no site-specific reloadEditable hook is present.
+    reloadEditable: module.namespace.reloadEditable || (async (main) => {
+      await module.namespace.decorateMain(main);
+      await helpers.loadSections(main);
+    }),
   };
 }
 
@@ -124,4 +135,35 @@ test('real OneTrust mode never imports the dummy consent override, even with con
   assert.equal(page.document.body.classList.contains('appear'), true);
   assert.ok(page.imports.includes('./demo-performance.js'));
   assert.equal(page.imports.includes('./consent-check.js'), false);
+});
+
+const disclosureItems = '<div class="disclosures"><ol class="disclosures-items"><li id="disclosure-offer" data-disclosure-id="offer" value="2">Offer terms</li></ol></div>';
+
+test('DA inline reload decorates detached citations and preserves the shared chrome', async () => {
+  const page = await harness(`<header>Navigation</header><main><div>Other content</div></main><footer>Footer</footer><aside>${disclosureItems}</aside>`);
+  const header = page.document.querySelector('header');
+  const footer = page.document.querySelector('footer');
+  const main = page.document.createElement('main');
+  main.innerHTML = '<div><p data-prose-index="7">Edited claim<sup>offer</sup></p></div>';
+  await page.reloadEditable(main);
+  const paragraph = main.querySelector('[data-prose-index="7"]');
+  assert.equal(paragraph.querySelector('sup a').getAttribute('href'), '#disclosure-offer');
+  assert.equal(paragraph.querySelector('sup').textContent, '2');
+  assert.equal(page.document.querySelector('header'), header);
+  assert.equal(page.document.querySelector('footer'), footer);
+  assert.equal(page.document.querySelector('main').textContent, 'Other content');
+});
+
+test('DA view reload links table citations after its disclosure block finishes loading', async () => {
+  const page = await harness('<main><div>Existing view</div></main>', undefined, '', false, {
+    loadSections: async (main) => {
+      await Promise.resolve();
+      main.querySelector('.disclosures').innerHTML = disclosureItems.replace(/^<div class="disclosures">|<\/div>$/g, '');
+    },
+  });
+  const main = page.document.createElement('main');
+  main.innerHTML = '<div><table><tr><td>Claim<sup>offer</sup></td></tr></table><div class="disclosures"></div></div>';
+  await page.reloadEditable(main);
+  assert.equal(main.querySelector('td sup a')?.getAttribute('href'), '#disclosure-offer');
+  assert.equal(main.querySelector('td sup').textContent, '2');
 });
