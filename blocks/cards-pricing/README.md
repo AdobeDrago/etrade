@@ -18,6 +18,12 @@ the live summary. The ordinary Cards Pricing treatment remains available.
 
 The shared rate binding supports `{{rate}}` or named markers plus a separate **Rate settings** cell. API, manual and hybrid modes are documented in the [shared rate settings](../cards-product/README.md#optional-dynamic-rates). Keep units and disclosure superscripts authored. Commission amounts and ordinary pricing remain authored unless explicitly configured; the bank-rate endpoint does not supply trading fees. Review: https://et-dynamic--etrade--AdobeDrago.aem.page/home.
 
+## Migration review
+
+The shared style migration is on `etrade-style`. Preview: https://etrade-style--etrade--AdobeDrago.aem.page/home
+
+Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
+
 ## Style ownership
 
 The block consumes shared card, typography, spacing, border, focus and action tokens. Section selectors require this block to be present. Explicit Section Metadata owns the surrounding container, spacing, background and introduction alignment; Band retains its own blue surface and inverse values inside that section. Narrow section cells and enlarged text reduce the internal column count as needed. See the [shared card styles](../../README.md#shared-card-styles) for validation.

@@ -17,4 +17,4 @@ Service failures preserve navigation and show retryable states. Stale requests c
 
 ## Shared style system
 
-Series colors, axes, labels, controls and status roles use shared tokens. Chart geometry reserves room for enlarged labels. A narrow plot scrolls internally while its full observation table stays available; index selection, search and service behavior are unchanged. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation.
+Series colors, axes, labels, controls and status roles use shared tokens. Chart geometry reserves room for enlarged labels. A narrow plot scrolls internally while its full observation table stays available; index selection, search and service behavior are unchanged. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

@@ -14,4 +14,4 @@ The bundled sample file is allowed on the same origin on localhost, preview and 
 
 ## Shared style system
 
-The ticker uses a shared campaign surface and inverse status roles. Its desktop grid reduces columns inside narrow section cells or with enlarged text. The quote source, loading labels, retry action and unavailable values are unchanged. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation.
+The ticker uses a shared campaign surface and inverse status roles. Its desktop grid reduces columns inside narrow section cells or with enlarged text. The quote source, loading labels, retry action and unavailable values are unchanged. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

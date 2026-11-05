@@ -50,6 +50,14 @@ To enable cookie preferences, update the existing **Your Privacy Choices** URL i
 
 Source and content publish separately. Create and preview the `/footer` document before expecting the footer on regular pages; the block intentionally supplies no fallback content.
 
+## Migration review
+
+This component is migrated on `et-footer`. Review its changes against `develop`; merge the prerequisite first when the base is a feature branch.
+
+Preview: https://et-footer--etrade--AdobeDrago.aem.page/home
+
+Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
+
 ## Shared style system
 
-This block consumes the shared color, typography, spacing, border, focus and applicable motion tokens. Narrow section cells and enlarged text reflow within the block. Authored Section Metadata takes precedence over legacy surrounding section styles; content, links and existing interactions are preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation.
+This block consumes the shared color, typography, spacing, border, focus and applicable motion tokens. Narrow section cells and enlarged text reflow within the block. Authored Section Metadata takes precedence over legacy surrounding section styles; content, links and existing interactions are preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

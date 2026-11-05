@@ -45,10 +45,18 @@ The real EDS section breaks remain before and after each dedicated Separator tab
 
 Shared homepage content-gutter rules must exclude dedicated `data-section-kind` sections, including separators. Verify the separator block and SVG bounds rather than only the wrapper: both should start at the viewport's left edge and span its content width at desktop and mobile sizes. When a neighboring section uses `#1c1a1e`, author that explicit surface color; the `dark` shortcut resolves to `#121213`.
 
+## Migration review
+
+This component is migrated on `et-separator`. Review its changes against `develop`.
+
+Preview: https://et-separator--etrade--AdobeDrago.aem.page/home
+
+Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
+
 ## Style ownership
 
-The block stylesheet owns the component itself. Common homepage gutters, dedicated divider/overlay section spacing, and superscript typography remain in `styles/styles.css`; `scripts/section-layout.js` only identifies section boundaries.
+The block stylesheet owns the component itself. Common homepage gutters, dedicated divider/overlay section spacing, and superscript typography remain in `styles/styles.css`; `scripts/section-layout.js` only identifies section boundaries. These shared rules are identical across the layout-dependent PRs.
 
 ## Shared style system
 
-Named Light/Dark surfaces and the automatic outline now resolve through shared color tokens. Explicit authored CSS colors remain supported. The SVG path, fixed artwork dimensions, bend controls and decorative accessibility behavior are unchanged. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation.
+Named Light/Dark surfaces and the automatic outline now resolve through shared color tokens. Explicit authored CSS colors remain supported. The SVG path, fixed artwork dimensions, bend controls and decorative accessibility behavior are unchanged. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

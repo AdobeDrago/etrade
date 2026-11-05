@@ -30,7 +30,11 @@ For balance testing on localhost or an `aem.page` preview, run `localStorage.set
 
 The four dummy JSON files under `test/fixtures` and `/phx/pros` share distinct savings APYs: 3.75 below $5,000; 3.85 from $5,000; 4.00 from $50,000; 4.15 from $100,000; 4.25 from $500,000. These are fabricated test values. Keep `Balance` authored for every savings/checking binding, and keep the page connected to a sample JSON endpoint when testing these expectations.
 
-## Three-column variant
+## Migration review
+
+The shared style migration is on `etrade-style`. Preview: https://etrade-style--etrade--AdobeDrago.aem.page/home
+
+Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
 
 **Cards Product (Three Columns)** displays the three current homepage product
 cards in up to three columns from 768px. The ordinary variant retains its two-column cap.

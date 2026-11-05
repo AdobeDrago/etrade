@@ -103,7 +103,7 @@ The palette combines the supplied brand reference with retained component, campa
 
 - At the browser's default 16px root size, `--font-size-16` and `--space-16` equal `1rem`; `--space-24` equals `1.5rem`. The suffix is a reference equivalent, not a fixed pixel result.
 - The root font size stays unset so rem sizes follow browser preferences. Line-height tokens are unitless.
-- `--tracking-tight` is `calc(-1rem / 64)`, equivalent to `-0.25px` at the default root size. Use it for shared small negative letter spacing.
+- `--tracking-tight` is `calc(-1rem / 64)`, equivalent to `-0.25px` at the default root size. Use it for the shared small negative letter spacing identified during PR 21 review.
 - Thin strokes, physical container limits, the header reserve, chart coordinates, and asset geometry can retain physical dimensions.
 - The header reserve is 88px below 1085px and 110px above that breakpoint. It is a physical minimum; the navigation can grow with its contents.
 - Reduced-motion preferences set shared motion durations to zero. A block inherits this behavior only when its transitions consume those tokens.
@@ -440,13 +440,13 @@ Useful focused checks:
 
 Node tests exercise markup, behavior, and integration contracts. They do not replace browser layout, contrast, or interaction review. Review both families and no-family compatibility; authored light/dark sections; block-owned surfaces; all supported variants; mobile/desktop widths; narrow/full containers and grids; 200% text; keyboard focus and hover; reduced motion; and missing or extra authored cells.
 
-Saved-page and synthetic fixtures do not confirm current DA content, live rate-service access, or every reference-page visual detail. Verify those separately on the delivery host.
+At migration checkpoint `7fa3e1a`, 144 Node tests and lint passed. The stylesheet ownership refactor also passed 30 paired local browser comparisons of layout and computed styles. Those checks used saved-page and synthetic fixtures. They do not confirm the current DA content, live rate-service access, or every reference-page visual detail; a persistent browser comparison suite remains future work.
 
 ### Content work remains separate
 
 The token and stylesheet-ownership migrations do not require rewriting existing block tables. Opting into a page family does require authored page Metadata. Review header overrides and matching logos, footer artwork, campaign images, explicit backgrounds, and block variants for the intended surface. The two family names alone do not reproduce different campaign content or reference layouts.
 
-Based on the supplied reference mapping, Home and Bank use Charcoal; Platforms, Pricing and Rates, and Welcome Back use Purple. The saved Our Accounts, Brokerage, Planning, and Why E*TRADE examples still need a confirmed family selection. Saved fixtures are not an audit of current live content. See the [authoring rollout](../README.md#authoring-rollout) for content configuration steps.
+Based on the supplied reference mapping, Home and Bank use Charcoal; Platforms, Pricing and Rates, and Welcome Back use Purple. The saved Our Accounts, Brokerage, Planning, and Why E*TRADE examples still need a confirmed family selection. Saved fixtures are not an audit of current live content. See the [authoring rollout](../README.md#authoring-rollout) for the pending work.
 
 Save and preview DA changes separately from code. Review the affected pages and shared fragments on the [etrade-style branch preview](https://etrade-style--etrade--AdobeDrago.aem.page/home). Include a branch preview link in the PR. Merging `main` ships code; content publishes separately.
 

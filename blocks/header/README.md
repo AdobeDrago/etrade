@@ -89,6 +89,14 @@ The current `/nav` fragment has fewer links/descriptions and different promotion
 
 Optional page Metadata `Nav Link Base` accepts an HTTP(S) URL. Root-relative navigation links resolve against that authored base, while the `/home` brand link stays on the current site. For this sandbox homepage, use `https://us.etrade.com` until the destination pages exist locally. Absolute links and tracking parameters are retained. Omit this metadata to keep normal local navigation.
 
+## Migration review
+
+This component is migrated on `et-header`. Review its changes against `develop`; merge the prerequisite first when the base is a feature branch.
+
+Preview: https://et-header--etrade--AdobeDrago.aem.page/home
+
+Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
+
 ## Shared style system
 
-Both themes use shared color, typography, radius, focus, layer and motion tokens. The bar can wrap when text is enlarged; drawer and dropdown height is bounded by measured viewport space. Existing disclosure, search and focus-return behavior is preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation.
+Both themes use shared color, typography, radius, focus, layer and motion tokens. The bar can wrap when text is enlarged; drawer and dropdown height is bounded by measured viewport space. Existing disclosure, search and focus-return behavior is preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

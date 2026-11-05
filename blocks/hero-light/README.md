@@ -20,4 +20,4 @@ Preview after code push: https://et-hero-2--etrade--AdobeDrago.aem.page/what-we-
 
 ## Shared style system
 
-The transparent introduction follows its surrounding section text and link scheme. Rem headings grow with browser text preferences. Explicit Section Metadata owns the surrounding section layout. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation.
+The transparent introduction follows its surrounding section text and link scheme. Rem headings grow with browser text preferences. Explicit Section Metadata owns the surrounding section layout. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

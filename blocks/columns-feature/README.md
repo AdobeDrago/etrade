@@ -10,6 +10,14 @@ The block inherits `dark` from its section; other sections use `light`. Explicit
 
 From 900px, the two cells sit side by side. Below that breakpoint, copy comes before the image. Content wraps within the available width. Omitted cells and CTAs remain usable.
 
+## Migration review
+
+This component is migrated on `et-columns-feature`. Review its changes against `develop`.
+
+Preview: https://et-columns-feature--etrade--AdobeDrago.aem.page/home
+
+Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
+
 ## Style ownership
 
 The block stylesheet owns both the component and its feature-specific surrounding section styles. Section selectors require this block to be present; `:where()` preserves their existing specificity. Shared homepage section spacing remains in `styles/styles.css`.
@@ -22,4 +30,4 @@ section.
 
 ## Shared style system
 
-Explicit Light/Dark block options keep precedence. Otherwise the block reads both legacy dark sections and authored Color Scheme metadata. Band and Award keep a surface matching their selected theme. Narrow section cells stack media and copy, and Section Metadata owns the surrounding layout. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation.
+Explicit Light/Dark block options keep precedence. Otherwise the block reads both legacy dark sections and authored Color Scheme metadata. Band and Award keep a surface matching their selected theme. Narrow section cells stack media and copy, and Section Metadata owns the surrounding layout. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

@@ -106,7 +106,7 @@ This selects the Purple family with an explicit dark header. Section schemes rem
 
 ### Authoring rollout
 
-To apply a page theme, make the following changes in DA, then save and preview the content separately from code.
+Code changes and authored content must be tracked together. Theme support is implemented in this branch; the following DA updates are pending, and must be saved and previewed separately from code.
 
 | Authoring update | When needed |
 | --- | --- |
@@ -124,7 +124,7 @@ The six saved-page fixtures currently contain header schemes but no Purple/Charc
 
 ## Shared component styles
 
-Each block's stylesheet owns its wrapper container, surface roles, layout, variants and container queries. A block can reflow independently of the viewport without a global stylesheet listing its internal selectors. The block groups are:
+Each block's stylesheet owns its wrapper container, surface roles, layout, variants and container queries. A block can reflow independently of the viewport without a global stylesheet listing its internal selectors. The migrated groups are:
 
 | Group | Blocks |
 | --- | --- |
@@ -150,13 +150,13 @@ Keep container queries beside their block's viewport rules. Establish the `block
 
 Light and dark components own matching foreground, link, hover and native-control roles. Transparent text intros follow their section's scheme; explicitly themed feature bands and awards keep a matching surface. Legacy dark sections inherit text and link roles rather than forcing every nested paragraph white. Explicit Section Metadata controls take precedence over legacy component section styling, including the standard container and spacing on non-homepage templates. Header bars can wrap with enlarged text, and dropdown/drawer height is measured from the available viewport space.
 
-Shared styles preserve authored claims, legal IDs, link targets, tracking, image alternatives, rate bindings, market requests and sign-in handoffs. Product rate documentation describes the implemented real-service contract and the explicit test endpoint; fixture success does not verify live-service access. Disclosure loading retains its logged, hidden failure behavior.
+The migration retains authored claims, legal IDs, link targets, tracking, image alternatives, rate bindings, market requests and sign-in handoffs. PR 21's shared tracking and scalable typography feedback is applied throughout. Product rate documentation describes the implemented real-service contract and the explicit test endpoint; fixture success does not verify live-service access. Disclosure loading retains its logged, hidden failure behavior.
 
 Run `npm run lint` and `node --experimental-vm-modules --test test/*.test.js` for the complete regression suite. Browser review should include every documented variant, the six saved page layouts, mobile and desktop breakpoints, light/dark themes, authored grids and containers, 200% text, keyboard navigation and enlarged controls. Local browser fixtures are separate from live content. Review pushed code and separately previewed content at [etrade-style /home](https://etrade-style--etrade--AdobeDrago.aem.page/home).
 
 ## Shared card styles
 
-[`styles/cards.css`](styles/cards.css) supplies common text, copy, surface and link roles, keyboard focus, wrapping and grid sizing for all nine card blocks. [`styles/actions.css`](styles/actions.css) supplies their shared action controls. Block styles own artwork, accents and variant layouts. Most card headings use 1.5rem on mobile and 1.75rem on desktop; award titles, compact cards and other reference-specific treatments retain their own token sizes. Thin borders use the shared border color. Small negative letter spacing uses `--tracking-tight`.
+[`styles/cards.css`](styles/cards.css) supplies common text, copy, surface and link roles, keyboard focus, wrapping and grid sizing for all nine card blocks. [`styles/actions.css`](styles/actions.css) supplies their shared action controls. Block styles own artwork, accents and variant layouts. Most card headings use 1.5rem on mobile and 1.75rem on desktop; award titles, compact cards and other reference-specific treatments retain their own token sizes. Thin borders use the shared border color. Small negative letter spacing uses `--tracking-tight`, including the award values identified in PR 21.
 
 | Block | Variants and maximum internal columns at the default text size |
 | --- | --- |
@@ -220,7 +220,7 @@ For custom colors, gradients and images, choose a Color Scheme that makes the fo
 
 The shared helper consumes metadata before block initialization without moving block wrappers. It also runs for decorated fragments. Place a Fragment block in its own section to retain the fragment's section options; fragments sharing a section follow the existing behavior of flattening content into their parent section. Missing cells, unsupported options and unknown fields are ignored, and configuration tables are removed from rendered content. Repeated decoration does not duplicate backgrounds. Existing pages without these options keep their current styles.
 
-Run `npm run test:sections` for authoring, page-layout and loading checks. Browser verification should cover all grid counts, each spacing size, constrained and full-width containers, themes, background colors/gradients/images, keyboard focus and enlarged text. A style-system reference preview is [etrade-style /home](https://etrade-style--etrade--AdobeDrago.aem.page/home); authored content must be saved and previewed separately.
+Run `npm run test:sections` for authoring, page-layout and loading checks. Browser verification should cover all grid counts, each spacing size, constrained and full-width containers, themes, background colors/gradients/images, keyboard focus and enlarged text. The live preview for this branch is [etrade-style /home](https://etrade-style--etrade--AdobeDrago.aem.page/home); authored content must be saved and previewed separately.
 
 ## Authoring and regression tests
 
