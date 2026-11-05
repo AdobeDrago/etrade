@@ -2,6 +2,7 @@ import { composeLinkURL, linkSummary, readSelectedLink } from './model.js';
 import { cleanTrackingHref, trackingCategories, trackingParameters } from '../../../scripts/tracking-attributes.js';
 import { cleanRouteHref, resolveRouteLink, routeSettings } from '../../../scripts/route-links.js';
 import { cleanActionHref, linkAction, PRIVACY_ACTION } from '../../../scripts/link-actions.js';
+import { captureLinkEdit, updatedLinkBlock } from './editor.js';
 
 export default function mountLinkOptions(doc, {
   copy = (value) => navigator.clipboard.writeText(value),
@@ -13,6 +14,16 @@ export default function mountLinkOptions(doc, {
   let loading = false;
   let copying = false;
   let selectedLink = {};
+  let live;
+  let editTarget;
+  let applying = false;
+  let unsubscribe;
+  function canApply() {
+    return !applying && editTarget && live?.editable === true
+      && live.html === editTarget.expected.html
+      && live.selection?.blockIndex === editTarget.expected.blockIndex
+      && sdk?.capabilities?.sendHTMLReplace === 1 && typeof sdk.actions.sendHTML === 'function';
+  }
   function status(text, error = false) {
     byId('status').textContent = text;
     byId('status').classList.toggle('error', error);
@@ -29,7 +40,7 @@ export default function mountLinkOptions(doc, {
   }
   function setCategory(category) {
     const normalized = trackingCategories(category)?.join(',') || category;
-    byId('category').value = ['C0004', 'C0002', 'C0002,C0004'].includes(normalized)
+    byId('category').value = ['none', 'C0004', 'C0002', 'C0002,C0004'].includes(normalized)
       ? normalized : 'custom';
     byId('custom-category').value = category;
     byId('advanced').open = normalized !== 'C0004';
@@ -52,6 +63,7 @@ export default function mountLinkOptions(doc, {
   }
   function render() {
     toggleTracking();
+    byId('apply').disabled = !canApply();
     const summary = linkSummary({ ...selectedLink, ...options() });
     Object.entries(summary).forEach(([key, value]) => { byId(`summary-${key}`).textContent = value; });
     byId('copy').textContent = 'Copy URL';
@@ -92,19 +104,27 @@ export default function mountLinkOptions(doc, {
     byId('load-selection').disabled = true;
     status('Reading the selected link…');
     const requestedAt = revision;
+    const snapshot = live;
     try {
       const html = await sdk.actions.getSelection();
       if (typeof html !== 'string') throw new Error('No selection found');
-      const selected = readSelectedLink(html);
+      const captured = snapshot === undefined || snapshot === live
+        ? captureLinkEdit(live, html) : null;
+      const selected = readSelectedLink(captured?.linkHTML || html);
       if (revision !== requestedAt) {
         status('Your current values were kept. Use “Load selected link” again to replace them.');
         return;
       }
       fill(selected);
       dirty = false;
+      editTarget = captured;
+      render();
       byId('selection-label').textContent = `Selected link: ${selected.label}`;
-      status('Link loaded. Configure its options, then copy the URL.');
+      status(canApply() ? 'Link loaded. Configure its options, then Apply to selected link.'
+        : 'Link loaded. Copy its URL to update it in the native link dialog.');
     } catch (error) {
+      editTarget = null;
+      byId('apply').disabled = true;
       const message = error?.message || error;
       status(message === 'No selection found'
         ? 'Select a complete link and use “Load selected link”, or paste a destination URL below.'
@@ -115,6 +135,42 @@ export default function mountLinkOptions(doc, {
     }
   }
   byId('load-selection').addEventListener('click', loadSelection);
+  byId('apply').addEventListener('click', async () => {
+    if (!canApply()) return;
+    const connection = sdk;
+    const target = editTarget;
+    const requestedAt = revision;
+    applying = true;
+    render();
+    try {
+      const href = composeLinkURL(options());
+      const html = await connection.actions.getSelection();
+      const current = captureLinkEdit(live, html);
+      if (sdk !== connection || revision !== requestedAt || !current
+        || current.expected.html !== target.expected.html
+        || current.expected.blockIndex !== target.expected.blockIndex
+        || current.linkIndex !== target.linkIndex) {
+        throw new Error('The selection or page changed. Load the selected link again before applying.');
+      }
+      const result = await connection.actions.sendHTML(updatedLinkBlock(target, href), {
+        replace: true, expected: target.expected,
+      });
+      if (sdk !== connection) return;
+      if (!result?.ok) throw new Error('The editor could not apply this change. Load the selected link again.');
+      editTarget = null;
+      if (revision !== requestedAt) {
+        status('The previous settings were applied. Your latest values were kept; load the link again before another change.');
+        return;
+      }
+      dirty = false;
+      status('Link updated in the editor. Use Undo to revert, then save and preview in DA.');
+    } catch (error) {
+      if (sdk === connection) status(error.message || 'Could not update the selected link.', true);
+    } finally {
+      applying = false;
+      render();
+    }
+  });
   byId('close').addEventListener('click', () => sdk?.actions.closeLibrary?.());
   byId('link-form').addEventListener('input', () => { dirty = true; revision += 1; render(); });
   byId('category').addEventListener('change', render);
@@ -182,11 +238,28 @@ export default function mountLinkOptions(doc, {
     }
   });
   render();
+  doc.defaultView?.addEventListener('focus', () => {
+    if (!dirty && !applying) loadSelection();
+  });
+  doc.defaultView?.addEventListener('pagehide', () => unsubscribe?.(), { once: true });
   return {
     async connect(connection) {
       if (!connection.actions?.getSelection) return;
+      unsubscribe?.();
       revision += 1;
       sdk = connection;
+      live = undefined;
+      editTarget = null;
+      if (connection.capabilities?.liveDocument === 1 && connection.actions.subscribeLiveDocument) {
+        let subscribing = true;
+        unsubscribe = connection.actions.subscribeLiveDocument((snapshot) => {
+          if (sdk !== connection) return;
+          live = snapshot;
+          byId('apply').disabled = !canApply();
+          if (!subscribing && !dirty && !applying && !loading) loadSelection();
+        });
+        subscribing = false;
+      }
       if (!dirty && connection.context?.path) byId('preview-path').value = connection.context.path;
       byId('load-selection').disabled = false;
       byId('close').hidden = false;

@@ -53,6 +53,16 @@ test('link inspector describes selected opening behavior and consent without cha
   assert.match(linkSummary(settings()).opening, /Keep the opening behavior/);
 });
 
+test('None is an explicit consent choice that round trips through authoring and decoration', () => {
+  const href = composeLinkURL(settings({ category: 'none' }));
+  assert.equal(href, '/home?@tracking=home-link&@tracking-category=none');
+  assert.equal(readSelectedLink(`<a href="${href}">Home</a>`).category, 'none');
+  assert.equal(linkSummary(settings({ category: 'none' })).consent, 'None');
+  const { document } = parseHTML(`<html><body><a href="${href}">Home</a></body></html>`);
+  decorateTrackingLinks(document, 'https://example.com/home');
+  assert.equal(document.querySelector('a').dataset.trackingCategory, 'none');
+});
+
 test('reads image labels and explicit data attributes, and exposes invalid settings for correction', () => {
   const image = readSelectedLink('<a href="/home" data-tracking-key="logo" data-tracking-category="C0002"><img src="/logo.svg" alt="Home logo"></a>');
   assert.equal(image.label, 'Home logo');
@@ -304,6 +314,86 @@ test('DA integration reads a selection and closes only; it never writes editor o
   assert.equal(closed, false);
   document.getElementById('close').dispatchEvent(new window.Event('click'));
   assert.equal(closed, true);
+});
+
+test('Apply updates a loaded block link through DA with a live-document guard', async () => {
+  const context = await ui();
+  const {
+    controller, byId, document, window,
+  } = context;
+  const html = '<main><div><div class="footer" data-block-index="0"><div><div><p>Before <a href="/privacy">Privacy</a> after</p></div></div></div></div></main>';
+  const writes = [];
+  await controller.connect({
+    capabilities: { liveDocument: 1, sendHTMLReplace: 1 },
+    actions: {
+      getSelection: async () => '<a href="/privacy">Privacy</a>',
+      subscribeLiveDocument: (callback) => {
+        callback({ html, selection: { blockIndex: 0 }, editable: true });
+        return () => {};
+      },
+      sendHTML: async (replacement, options) => {
+        writes.push({ replacement, options });
+        return { ok: true };
+      },
+    },
+  });
+  assert.ok(byId('apply'), 'The panel needs a direct Apply action');
+  assert.equal(byId('apply').disabled, false);
+  context.edit('link-action', 'privacy-preferences', 'change');
+  byId('apply').dispatchEvent(new window.Event('click'));
+  await settle();
+  assert.equal(writes.length, 1);
+  assert.deepEqual(writes[0].options, { replace: true, expected: { html, blockIndex: 0 } });
+  assert.match(writes[0].replacement, /href="@privacy-preferences"/);
+  assert.match(writes[0].replacement, /Before/);
+  assert.match(document.getElementById('status').textContent, /updated/i);
+});
+
+test('Apply refuses a different selected link and a stale document without writing', async () => {
+  const context = await ui();
+  let selection = '<a href="/privacy">Privacy</a>';
+  let notify;
+  const html = '<main><div><div class="footer" data-block-index="0"><div><div><a href="/privacy">Privacy</a><a href="/other">Other</a></div></div></div></div></main>';
+  await context.controller.connect({
+    capabilities: { liveDocument: 1, sendHTMLReplace: 1 },
+    actions: {
+      getSelection: async () => selection,
+      subscribeLiveDocument: (callback) => {
+        notify = callback;
+        callback({ html, selection: { blockIndex: 0 }, editable: true });
+        return () => {};
+      },
+      sendHTML: () => assert.fail('Must not write a stale link'),
+    },
+  });
+  assert.ok(context.byId('apply'));
+  context.edit('url', '/changed');
+  selection = '<a href="/other">Other</a>';
+  context.byId('apply').dispatchEvent(new context.window.Event('click'));
+  await settle();
+  assert.match(context.byId('status').textContent, /selection|selected|changed/i);
+  notify({ html: html.replace('Privacy', 'Updated'), selection: { blockIndex: 0 }, editable: true });
+  assert.equal(context.byId('apply').disabled, true);
+});
+
+test('an asynchronous first live snapshot enables Apply without a second manual load', async () => {
+  const context = await ui();
+  let notify;
+  await context.controller.connect({
+    capabilities: { liveDocument: 1, sendHTMLReplace: 1 },
+    actions: {
+      getSelection: async () => '<a href="/privacy">Privacy</a>',
+      subscribeLiveDocument: (callback) => { notify = callback; return () => {}; },
+      sendHTML: async () => ({ ok: true }),
+    },
+  });
+  notify({
+    html: '<main><div><div class="footer" data-block-index="0"><div><div><a href="/privacy">Privacy</a></div></div></div></div></main>',
+    selection: { blockIndex: 0 },
+    editable: true,
+  });
+  await settle();
+  assert.equal(context.byId('apply').disabled, false);
 });
 
 test('late SDK connections and delayed selection responses preserve manual edits', async () => {

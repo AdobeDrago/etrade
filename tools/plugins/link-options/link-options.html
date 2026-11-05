@@ -15,7 +15,7 @@
       <button id="load-selection" type="button" disabled>Load selected link</button>
     </header>
     <main>
-      <p class="hint">Configure the link, copy its URL, then paste into DA’s Edit link dialog. Select a link before opening this tool to load its current settings.</p>
+      <p class="hint">Select link text in DA, then load it here. Configure its options and apply them directly when available, or copy its URL for DA’s Edit link dialog.</p>
       <p id="status" class="status" role="status" aria-live="polite">Choose an action, enter a destination URL, or load a selected link from DA.</p>
       <p id="demo-notice" class="hint" hidden>Home example · This helper copies a URL. It does not change or publish DA content.</p>
       <p id="selection-label" class="hint"></p>
@@ -60,6 +60,7 @@
                 <label for="category">Required consent</label>
                 <select id="category" aria-describedby="category-help">
                   <option value="C0004">Advertising · C0004</option>
+                  <option value="none">None</option>
                   <option value="C0002">Analytics · C0002</option>
                   <option value="C0002,C0004">Analytics + advertising · C0002, C0004</option>
                   <option value="custom">Custom category IDs</option>
@@ -98,6 +99,7 @@
             <p id="manual-copy" class="hint" hidden>Use ⌘C on Mac or Ctrl+C on Windows to copy the selected URL.</p>
           </section>
           <div class="actions">
+            <button id="apply" class="primary" type="button" disabled>Apply to selected link</button>
             <button id="copy" class="primary" type="submit">Copy URL</button>
             <button id="close" type="button" hidden>Close</button>
           </div>

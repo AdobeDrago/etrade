@@ -56,7 +56,7 @@ export function decorateTrackingLinks(root, base = root.baseURI || root.ownerDoc
     link.removeAttribute('data-tracking-category');
     if (!validTrackingKey(key) || !required) return;
     link.dataset.trackingKey = key;
-    link.dataset.trackingCategory = required.join(',');
+    link.dataset.trackingCategory = required.length ? required.join(',') : 'none';
   });
 }
 

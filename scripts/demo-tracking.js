@@ -91,7 +91,8 @@ function mountTrackedLinks(doc, win, root, onTest) {
       const label = event?.payload.context.label || link.getAttribute('aria-label')
         || link.textContent.trim() || link.querySelector('img')?.alt || 'Untitled link';
       const key = event?.key || '(empty key)';
-      const category = event?.requiredCategories?.join(', ') || 'Invalid tracking configuration';
+      const category = event?.requiredCategories?.length === 0 ? 'None'
+        : event?.requiredCategories?.join(', ') || 'Invalid tracking configuration';
       return {
         link, event, label, key, category,
       };

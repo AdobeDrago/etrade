@@ -8,6 +8,7 @@ import decoratePageLayout, {
 } from './page-layout.js';
 import isDemoHelperHost from './demo-host.js';
 import startTracking, { decorateTrackingLinks } from './tracking.js';
+import startCookieBanner, { cookieBannerRequested } from './cookie-banner.js';
 import {
   loadHeader,
   loadFooter,
@@ -300,8 +301,9 @@ function loadDelayed(realConsent = false) {
 
 async function loadPage() {
   startTracking(document, window);
+  const cookieBanner = cookieBannerRequested(window.location.href);
   let performanceDemo;
-  if (isDemoHelperHost(window.location.hostname)) {
+  if (!cookieBanner && isDemoHelperHost(window.location.hostname)) {
     const { default: startPerformanceDemo } = await import('./demo-performance.js');
     performanceDemo = startPerformanceDemo(document, window);
     // Only the observed blocking bootstrap stage delays EDS decoration.
@@ -310,7 +312,8 @@ async function loadPage() {
   await loadEager(document);
   await loadLazy(document);
   performanceDemo?.afterContent();
-  loadDelayed(performanceDemo?.config.profile === 'onetrust-real');
+  if (cookieBanner) startCookieBanner(document, window);
+  loadDelayed(cookieBanner || performanceDemo?.config.profile === 'onetrust-real');
 }
 
 // Standalone block reviews own their lifecycle; fragments can still use decorateMain.

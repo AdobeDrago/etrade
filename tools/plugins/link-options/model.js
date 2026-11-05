@@ -43,6 +43,9 @@ export function readSelectedLink(html) {
 export function linkSummary(options) {
   const categories = trackingCategories(options.category);
   const names = { C0002: 'Analytics', C0004: 'Advertising' };
+  let consent = 'Choose valid consent categories';
+  if (categories?.length === 0) consent = 'None';
+  else if (categories) consent = categories.map((id) => `${names[id] || 'Custom category'} (${id})`).join(' + ');
   let opening = 'Keep the opening behavior set in DA';
   if (options.target === '_blank') opening = 'Opens in a new tab or window';
   else if (options.target === '_self') opening = 'Opens in the same tab';
@@ -58,7 +61,7 @@ export function linkSummary(options) {
       : 'Same wording and destination on every page',
     tracking: options.enabled ? `Reports clicks using “${options.key.trim() || 'add a tracking key'}”` : 'Link click tracking is off',
     consent: options.enabled
-      ? categories?.map((id) => `${names[id] || 'Custom category'} (${id})`).join(' + ') || 'Choose valid consent categories'
+      ? consent
       : 'No consent category added by this tool',
   };
 }
