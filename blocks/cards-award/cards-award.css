@@ -1,10 +1,12 @@
 .cards-award {
   --card-copy-color: var(--color-text-primary);
+  --card-attribution-color: var(--color-text-secondary);
 }
 
 main .section:is(.dark, [data-section-theme="dark"]) .cards-award {
   --card-text-color: var(--color-text-inverse);
   --card-copy-color: var(--color-text-inverse);
+  --card-attribution-color: var(--color-text-inverse-secondary);
   --card-link-color: var(--color-link-inverse);
   --link-color: var(--color-link-inverse);
   --link-hover-color: var(--color-link-inverse-hover);
@@ -22,7 +24,7 @@ body.homepage .awards-section:not([data-section-layout="authored"]):where(:has(.
 
 .cards-award > ul {
   --card-columns: 1;
-  --card-gap: var(--space-40);
+  --card-gap: var(--space-20);
 
   display: grid;
   gap: var(--card-gap);
@@ -36,7 +38,7 @@ body.homepage .awards-section:not([data-section-layout="authored"]):where(:has(.
   flex-direction: column;
   align-items: flex-start;
   min-width: 0;
-  gap: var(--space-24);
+  gap: var(--space-20);
   color: var(--card-text-color);
   font-size: var(--text-body-size);
   line-height: var(--line-height-copy);
@@ -44,10 +46,37 @@ body.homepage .awards-section:not([data-section-layout="authored"]):where(:has(.
   overflow-wrap: anywhere;
 }
 
+.cards-award .cards-award-image p {
+  margin: 0;
+}
+
 .cards-award .cards-award-image :is(img, svg, .icon) {
   display: block;
   width: 4.5rem;
   height: 4.5rem;
+}
+
+@font-face {
+  font-family: ETRADEIcons;
+  src: url('../../fonts/et-iconography.woff2') format('woff2');
+  font-display: block;
+}
+
+.cards-award .cards-award-image .icon-award {
+  width: auto;
+  color: var(--card-text-color, var(--color-text-primary));
+  font-family: ETRADEIcons, sans-serif;
+  font-size: var(--font-size-72);
+  font-style: normal;
+  line-height: 1;
+}
+
+.cards-award .cards-award-image .icon-award::before {
+  content: '\e923';
+}
+
+.cards-award .cards-award-image .icon-award img {
+  display: none;
 }
 
 .cards-award .cards-award-body h3 {
@@ -63,6 +92,11 @@ body.homepage .awards-section:not([data-section-layout="authored"]):where(:has(.
   margin: 0 0 var(--space-20);
 }
 
+.cards-award .cards-award-body :is(b, strong) {
+  color: var(--card-attribution-color);
+  font-weight: var(--font-weight-semibold);
+}
+
 @media (width >= 768px) {
   .cards-award > ul {
     --card-columns: 3;
@@ -72,8 +106,12 @@ body.homepage .awards-section:not([data-section-layout="authored"]):where(:has(.
   }
 }
 
+body.homepage .section:not([data-section-layout="authored"]):has(.cards-award) {
+  padding: 4.0625rem 0;
+}
+
 body.homepage .section:not([data-section-layout="authored"]):has(.cards-award) .default-content-wrapper > h2 {
-  margin-bottom: var(--space-40);
+  margin-bottom: 2.125rem;
   font-size: var(--font-size-28);
   line-height: calc(32 / 28);
   text-align: left;
@@ -81,13 +119,34 @@ body.homepage .section:not([data-section-layout="authored"]):has(.cards-award) .
 }
 
 body.homepage .section:not([data-section-layout="authored"]):has(.cards-award) .page-intro-actions {
-  justify-content: center;
-  margin-top: var(--space-40);
+  justify-content: flex-start;
+  margin: var(--space-20) 0 var(--space-10);
+}
+
+body.homepage .section:not([data-section-layout="authored"]):has(.cards-award) .page-intro-actions .etrade-action:any-link {
+  gap: var(--space-4);
+  min-height: 0;
+  border: 0;
+  padding: 0;
+  font-size: var(--font-size-17);
+  line-height: calc(24 / 17);
+}
+
+body.homepage .section:not([data-section-layout="authored"]):has(.cards-award) .page-intro-actions .etrade-action-icon {
+  flex-basis: 0.9375rem;
+  width: 0.9375rem;
+  height: 0.9375rem;
 }
 
 @media (width >= 768px) {
   body.homepage .section:not([data-section-layout="authored"]):has(.cards-award) .default-content-wrapper > h2 {
+    margin-bottom: var(--space-40);
     font-size: var(--font-size-36);
     line-height: calc(40 / 36);
+  }
+
+  body.homepage .section:not([data-section-layout="authored"]):has(.cards-award) .page-intro-actions .etrade-action:any-link {
+    font-size: var(--font-size-15);
+    line-height: calc(21 / 15);
   }
 }
