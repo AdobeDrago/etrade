@@ -34,7 +34,11 @@ In the authoring document, insert `:social-facebook:` inside the link alongside 
 
 The optional Brand row uses a regular linked image, with an appropriate image alternative text. No logo path is built into the block. Telephone links must be authored with a `tel:` destination. Link destinations, tracking parameters, and targets are preserved. New-tab links receive `noopener noreferrer`.
 
-The production “Your Privacy Choices” control opens its consent manager. Author a working privacy-page link for the sandbox; connecting a consent-manager action requires that site's separate consent integration. Do not author a destinationless anchor as an interactive control.
+To make a link open cookie preferences, select **Link action → Open cookie preferences** in [Link Options](../../tools/plugins/link-options/README.md), copy the generated URL, and paste it into DA's native link dialog. For example, author `https://www.morganstanley.com/privacy-pledge?@action=privacy-preferences`. The shared decorator removes the action marker from the delivered destination and records `data-link-action="privacy-preferences"`. The action is independent of the wording and icon; `:privacy-options:` is optional artwork and does not activate OneTrust. Choosing **Normal link** removes the action marker.
+
+The explicit action opens the actual OneTrust preference center. If OneTrust is not already available, the first click loads E*TRADE's published OneTrust script from `cdn2.etrade.net`, with domain ID `01953914-53cc-7833-b8d6-c9c9d7301ff9`, and queues the request until initialization finishes. Repeated clicks while loading share that request. The script, configuration, appearance, geographic rules and cookie controls come from OneTrust; no custom cookie dialog is rendered. An existing consent integration can handle the cancelable, bubbling `privacy:open` event before the loader starts.
+
+To enable cookie preferences, update the existing **Your Privacy Choices** URL in the shared `/footer` document with the explicit action marker, save and preview that content, then open `/home` and select the link. The E*TRADE-branded OneTrust **Cookie Preferences** center should open on the current page. No demo-overlay setup or page query parameters are needed. The separate **Privacy & Cookies** link keeps its authored destination. Keep a working privacy-page URL on the badge for visitors without JavaScript. OneTrust must successfully initialize; loading errors do not redirect the user to the Privacy Pledge or grant consent. Deploy the runtime and update the authored footer together; legacy icon-only links now navigate normally.
 
 ## Layout and accessibility
 
@@ -46,14 +50,6 @@ The production “Your Privacy Choices” control opens its consent manager. Aut
 
 Source and content publish separately. Create and preview the `/footer` document before expecting the footer on regular pages; the block intentionally supplies no fallback content.
 
-## Migration review
-
-This component is migrated on `et-footer`. Review its changes against `develop`; merge the prerequisite first when the base is a feature branch.
-
-Preview: https://et-footer--etrade--AdobeDrago.aem.page/home
-
-Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
-
 ## Shared style system
 
-This block consumes the shared color, typography, spacing, border, focus and applicable motion tokens. Narrow section cells and enlarged text reflow within the block. Authored Section Metadata takes precedence over legacy surrounding section styles; content, links and existing interactions are preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.
+This block consumes the shared color, typography, spacing, border, focus and applicable motion tokens. Narrow section cells and enlarged text reflow within the block. Authored Section Metadata takes precedence over legacy surrounding section styles; content, links and existing interactions are preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation.

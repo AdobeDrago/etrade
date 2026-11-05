@@ -54,14 +54,6 @@ Authors provide meaningful alternative text and the heading levels appropriate t
 
 Branch preview after code push and content preview: https://et-hero-2--etrade--AdobeDrago.aem.page/what-we-offer/our-accounts/brokerage-account
 
-## Migration review
-
-This component is migrated on `et-hero`. Review its changes against `et-actions`; merge the prerequisite first when the base is a feature branch.
-
-Preview: https://et-hero--etrade--AdobeDrago.aem.page/home
-
-Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.
-
 ## Shared style system
 
-This block consumes the shared color, typography, spacing, border, focus and applicable motion tokens. Narrow section cells and enlarged text reflow within the block. Authored Section Metadata takes precedence over legacy surrounding section styles; content, links and existing interactions are preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.
+This block consumes the shared color, typography, spacing, border, focus and applicable motion tokens. Narrow section cells and enlarged text reflow within the block. Authored Section Metadata takes precedence over legacy surrounding section styles; content, links and existing interactions are preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation.

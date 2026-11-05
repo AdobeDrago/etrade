@@ -1,6 +1,7 @@
 import { composeLinkURL, linkSummary, readSelectedLink } from './model.js';
 import { cleanTrackingHref, trackingCategories, trackingParameters } from '../../../scripts/tracking-attributes.js';
 import { cleanRouteHref, resolveRouteLink, routeSettings } from '../../../scripts/route-links.js';
+import { cleanActionHref, linkAction } from '../../../scripts/link-actions.js';
 
 export default function mountLinkOptions(doc, {
   copy = (value) => navigator.clipboard.writeText(value),
@@ -31,6 +32,7 @@ export default function mountLinkOptions(doc, {
   function options() {
     return {
       href: byId('url').value,
+      action: byId('link-action').value,
       enabled: byId('track-clicks').checked,
       key: byId('tracking-key').value,
       category: byId('category').value === 'custom'
@@ -56,7 +58,7 @@ export default function mountLinkOptions(doc, {
       const preview = previewPath.startsWith('/') && !previewPath.startsWith('//')
         ? resolveRouteLink(byId('output-url').value, `https://preview.example${previewPath}`) : undefined;
       byId('route-preview').textContent = preview
-        ? `${preview.matched ? 'Matching pages' : 'Default'}: “${preview.label || selectedLink.label || 'Your default wording'}” → ${cleanTrackingHref(preview.href)}`
+        ? `${preview.matched ? 'Matching pages' : 'Default'}: “${preview.label || selectedLink.label || 'Your default wording'}” → ${cleanActionHref(cleanTrackingHref(preview.href))}`
         : 'Enter a page path beginning with / to preview the result.';
       byId('output-help').textContent = 'Paste this into the URL field in DA’s Edit link dialog, then Save.';
     } catch {
@@ -69,6 +71,7 @@ export default function mountLinkOptions(doc, {
     revision += 1;
     selectedLink = { label: settings.label, target: settings.target };
     byId('url').value = settings.href;
+    byId('link-action').value = settings.action || '';
     byId('track-clicks').checked = settings.enabled;
     byId('tracking-key').value = settings.key;
     byId('route-enabled').checked = Boolean(settings.route?.enabled);
@@ -112,15 +115,18 @@ export default function mountLinkOptions(doc, {
   byId('category').addEventListener('change', render);
   byId('track-clicks').addEventListener('change', render);
   byId('route-enabled').addEventListener('change', render);
+  byId('link-action').addEventListener('change', render);
   byId('url').addEventListener('change', () => {
     const settings = trackingParameters(byId('url').value);
     const route = routeSettings(byId('url').value);
-    if (settings.enabled || route.enabled) {
+    const action = linkAction(byId('url').value);
+    if (settings.enabled || route.enabled || cleanActionHref(byId('url').value) !== byId('url').value) {
       fill({
         ...selectedLink,
         ...settings,
         route,
-        href: cleanRouteHref(cleanTrackingHref(byId('url').value)),
+        action,
+        href: cleanActionHref(cleanRouteHref(cleanTrackingHref(byId('url').value))),
       });
     }
   });

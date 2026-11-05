@@ -5,19 +5,24 @@ A buildless DA Library panel for links and CTAs. Authors configure tracking insi
 ## Use it
 
 1. Select a complete link in DA. In New Authoring, open the **Outline** dropdown at the top of the right sidebar and choose **Link Options** under **Extensions**. In the classic editor, open **Library → Link Options**. The panel opens alongside the editor and loads the link's URL and tracking settings. Alternatively, paste a destination URL into the panel.
-2. Toggle **Track clicks** and enter a stable **Tracking key**. **Consent settings → Required consent** defaults to Advertising (`C0004`), with Analytics (`C0002`), both categories, and custom category IDs available. IDs must match the tenant's OneTrust policy. Every listed category is required before sending.
-3. Click **Copy URL**. If browser clipboard access is blocked, the helper selects the generated URL and shows manual copy instructions.
-4. Close Link Options, open DA's native **Edit link** dialog, paste into **URL**, then **Save**. Save and preview the page separately in DA.
+2. Choose **Link action**: **Normal link** follows the authored destination; **Open cookie preferences** opens the site's real OneTrust preference center on the current page. Use a working privacy-page destination as the fallback. Wording and icons do not select the action.
+3. Optionally toggle **Track clicks** and enter a stable **Tracking key**. **Consent settings → Required consent** defaults to Advertising (`C0004`), with Analytics (`C0002`), both categories, and custom category IDs available. IDs must match the tenant's OneTrust policy. Every listed category is required before sending.
+4. Click **Copy URL**. If browser clipboard access is blocked, the helper selects the generated URL and shows manual copy instructions.
+5. Close Link Options, open DA's native **Edit link** dialog, paste into **URL**, then **Save**. Save and preview the page separately in DA.
 
 For example, `/home` with key `home-link` produces `/home?@tracking=home-link`. Choosing Analytics produces `/home?@tracking=home-link&@tracking-category=C0002`. The site's shared decorator converts the markers into `data-tracking-key` / `data-tracking-category` and removes them from the visitor's destination URL. Ordinary query parameters and fragments survive. Turning the toggle off removes only the reserved authoring markers. Pasting an existing marked URL loads its settings into the fields.
 
 The helper reads a single selected anchor, including one serialized inside CTA table wrappers. If the selection contains multiple links or no anchor, paste the destination or select one link and use **Load selected link**. This reads the current editor selection without reloading the page or panel. Selection access is optional: late or unavailable SDK connections leave manual authoring usable. Edits entered while the SDK is connecting are retained.
 
+Choosing **Open cookie preferences** produces, for example, `https://www.morganstanley.com/privacy-pledge?@action=privacy-preferences`. The shared runtime strips only the reserved action marker and sets `data-link-action="privacy-preferences"`; the existing OneTrust integration handles the interaction. Existing query bytes, fragments, tracking settings and page-path conditions are preserved. The same action applies to both route variants. **Normal link** removes the marker. Only the recognized action is accepted; an icon alone, an unknown action or conflicting duplicate markers cannot activate OneTrust. The authoring helper never creates or styles a cookie banner.
+
+Existing footer content must be migrated explicitly: load **Your Privacy Choices** from `/footer`, choose the action, copy the URL back into DA's native link dialog, then save and preview. Deploy the shared runtime with the helper before authoring action links. The local `/test/privacy-action.html` review demonstrates an action link without an icon and a normal link with the privacy icon.
+
 If values change while clipboard permission is pending, the helper identifies the copied URL as the previous version and asks you to copy the current one again. A response from an earlier DA connection cannot replace the current fields; use **Load selected link** again after switching pages or connections.
 
 ## Inspect and condition a link
 
-**What this link does** explains the selected wording, default destination, opening behavior, reporting key and consent. The summary updates with the form. Opening behavior comes from the selected anchor; for a pasted URL, it remains the behavior authored in DA.
+**What this link does** explains the selected wording, default destination, action, opening behavior, reporting key and consent. The summary updates with the form. Normal-link opening behavior comes from the selected anchor; for a pasted URL, it remains the behavior authored in DA. Cookie preferences always opens OneTrust on the current page.
 
 Enable **Change this link on matching pages** to add one route rule. For example, `/brokerage, /what-we-offer` matches those exact page paths and their descendants, including `.html` variants. It does not match `/brokerage-other`. Supply alternate wording and destination together. **Preview on page path** shows the resulting wording and destination for a matching path or an unrelated path. Other pages keep the default destination and the wording authored in DA. The rule uses the page displaying the link, including links loaded from shared navigation, footer and content fragments.
 

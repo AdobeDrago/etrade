@@ -4,6 +4,7 @@ import {
 } from './tracking-attributes.js';
 import { readDemoSession, watchDemoNavigation, writeDemoSession } from './demo-session.js';
 import decorateRouteLinks from './route-links.js';
+import bindPrivacyChoices from './privacy.js';
 
 const CATEGORY = /^C\d{4,}$/;
 const STATES = new Set(['pending', 'granted', 'denied']);
@@ -38,6 +39,7 @@ function restoredEvents(initial, limit, restoreConsent) {
 /** Shared by initial content, fragments and dynamically inserted links. */
 export function decorateTrackingLinks(root, base = root.baseURI || root.ownerDocument?.baseURI) {
   decorateRouteLinks(root, base);
+  bindPrivacyChoices(root);
   const links = [...root.querySelectorAll('a[href]')];
   if (root.matches?.('a[href]')) links.unshift(root);
   links.forEach((link) => {

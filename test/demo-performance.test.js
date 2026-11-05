@@ -7,6 +7,7 @@ import { parseHTML } from 'linkedom';
 import startPerformanceDemo, { readPerformanceConfig, performanceURL } from '../scripts/demo-performance.js';
 import mountPerformanceControls from '../scripts/demo-performance-controls.js';
 import mountDemoHelper from '../scripts/demo-helper.js';
+import startOneTrust from '../scripts/onetrust.js';
 
 const manifest = JSON.parse(await readFile(new URL('../scripts/demo-performance-profile.json', import.meta.url)));
 
@@ -768,13 +769,16 @@ test('real network measurements exclude fixtures and distinguish unavailable cro
   const context = browser('?perf=onetrust-real');
   let entries = [
     {
-      name: 'https://cdn.cookielaw.org/scripttemplates/otSDKStub.js', duration: 140, transferSize: 9000, decodedBodySize: 27000,
+      name: 'https://cdn2.etrade.net/1/1d/aempros/content/dam/onetrust/etpros/scripttemplates/otSDKStub.js', duration: 140, transferSize: 9000, decodedBodySize: 27000,
     },
     {
       name: 'http://localhost/scripts/demo-performance-assets/cmp-stub.js', duration: 5, transferSize: 27000, decodedBodySize: 27000,
     },
     {
       name: 'https://cookielaw.org.example.com/pixel.js', duration: 50, transferSize: 999, decodedBodySize: 999,
+    },
+    {
+      name: 'https://cdn2.etrade.net/1/1d/aempros/content/dam/images/hero.jpg', duration: 10, transferSize: 999, decodedBodySize: 999,
     },
   ];
   context.win.performance.getEntriesByType = () => entries;
@@ -790,6 +794,20 @@ test('real network measurements exclude fixtures and distinguish unavailable cro
   }];
   assert.equal(controller.snapshot().actualTransferBytes, null);
   assert.equal(controller.snapshot().restrictedSizes, true);
+  controller.stop();
+});
+
+test('real EDS measurements follow OneTrust when the footer starts it before the delayed demo', async () => {
+  const context = browser('?perf=onetrust-real&perf-phase=eds');
+  const controller = startPerformanceDemo(context.document, context.win);
+  const cmp = startOneTrust(context.document, context.win, { loadConsented: async () => {} });
+  await delayedCMP(context, controller);
+  context.win.OnetrustActiveGroups = ',C0001,C0002,C0004,';
+  context.win.OptanonWrapper();
+  assert.equal(cmp.hasConsent(), true);
+  assert.equal(controller.snapshot().cmpReady, true);
+  assert.equal(controller.snapshot().consent, 'accepted');
+  assert.equal(context.document.querySelectorAll('script[data-domain-script]').length, 1);
   controller.stop();
 });
 

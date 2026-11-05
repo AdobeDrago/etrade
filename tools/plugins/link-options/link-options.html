@@ -25,18 +25,25 @@
           <dt>Wording</dt><dd id="summary-label"></dd>
           <dt>Destination</dt><dd id="summary-destination"></dd>
           <dt>Opening</dt><dd id="summary-opening"></dd>
+          <dt>Action</dt><dd id="summary-action"></dd>
           <dt>Page condition</dt><dd id="summary-condition"></dd>
           <dt>Click reporting</dt><dd id="summary-tracking"></dd>
           <dt>Required consent</dt><dd id="summary-consent"></dd>
         </dl>
-        <p class="hint">This summary updates as you edit. Reporting waits for all required consent categories. Wording and opening behavior are read from the selected link and stay in DA’s Edit link dialog.</p>
+        <p class="hint">This summary updates as you edit. Reporting waits for all required consent categories. Wording and normal-link opening behavior stay in DA’s Edit link dialog. Cookie preferences opens on the current page.</p>
       </section>
       <form id="link-form" novalidate>
         <fieldset id="fields">
           <legend>Link details</legend>
           <label for="url">URL</label>
           <input id="url" name="url" type="text" placeholder="/home or https://…" autocomplete="off" spellcheck="false" aria-describedby="url-help">
-          <p id="url-help" class="hint">Enter the destination. Tracking settings are managed below.</p>
+          <p id="url-help" class="hint">Enter the destination. For cookie preferences, use a privacy-page URL as the fallback for visitors without JavaScript.</p>
+          <label for="link-action">Link action</label>
+          <select id="link-action" aria-describedby="link-action-help">
+            <option value="">Normal link</option>
+            <option value="privacy-preferences">Open cookie preferences</option>
+          </select>
+          <p id="link-action-help" class="hint">Cookie preferences opens the site’s OneTrust preference center. The wording and icon can be changed independently.</p>
           <section class="tracking" aria-label="Tracking options">
             <label class="switch" for="track-clicks">
               <span><strong>Track clicks</strong><small>Add a reporting key to this link.</small></span>
@@ -76,7 +83,7 @@
               <input id="route-label" type="text" maxlength="160" placeholder="e.g. Explore brokerage accounts">
               <label for="route-url">Destination on matching pages</label>
               <input id="route-url" type="text" maxlength="2048" placeholder="/what-we-offer/our-accounts" spellcheck="false">
-              <p class="hint">Other pages keep the default URL above and the wording authored in DA. Both versions use the same tracking key, consent and opening behavior. This rule supports text links and text buttons; image and icon links keep their default.</p>
+              <p class="hint">Other pages keep the default URL above and the wording authored in DA. Both versions use the same action, tracking key, consent and opening behavior. This rule supports text links and text buttons; image and icon links keep their default.</p>
               <label for="preview-path">Preview on page path</label>
               <input id="preview-path" type="text" value="/home" spellcheck="false">
               <p id="route-preview" class="route-preview" role="status"></p>

@@ -95,11 +95,3 @@ Both variants retain their own light surface, primary text and purple links insi
 Run `npm run test:accordion` for semantic-table preservation, omitted cells, panel controls and default FAQ regression checks. Run `npm run lint` before committing.
 
 In a browser, review both variants below and above 768px and 900px, including expanded answers, keyboard focus, a dark surrounding section, long labels and 200% text sizing. Also review narrow/full containers, section backgrounds, `Spacing: none` and multi-block grids with shared headings and actions. Flat answer tables should scroll within their labeled region without widening the page. Confirm exclusive opening, Expand all / Collapse all, plus/minus or chevron states and reduced-motion behavior.
-
-## Migration review
-
-This component is migrated on `et-accordion-faq`. Review its changes against `develop`; merge the prerequisite first when the base is a feature branch.
-
-Preview: https://et-accordion-faq--etrade--AdobeDrago.aem.page/home
-
-Authored content is transferred separately. Existing sandbox integration and campaign limitations still apply.

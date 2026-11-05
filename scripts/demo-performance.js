@@ -1,5 +1,5 @@
 import isDemoHelperHost from './demo-host.js';
-import startOneTrust from './onetrust.js';
+import startOneTrust, { ONETRUST_SRC } from './onetrust.js';
 import { readDemoSession, writeDemoSession } from './demo-session.js';
 import { recordPerformanceSession } from './demo-session-history.js';
 
@@ -427,6 +427,7 @@ export default function startPerformanceDemo(doc = document, win = window, depen
     snapshot() {
       const actual = win.performance.getEntriesByType('resource').filter((entry) => {
         if (!realCMP) return entry.name.includes('/demo-performance-assets/');
+        if (entry.name.startsWith(new URL('../', ONETRUST_SRC).href)) return true;
         const { hostname } = new URL(entry.name);
         return ['cookielaw.org', 'onetrust.com'].some((host) => hostname === host
           || hostname.endsWith(`.${host}`));

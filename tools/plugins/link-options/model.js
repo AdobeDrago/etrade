@@ -3,6 +3,9 @@ import {
   trackingCategories, trackingParameters, validTrackingKey,
 } from '../../../scripts/tracking-attributes.js';
 import { authorRouteHref, cleanRouteHref, routeSettings } from '../../../scripts/route-links.js';
+import {
+  authorActionHref, cleanActionHref, linkAction, PRIVACY_ACTION,
+} from '../../../scripts/link-actions.js';
 
 function fail(field, message) {
   throw Object.assign(new Error(message), { field });
@@ -16,6 +19,10 @@ export function readSelectedLink(html) {
   }
   const [link] = links;
   const href = link.getAttribute('href');
+  let action = linkAction(href);
+  if (cleanActionHref(href) === href && link.dataset.linkAction === PRIVACY_ACTION) {
+    action = PRIVACY_ACTION;
+  }
   const tracking = trackingParameters(href);
   if (!tracking.enabled && link.hasAttribute('data-tracking-key')) {
     tracking.enabled = true;
@@ -23,9 +30,10 @@ export function readSelectedLink(html) {
     tracking.category = link.dataset.trackingCategory ?? DEFAULT_CATEGORY;
   }
   return {
-    href: cleanRouteHref(cleanTrackingHref(href)),
+    href: cleanActionHref(cleanRouteHref(cleanTrackingHref(href))),
     label: link.textContent.trim() || link.querySelector('img')?.alt || 'Image link',
     target: link.getAttribute('target') || '_self',
+    action,
     route: routeSettings(href),
     ...tracking,
   };
@@ -39,10 +47,12 @@ export function linkSummary(options) {
   if (options.target === '_blank') opening = 'Opens in a new tab or window';
   else if (options.target === '_self') opening = 'Opens in the same tab';
   else if (options.target) opening = `Opens in target “${options.target}”`;
+  if (options.action === PRIVACY_ACTION) opening = 'Opens OneTrust cookie preferences on this page';
   return {
     label: options.label || 'Load a selected link to see its wording',
     destination: options.href.trim() || 'Add a destination below',
     opening,
+    action: options.action === PRIVACY_ACTION ? 'Open cookie preferences (OneTrust)' : 'Normal link',
     condition: options.route?.enabled
       ? `Alternate wording and destination under ${options.route.paths || 'the paths below'}; default everywhere else`
       : 'Same wording and destination on every page',
@@ -65,6 +75,16 @@ export function composeLinkURL(options) {
   if (!['http:', 'https:', 'mailto:', 'tel:'].includes(url.protocol)) {
     fail('url', 'Use a web address, relative path, email address or telephone link.');
   }
+  if (options.action && (options.action !== PRIVACY_ACTION || !['http:', 'https:'].includes(url.protocol))) {
+    fail('link-action', 'Choose a supported action with a web address as its fallback URL.');
+  }
+  if (options.action === PRIVACY_ACTION && options.route?.enabled) {
+    let alternate;
+    try { alternate = new URL(options.route.href.trim(), 'https://authoring.example/'); } catch { /* Route validation supplies the error below. */ }
+    if (alternate && !['http:', 'https:'].includes(alternate.protocol)) {
+      fail('route-url', 'Cookie preferences needs a web address as the fallback on matching pages.');
+    }
+  }
   const key = options.key.trim();
   if (options.enabled && !validTrackingKey(key)) {
     fail('tracking-key', 'Enter a tracking key of 1–160 characters without control characters.');
@@ -74,9 +94,9 @@ export function composeLinkURL(options) {
     fail('custom-category', 'Use consent category IDs such as C0004 or C0002,C0004.');
   }
   try {
-    return authorRouteHref(authorTrackingHref(href, {
+    return authorActionHref(authorRouteHref(authorTrackingHref(href, {
       enabled: options.enabled, key, category: required || DEFAULT_CATEGORY,
-    }), options.route);
+    }), options.route), options.action);
   } catch (error) {
     const field = { label: 'route-label', href: 'route-url' }[error.field] || 'route-paths';
     throw Object.assign(error, { field });

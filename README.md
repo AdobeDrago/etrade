@@ -106,7 +106,7 @@ This selects the Purple family with an explicit dark header. Section schemes rem
 
 ### Authoring rollout
 
-Code changes and authored content must be tracked together. Theme support is implemented in this branch; the following DA updates are pending, and must be saved and previewed separately from code.
+To apply a page theme, make the following changes in DA, then save and preview the content separately from code.
 
 | Authoring update | When needed |
 | --- | --- |
@@ -124,7 +124,7 @@ The six saved-page fixtures currently contain header schemes but no Purple/Charc
 
 ## Shared component styles
 
-Each block's stylesheet owns its wrapper container, surface roles, layout, variants and container queries. A block can reflow independently of the viewport without a global stylesheet listing its internal selectors. The migrated groups are:
+Each block's stylesheet owns its wrapper container, surface roles, layout, variants and container queries. A block can reflow independently of the viewport without a global stylesheet listing its internal selectors. The block groups are:
 
 | Group | Blocks |
 | --- | --- |
@@ -150,13 +150,13 @@ Keep container queries beside their block's viewport rules. Establish the `block
 
 Light and dark components own matching foreground, link, hover and native-control roles. Transparent text intros follow their section's scheme; explicitly themed feature bands and awards keep a matching surface. Legacy dark sections inherit text and link roles rather than forcing every nested paragraph white. Explicit Section Metadata controls take precedence over legacy component section styling, including the standard container and spacing on non-homepage templates. Header bars can wrap with enlarged text, and dropdown/drawer height is measured from the available viewport space.
 
-The migration retains authored claims, legal IDs, link targets, tracking, image alternatives, rate bindings, market requests and sign-in handoffs. PR 21's shared tracking and scalable typography feedback is applied throughout. Product rate documentation describes the implemented real-service contract and the explicit test endpoint; fixture success does not verify live-service access. Disclosure loading retains its logged, hidden failure behavior.
+Shared styles preserve authored claims, legal IDs, link targets, tracking, image alternatives, rate bindings, market requests and sign-in handoffs. Product rate documentation describes the implemented real-service contract and the explicit test endpoint; fixture success does not verify live-service access. Disclosure loading retains its logged, hidden failure behavior.
 
 Run `npm run lint` and `node --experimental-vm-modules --test test/*.test.js` for the complete regression suite. Browser review should include every documented variant, the six saved page layouts, mobile and desktop breakpoints, light/dark themes, authored grids and containers, 200% text, keyboard navigation and enlarged controls. Local browser fixtures are separate from live content. Review pushed code and separately previewed content at [etrade-style /home](https://etrade-style--etrade--AdobeDrago.aem.page/home).
 
 ## Shared card styles
 
-[`styles/cards.css`](styles/cards.css) supplies common text, copy, surface and link roles, keyboard focus, wrapping and grid sizing for all nine card blocks. [`styles/actions.css`](styles/actions.css) supplies their shared action controls. Block styles own artwork, accents and variant layouts. Most card headings use 1.5rem on mobile and 1.75rem on desktop; award titles, compact cards and other reference-specific treatments retain their own token sizes. Thin borders use the shared border color. Small negative letter spacing uses `--tracking-tight`, including the award values identified in PR 21.
+[`styles/cards.css`](styles/cards.css) supplies common text, copy, surface and link roles, keyboard focus, wrapping and grid sizing for all nine card blocks. [`styles/actions.css`](styles/actions.css) supplies their shared action controls. Block styles own artwork, accents and variant layouts. Most card headings use 1.5rem on mobile and 1.75rem on desktop; award titles, compact cards and other reference-specific treatments retain their own token sizes. Thin borders use the shared border color. Small negative letter spacing uses `--tracking-tight`.
 
 | Block | Variants and maximum internal columns at the default text size |
 | --- | --- |
@@ -220,7 +220,7 @@ For custom colors, gradients and images, choose a Color Scheme that makes the fo
 
 The shared helper consumes metadata before block initialization without moving block wrappers. It also runs for decorated fragments. Place a Fragment block in its own section to retain the fragment's section options; fragments sharing a section follow the existing behavior of flattening content into their parent section. Missing cells, unsupported options and unknown fields are ignored, and configuration tables are removed from rendered content. Repeated decoration does not duplicate backgrounds. Existing pages without these options keep their current styles.
 
-Run `npm run test:sections` for authoring, page-layout and loading checks. Browser verification should cover all grid counts, each spacing size, constrained and full-width containers, themes, background colors/gradients/images, keyboard focus and enlarged text. The live preview for this branch is [etrade-style /home](https://etrade-style--etrade--AdobeDrago.aem.page/home); authored content must be saved and previewed separately.
+Run `npm run test:sections` for authoring, page-layout and loading checks. Browser verification should cover all grid counts, each spacing size, constrained and full-width containers, themes, background colors/gradients/images, keyboard focus and enlarged text. A style-system reference preview is [etrade-style /home](https://etrade-style--etrade--AdobeDrago.aem.page/home); authored content must be saved and previewed separately.
 
 ## Authoring and regression tests
 
@@ -297,7 +297,7 @@ Choose **Libraries → OneTrust · real SDK** in Advanced settings, or open:
 - [Split startup: asynchronous CMP, tracking after consent](https://demo-controller--etrade--AdobeDrago.aem.page/home?perf=onetrust-real&perf-phase=early&perf-work=none).
 - [EDS: CMP three seconds after page content, tracking after consent](https://demo-controller--etrade--AdobeDrago.aem.page/home?perf=onetrust-real&perf-phase=eds&perf-work=none).
 
-Both versions use the real `https://cdn.cookielaw.org/scripttemplates/otSDKStub.js`, with the public domain ID `01953914-53cc-7833-b8d6-c9c9d7301ff9` from the referenced integration. Optional page metadata `onetrust-domain-id` can select another published OneTrust domain ID, including a `-test` ID. The SDK is asynchronous in both versions, and the page never waits for its network requests or initialization. These comparisons remain restricted to the existing exact demo/local hosts and require explicit selection.
+Both versions use E*TRADE's published OneTrust SDK at `https://cdn2.etrade.net/1/1d/aempros/content/dam/onetrust/etpros/scripttemplates/otSDKStub.js`, with public domain ID `01953914-53cc-7833-b8d6-c9c9d7301ff9`, verified on `us.etrade.com/home`. Optional page metadata `onetrust-domain-id` can select another published OneTrust domain ID, including a `-test` ID; its configuration must be available through this SDK host. The SDK is asynchronous in both versions, and the page never waits for its network requests or initialization. These comparisons remain restricted to the existing exact demo/local hosts and require explicit selection. Independently of comparison mode, links authored with **Link Options → Link action → Open cookie preferences** (`@action=privacy-preferences`) load this same real SDK on demand and open its preference center after initialization. The icon does not activate the action; migrate the existing **Your Privacy Choices** link in `/footer` to the explicit marker.
 
 `scripts/onetrust.js` registers `OptanonWrapper` and `OneTrustGroupsUpdated` before injection, preserves an existing wrapper, checks already-reported groups, and deduplicates SDK setup. It requires both exact category IDs `C0002` and `C0004`, matching the example integration; validate these against your tenant when adopting it elsewhere. Initialization and changes dispatch real `consent.update` events with `source: 'onetrust'`. The existing `consented.js` integration hook imports once after those categories are granted. It currently contains no analytics/ad vendors. Revocation dispatches `consented: false`; future tracking integrations must stop their ongoing work on that event. Previously executed code cannot be unloaded by removing consent.
 

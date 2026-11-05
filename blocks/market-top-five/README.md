@@ -23,6 +23,6 @@ Layout: one column below 768px. From 768px, the grid fits up to five columns, wi
 
 ## Shared style system
 
-Prices, changes, chart colors and controls use shared roles. The five-column cap reduces to fewer columns when available width or enlarged text requires it. Symbols and prices can wrap independently; category selection and authored disclosures are unchanged. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.
+Prices, changes, chart colors and controls use shared roles. The five-column cap reduces to fewer columns when available width or enlarged text requires it. Symbols and prices can wrap independently; category selection and authored disclosures are unchanged. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation.
 
 `--market-top-five-grid-columns` stays local to this block because its five-quote cap, 10rem minimum, and gap differ from the shared card and ticker grids.
