@@ -515,3 +515,48 @@ test('empty fragment bodies create neither numbered gaps nor reference targets',
   assert.equal(app.document.querySelector('sup').textContent, 'empty');
   assert.equal(app.document.querySelector('sup:last-child a').textContent, '1');
 });
+
+test('editing an existing citation uses the new marker instead of its cached IDs', async () => {
+  const app = await harness(new Map([
+    [endpoint, {
+      disclosures: [
+        { disclosureId: 'offer', fragment: `${fragments}/offer` },
+        { disclosureId: 'apy', fragment: `${fragments}/rate` },
+      ],
+    }],
+    [`${fragments}/offer.plain.html`, '<div><p>Offer terms</p></div>'],
+    [`${fragments}/rate.plain.html`, '<div><p>Rate terms</p></div>'],
+  ]), '<p><sup>offer</sup></p>');
+  await app.decorate(app.block);
+  const main = app.document.querySelector('main');
+  const sup = main.querySelector('sup');
+  sup.querySelector('a').textContent = 'apy';
+  app.decorateReferences(main);
+  assert.equal(sup.textContent, '2');
+  assert.equal(sup.querySelector('a').getAttribute('href'), '#disclosure-apy');
+  sup.innerHTML = 'apy,offer';
+  app.decorateReferences(main);
+  assert.equal(sup.textContent, '2,1');
+  assert.equal(sup.dataset.disclosureIds, 'apy,offer');
+  const [first, second] = sup.querySelectorAll('a');
+  sup.replaceChildren(second, ',', first);
+  app.decorateReferences(main);
+  assert.equal(sup.textContent, '1,2');
+  assert.equal(sup.dataset.disclosureIds, 'offer,apy');
+  sup.querySelector('a').setAttribute('href', '#disclosure-apy');
+  app.decorateReferences(main);
+  assert.equal(sup.textContent, '2,2');
+  assert.equal(sup.dataset.disclosureIds, 'apy,apy');
+});
+
+test('a reference refresh leaves live mini-editor markup under DA control', async () => {
+  const app = await harness(new Map([
+    [endpoint, { disclosures: [{ disclosureId: 'offer', fragment: `${fragments}/offer` }] }],
+    [`${fragments}/offer.plain.html`, '<div><p>Offer terms</p></div>'],
+  ]), '<div class="prosemirror-editor"><div class="ProseMirror" contenteditable="true"><p><sup>offer</sup></p></div></div><p><sup>offer</sup></p>');
+  const editor = app.document.querySelector('.prosemirror-editor');
+  const before = editor.innerHTML;
+  await app.decorate(app.block);
+  assert.equal(editor.innerHTML, before);
+  assert.equal(app.document.querySelector('main > p sup a').getAttribute('href'), '#disclosure-offer');
+});

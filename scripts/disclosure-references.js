@@ -1,5 +1,23 @@
-/** Auto-link inline markers only after their footer items have rendered. */
-export default function decorateDisclosureReferences(main, disclosures = document.querySelector('.disclosures:not([hidden])')) {
+/** Retain stable IDs only while the generated citation is still intact. */
+function referenceText(sup, targets) {
+  const ids = sup.dataset.disclosureIds;
+  const links = [...sup.querySelectorAll('a[href]')];
+  const numbers = links.map((link) => link.getAttribute('aria-label')?.match(/^Disclosure (\d+)$/)?.[1]);
+  const unchanged = ids && links.length === ids.split(',').length
+    && numbers.every((number, index) => number && links[index].textContent === number)
+    && sup.textContent.trim() === numbers.join(',');
+  if (!unchanged) return sup.textContent.trim();
+  const stored = ids.split(',');
+  return links.map((link, index) => {
+    const href = link.getAttribute('href');
+    if (targets.get(stored[index])?.href === href) return stored[index];
+    return [...targets].find(([, target]) => target.href === href)?.[0] || '';
+  }).join(',');
+}
+
+/** Auto-link static markers only after their footer items have rendered. */
+export default function decorateDisclosureReferences(main, disclosures = main?.querySelector('.disclosures')
+  || document.querySelector('.disclosures:not([hidden])')) {
   if (!main || !disclosures || disclosures.hidden) return;
   const targets = new Map();
   const items = [...disclosures.querySelectorAll('.disclosures-items > li[id]')];
@@ -19,8 +37,8 @@ export default function decorateDisclosureReferences(main, disclosures = documen
     }
   });
   main.querySelectorAll('sup').forEach((sup) => {
-    if (sup.closest('.disclosures')) return;
-    const text = sup.dataset.disclosureIds || sup.textContent.trim();
+    if (sup.closest('.disclosures, .prosemirror-editor, .ProseMirror, [contenteditable="true"]')) return;
+    const text = referenceText(sup, targets);
     const ids = text.split(/\s*,\s*/);
     if (!ids.every((id) => targets.has(id))) return;
 
