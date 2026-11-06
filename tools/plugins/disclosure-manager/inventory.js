@@ -113,6 +113,12 @@ function dependencies(source, context) {
       doc.querySelectorAll('main .fragment').forEach((block) => {
         addEmbedded(block.querySelector('a[href]')?.getAttribute('href') || block.textContent.trim());
       });
+      // buildAutoBlocks embeds these hyperlinks by pathname, including absolute URLs.
+      doc.querySelectorAll('main a[href*="/fragments/"]').forEach((link) => {
+        if (!link.closest('.fragment')) {
+          addEmbedded(new URL(link.getAttribute('href'), 'https://placeholder.invalid').pathname);
+        }
+      });
       doc.querySelectorAll('main .disclosures').forEach((block) => {
         const link = block.querySelector('a[href]');
         if (block.children.length === 1 && link

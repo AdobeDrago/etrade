@@ -96,6 +96,26 @@ test('schema transition preserves fragment choices and accepts old and numeric i
   assert.equal(schema.properties.disclosures.items.properties.disclosureId.title, 'Identifier');
 });
 
+test('JSON rich-text links without superscripts follow their legal target', () => {
+  const plan = renumberPlan(model(), [1, 0, 2]);
+  const result = rewriteDisclosureReferences(JSON.stringify({
+    body: '<a href="#disclosure-homepage-1">Offer terms</a>',
+  }), plan);
+  assert.deepEqual(result.issues, []);
+  assert.match(JSON.parse(result.source).body, /href="#disclosure-homepage-2"/);
+  assert.match(JSON.parse(result.source).body, /Offer terms/);
+});
+
+test('a supported JSON disclosure-set selector is retained while its references change', () => {
+  const plan = renumberPlan(model(), [1, 0, 2]);
+  const result = rewriteDisclosureReferences(JSON.stringify({
+    disclosureSet: '/disclosures/sets/homepage.json', disclosureIds: ['1'],
+  }), plan);
+  assert.deepEqual(result.issues, []);
+  assert.equal(JSON.parse(result.source).disclosureSet, '/disclosures/sets/homepage.json');
+  assert.deepEqual(JSON.parse(result.source).disclosureIds, ['2']);
+});
+
 test('DA structured reference arrays are rewritten without changing unrelated property cells', () => {
   const plan = renumberPlan(model(), [1, 0, 2]);
   const source = '<body><main><div><div class="da-form"><div><div>x-schema-name</div><div>card</div></div></div><div class="card"><div><div>disclosureIds</div><div><ul><li><p>1</p></li><li>3</li></ul></div></div><div><div>amount</div><div>123</div></div></div></div></main></body>';

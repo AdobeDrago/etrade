@@ -77,6 +77,18 @@ test('shared unqualified citations consumed by another set block the batch', asy
   assert.ok(result.issues.some((issue) => /shared|another set/i.test(issue.message) && issue.message.includes('/other')));
 });
 
+test('automatically embedded fragment links participate in renumbering and shared-set checks', async () => {
+  const server = fixture([['/fragments/offer', '<body><main><p>Claim<sup>1</sup></p></main></body>']]);
+  const embedded = '<p><a href="/fragments/offer">Offer</a></p>';
+  server.sources.set('/home', page(path, embedded));
+  const result = await review(server.request);
+  assert.deepEqual(result.issues, []);
+  assert.match(result.writes.find((item) => item.path === '/fragments/offer')?.target || '', /<sup>2<\/sup>/);
+  server.sources.set('/other', page('/disclosures/sets/other.json', embedded));
+  const conflict = await review(server.request);
+  assert.ok(conflict.issues.some((item) => /Shared source.*\/fragments\/offer/.test(item.message)));
+});
+
 test('incomplete enumeration, unsafe returned paths and missing embedded sources block saving', async () => {
   const server = fixture();
   const failed = await review(async (url) => (

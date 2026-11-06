@@ -203,9 +203,13 @@ function jsonReferences(source, plan, options) {
             changes.push({ before: item.join(','), after: target.join(','), location: path });
           }
         }
+      } else if (typeof item === 'string' && ((key === 'disclosureSet' && location === 'data')
+        || (key === 'disclosures' && location === 'data.metadata'))) {
+        // The inventory owns these supported set selectors; their paths never renumber.
       } else if (/^disclosure/i.test(key)) {
         issues.push({ type: 'error', message: `Unsupported disclosure field ${path}; review its schema before renumbering.` });
-      } else if (typeof item === 'string' && /<sup[\s>]/i.test(item)) {
+      } else if (typeof item === 'string'
+        && /<sup[\s>]|<a\b[^>]*\bhref\s*=\s*["']?#disclosure-/i.test(item)) {
         if (!RICH_FIELDS.has(key)) {
           issues.push({ type: 'error', message: `Unsupported rich-text citation field ${path}.` });
           return;
