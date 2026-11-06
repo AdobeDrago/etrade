@@ -74,7 +74,10 @@ export async function readSiteInventory(context, request) {
     return scan();
   };
   await scan();
-  return { documents: [...documents].sort(), directories };
+  return {
+    documents: [...documents].sort(),
+    directories: directories.sort((a, b) => a.path.localeCompare(b.path)),
+  };
 }
 
 function dependencies(source, context) {
