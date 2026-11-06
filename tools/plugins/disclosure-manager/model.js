@@ -1,4 +1,4 @@
-import { disclosureFragmentPath, disclosureSetEntries } from '../../../scripts/disclosure-sets.js';
+import { disclosureFragmentPath, disclosureSetEntries, disclosureSetMode } from '../../../scripts/disclosure-sets.js';
 
 const parse = (html) => new DOMParser().parseFromString(html, 'text/html');
 
@@ -6,7 +6,7 @@ function rows(block) {
   return [...block.children].flatMap((row) => (row.tagName === 'TBODY' ? [...row.children] : [row]));
 }
 
-function cellFor(block, key) {
+export function cellFor(block, key) {
   return rows(block).find((row) => (
     row.children[0]?.textContent.trim().toLowerCase() === key.toLowerCase()
   ))?.children[1];
@@ -78,11 +78,13 @@ export function parseSetSource(source, path) {
   const list = block && cellFor(block, 'disclosures')?.querySelector('ul, ol');
   if (!list) throw new Error('No structured disclosures array found. Use the disclosure-set schema in DA.');
   const items = [...list.children].filter((item) => item.tagName === 'LI');
+  const entryBlocks = [];
   const disclosures = items.map((item) => {
     const reference = item.textContent.trim();
     if (!reference.startsWith('self://#')) throw new Error('Unsupported disclosure entry. Use a fragment and a stable disclosureId.');
     const target = blocks.find((entry) => entry.classList.contains(reference.slice(8).replaceAll('/', '-')));
     if (!target) throw new Error('A structured disclosure entry could not be resolved.');
+    entryBlocks.push(target);
     return {
       disclosureId: cellFor(target, 'disclosureId')?.textContent.trim(),
       fragment: cellFor(target, 'fragment')?.textContent.trim(),
@@ -102,17 +104,26 @@ export function parseSetSource(source, path) {
     doc,
     list,
     items,
-    data: { disclosures, introduction: supporting('introduction'), closing: supporting('closing') },
+    entryBlocks,
+    data: {
+      id: cellFor(block, 'id')?.textContent.trim(),
+      disclosures,
+      introduction: supporting('introduction'),
+      closing: supporting('closing'),
+    },
   };
 }
 
 export function validateSet(model) {
   const issues = [];
+  try { disclosureSetMode(model.data); } catch (error) {
+    issues.push({ type: 'error', message: error.message });
+  }
   const seen = new Set();
   model.data.disclosures.forEach((item, index) => {
     const id = item?.disclosureId;
-    if (typeof id !== 'string' || !/^[a-z][a-z0-9]*$/.test(id)) {
-      issues.push({ type: 'error', message: `Entry ${index + 1} needs a stable ID using lowercase letters and digits, starting with a letter.` });
+    if (typeof id !== 'string' || !/^(?:[a-z][a-z0-9]*|[1-9]\d*)$/.test(id)) {
+      issues.push({ type: 'error', message: `Entry ${index + 1} needs a valid disclosure identifier.` });
     } else if (seen.has(id)) {
       issues.push({ type: 'error', message: `Disclosure ID “${id}” appears more than once.` });
     }
@@ -196,7 +207,7 @@ export function auditReferences(html, entries) {
 
 export function referenceMarkup(ids, entries) {
   const valid = new Set(entries.map((item) => item.disclosureId));
-  if (!ids.length || ids.some((id) => !/^[a-z][a-z0-9]*$/.test(id) || !valid.has(id))) {
+  if (!ids.length || ids.some((id) => !/^(?:[a-z][a-z0-9]*|[1-9]\d*)$/.test(id) || !valid.has(id))) {
     throw new Error('Select a disclosure from this set.');
   }
   return `<sup>${[...new Set(ids)].join(',')}</sup>`;
