@@ -129,6 +129,11 @@ test('numeric references resolve plain and namespaced citations and respect a ma
   app.decorateReferences(main);
   assert.equal(edited.querySelector('a').getAttribute('href'), '#disclosure-homepage-2');
   assert.equal(edited.querySelector('a').getAttribute('aria-label'), 'Disclosure 2');
+  edited.querySelector('a').textContent = '99';
+  app.decorateReferences(main);
+  assert.equal(edited.textContent, '99');
+  assert.ok(!edited.querySelector('a'), 'an unresolved edited number must not retain a link');
+  assert.equal(edited.hasAttribute('data-disclosure-ids'), false);
   assert.equal(main.querySelectorAll('sup')[3].textContent, 'other-1');
   assert.equal(main.querySelectorAll('sup')[5].querySelector('a').getAttribute('href'), 'https://example.com');
 });

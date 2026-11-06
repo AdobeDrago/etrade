@@ -249,6 +249,7 @@ export default function mountDisclosureAssistant({
     }
   };
   const check = async () => {
+    hide();
     selectionRequest += 1;
     const request = selectionRequest;
     const previousHTML = latest?.html;
@@ -259,13 +260,17 @@ export default function mountDisclosureAssistant({
         report('The page changed. Check the superscript again.', true);
         return;
       }
-      const selected = parse(html);
+      const selected = parse(`<body>${html}</body>`);
       const text = selected.body.textContent.trim();
       if (!NUMBER_GROUP.test(text) || selected.querySelectorAll('sup').length > 1) {
         throw new Error('Select one superscript number or comma-separated group in the page.');
       }
-      const matches = candidates(latest, { includeLinked: true })
-        .filter((item) => item.numbers.join(',') === text.split(/\s*,\s*/).join(','));
+      const selectedItems = candidates({ html: `<body><main>${html}</main></body>` }, {
+        includeLinked: true,
+      });
+      const matches = selectedItems.length === 1
+        ? candidates(latest, { includeLinked: true })
+          .filter((item) => item.supHTML === selectedItems[0].supHTML) : [];
       if (matches.length === 1) show(matches[0]);
       else {
         const [item] = candidates({ html: `<body><main><sup>${text}</sup></main></body>`, editable: false });

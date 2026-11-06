@@ -62,8 +62,6 @@ export default function decorateDisclosureReferences(main, disclosures = main?.q
     if (sup.closest('.disclosures, .prosemirror-editor, .ProseMirror, [contenteditable="true"]')) return;
     const text = referenceText(sup, targets);
     const ids = text.split(/\s*,\s*/);
-    if (!ids.every((id) => targets.has(id))) return;
-
     const outerLink = sup.closest('a[href]');
     if (outerLink && (outerLink !== sup.parentElement || outerLink.children.length !== 1
       || outerLink.textContent.trim() !== sup.textContent.trim())) return;
@@ -74,6 +72,16 @@ export default function decorateDisclosureReferences(main, disclosures = main?.q
       return !/^#disclosure-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(href)
         || (namespace && named && named[1] !== namespace);
     })) return;
+
+    if (!ids.every((id) => targets.has(id))) {
+      if (sup.classList.contains('disclosures-reference')) {
+        if (outerLink) outerLink.replaceWith(sup);
+        authoredLinks.forEach((link) => link.replaceWith(...link.childNodes));
+        delete sup.dataset.disclosureIds;
+        sup.classList.remove('disclosures-reference');
+      }
+      return;
+    }
 
     // Preserve the authored IDs so a later pass never interprets display numbers as IDs.
     sup.dataset.disclosureIds = ids.join(',');

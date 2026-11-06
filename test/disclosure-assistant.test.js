@@ -48,7 +48,7 @@ test('ordinary superscript conversion retains surrounding and nested marks witho
   assert.equal(changed.querySelector('strong').textContent, 'keep wording');
 });
 
-async function assistantHarness(capable = true) {
+async function assistantHarness(capable = true, selectionHTML = '<sup>2</sup>') {
   const html = await readFile(new URL('../tools/plugins/disclosure-manager/disclosure-manager.html', import.meta.url), 'utf8');
   const { document, window } = parseHTML(html);
   const timers = new Map();
@@ -66,7 +66,7 @@ async function assistantHarness(capable = true) {
         callback(current);
         return () => { listener = undefined; };
       },
-      getSelection: async () => '<sup>2</sup>',
+      getSelection: async () => selectionHTML,
       sendHTML: async (htmlText, options) => {
         writes.push({ html: htmlText, options });
         return { ok: true };
@@ -150,6 +150,19 @@ test('an unknown number can be kept ordinary without inventing a legal target', 
   assert.match(ui.writes[0].html, /²⁷/);
   assert.doesNotMatch(ui.writes[0].html, /disclosure-homepage/);
   ui.controller.dispose();
+});
+
+test('plain numbers and external selected superscripts cannot authorize another citation edit', async () => {
+  await Promise.all(['2', '<sup><a href="https://example.com">2</a></sup>'].map(async (selection) => {
+    const ui = await assistantHarness(true, selection);
+    ui.emit('2 accounts. Claim<sup>2</sup>'); ui.flush();
+    ui.document.getElementById('assistant-check').click();
+    await new Promise((resolve) => { setImmediate(resolve); });
+    assert.equal(ui.document.getElementById('assistant-ordinary').disabled, true);
+    ui.document.getElementById('assistant-ordinary').click();
+    assert.equal(ui.writes.length, 0);
+    ui.controller.dispose();
+  }));
 });
 
 test('inserting before an existing marker suggests the new marker, while indistinguishable duplicates stay copy-only', async () => {
