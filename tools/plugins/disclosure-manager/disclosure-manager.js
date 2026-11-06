@@ -65,6 +65,8 @@ function updateControls() {
 
 function invalidateReview() {
   reviewed = undefined;
+  byId('confirm-numeric').checked = false;
+  byId('numeric-confirmation').hidden = true;
   byId('change-review').hidden = true;
   byId('confirm-save').disabled = true;
 }
@@ -191,6 +193,7 @@ function render() {
 
 async function load() {
   busy = true;
+  byId('saved-page').checked = false;
   model = undefined;
   pending = undefined;
   invalidateReview();
@@ -266,22 +269,36 @@ async function load() {
   }
 }
 
-async function save() {
+const contextKey = () => `${sdk.context.org}/${sdk.context.repo}${sdk.context.path}`;
+const reviewInputs = (review) => JSON.stringify([
+  review.contextKey, review.setPath, review.mapping, review.inventory,
+  review.guards.map(({ path, original }) => [path, original])
+    .sort(([left], [right]) => left.localeCompare(right)),
+]);
+
+async function save(approvedReview) {
   busy = true;
   updateControls();
   invalidateReview();
   status('Checking the site for affected pages and shared content…');
   try {
-    if (sdk.actions.saveDocument) {
-      const saved = await sdk.actions.saveDocument();
-      if (!saved?.ok) {
-        byId('saved-page-notice').hidden = false;
-        if (!byId('saved-page').checked) throw new Error('Save this page in DA, confirm below, then review again.');
-      }
+    const site = contextKey();
+    const saved = typeof sdk.actions.saveDocument === 'function'
+      ? await sdk.actions.saveDocument() : null;
+    if (!saved?.ok) {
+      byId('saved-page-notice').hidden = false;
+      if (!byId('saved-page').checked) throw new Error('Save this page in DA, confirm below, then review again.');
     }
-    reviewed = await planAffectedSources(sdk.context, model, order, sdk.actions.daFetch, {
-      confirmNumeric: byId('confirm-numeric').checked,
+    let candidate = await planAffectedSources(sdk.context, model, order, sdk.actions.daFetch, {
+      confirmNumeric: Boolean(approvedReview),
     });
+    candidate.contextKey = site;
+    if (approvedReview && reviewInputs(approvedReview) !== reviewInputs(candidate)) {
+      candidate = await planAffectedSources(sdk.context, model, order, sdk.actions.daFetch);
+      candidate.contextKey = site;
+    } else if (approvedReview) byId('confirm-numeric').checked = true;
+    if (site !== contextKey()) throw new Error('The connected page changed. Refresh before reviewing.');
+    reviewed = candidate;
     byId('change-review').hidden = false;
     byId('review-summary').textContent = `${reviewed.scanned} sources checked · ${reviewed.affectedPages.length} affected page(s). ${reviewed.mapping.map(([before, after]) => `${before} → ${after}`).join(', ')}`;
     const paths = new Map(reviewed.writes.map((write) => [write.path, `${write.references} citation change(s)`]));
@@ -372,10 +389,13 @@ document.querySelectorAll('[data-panel]').forEach((button) => {
   });
 });
 byId('refresh').addEventListener('click', load);
-byId('save').addEventListener('click', save);
+byId('save').addEventListener('click', () => save());
 byId('confirm-save').addEventListener('click', confirmSave);
 byId('cancel-review').addEventListener('click', invalidateReview);
-byId('confirm-numeric').addEventListener('change', save);
+byId('confirm-numeric').addEventListener('change', () => {
+  const approved = byId('confirm-numeric').checked ? reviewed : undefined;
+  save(approved);
+});
 byId('resume-operation').addEventListener('click', () => recover(false));
 byId('restore-operation').addEventListener('click', () => recover(true));
 byId('reset').addEventListener('click', () => {
@@ -407,7 +427,10 @@ async function init() {
   } else return;
   if (!sdk?.context || !sdk.actions?.daFetch) throw new Error('Open Disclosure Manager through the DA Library to connect to your page.');
   sdk.actions.subscribeLiveDocument?.(({ html }) => {
-    if (liveHtml !== undefined && liveHtml !== html) invalidateReview();
+    if (liveHtml !== undefined && liveHtml !== html) {
+      byId('saved-page').checked = false;
+      invalidateReview();
+    }
     liveHtml = html;
   });
   await load();

@@ -10,6 +10,7 @@ import {
   referenceMarkup, reorderedSource, resolveSetPath, saveOrder, sourceUrl, validateSet,
 } from '../tools/plugins/disclosure-manager/model.js';
 import { footerEntries, footerPreview, previewContent } from '../tools/plugins/disclosure-manager/preview.js';
+import demoSdk from '../tools/plugins/disclosure-manager/demo.js';
 
 // linkedom needs an explicit html wrapper; browser DOMParser adds one automatically.
 class BrowserParser {
@@ -251,12 +252,14 @@ test('changed sources and failed saves keep the original snapshot and never repo
   assert.deepEqual(model.data.disclosures, entries);
 });
 
-async function uiHarness(query = '') {
+async function uiHarness(query = '', configureSdk = null) {
   const base = new URL('../', import.meta.url);
   const entry = '/tools/plugins/disclosure-manager/disclosure-manager.js';
   const html = await readFile(new URL(`.${entry.replace(/\.js$/, '.html')}`, base), 'utf8');
   const { document, window } = parseHTML(html);
-  window.location = new URL(`http://localhost:3000/tools/plugins/disclosure-manager/disclosure-manager.html?demo=1${query}`);
+  window.location = new URL(`http://localhost:3000/tools/plugins/disclosure-manager/disclosure-manager.html?${configureSdk ? 'host=1' : 'demo=1'}${query}`);
+  const hostSdk = configureSdk ? await demoSdk(() => {}) : undefined;
+  if (hostSdk) { await configureSdk(hostSdk); window.parent = {}; }
   const contextVm = vm.createContext({
     document,
     window,
@@ -274,6 +277,9 @@ async function uiHarness(query = '') {
     clearTimeout,
   });
   const modules = new Map();
+  const hostModule = new vm.SyntheticModule(['default'], function initialize() {
+    this.setExport('default', Promise.resolve(hostSdk));
+  }, { context: contextVm });
   const moduleFor = (pathname) => {
     if (!modules.has(pathname)) {
       // Cache creation before reading so parallel imports share one module instance.
@@ -282,6 +288,11 @@ async function uiHarness(query = '') {
           context: contextVm,
           identifier: `http://localhost:3000${pathname}`,
           importModuleDynamically: async (specifier, parent) => {
+            if (specifier === 'https://da.live/nx/utils/sdk.js') {
+              await hostModule.link(() => {});
+              await hostModule.evaluate();
+              return hostModule;
+            }
             const child = await moduleFor(new URL(specifier, parent.identifier).pathname);
             if (child.status === 'unlinked') {
               await child.link((name, ref) => moduleFor(new URL(name, ref.identifier).pathname));
@@ -301,7 +312,13 @@ async function uiHarness(query = '') {
   ));
   await controller.evaluate();
   await controller.namespace.default;
-  return { document, window };
+  return { document, window, sdk: hostSdk };
+}
+
+async function putSource(sdk, sourcePath, html) {
+  const body = new FormData();
+  body.append('data', new Blob([html], { type: 'text/html' }), 'source.html');
+  await sdk.actions.daFetch(sourceUrl(sdk.context, sourcePath), { method: 'POST', body });
 }
 
 async function until(check) {
@@ -365,6 +382,47 @@ test('changing a proposed order invalidates its old change review', async () => 
   byId('disclosure-list').children[0].querySelector('button[aria-label="Move offer down"]').click();
   assert.equal(byId('change-review').hidden, true);
   assert.equal(byId('confirm-save').disabled, true);
+});
+
+test('a host without saveDocument requires acknowledgment before source review', async () => {
+  const { document, sdk } = await uiHarness('', (host) => { delete host.actions.saveDocument; });
+  const byId = (id) => document.getElementById(id);
+  byId('save').click();
+  await until(() => !byId('save').disabled);
+  assert.equal(byId('saved-page-notice').hidden, false);
+  assert.equal(byId('change-review').hidden, true);
+  byId('saved-page').checked = true;
+  byId('save').click();
+  await until(() => byId('change-review').hidden === false);
+  assert.equal(byId('confirm-save').disabled, false);
+  sdk.demo.addSuperscript();
+  assert.equal(byId('saved-page').checked, false);
+  assert.equal(byId('change-review').hidden, true);
+});
+
+test('numeric-collision consent approves only the exact reviewed sources and resets on cancel', async () => {
+  const { document, window, sdk } = await uiHarness('', async (host) => {
+    const current = await (await host.actions.daFetch(sourceUrl(host.context, '/home'))).text();
+    await putSource(host, '/home', current.replace('</main>', '<p>Check<sup>1</sup></p></main>'));
+  });
+  const byId = (id) => document.getElementById(id);
+  byId('save').click();
+  await until(() => !byId('numeric-confirmation').hidden);
+  await putSource(sdk, '/drafts/unseen', '<body><main><p>New<sup>2</sup></p>'
+    + '<div class="metadata"><div><div>Disclosures</div><div>/disclosures/sets/homepage.json</div>'
+    + '</div></div></main></body>');
+  byId('confirm-numeric').checked = true;
+  byId('confirm-numeric').dispatchEvent(new window.Event('change'));
+  await until(() => !byId('save').disabled);
+  assert.equal(byId('confirm-save').disabled, true);
+  assert.equal(byId('confirm-numeric').checked, false);
+  assert.match(byId('review-issues').textContent, /\/drafts\/unseen.*positional intent/);
+  byId('confirm-numeric').checked = true;
+  byId('confirm-numeric').dispatchEvent(new window.Event('change'));
+  await until(() => !byId('confirm-save').disabled);
+  assert.equal(byId('confirm-numeric').checked, true);
+  byId('cancel-review').click();
+  assert.equal(byId('confirm-numeric').checked, false);
 });
 
 test('reopening with an unfinished demo operation offers recovery and blocks a new reorder', async () => {
