@@ -14,6 +14,8 @@ The implementation uses one fresh whole-branch review after inline development r
 
 ## Enable compatible code first
 
+Post-push QA update: the branch preview is available, and **Disclosure Manager (numbering QA)** is registered only for `ref=codex-rework-disclosure-numbering`. The [Canvas test page](https://da.live/canvas?ref=codex-rework-disclosure-numbering#/adobedrago/etrade/drafts/disclosure-numbering-qa/consumer-a) uses the existing `/disclosures/sets/homepage` and its fragments. Canvas rendered repeated/grouped/table citations and the manager loaded all 13 disclosures. The shared set and live schema remain unchanged, so numeric conversion, reorder saves and the numeric-only assistant are still unverified against this shared set. The user is taking over manual testing.
+
 Deploy the backward-compatible renderer and Disclosure Manager before migrating real content. Use a separate plugin registration and disposable draft sources for branch QA. DA sources are shared across code branches: changing homepage content while another active branch still understands only letter IDs can break that branch's footer.
 
 Do not migrate the real homepage as part of merely reviewing the feature PR. Merge/deploy compatible code through the normal process, then schedule the source/schema migration and content review.
