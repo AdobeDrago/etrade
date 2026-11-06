@@ -452,8 +452,13 @@ main .section:not([data-section-layout="authored"]) > .accordion-faq-wrapper:has
   }
 }
 
+/* The reference section pads 60px above and below, and keeps the row gap after the last question. */
 body.our-accounts .accordion-faq[data-faq-layout="flat"] {
-  padding-top: 0;
+  padding: var(--space-60) 0 calc(var(--space-60) + 1.125rem);
+}
+
+body.our-accounts .accordion-faq[data-faq-layout="flat"] .accordion-faq-item-label {
+  line-height: 1.15;
 }
 
 body.our-accounts .accordion-faq[data-faq-layout="flat"] .accordion-faq-heading {
