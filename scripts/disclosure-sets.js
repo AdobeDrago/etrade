@@ -28,10 +28,29 @@ export function disclosureSetRequest(value, base = window.location.href) {
   return `${DELIVERY_ORIGIN}/${preview ? 'preview' : 'live'}${SITE_PATH}${path}`;
 }
 
+/** Numeric identities are positional; legacy identities retain their existing contract. */
+export function disclosureSetMode(payload) {
+  const set = payload?.data ?? payload;
+  if (!set || !Array.isArray(set.disclosures)) throw new Error('Invalid disclosure set.');
+  const numeric = set.disclosures.some((item) => typeof item?.disclosureId === 'string'
+    && /^\d+$/.test(item.disclosureId));
+  if (numeric) {
+    if (typeof set.id !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(set.id)) {
+      throw new Error('A numeric disclosure set needs a valid namespace.');
+    }
+    if (set.disclosures.some((item, index) => item?.disclosureId !== String(index + 1)
+      || !disclosureFragmentPath(item.fragment))) {
+      throw new Error('Numeric disclosure IDs must match their sequence positions and valid fragments.');
+    }
+    return 'sequence';
+  }
+  return set.disclosures.some((item) => item && Object.hasOwn(item, 'disclosureId')) ? 'stable' : 'legacy';
+}
+
 /** Number valid, unique disclosure IDs in authored array order. */
 export function disclosureSetEntries(payload) {
   const set = payload?.data ?? payload;
-  if (!set || !Array.isArray(set.disclosures)) throw new Error('Invalid disclosure set.');
+  const mode = disclosureSetMode(set);
   const entries = [];
   const append = (items, entryFor) => {
     if (!Array.isArray(items)) return;
@@ -49,7 +68,7 @@ export function disclosureSetEntries(payload) {
   });
   const ids = new Set();
   const numbers = new Set();
-  const usesIds = set.disclosures.some((item) => item && Object.hasOwn(item, 'disclosureId'));
+  const usesIds = mode !== 'legacy';
   append(set.disclosures, (item) => {
     // Preview/live content may still serve the previous schema during migration.
     if (!usesIds) {
@@ -60,6 +79,9 @@ export function disclosureSetEntries(payload) {
       return { label: String(number) };
     }
     const { disclosureId } = item;
+    if (mode === 'sequence') {
+      return { label: disclosureId, disclosureId, namespace: set.id };
+    }
     if (typeof disclosureId !== 'string' || !/^[a-z][a-z0-9]*$/.test(disclosureId)
       || ids.has(disclosureId)) return null;
     ids.add(disclosureId);

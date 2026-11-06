@@ -12,6 +12,9 @@ function finishDisclosures(block) {
 
 /** Render both legacy table rows and resolved rich-text fragments consistently. */
 function renderDisclosures(block, entries) {
+  const namespace = entries.find((entry) => entry.namespace)?.namespace;
+  if (namespace) block.dataset.disclosureNamespace = namespace;
+  else delete block.dataset.disclosureNamespace;
   const intro = document.createElement('div');
   intro.className = 'disclosures-intro';
   const closing = document.createElement('div');
@@ -21,11 +24,14 @@ function renderDisclosures(block, entries) {
   entries.forEach(({ label, disclosureId, nodes }) => {
     const content = document.createElement(/^\d+$/.test(label) ? 'li' : 'div');
     content.append(...nodes);
-    if (!content.textContent.trim() && !content.querySelector('img, picture, .icon')) return;
+    if (!content.textContent.trim() && !content.querySelector('img, picture, .icon')) {
+      if (namespace && disclosureId) throw new Error(`Numeric disclosure ${disclosureId} is empty.`);
+      return;
+    }
     decorateIcons(content);
     if (/^\d+$/.test(label)) {
       const number = disclosureId ? list.children.length + 1 : Number(label);
-      content.id = `disclosure-${disclosureId || number}`;
+      content.id = `disclosure-${namespace ? `${namespace}-${disclosureId}` : disclosureId || number}`;
       content.setAttribute('value', String(number));
       if (disclosureId) content.dataset.disclosureId = disclosureId;
       content.tabIndex = -1;
@@ -128,14 +134,18 @@ async function renderSet(block, url) {
   entries.forEach(({ path }) => {
     if (!documents.has(path)) documents.set(path, loadFragment(path, { decorate: false }));
   });
-  const rows = await Promise.all(entries.map(async ({ label, disclosureId, path }) => {
+  const rows = await Promise.all(entries.map(async ({
+    label, disclosureId, namespace, path,
+  }) => {
     const fragment = await documents.get(path);
     if (!fragment) throw new Error(`Disclosure fragment could not be loaded: ${path}`);
     const nodes = [...fragment.childNodes].flatMap((section) => (
       section.nodeType === 1 && section.tagName === 'DIV'
         ? [...section.childNodes] : [section]
     )).map((node) => node.cloneNode(true));
-    return { label, disclosureId, nodes };
+    return {
+      label, disclosureId, namespace, nodes,
+    };
   }));
   renderDisclosures(block, rows);
 }

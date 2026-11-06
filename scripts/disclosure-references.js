@@ -20,6 +20,7 @@ export default function decorateDisclosureReferences(main, disclosures = main?.q
   || document.querySelector('.disclosures:not([hidden])')) {
   if (!main || !disclosures || disclosures.hidden) return;
   const targets = new Map();
+  const namespace = disclosures.dataset.disclosureNamespace;
   const items = [...disclosures.querySelectorAll('.disclosures-items > li[id]')];
   const usesIds = items.some((item) => item.dataset.disclosureId);
   items.forEach((item, index) => {
@@ -29,6 +30,7 @@ export default function decorateDisclosureReferences(main, disclosures = main?.q
     if (id && number > 0) {
       const target = { href: `#${item.id}`, number: String(number) };
       targets.set(id, target);
+      if (namespace) targets.set(`${namespace}-${id}`, target);
       // Pages may already author a–z IDs while preview still delivers the numeric schema.
       const legacyNumber = Number(id);
       if (!usesIds && legacyNumber >= 1 && legacyNumber <= 26) {
@@ -46,7 +48,12 @@ export default function decorateDisclosureReferences(main, disclosures = main?.q
     if (outerLink && (outerLink !== sup.parentElement || outerLink.children.length !== 1
       || outerLink.textContent.trim() !== sup.textContent.trim())) return;
     const authoredLinks = [...sup.querySelectorAll('a[href]'), ...(outerLink ? [outerLink] : [])];
-    if (authoredLinks.some((link) => !/^#disclosure-[a-z0-9]+$/.test(link.getAttribute('href')))) return;
+    if (authoredLinks.some((link) => {
+      const href = link.getAttribute('href');
+      const named = href.match(/^#disclosure-(.+)-[1-9]\d*$/);
+      return !/^#disclosure-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(href)
+        || (namespace && named && named[1] !== namespace);
+    })) return;
 
     // Preserve the authored IDs so a later pass never interprets display numbers as IDs.
     sup.dataset.disclosureIds = ids.join(',');

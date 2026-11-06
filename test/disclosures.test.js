@@ -78,6 +78,75 @@ async function harness(routes = new Map(), body = '<p>References <sup>offer,apy<
   };
 }
 
+test('numeric identities match sequence positions and carry the set namespace', () => {
+  assert.deepEqual(disclosureSetEntries({
+    id: 'homepage',
+    disclosures: [
+      { disclosureId: '1', fragment: '/one' }, { disclosureId: '2', fragment: '/two' },
+    ],
+  }), [
+    {
+      label: '1', disclosureId: '1', namespace: 'homepage', path: '/one',
+    },
+    {
+      label: '2', disclosureId: '2', namespace: 'homepage', path: '/two',
+    },
+  ]);
+  [
+    { id: 'homepage', disclosures: [{ disclosureId: '2', fragment: '/two' }] },
+    { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/one' }, { disclosureId: 'a', fragment: '/two' }] },
+    { disclosures: [{ disclosureId: '1', fragment: '/one' }] },
+    { id: 'homepage', disclosures: [{ disclosureId: '01', fragment: '/one' }] },
+    { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: 'https://outside.example/one' }] },
+  ].forEach((set) => assert.throws(() => disclosureSetEntries(set), /numeric|sequence|namespace/i));
+});
+
+test('numeric references resolve plain and namespaced citations and respect a manual retarget', async () => {
+  const routes = new Map([
+    [endpoint, {
+      data: {
+        id: 'homepage',
+        disclosures: [
+          { disclosureId: '1', fragment: '/one' }, { disclosureId: '2', fragment: '/two' },
+        ],
+      },
+    }],
+    ['/one.plain.html', '<div><p>Offer terms</p></div>'],
+    ['/two.plain.html', '<div><p>Fee terms</p></div>'],
+  ]);
+  const app = await harness(routes, '<p><sup>1</sup> <sup>2,1</sup> <sup>homepage-2</sup> <sup>other-1</sup> <sup>™</sup> <sup><a href="https://example.com">1</a></sup></p>');
+  await app.decorate(app.block);
+  assert.deepEqual([...app.block.querySelectorAll('li')].map((li) => [li.id, li.getAttribute('value')]), [
+    ['disclosure-homepage-1', '1'], ['disclosure-homepage-2', '2'],
+  ]);
+  const main = app.document.querySelector('main');
+  assert.deepEqual([...main.querySelectorAll('.disclosures-reference')].map((sup) => sup.textContent), ['1', '2,1', '2']);
+  assert.equal(main.querySelectorAll('a a').length, 0);
+  const edited = main.querySelector('sup');
+  edited.querySelector('a').textContent = '2';
+  app.decorateReferences(main);
+  assert.equal(edited.querySelector('a').getAttribute('href'), '#disclosure-homepage-2');
+  assert.equal(edited.querySelector('a').getAttribute('aria-label'), 'Disclosure 2');
+  assert.equal(main.querySelectorAll('sup')[3].textContent, 'other-1');
+  assert.equal(main.querySelectorAll('sup')[5].querySelector('a').getAttribute('href'), 'https://example.com');
+});
+
+test('an empty numeric disclosure cannot make the remaining identities shift position', async () => {
+  const app = await harness(new Map([
+    [endpoint, {
+      id: 'homepage',
+      disclosures: [
+        { disclosureId: '1', fragment: '/empty' }, { disclosureId: '2', fragment: '/two' },
+      ],
+    }],
+    ['/empty.plain.html', '<div></div>'], ['/two.plain.html', '<div><p>Second</p></div>'],
+  ]), '<p>Claim<sup>2</sup></p>');
+  await app.decorate(app.block);
+  assert.equal(app.block.hidden, true);
+  assert.equal(app.document.querySelector('main a'), null);
+  assert.equal(app.errors.length, 1);
+});
+
 test('metadata paths select preview/live delivery, and explicit JSON paths load locally', () => {
   assert.equal(disclosureSetRequest('/disclosures/sets/homepage', preview), endpoint);
   assert.equal(disclosureSetRequest('/disclosures/sets/homepage.html', preview), endpoint);
