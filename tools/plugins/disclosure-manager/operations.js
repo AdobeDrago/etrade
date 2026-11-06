@@ -171,7 +171,7 @@ export async function applyOperation(context, plan, request, options = {}) {
     throw new Error('An unfinished operation needs recovery before a new reorder.');
   }
   await verifyInventory(context, plan.inventory, request);
-  await Promise.all(plan.writes.map(async (write) => {
+  await Promise.all((plan.guards || plan.writes).map(async (write) => {
     if (await readSource(context, write.path, request) !== write.original) {
       throw new Error(`Source changed since review: ${write.path}.`);
     }
@@ -197,6 +197,9 @@ export async function applyOperation(context, plan, request, options = {}) {
     created: new Date().toISOString(),
     status: 'prepared',
     writes,
+    guards: await Promise.all((plan.guards || []).map(async (guard) => ({
+      path: guard.path, hash: await hash(guard.original),
+    }))),
   };
   await persist(context, operation, request);
   return execute(context, operation, request, options);
@@ -206,6 +209,12 @@ export async function resumeOperation(context, operation, request, options = {})
   const current = await currentOperation(context, operation, request);
   if (current.status === 'restored') throw new Error('This operation was restored. Review a new reorder instead.');
   await verifyInventory(context, current.inventory, request);
+  await Promise.all((current.guards || []).map(async (guard) => {
+    if (current.writes.some((write) => write.path === guard.path)) return;
+    if (await hash(await readSource(context, guard.path, request)) !== guard.hash) {
+      throw new Error(`A consumer changed during recovery: ${guard.path}. Restore and review again.`);
+    }
+  }));
   return execute(context, current, request, options);
 }
 

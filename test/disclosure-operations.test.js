@@ -11,7 +11,7 @@ const setPath = '/disclosures/sets/homepage.json';
 
 async function server() {
   const state = {
-    sources: new Map([['/home', 'old home'], ['/copy/shared', 'old copy'], [setPath, 'old set']]),
+    sources: new Map([['/home', 'old home'], ['/copy/shared', 'old copy'], [setPath, 'old set'], ['/observer', 'unchanged consumer']]),
     writes: [],
     failAt: 0,
     timeoutAt: 0,
@@ -62,7 +62,8 @@ async function server() {
     issues: [],
     affectedPages: ['/home'],
     inventory: await readSiteInventory(context, state.request),
-    writes: [...state.sources].map(([path, original]) => ({
+    guards: [...state.sources].map(([path, original]) => ({ path, original })),
+    writes: [...state.sources].filter(([path]) => path !== '/observer').map(([path, original]) => ({
       path,
       original,
       target: original.replace('old', 'new'),
@@ -182,5 +183,12 @@ test('modified recovery snapshots fail integrity checks before content is writte
   completed.writes[0].target = 'a different target';
   api.writes = [];
   await assert.rejects(restoreOperation(context, completed, api.request), /integrity/i);
+  assert.deepEqual(api.writes, []);
+});
+
+test('an unchanged consumer whose dependencies change after review invalidates the batch', async () => {
+  const api = await server();
+  api.sources.set('/observer', 'now embeds the shared citation under another set');
+  await assert.rejects(applyOperation(context, api.plan, api.request), /changed|consumer/i);
   assert.deepEqual(api.writes, []);
 });

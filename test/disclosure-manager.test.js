@@ -1,5 +1,6 @@
 /* eslint-env node, es2022 */
 import assert from 'node:assert/strict';
+import { webcrypto } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import vm from 'node:vm';
@@ -240,12 +241,12 @@ test('changed sources and failed saves keep the original snapshot and never repo
   assert.deepEqual(model.data.disclosures, entries);
 });
 
-async function uiHarness() {
+async function uiHarness(query = '') {
   const base = new URL('../', import.meta.url);
   const entry = '/tools/plugins/disclosure-manager/disclosure-manager.js';
   const html = await readFile(new URL(`.${entry.replace(/\.js$/, '.html')}`, base), 'utf8');
   const { document, window } = parseHTML(html);
-  window.location = new URL('http://localhost:3000/tools/plugins/disclosure-manager/disclosure-manager.html?demo=1');
+  window.location = new URL(`http://localhost:3000/tools/plugins/disclosure-manager/disclosure-manager.html?demo=1${query}`);
   const contextVm = vm.createContext({
     document,
     window,
@@ -257,6 +258,8 @@ async function uiHarness() {
     Blob,
     structuredClone,
     console,
+    crypto: webcrypto,
+    TextEncoder,
   });
   const modules = new Map();
   const moduleFor = (pathname) => {
@@ -299,7 +302,7 @@ async function until(check) {
   assert.fail('The UI did not finish its operation.');
 }
 
-test('demo UI loads, audits, reorders, saves, inserts grouped IDs, and refreshes without DA', async () => {
+test('demo UI reviews all affected sources before migrating and inserting grouped numbers', async () => {
   const { document, window } = await uiHarness();
   const byId = (id) => document.getElementById(id);
   const list = byId('disclosure-list');
@@ -321,16 +324,67 @@ test('demo UI loads, audits, reorders, saves, inserts grouped IDs, and refreshes
   assert.equal(byId('insert').disabled, true);
   assert.match(byId('audit-summary').textContent, /Proposed order/);
   byId('save').click();
-  await until(() => /Demo order saved/.test(byId('status').textContent));
+  await until(() => byId('change-review')?.hidden === false && !byId('confirm-save').disabled);
+  assert.match(byId('review-paths').textContent, /\/home/);
+  assert.match(byId('review-paths').textContent, /\/drafts\/offer/);
+  assert.equal(list.children[0].querySelector('.entry-id').textContent, 'fees');
+  byId('confirm-save').click();
+  await until(() => /Demo changes saved/.test(byId('status').textContent));
   assert.equal(byId('save').disabled, true);
   assert.equal(byId('insert').disabled, false);
   byId('insert').click();
-  assert.match(byId('demo-reference').textContent, /<sup>fees,offer<\/sup>/);
+  assert.match(byId('demo-reference').textContent, /<sup>1,2<\/sup>/);
+  assert.match(byId('changed-sources').textContent, /Preview/);
   byId('refresh').click();
   await until(() => /Loaded 4/.test(byId('status').textContent));
-  assert.equal(list.children[0].querySelector('.entry-id').textContent, 'fees');
+  assert.equal(list.children[0].querySelector('.entry-id').textContent, '1');
+  assert.match(list.children[0].querySelector('.entry-path').textContent, /trading-fees/);
   document.querySelector('[data-panel="audit"]').click();
   assert.equal(byId('audit').hidden, false);
   assert.equal(byId('manage').hidden, true);
   assert.ok(byId('audit-output').querySelector('.error'));
+});
+
+test('changing a proposed order invalidates its old change review', async () => {
+  const { document } = await uiHarness();
+  const byId = (id) => document.getElementById(id);
+  byId('save').click();
+  await until(() => byId('change-review')?.hidden === false && !byId('confirm-save').disabled);
+  byId('disclosure-list').children[0].querySelector('button[aria-label="Move offer down"]').click();
+  assert.equal(byId('change-review').hidden, true);
+  assert.equal(byId('confirm-save').disabled, true);
+});
+
+test('reopening with an unfinished demo operation offers recovery and blocks a new reorder', async () => {
+  const { document } = await uiHarness('&recovery=1');
+  const byId = (id) => document.getElementById(id);
+  assert.equal(byId('recovery').hidden, false);
+  assert.match(byId('recovery-paths').textContent, /\/home/);
+  assert.equal(byId('save').disabled, true);
+  assert.equal(byId('resume-operation').disabled, false);
+  assert.equal(byId('restore-operation').disabled, false);
+});
+
+test('numeric reorder previews and saves keep selection attached to its original legal text', async () => {
+  const { document, window } = await uiHarness();
+  const byId = (id) => document.getElementById(id);
+  const saveReviewed = async () => {
+    byId('save').click();
+    await until(() => byId('change-review').hidden === false && !byId('confirm-save').disabled);
+    byId('confirm-save').click();
+    await until(() => /Demo changes saved/.test(byId('status').textContent));
+  };
+  await saveReviewed();
+  const checkbox = byId('disclosure-list').children[0].querySelector('input');
+  checkbox.checked = true;
+  checkbox.dispatchEvent(new window.Event('change'));
+  byId('disclosure-list').children[0].querySelector('button[aria-label="Move 1 down"]').click();
+  const previewDoc = new BrowserParser().parseFromString(byId('footer-preview').srcdoc, 'text/html');
+  assert.equal(previewDoc.querySelector('.preview-selected').dataset.disclosureId, '2');
+  assert.match(previewDoc.querySelector('.preview-selected').textContent, /Account offer/);
+  assert.equal(byId('insert').disabled, true);
+  await saveReviewed();
+  byId('insert').click();
+  assert.match(byId('demo-reference').textContent, /<sup>2<\/sup>/);
+  assert.match(byId('disclosure-list').children[1].textContent, /Account offer/);
 });

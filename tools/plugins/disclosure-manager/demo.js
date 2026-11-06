@@ -1,5 +1,9 @@
+import { parseSetSource } from './model.js';
+import { planAffectedSources } from './inventory.js';
+import { applyOperation } from './operations.js';
+
 /** Explicit opt-in demo. All content and writes stay in memory. */
-export default function demoSdk(insert) {
+export default async function demoSdk(insert, { seedRecovery = false } = {}) {
   const context = {
     org: 'adobedrago', repo: 'etrade', path: '/home', view: 'edit',
   };
@@ -11,8 +15,11 @@ export default function demoSdk(insert) {
       <p>Trading costs and rate terms<sup>fees,apy</sup>.</p>
       <p>Repeated offer reference<sup>offer</sup>.</p>
       <p>A reference needing review<sup>missing</sup>.</p>
+      <div class="fragment"><div><div><a href="/copy/shared-offer">Shared offer</a></div></div></div>
       <div class="metadata"><div><div>Disclosures</div><div>${setPath}</div></div></div>
       </div></main></body>`],
+    ['/drafts/offer.html', `<body><main><p>Another offer<sup>offer</sup>.</p><div class="fragment"><div><div><a href="/copy/shared-offer">Shared offer</a></div></div></div><div class="metadata"><div><div>Disclosures</div><div>${setPath}</div></div></div></main></body>`],
+    ['/copy/shared-offer.html', '<body><main><p>Shared fee information<sup>fees</sup>.</p></main></body>'],
     [setPath, JSON.stringify({
       id: 'homepage',
       introduction: [{ fragment: `${fragments}/introduction`, kind: 'notice' }],
@@ -35,13 +42,38 @@ export default function demoSdk(insert) {
   ].forEach(([name, title, text]) => {
     source.set(`${fragments}/${name}.html`, `<body><main><div><p><strong>${title}</strong></p><p>${text}</p></div></main></body>`);
   });
-  return {
+  let contentWrites = 0;
+  let firstWrite;
+  let failAt = seedRecovery ? 2 : 0;
+  const sdk = {
     context,
     actions: {
       sendHTML: insert,
+      saveDocument: async () => ({ ok: true }),
       daFetch: async (url, options = {}) => {
-        const path = new URL(url).pathname.replace('/source/adobedrago/etrade', '');
+        const { pathname } = new URL(url);
+        if (pathname.startsWith('/list/adobedrago/etrade')) {
+          const folder = pathname.slice('/list/adobedrago/etrade'.length);
+          const listing = new Map();
+          [...source.keys()].forEach((path) => {
+            if (!path.startsWith(`${folder}/`)) return;
+            const relative = path.slice(folder.length + 1);
+            const [name] = relative.split('/');
+            if (relative.includes('/')) listing.set(name, { path: `/adobedrago/etrade${folder}/${name}` });
+            else listing.set(name, { path: `/adobedrago/etrade${path}`, ext: path.endsWith('.json') ? 'json' : 'html' });
+          });
+          return Response.json([...listing.values()]);
+        }
+        const path = pathname.replace('/source/adobedrago/etrade', '');
         if (options.method === 'POST') {
+          if (!path.startsWith('/.da/')) {
+            contentWrites += 1;
+            firstWrite ||= path;
+            if (contentWrites === failAt) {
+              source.set(firstWrite, `${source.get(firstWrite)}<!-- A collaborator changed this demo source. -->`);
+              return new Response('', { status: 500 });
+            }
+          }
           source.set(path, await options.body.get('data').text());
           return new Response('', { status: 200 });
         }
@@ -49,4 +81,11 @@ export default function demoSdk(insert) {
       },
     },
   };
+  if (seedRecovery) {
+    const model = parseSetSource(source.get(setPath), setPath);
+    const plan = await planAffectedSources(context, model, [1, 0, 2, 3], sdk.actions.daFetch);
+    await applyOperation(context, plan, sdk.actions.daFetch);
+    failAt = 0;
+  }
+  return sdk;
 }

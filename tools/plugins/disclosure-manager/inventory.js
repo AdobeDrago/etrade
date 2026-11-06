@@ -158,12 +158,14 @@ export async function planAffectedSources(context, model, order, request, option
     scanned: 0,
     affectedPages: [],
     inventory: null,
+    guards: [],
   };
   try {
     const inventory = await readSiteInventory(context, request);
     result.inventory = inventory;
     if (!inventory.documents.includes(model.path)) throw new Error('The selected set is absent from the complete site inventory.');
     const sources = await readDocuments(context, inventory.documents, request);
+    result.guards = [...sources].map(([path, original]) => ({ path, original }));
     result.scanned = sources.size;
     if (sources.get(model.path) !== model.source) throw new Error('The disclosure set changed since loading. Refresh before reviewing.');
     const graph = new Map([...sources].map(([path, source]) => (

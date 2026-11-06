@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { DOMParser } from 'linkedom';
-import { parseSetSource } from '../tools/plugins/disclosure-manager/model.js';
+import { parseSetSource, reorderedSource } from '../tools/plugins/disclosure-manager/model.js';
 import { numberedDisclosureSchema, renumberPlan, rewriteDisclosureReferences } from '../tools/plugins/disclosure-manager/renumber.js';
 
 class Parser {
@@ -105,4 +105,8 @@ test('DA structured reference arrays are rewritten without changing unrelated pr
   assert.match(result.source, /<div>123<\/div>/);
   const unsupported = source.replace('disclosureIds', 'disclosureCustom');
   assert.match(rewriteDisclosureReferences(unsupported, plan).issues[0].message, /unsupported/i);
+});
+
+test('the previous set-only save path cannot persist a numeric reorder without its consumers', () => {
+  assert.throws(() => reorderedSource(model(), [1, 0, 2]), /batch|review|manager/i);
 });

@@ -51,6 +51,10 @@
   cursor: pointer;
 }
 
+.disclosure-manager .batch-review button {
+  margin: 0.25rem 0.25rem 0.25rem 0;
+}
+
 .disclosure-manager button:disabled {
   opacity: 0.5;
   cursor: default;
@@ -118,6 +122,19 @@
 .disclosure-manager .hint {
   color: #5d566d;
   font-size: 0.75rem;
+}
+
+.disclosure-manager .batch-review {
+  border: 1px solid #c8bde6;
+  border-radius: 8px;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #fff;
+  overflow-wrap: anywhere;
+}
+
+.disclosure-manager .batch-review ul {
+  padding-left: 1.25rem;
 }
 
 .disclosure-manager .disclosure-list,

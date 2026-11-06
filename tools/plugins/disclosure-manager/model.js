@@ -159,6 +159,10 @@ export function orderedEntries(model, order) {
 export function reorderedSource(model, order) {
   if (validateSet(model).length) throw new Error('Fix the disclosure set errors before saving its order.');
   const entries = orderedEntries(model, order);
+  if (disclosureSetMode(model.data) === 'sequence'
+    && order.some((index, position) => index !== position)) {
+    throw new Error('Numeric reorders require the reviewed batch in Disclosure Manager.');
+  }
   if (model.payload) {
     const payload = structuredClone(model.payload);
     (payload.data ?? payload).disclosures = entries;
@@ -171,10 +175,13 @@ export function reorderedSource(model, order) {
 }
 
 /** Audit the same marker shapes the site's automatic linker accepts. */
-export function auditReferences(html, entries) {
+export function auditReferences(html, entries, namespace) {
   const doc = parse(html);
-  const targets = new Map(disclosureSetEntries({ disclosures: entries })
+  const targets = new Map(disclosureSetEntries({ id: namespace, disclosures: entries })
     .map(({ disclosureId, label }) => [disclosureId, label]));
+  if (namespace && entries.every((item) => /^[1-9]\d*$/.test(item.disclosureId))) {
+    entries.forEach((item) => targets.set(`${namespace}-${item.disclosureId}`, item.disclosureId));
+  }
   const used = new Set();
   const issues = [];
   let references = 0;
@@ -182,10 +189,10 @@ export function auditReferences(html, entries) {
     if (sup.closest('.disclosures, .metadata')) return;
     const outer = sup.closest('a[href]');
     const links = [...sup.querySelectorAll('a[href]'), ...(outer ? [outer] : [])];
-    if (links.some((link) => !/^#disclosure-[a-z0-9]+$/.test(link.getAttribute('href')))) return;
+    if (links.some((link) => !/^#disclosure-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(link.getAttribute('href')))) return;
     const text = sup.dataset.disclosureIds || sup.textContent.trim();
     const ids = text.split(/\s*,\s*/);
-    if (!ids.every((id) => /^[a-z][a-z0-9]*$|^\d+$/.test(id))) return;
+    if (!ids.every((id) => /^[a-z][a-z0-9-]*$|^\d+$/.test(id))) return;
     if (outer && (outer !== sup.parentElement || outer.children.length !== 1
       || outer.textContent.trim() !== sup.textContent.trim())) {
       issues.push({ type: 'error', message: `Marker “${text}” is inside a larger link and cannot be linked automatically.` });
@@ -193,7 +200,7 @@ export function auditReferences(html, entries) {
     }
     const missing = ids.filter((id) => !targets.has(id));
     if (missing.length) {
-      issues.push({ type: 'error', message: `Marker “${text}” has no matching ID for ${missing.join(', ')}. Use stable IDs rather than display numbers.` });
+      issues.push({ type: 'error', message: `Marker “${text}” has no matching ID for ${missing.join(', ')}. Use a reference from the selected set.` });
       return;
     }
     ids.forEach((id) => { used.add(id); references += 1; });
