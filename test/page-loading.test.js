@@ -186,3 +186,12 @@ test('DA reload waits for refreshed shared targets before linking detached numer
   await pending;
   assert.equal(detached.querySelector('sup a').getAttribute('href'), '#disclosure-homepage-2');
 });
+
+test('only the quick-edit lifecycle loads the inline disclosure helper', async () => {
+  const page = await harness('<main><p>Claim</p></main>', () => {});
+  await page.reloadEditable(page.document.querySelector('main'));
+  assert.equal(page.imports.includes('./disclosure-hints.js'), false);
+  page.document.body.classList.add('quick-edit');
+  await page.reloadEditable(page.document.querySelector('main'));
+  assert.equal(page.imports.includes('./disclosure-hints.js'), true);
+});

@@ -1,0 +1,26 @@
+.disclosure-hint {
+  position: fixed;
+  z-index: 1200;
+  max-width: calc(100vw - 2rem);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--color-surface-default);
+  box-shadow: var(--shadow-floating);
+  color: var(--color-text-primary);
+  font: 0.875rem/1.5 Arial, sans-serif;
+}
+
+.disclosure-hint h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.disclosure-hint p {
+  margin: 0.5rem 0 0;
+}
+
+.disclosure-hint .disclosure-hint-help {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}

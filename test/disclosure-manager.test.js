@@ -186,6 +186,16 @@ test('invalid IDs, duplicates, legacy numbers and incomplete orders cannot be sa
   assert.throws(() => parseSetSource(source.replace('<p>disclosure-set</p>', '<p>other-schema</p>'), path), /schema/);
 });
 
+test('numbered audit resolves namespaced markers to canonical IDs and targets', () => {
+  const numbered = ['1', '2'].map((disclosureId) => ({ disclosureId, fragment: '/terms' }));
+  const audit = auditReferences('<body><main><sup>homepage-1</sup><sup>2</sup>'
+    + '<sup><a href="#disclosure-other-1">1</a></sup></main></body>', numbered, 'homepage');
+  assert.equal(audit.references, 2);
+  assert.equal(audit.issues.filter((issue) => issue.type !== 'ok').length, 0);
+  assert.match(audit.issues[0].message, /#disclosure-homepage-1/);
+  assert.match(audit.issues[1].message, /#disclosure-homepage-2/);
+});
+
 test('audit follows stable IDs across repeated, grouped, late, and reordered references', () => {
   const html = `<body><main><p><sup>offer</sup><sup>fees,offer</sup>
     <a href="#disclosure-offer"><sup>offer</sup></a>
@@ -260,6 +270,8 @@ async function uiHarness(query = '') {
     console,
     crypto: webcrypto,
     TextEncoder,
+    setTimeout,
+    clearTimeout,
   });
   const modules = new Map();
   const moduleFor = (pathname) => {
@@ -293,7 +305,7 @@ async function uiHarness(query = '') {
 }
 
 async function until(check) {
-  for (let attempt = 0; attempt < 50; attempt += 1) {
+  for (let attempt = 0; attempt < 150; attempt += 1) {
     if (check()) return;
     // Each poll depends on the asynchronous UI operation completing.
     // eslint-disable-next-line no-await-in-loop
@@ -387,4 +399,25 @@ test('numeric reorder previews and saves keep selection attached to its original
   byId('insert').click();
   assert.match(byId('demo-reference').textContent, /<sup>2<\/sup>/);
   assert.match(byId('disclosure-list').children[1].textContent, /Account offer/);
+});
+
+test('the manager assistant suggests a new demo superscript and applies the author’s choice', async () => {
+  const { document } = await uiHarness();
+  const byId = (id) => document.getElementById(id);
+  byId('save').click();
+  await until(() => byId('change-review').hidden === false && !byId('confirm-save').disabled);
+  byId('confirm-save').click();
+  await until(() => /Demo changes saved/.test(byId('status').textContent));
+  assert.equal(byId('assistant-demo').hidden, false);
+  byId('assistant-demo').click();
+  await until(() => !byId('assistant-suggestion').hidden);
+  assert.match(byId('assistant-question').textContent, /3/);
+  assert.equal(byId('assistant-link').disabled, false);
+  byId('assistant-link').click();
+  await until(() => /Disclosure linked/.test(byId('status').textContent));
+  byId('assistant-demo').click();
+  await until(() => !byId('assistant-suggestion').hidden);
+  assert.equal(byId('assistant-link').disabled, true);
+  byId('assistant-ordinary').click();
+  await until(() => /ordinary superscript/.test(byId('status').textContent));
 });

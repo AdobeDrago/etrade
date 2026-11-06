@@ -177,10 +177,16 @@ export function reorderedSource(model, order) {
 /** Audit the same marker shapes the site's automatic linker accepts. */
 export function auditReferences(html, entries, namespace) {
   const doc = parse(html);
+  const numeric = namespace && entries.every((item) => /^[1-9]\d*$/.test(item.disclosureId));
   const targets = new Map(disclosureSetEntries({ id: namespace, disclosures: entries })
-    .map(({ disclosureId, label }) => [disclosureId, label]));
-  if (namespace && entries.every((item) => /^[1-9]\d*$/.test(item.disclosureId))) {
-    entries.forEach((item) => targets.set(`${namespace}-${item.disclosureId}`, item.disclosureId));
+    .map(({ disclosureId, label }) => [disclosureId, {
+      id: disclosureId, label, anchor: numeric ? `${namespace}-${disclosureId}` : disclosureId,
+    }]));
+  if (numeric) {
+    entries.forEach((item) => targets.set(
+      `${namespace}-${item.disclosureId}`,
+      targets.get(item.disclosureId),
+    ));
   }
   const used = new Set();
   const issues = [];
@@ -190,6 +196,10 @@ export function auditReferences(html, entries, namespace) {
     const outer = sup.closest('a[href]');
     const links = [...sup.querySelectorAll('a[href]'), ...(outer ? [outer] : [])];
     if (links.some((link) => !/^#disclosure-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(link.getAttribute('href')))) return;
+    if (numeric && links.some((link) => {
+      const target = link.getAttribute('href').slice('#disclosure-'.length);
+      return !targets.has(target) && !/^[1-9]\d*$/.test(target);
+    })) return;
     const text = sup.dataset.disclosureIds || sup.textContent.trim();
     const ids = text.split(/\s*,\s*/);
     if (!ids.every((id) => /^[a-z][a-z0-9-]*$|^\d+$/.test(id))) return;
@@ -203,8 +213,14 @@ export function auditReferences(html, entries, namespace) {
       issues.push({ type: 'error', message: `Marker “${text}” has no matching ID for ${missing.join(', ')}. Use a reference from the selected set.` });
       return;
     }
-    ids.forEach((id) => { used.add(id); references += 1; });
-    issues.push({ type: 'ok', message: `Marker ${text} → ${ids.map((id) => `${targets.get(id)} (#disclosure-${id})`).join(', ')}.` });
+    ids.forEach((id) => { used.add(targets.get(id).id); references += 1; });
+    issues.push({
+      type: 'ok',
+      message: `Marker ${text} → ${ids.map((id) => {
+        const target = targets.get(id);
+        return `${target.label} (#disclosure-${target.anchor})`;
+      }).join(', ')}.`,
+    });
   });
   entries.forEach(({ disclosureId }) => {
     if (!used.has(disclosureId)) issues.push({ type: 'warn', message: `No reference to “${disclosureId}” in the saved page. Check separately loaded content before removing it.` });

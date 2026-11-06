@@ -38,6 +38,14 @@ The **Audit** tab checks the saved current page, including grouped and linked ci
 
 Legacy stable-ID rendering and old numeric legal documents remain compatible. Converting a structured set and its consumers is explicit. Legacy tables/documents must first be migrated to a structured set; the tool does not infer legal identities from arbitrary documents.
 
+## Disclosure assistant
+
+With a saved numbered set loaded, leave the manager open while authoring a numeric superscript. The assistant offers the matching disclosure excerpt, **Link disclosure**, **Keep as ordinary superscript**, and **Dismiss**. **Check selected superscript** also checks a selected number or comma-separated group. Keeping an ordinary superscript explicitly converts its digits to Unicode superscript characters, such as `²`, retaining surrounding formatting.
+
+Applying a suggestion requires DA's supported, version-guarded block replacement capability and an unambiguous current selection. Older hosts and ambiguous selections offer copy options. No unguarded replacement is attempted. Reordering or an unfinished recovery disables assistant edits until the set is saved.
+
+In Canvas quick-edit rendering, focusing or hovering a rendered disclosure reference shows its actual legal excerpt beside the reference. Escape closes this read-only hint. It lives outside authored content, does not alter an active editor, and is absent on the public website. Linking decisions stay in the manager.
+
 ## Interrupted saves and collaboration
 
 DA's Source API writes individual documents. The tool checks exact source snapshots and the complete consumer inventory before saving, verifies writes, and stores a recovery manifest under `/.da/disclosure-manager/renumber-jobs/`. The manifest contains original/target source snapshots and integrity hashes; credentials are never persisted. Completed manifests are retained when a new operation starts.
@@ -53,5 +61,7 @@ See [the schema and migration procedure](../../../docs/disclosure-numbering-roll
 ## Local review
 
 Open `http://localhost:3000/tools/plugins/disclosure-manager/disclosure-manager.html?demo=1` (or the port printed by AEM CLI). The demo includes two consuming pages, shared content, grouped/repeated citations, an unmatched marker and an unreferenced disclosure. Review and save use the real planning/recovery code with an in-memory API; they do not write DA content. Reloading the browser resets it. Add `&recovery=1` to inspect an interrupted operation with a collaborator conflict.
+
+After conversion, **Try a new superscript (demo)** exercises assistant linking and ordinary-superscript choices against the same guarded interface in memory.
 
 Run `npm run test:disclosure-manager`, `npm run test:disclosures`, and `npm test` for transformation, discovery, recovery, editor lifecycle and interface checks. The demo does not replace authenticated Canvas checks of SDK editing, source permissions and preview propagation.
