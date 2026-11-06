@@ -5,6 +5,20 @@ const NUMBER_GROUP = /^[1-9]\d*(?:\s*,\s*[1-9]\d*)*$/;
 const SUPERSCRIPT = '⁰¹²³⁴⁵⁶⁷⁸⁹';
 const ordinary = (text) => text.replace(/\d/g, (digit) => SUPERSCRIPT[Number(digit)]);
 
+export async function copyAssistantContent(
+  text,
+  html,
+  clipboard = navigator.clipboard,
+  Item = window.ClipboardItem,
+) {
+  if (html && Item && clipboard.write) {
+    await clipboard.write([new Item({
+      'text/html': new Blob([html], { type: 'text/html' }),
+      'text/plain': new Blob([text], { type: 'text/plain' }),
+    })]);
+  } else await clipboard.writeText(text);
+}
+
 function numbered(entries, namespace) {
   return typeof namespace === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(namespace)
     && entries.length > 0
@@ -87,7 +101,7 @@ export function updatedSuperscriptBlock(candidate, choice) {
 export default function mountDisclosureAssistant({
   document: doc, sdk, getEntries, getNamespace, getFragments, onStatus,
   canEdit = () => true,
-  copyText = (text) => navigator.clipboard.writeText(text),
+  copyText = copyAssistantContent,
   setTimer = setTimeout,
   clearTimer = clearTimeout,
 }) {
@@ -221,12 +235,18 @@ export default function mountDisclosureAssistant({
   };
   const copy = async (choice) => {
     if (!candidate || !canEdit()) return;
-    const text = choice === 'link' ? referenceHTML(candidate) : ordinary(candidate.text);
+    const text = choice === 'link' ? candidate.numbers.join(',') : ordinary(candidate.text);
+    const html = choice === 'link' ? referenceHTML(candidate) : undefined;
     if (!text) return;
     const output = byId('assistant-copy');
     output.hidden = false;
     output.value = text;
-    try { await copyText(text); report('Copied. Paste it over the selected superscript in DA.'); } catch { report('Select the text below and copy it manually.'); }
+    try {
+      await copyText(text, html);
+      report('Copied. Paste it over the selected superscript in DA.');
+    } catch {
+      report('Copy the text below manually. For a disclosure, paste into the existing superscript.');
+    }
   };
   const check = async () => {
     selectionRequest += 1;

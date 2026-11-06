@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import { DOMParser, parseHTML } from 'linkedom';
-import mountAssistant, { superscriptCandidates, updatedSuperscriptBlock } from '../tools/plugins/disclosure-manager/assistant.js';
+import mountAssistant, { copyAssistantContent, superscriptCandidates, updatedSuperscriptBlock } from '../tools/plugins/disclosure-manager/assistant.js';
 import mountHints from '../scripts/disclosure-hints.js';
 
 class Parser {
@@ -16,6 +16,15 @@ globalThis.DOMParser = Parser;
 const entries = ['1', '2', '3'].map((disclosureId) => ({ disclosureId, fragment: `/terms/${disclosureId}` }));
 const snapshot = (content) => ({ html: `<body><main><div class="hero" data-block-index="2"><p>Claim <strong>keep wording</strong>${content}</p><a href="https://example.com">Other link</a></div></main></body>`, editable: true, selection: { blockIndex: 2 } });
 const parse = (html) => new Parser().parseFromString(html, 'text/html');
+
+test('copying a disclosure puts rich HTML and plain numbers on the clipboard', async () => {
+  const writes = [];
+  function Item(types) { return { types }; }
+  const clipboard = { write: async (items) => writes.push(items) };
+  await copyAssistantContent('2,3', '<sup>2,3</sup>', clipboard, Item);
+  assert.equal(await writes[0][0].types['text/html'].text(), '<sup>2,3</sup>');
+  assert.equal(await writes[0][0].types['text/plain'].text(), '2,3');
+});
 
 test('assistant captures plain and grouped superscripts with exact block/document guards', () => {
   const current = snapshot('<sup>2,3</sup><sup>27</sup><sup>™</sup><sup><a href="https://example.com">1</a></sup>');
@@ -71,7 +80,7 @@ async function assistantHarness(capable = true) {
     getNamespace: () => 'homepage',
     getFragments: () => new Map(entries.map((entry) => [entry.fragment, { title: `Terms ${entry.disclosureId}`, excerpt: `Excerpt ${entry.disclosureId}` }])),
     onStatus: (message) => statuses.push(message),
-    copyText: async (text) => { copies.push(text); },
+    copyText: async (text, htmlText) => { copies.push({ text, html: htmlText }); },
     setTimer: (fn) => { id += 1; timers.set(id, fn); return id; },
     clearTimer: (timer) => timers.delete(timer),
   });
@@ -125,7 +134,9 @@ test('unsupported hosts use copy options without calling legacy insertion APIs',
   ui.document.getElementById('assistant-copy-link').click();
   await new Promise((resolve) => { setImmediate(resolve); });
   assert.equal(ui.writes.length, 0);
-  assert.match(ui.copies[0], /#disclosure-homepage-2/);
+  assert.equal(ui.copies[0].text, '2');
+  assert.match(ui.copies[0].html, /#disclosure-homepage-2/);
+  assert.equal(ui.document.getElementById('assistant-copy').value, '2');
   ui.controller.dispose();
 });
 
