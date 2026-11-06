@@ -1,7 +1,7 @@
 # Disclosure numbering and reference synchronization
 
 Date: 2026-11-05
-Status: Approved by the user on 2026-11-06. Implementation authorized.
+Status: Approved by the user on 2026-11-06. Implemented and reviewed locally; post-push Canvas QA remains in the plan.
 Chosen approach: Renumber disclosure IDs and all affected authored references together.
 
 ## Intent and agreed behavior
@@ -12,7 +12,7 @@ Reordering preserves which legal text an existing citation refers to. Moving the
 
 The user selected this approach and clarified both behaviors in this chat. Peter's supplied feedback also permits namespacing by set, such as homepage-1.
 
-## Current implementation and evidence
+## Baseline implementation and evidence
 
 - The delivered homepage set has id "homepage" and disclosureId values a through m.
 - The live DA disclosure-set schema requires disclosureId to match ^[a-z][a-z0-9]*$. Its description currently tells authors to superscript those identifiers.

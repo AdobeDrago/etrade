@@ -2,6 +2,16 @@
 
 The feature keeps the existing `disclosure-set` schema and changes its authoring contract to sequential numeric identifiers. Code and DA content have separate delivery lifecycles.
 
+## Verification at handoff
+
+On 2026-11-06, the local implementation passed all 431 tests and project lint checks. A fresh branch review found and verified fixes for automatically embedded fragment discovery, JSON links/selectors, unresolved edited numbers, unrelated selected superscripts, numeric-collision approval scope, and hosts without automatic page saving. Each correction has a regression that failed before the fix.
+
+Local browser checks covered conversion and reviewed batch saving, both assistant choices, desktop/mobile layout, and keyboard focus/Escape for the inline preview. Screenshots: [desktop manager](../test/screenshots/disclosure-assistant-desktop.jpg), [mobile manager](../test/screenshots/disclosure-assistant-mobile.jpg), [inline preview fixture](../test/screenshots/disclosure-inline-helper.jpg). These are local demo/fixture results, not authenticated source-write evidence.
+
+The live schema and Card reference fields were inspected after Adobe sign-in; the schema patch preserves all 36 existing fragment options. No live schema, Library configuration or content was changed. The user will push `codex/rework-disclosure-numbering`; deployed branch checks and disposable Canvas save/Undo/preview tests remain required after that push. This branch must not be treated as content-rollout approval.
+
+The implementation uses one fresh whole-branch review after inline development rather than separate reviewers for every task. The ordinary-superscript choice uses Unicode characters because generic mark attributes cannot be assumed to survive the editor. Helper implementation preceded authenticated integration testing so its full code could be reviewed before granting editing access; real-host issues can still surface during the post-push checks.
+
 ## Enable compatible code first
 
 Deploy the backward-compatible renderer and Disclosure Manager before migrating real content. Use a separate plugin registration and disposable draft sources for branch QA. DA sources are shared across code branches: changing homepage content while another active branch still understands only letter IDs can break that branch's footer.

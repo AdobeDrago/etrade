@@ -105,11 +105,11 @@
 
 **Interfaces:** reloadEditable(main) remains DA's sole reload callback. Numeric target refresh uses the shared set loader and source identity; active mini-editor DOM remains untouched.
 
-- [ ] Add regression for a newer numeric set after a preview update and detached inline/table/view changes.
-- [ ] Observe stale-target failure, implement scoped static target refresh with deduplicated fetching and no hidden browser reload.
-- [ ] Document exact schema patch application, code-before-content migration, complete-batch preview/publish, recovery and ordinary-superscript rules.
-- [ ] Verify current live DA schema/structured reference fields and disposable draft save/preview behavior. Record concrete platform limitations if present.
-- [ ] Run full check; verify the branch preview and capture desktop/mobile authoring screenshots; commit.
+- [x] Add regression for a newer numeric set after a preview update and detached inline/table/view changes.
+- [x] Observe stale-target failure, implement scoped static target refresh with deduplicated fetching and no hidden browser reload.
+- [x] Document exact schema patch application, code-before-content migration, complete-batch preview/publish, recovery and ordinary-superscript rules.
+- [x] Verify current live DA schema/structured reference fields and record the authenticated QA limitation below.
+- [x] Run full check and capture local desktop/mobile authoring screenshots; commit.
 
 ### Task 7: Manager assistant and safe inline preview
 
@@ -117,18 +117,26 @@
 
 **User steering:** Build the helper inside Disclosure Manager first; also provide an inline helper where supported. This augments, and does not block, the approved renumbering implementation.
 
-- [ ] Add tests for new/selected superscript candidates, matching excerpts, grouped numbers, dismissal, stale snapshots and unsupported editor hosts.
-- [ ] Observe red; implement suggestions using subscribeLiveDocument/getSelection only while the manager is open. Debounce stable changes and avoid repeating dismissed suggestions.
-- [ ] Implement Link disclosure with supported sendHTML replacement and the host's exact document/block guard. Unsupported selections provide a copy fallback, not an unguarded write.
-- [ ] Keep as ordinary superscript can explicitly convert digits to Unicode superscript characters while preserving surrounding inline formatting, following the approved non-reference notation rule. Its UI explains the result before applying it; unsupported hosts use a copy fallback.
-- [ ] Add tests proving the inline helper renders outside authored main, shows the actual disclosure excerpt on citation hover/focus, supports Escape, and never runs on the public site or mutates an active editor.
-- [ ] Implement read-only inline preview through site-owned quick-edit lifecycle and delegated events. No cross-origin DOM manipulation or custom editor message protocol. Editing decisions stay in the manager.
-- [ ] Browser-check keyboard/pointer behavior in demo and authenticated Canvas where available; run all suites, then commit.
+- [x] Add tests for new/selected superscript candidates, matching excerpts, grouped numbers, dismissal, stale snapshots and unsupported editor hosts.
+- [x] Observe red; implement suggestions using subscribeLiveDocument/getSelection only while the manager is open. Debounce stable changes and avoid repeating dismissed suggestions.
+- [x] Implement Link disclosure with supported sendHTML replacement and the host's exact document/block guard. Unsupported selections provide a copy fallback, not an unguarded write.
+- [x] Keep as ordinary superscript can explicitly convert digits to Unicode superscript characters while preserving surrounding inline formatting, following the approved non-reference notation rule. Its UI explains the result before applying it; unsupported hosts use a copy fallback.
+- [x] Add tests proving the inline helper renders outside authored main, shows the actual disclosure excerpt on citation hover/focus, supports Escape, and never runs on the public site or mutates an active editor.
+- [x] Implement read-only inline preview through site-owned quick-edit lifecycle and delegated events. No cross-origin DOM manipulation or custom editor message protocol. Editing decisions stay in the manager.
+- [x] Browser-check demo actions and keyboard inline preview, including Escape; run all suites, then commit. Authenticated Canvas checks remain in the post-push checklist.
+
+## Post-push verification
+
+The user instructed on 2026-11-06: keep organized commits on the current branch; the user will push it. GitHub reports the connected account has read-only repository access. No DA Library registration, source migration, schema save, publishing or merge was performed. These checks require the user's push:
+
+- [ ] Verify the deployed branch preview and register its Disclosure Manager QA entry.
+- [ ] In disposable drafts, verify guarded SDK edits/Undo, complete-batch save/preview, and blur/table/Canvas view changes against the real host.
+- [ ] Follow the code-first schema/content rollout procedure after compatible code is deployed.
 
 ## Completion
 
-- [ ] Update approved spec status and record helper scope and significant rulings.
-- [ ] Full npm run check; hooks and full commit range validation against origin/develop.
-- [ ] Fresh whole-branch review; reproduce and fix material findings with regressions.
-- [ ] Prepare a draft Conventional Commit PR with the actual branch preview URL, clear remaining authenticated/content rollout steps, and screenshots.
-- [ ] Do not merge or publish automatically.
+- [x] Update approved spec status and record helper scope and significant rulings.
+- [x] Full npm run check; hooks and full commit range validation against origin/develop.
+- [x] Fresh whole-branch review; reproduce and fix material findings with regressions.
+- [x] Leave the current branch in organized Conventional Commits for the user to push, with the remaining authenticated/content rollout steps and local screenshots.
+- [x] Do not merge or publish automatically.
