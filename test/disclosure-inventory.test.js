@@ -112,3 +112,22 @@ test('a changed set snapshot and an empty required fragment prevent a reviewed p
   const empty = await review(server.request);
   assert.ok(empty.issues.some((issue) => /empty/i.test(issue.message)));
 });
+
+test('structured form migration requires a numeric-capable live schema before any source writes', async () => {
+  const api = fixture();
+  const formPath = '/disclosures/sets/qa';
+  const fields = ['a', 'b'].map((id, index) => `<div class="disclosures disclosures-${index}"><div><div>disclosureId</div><div>${id}</div></div><div><div>fragment</div><div>/terms/${index ? 'two' : 'one'}</div></div></div>`).join('');
+  const formSource = `<body><main><div><div class="da-form"><div><div>x-schema-name</div><div>disclosure-set</div></div></div><div class="disclosure-set"><div><div>id</div><div>qa</div></div><div><div>disclosures</div><div><ul><li>self://#disclosures/0</li><li>self://#disclosures/1</li></ul></div></div></div>${fields}</div></main></body>`;
+  api.sources.set(formPath, formSource);
+  api.sources.set('/qa-page', page(formPath, '<p>Claim<sup>a</sup></p>'));
+  const schemaPath = '/.da/forms/schemas/disclosure-set';
+  const schema = (pattern) => `<body><main><pre><code>${JSON.stringify({ properties: { disclosures: { items: { properties: { disclosureId: { type: 'string', pattern } } } } } })}</code></pre></main></body>`;
+  api.sources.set(schemaPath, schema('^[a-z][a-z0-9]*$'));
+  const model = parseSetSource(formSource, formPath);
+  const blocked = await planAffectedSources(context, model, [1, 0], api.request);
+  assert.ok(blocked.issues.some((issue) => /schema/i.test(issue.message)));
+  api.sources.set(schemaPath, schema('^(?:[a-z][a-z0-9]*|[1-9][0-9]*)$'));
+  const allowed = await planAffectedSources(context, model, [1, 0], api.request);
+  assert.deepEqual(allowed.issues, []);
+  assert.ok(allowed.guards.some((guard) => guard.path === schemaPath));
+});

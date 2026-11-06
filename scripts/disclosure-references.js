@@ -15,6 +15,26 @@ function referenceText(sup, targets) {
   }).join(',');
 }
 
+/** Remove only generated, static references when their legal targets become unavailable. */
+export function clearDisclosureReferences(main, namespace) {
+  main?.querySelectorAll('sup.disclosures-reference').forEach((sup) => {
+    if (sup.closest('.prosemirror-editor, .ProseMirror, [contenteditable="true"]')) return;
+    const links = [...sup.querySelectorAll('a[href]')];
+    if (links.some((link) => {
+      const href = link.getAttribute('href');
+      const named = href.match(/^#disclosure-(.+)-[1-9]\d*$/);
+      return !/^#disclosure-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(href)
+        || (namespace && named && named[1] !== namespace);
+    })) return;
+    const numbers = links.map((link) => link.getAttribute('aria-label')?.match(/^Disclosure (\d+)$/)?.[1]);
+    const intact = numbers.length > 0 && numbers.every(Boolean)
+      && sup.textContent.trim() === numbers.join(',');
+    sup.textContent = (intact && sup.dataset.disclosureIds) || sup.textContent;
+    delete sup.dataset.disclosureIds;
+    sup.classList.remove('disclosures-reference');
+  });
+}
+
 /** Auto-link static markers only after their footer items have rendered. */
 export default function decorateDisclosureReferences(main, disclosures = main?.querySelector('.disclosures')
   || document.querySelector('.disclosures:not([hidden])')) {

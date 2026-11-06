@@ -3,7 +3,7 @@ import {
   pageDisclosurePath, readSource, resolveSetPath, sourceUrl,
 } from './model.js';
 import { previewContent } from './preview.js';
-import { renumberPlan, rewriteDisclosureReferences } from './renumber.js';
+import { disclosureIdentifierSchema, renumberPlan, rewriteDisclosureReferences } from './renumber.js';
 
 const issue = (message) => ({ type: 'error', message });
 const EMBEDDED_FIELDS = new Set(['fragment', 'bodyFragment', 'contentFragment']);
@@ -161,11 +161,27 @@ export async function planAffectedSources(context, model, order, request, option
     guards: [],
   };
   try {
+    let schemaGuard;
+    if (!model.path.endsWith('.json')) {
+      const path = '/.da/forms/schemas/disclosure-set';
+      const source = await readSource(context, path, request);
+      const doc = new DOMParser().parseFromString(source, 'text/html');
+      const schema = JSON.parse(doc.querySelector('code,pre')?.textContent || '');
+      const identifier = disclosureIdentifierSchema(schema);
+      const pattern = identifier.pattern ? new RegExp(identifier.pattern) : null;
+      const accepts = numbering.after.every(({ disclosureId: id }) => (
+        (!pattern || pattern.test(id)) && (!identifier.enum || identifier.enum.includes(id))
+        && (!identifier.maxLength || id.length <= identifier.maxLength)
+      ));
+      if (!accepts) throw new Error('Numbered disclosures are not enabled in this site’s disclosure-set schema yet. Ask the site administrator to update it before migrating.');
+      schemaGuard = { path, original: source };
+    }
     const inventory = await readSiteInventory(context, request);
     result.inventory = inventory;
     if (!inventory.documents.includes(model.path)) throw new Error('The selected set is absent from the complete site inventory.');
     const sources = await readDocuments(context, inventory.documents, request);
     result.guards = [...sources].map(([path, original]) => ({ path, original }));
+    if (schemaGuard) result.guards.push(schemaGuard);
     result.scanned = sources.size;
     if (sources.get(model.path) !== model.source) throw new Error('The disclosure set changed since loading. Refresh before reviewing.');
     const graph = new Map([...sources].map(([path, source]) => (

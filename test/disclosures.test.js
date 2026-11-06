@@ -75,6 +75,8 @@ async function harness(routes = new Map(), body = '<p>References <sup>offer,apy<
     decorate: blockModule.namespace.default,
     decorateReferences: modules.get('/scripts/disclosure-references.js').namespace.default,
     loadFragment: modules.get('/blocks/fragment/fragment.js').namespace.loadFragment,
+    refreshSets: modules.get('/scripts/disclosure-refresh.js')?.namespace.refreshDisclosureSets
+      || (async () => {}),
   };
 }
 
@@ -145,6 +147,47 @@ test('an empty numeric disclosure cannot make the remaining identities shift pos
   assert.equal(app.block.hidden, true);
   assert.equal(app.document.querySelector('main a'), null);
   assert.equal(app.errors.length, 1);
+});
+
+test('editor refresh loads a newly previewed sequence before resolving edited citations', async () => {
+  const set = (first, second) => ({
+    id: 'homepage',
+    disclosures: [
+      { disclosureId: '1', fragment: first }, { disclosureId: '2', fragment: second },
+    ],
+  });
+  const routes = new Map([
+    [endpoint, set('/offer', '/fees')], ['/offer.plain.html', '<div><p>Offer terms</p></div>'],
+    ['/fees.plain.html', '<div><p>Fee terms</p></div>'],
+  ]);
+  const app = await harness(routes, '<p>Offer<sup>1</sup></p>');
+  await app.decorate(app.block);
+  routes.set(endpoint, set('/fees', '/offer'));
+  app.document.querySelector('main').innerHTML = '<p>Offer<sup>2</sup></p>';
+  await app.refreshSets(app.document);
+  assert.equal(app.block.querySelector('#disclosure-homepage-2').textContent, 'Offer terms');
+  assert.equal(app.document.querySelector('main sup a').getAttribute('href'), '#disclosure-homepage-2');
+  const link = app.document.querySelector('main sup a');
+  const previousRequests = app.requests.length;
+  await Promise.all([app.refreshSets(app.document), app.refreshSets(app.document)]);
+  assert.equal(app.document.querySelector('main sup a'), link);
+  assert.equal(app.requests.length - previousRequests, 1);
+});
+
+test('a failed target refresh removes stale generated links while preserving active editor markup', async () => {
+  const routes = new Map([
+    [endpoint, { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/one' }] }],
+    ['/one.plain.html', '<div><p>Offer terms</p></div>'],
+  ]);
+  const app = await harness(routes, '<p>Claim<sup>1</sup></p><div contenteditable="true"><p>Editing<sup>1</sup></p></div>');
+  await app.decorate(app.block);
+  const active = app.document.querySelector('[contenteditable]').outerHTML;
+  routes.set(endpoint, new Error('Preview request unavailable'));
+  await app.refreshSets(app.document);
+  assert.equal(app.block.hidden, true);
+  assert.equal(app.document.querySelector('main > p a'), null);
+  assert.equal(app.document.querySelector('main > p sup').textContent, '1');
+  assert.equal(app.document.querySelector('[contenteditable]').outerHTML, active);
 });
 
 test('metadata paths select preview/live delivery, and explicit JSON paths load locally', () => {

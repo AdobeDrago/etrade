@@ -1,7 +1,10 @@
 import { loadFragment } from '../fragment/fragment.js';
 import { decorateIcons } from '../../scripts/aem.js';
 import { disclosureFragmentPath, disclosureSetRequest, loadDisclosureSet } from '../../scripts/disclosure-sets.js';
-import decorateDisclosureReferences from '../../scripts/disclosure-references.js';
+import decorateDisclosureReferences, { clearDisclosureReferences } from '../../scripts/disclosure-references.js';
+import { registerDisclosureSet } from '../../scripts/disclosure-refresh.js';
+
+const setSignatures = new WeakMap();
 
 function finishDisclosures(block) {
   decorateIcons(block);
@@ -130,6 +133,11 @@ async function renderDocument(block, url) {
 /** Fetch each document once, then clone it for every position in the set. */
 async function renderSet(block, url) {
   const entries = await loadDisclosureSet(url);
+  const signature = JSON.stringify(entries);
+  if (!block.hidden && setSignatures.get(block) === signature) {
+    finishDisclosures(block);
+    return;
+  }
   const documents = new Map();
   entries.forEach(({ path }) => {
     if (!documents.has(path)) documents.set(path, loadFragment(path, { decorate: false }));
@@ -148,6 +156,7 @@ async function renderSet(block, url) {
     };
   }));
   renderDisclosures(block, rows);
+  setSignatures.set(block, signature);
 }
 
 export default async function decorate(block) {
@@ -158,6 +167,16 @@ export default async function decorate(block) {
       const request = disclosureSetRequest(reference.href);
       if (request) {
         await renderSet(block, request);
+        registerDisclosureSet(block, async () => {
+          try { await renderSet(block, request); } catch (error) {
+            block.replaceChildren();
+            block.hidden = true;
+            setSignatures.delete(block);
+            clearDisclosureReferences(document.querySelector('main'), block.dataset.disclosureNamespace);
+            // eslint-disable-next-line no-console
+            console.error('Disclosure loading failed', error);
+          }
+        });
       } else {
         await renderDocument(block, reference.href);
       }

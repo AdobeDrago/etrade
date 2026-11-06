@@ -229,14 +229,20 @@ export function rewriteDisclosureReferences(source, plan, options = {}) {
     ? jsonReferences(source, plan, options) : htmlReferences(source, plan, options);
 }
 
+export function disclosureIdentifierSchema(schema) {
+  const disclosures = schema.properties?.disclosures;
+  let item = disclosures?.items;
+  if (item?.$ref?.startsWith('#/$defs/')) item = schema.$defs?.[item.$ref.slice(8)];
+  const identifier = item?.properties?.disclosureId;
+  if (identifier?.type !== 'string') throw new Error('The schema has no supported disclosure identifier field.');
+  return identifier;
+}
+
 /** Patch the reviewed live schema without discarding site-specific fragment choices. */
 export function numberedDisclosureSchema(schema) {
   const copy = structuredClone(schema);
-  const disclosures = copy.properties?.disclosures;
-  let item = disclosures?.items;
-  if (item?.$ref?.startsWith('#/$defs/')) item = copy.$defs?.[item.$ref.slice(8)];
-  const identifier = item?.properties?.disclosureId;
-  if (identifier?.type !== 'string') throw new Error('The schema has no supported disclosure identifier field.');
+  const { disclosures } = copy.properties;
+  const identifier = disclosureIdentifierSchema(copy);
   identifier.title = 'Disclosure number';
   identifier.description = 'Use Disclosure Manager to number disclosures and update references together. Existing letter identifiers remain valid until migrated.';
   identifier.pattern = '^(?:[a-z][a-z0-9]*|[1-9][0-9]*)$';

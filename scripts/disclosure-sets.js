@@ -92,7 +92,7 @@ export function disclosureSetEntries(payload) {
 }
 
 export async function loadDisclosureSet(url) {
-  const response = await fetch(url);
+  const response = await fetch(url, { cache: 'no-store' });
   if (!response.ok) throw new Error(`Disclosure set request failed (${response.status}).`);
   return disclosureSetEntries(await response.json());
 }

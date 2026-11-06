@@ -37,6 +37,7 @@ async function harness(body, loadSection, theme = '', realCMP = false, overrides
     './section-layout.js': { default: noop },
     './section-authoring.js': { default: noop },
     './disclosure-references.js': { default: noop },
+    './disclosure-refresh.js': { refreshDisclosureSets: overrides.refreshDisclosureSets || noop },
     './page-layout.js': {
       default: noop,
       localizePageLinks: noop,
@@ -166,4 +167,22 @@ test('DA view reload links table citations after its disclosure block finishes l
   await page.reloadEditable(main);
   assert.equal(main.querySelector('td sup a')?.getAttribute('href'), '#disclosure-offer');
   assert.equal(main.querySelector('td sup').textContent, '2');
+});
+
+test('DA reload waits for refreshed shared targets before linking detached numeric edits', async () => {
+  let release;
+  const ready = new Promise((resolve) => { release = resolve; });
+  const page = await harness('<main></main><aside><div class="disclosures" data-disclosure-namespace="homepage"><ol class="disclosures-items"><li id="disclosure-homepage-1" data-disclosure-id="1" value="1">Fee terms</li></ol></div></aside>', () => {}, '', false, {
+    refreshDisclosureSets: async () => {
+      await ready;
+      page.document.querySelector('.disclosures-items').innerHTML += '<li id="disclosure-homepage-2" data-disclosure-id="2" value="2">Offer terms</li>';
+    },
+  });
+  const detached = page.document.createElement('main');
+  detached.innerHTML = '<p>Offer<sup>2</sup></p>';
+  const pending = page.reloadEditable(detached);
+  assert.equal(detached.querySelector('sup a'), null);
+  release();
+  await pending;
+  assert.equal(detached.querySelector('sup a').getAttribute('href'), '#disclosure-homepage-2');
 });
