@@ -291,7 +291,7 @@ test('single-letter IDs use set order without legacy letter aliases', async () =
   assert.equal(app.document.querySelector('sup').textContent, '2,1');
   assert.deepEqual(
     [...app.document.querySelectorAll('sup a')].map((link) => link.getAttribute('href')),
-    ['#disclosure-a', '#disclosure-g'],
+    ['#disclosure-a', '#disclosure-g', '#disclosure-g'],
   );
   assert.equal(app.document.querySelector('sup:nth-child(2)').textContent, 'b');
   assert.equal(app.document.querySelector('sup:last-child').textContent, '1');
@@ -605,7 +605,7 @@ test('only matching markers are converted, with no nested anchors or external li
     <a href="/claim">Claim <sup>offer</sup></a></p>`);
   await app.decorate(app.block);
   const main = app.document.querySelector('main');
-  assert.equal(main.querySelectorAll('.disclosures-reference').length, 3);
+  assert.equal(main.querySelectorAll('.disclosures-reference').length, 4);
   assert.equal(main.querySelectorAll('a a').length, 0);
   assert.deepEqual(
     [...main.querySelectorAll('sup')].map((sup) => sup.textContent),
@@ -676,4 +676,19 @@ test('a reference refresh leaves live mini-editor markup under DA control', asyn
   await app.decorate(app.block);
   assert.equal(editor.innerHTML, before);
   assert.equal(app.document.querySelector('main > p sup a').getAttribute('href'), '#disclosure-offer');
+});
+
+test('numeric superscripts select the sequence while legacy identifiers are phased out', async () => {
+  const app = await harness(new Map([
+    [endpoint, { id: 'homepage', disclosures: [{ disclosureId: 'offer', fragment: `${fragments}/offer` }, { disclosureId: 'apy', fragment: `${fragments}/apy` }] }],
+    [`${fragments}/offer.plain.html`, '<div><p>Offer terms</p></div>'],
+    [`${fragments}/apy.plain.html`, '<div><p>APY terms</p></div>'],
+  ]), '<p><sup>2,1</sup> <sup>offer</sup></p>');
+  await app.decorate(app.block);
+  const markers = [...app.document.querySelectorAll('main sup')];
+  assert.equal(markers[0].querySelector('a')?.getAttribute('href'), '#disclosure-apy');
+  assert.equal(markers[1].querySelector('a')?.getAttribute('href'), '#disclosure-offer');
+  markers[0].innerHTML = '1'; // DA replaces static markup after the superscript settles.
+  app.decorateReferences(app.document.querySelector('main'));
+  assert.equal(markers[0].querySelector('a')?.getAttribute('href'), '#disclosure-offer');
 });

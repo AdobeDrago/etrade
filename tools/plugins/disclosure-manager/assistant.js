@@ -22,12 +22,12 @@ export async function copyAssistantContent(
 function numbered(entries, namespace) {
   return typeof namespace === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(namespace)
     && entries.length > 0
-    && entries.every((entry, index) => entry.disclosureId === String(index + 1));
+    && entries.every((entry) => disclosureFragmentPath(entry.fragment));
 }
 
 function referenceHTML(candidate) {
   if (!candidate.linkable) return '';
-  const links = candidate.numbers.map((number) => `<a href="#disclosure-${candidate.namespace}-${number}" aria-label="Disclosure ${number}">${number}</a>`);
+  const links = candidate.numbers.map((number) => `<a href="${candidate.targets[number]}" aria-label="Disclosure ${number}">${number}</a>`);
   return `<sup>${links.join(',')}</sup>`;
 }
 
@@ -39,6 +39,9 @@ export function superscriptCandidates(
   { includeLinked = false } = {},
 ) {
   if (typeof snapshot?.html !== 'string' || !numbered(entries, namespace)) return [];
+  const targets = Object.fromEntries(entries.map((entry, index) => [String(index + 1),
+    /^[1-9]\d*$/.test(entry.disclosureId)
+      ? `#disclosure-${namespace}-${index + 1}` : `#disclosure-${entry.disclosureId}`]));
   const doc = parse(snapshot.html);
   const blockIndex = snapshot.selection?.blockIndex;
   const indexed = Number.isSafeInteger(blockIndex) && blockIndex >= 0
@@ -50,7 +53,7 @@ export function superscriptCandidates(
     const outer = sup.closest('a[href]');
     const links = [...sup.querySelectorAll('a[href]'), ...(outer ? [outer] : [])];
     if (links.length && (!includeLinked || links.some((link) => (
-      !link.getAttribute('href').startsWith(`#disclosure-${namespace}-`)
+      !Object.values(targets).includes(link.getAttribute('href'))
     )))) return [];
     if (outer && (outer !== sup.parentElement || outer.children.length !== 1
       || outer.textContent.trim() !== text)) return [];
@@ -61,6 +64,7 @@ export function superscriptCandidates(
     return [{
       key: `${namespace}:${block?.getAttribute('data-block-index') ?? 'copy'}:${supIndex}:${sup.outerHTML}`,
       namespace,
+      targets,
       numbers,
       text,
       supIndex,
@@ -68,13 +72,13 @@ export function superscriptCandidates(
       blockHTML: block?.outerHTML || '',
       expected: snapshot.editable === true && sameBlock
         ? { html: snapshot.html, blockIndex } : null,
-      linkable: numbers.every((number) => entries.some((entry) => entry.disclosureId === number)),
+      linkable: numbers.every((number) => Object.hasOwn(targets, number)),
     }];
   });
 }
 
 /** Only the captured citation changes; surrounding block content remains intact. */
-export function updatedSuperscriptBlock(candidate, choice) {
+export function updatedSuperscriptBlock(candidate, choice, replacement) {
   if (!candidate.blockHTML || !['link', 'ordinary'].includes(choice)) throw new Error('No supported superscript edit.');
   const doc = parse(candidate.blockHTML);
   const block = doc.querySelector('[data-block-index]');
@@ -83,8 +87,10 @@ export function updatedSuperscriptBlock(candidate, choice) {
   const outer = sup.closest('a[href]');
   if (outer) outer.replaceWith(sup);
   if (choice === 'link') {
-    if (!candidate.linkable) throw new Error('No matching disclosure for this number.');
-    const linked = parse(referenceHTML(candidate)).querySelector('sup');
+    const target = replacement && Object.hasOwn(candidate.targets, replacement)
+      ? { ...candidate, numbers: [replacement], linkable: true } : candidate;
+    if (!target.linkable) throw new Error('No matching disclosure for this number.');
+    const linked = parse(referenceHTML(target)).querySelector('sup');
     sup.replaceChildren(...linked.childNodes);
   } else {
     sup.querySelectorAll('a').forEach((link) => link.replaceWith(...link.childNodes));
@@ -125,6 +131,8 @@ export default function mountDisclosureAssistant({
   const controls = () => {
     byId('assistant-link').disabled = !editable() || !candidate?.linkable;
     byId('assistant-ordinary').disabled = !editable();
+    byId('assistant-choose').disabled = !editable();
+    byId('assistant-alternative').disabled = !editable();
     byId('assistant-copy-link').disabled = !candidate?.linkable || !canEdit();
     byId('assistant-copy-ordinary').disabled = !candidate || !canEdit();
   };
@@ -140,7 +148,7 @@ export default function mountDisclosureAssistant({
     const excerpt = byId('assistant-excerpt');
     excerpt.replaceChildren();
     item.numbers.forEach((number) => {
-      const entry = entries.find((value) => value.disclosureId === number);
+      const entry = entries[Number(number) - 1];
       const content = entry && fragments.get(disclosureFragmentPath(entry.fragment));
       const paragraph = doc.createElement('p');
       paragraph.textContent = entry
@@ -148,6 +156,13 @@ export default function mountDisclosureAssistant({
         : `No disclosure numbered ${number} exists in the saved set.`;
       excerpt.append(paragraph);
     });
+    byId('assistant-alternative').replaceChildren(...entries.map((entry, index) => {
+      const option = doc.createElement('option');
+      const content = fragments.get(disclosureFragmentPath(entry.fragment));
+      option.value = String(index + 1);
+      option.textContent = `${index + 1} — ${content?.title || content?.excerpt || 'Disclosure'}`;
+      return option;
+    }));
     byId('assistant-ordinary-preview').textContent = `Ordinary superscript: ${ordinary(item.text)}`;
     if (!editable()) byId('assistant-status').textContent = 'This selection supports copying. Apply controls require a supported Canvas block.';
     controls();
@@ -166,7 +181,7 @@ export default function mountDisclosureAssistant({
     byId('assistant-check').disabled = !available || typeof sdk.actions.getSelection !== 'function';
     byId('assistant-status').textContent = available
       ? 'Finish a superscript while this panel is open, or check the selected one.'
-      : 'Convert this set to numbered references to use the disclosure assistant.';
+      : 'Choose a disclosure set to use the disclosure assistant.';
   };
   const receive = (snapshot) => {
     if (disposed || typeof snapshot?.html !== 'string') return;
@@ -199,7 +214,7 @@ export default function mountDisclosureAssistant({
       }
     }, 600);
   };
-  const apply = async (choice) => {
+  const apply = async (choice, replacement) => {
     if (!candidate || applying) return;
     if (candidate.expected && (latest?.html !== candidate.expected.html
       || latest?.selection?.blockIndex !== candidate.expected.blockIndex)) {
@@ -212,7 +227,7 @@ export default function mountDisclosureAssistant({
     applying = true;
     controls();
     try {
-      const html = updatedSuperscriptBlock(current, choice);
+      const html = updatedSuperscriptBlock(current, choice, replacement);
       const result = await sdk.actions.sendHTML(html, {
         replace: true, expected: current.expected,
       });
@@ -286,6 +301,7 @@ export default function mountDisclosureAssistant({
   };
   listen('assistant-check', check);
   listen('assistant-link', () => apply('link'));
+  listen('assistant-choose', () => apply('link', byId('assistant-alternative').value));
   listen('assistant-ordinary', () => apply('ordinary'));
   listen('assistant-copy-link', () => copy('link'));
   listen('assistant-copy-ordinary', () => copy('ordinary'));

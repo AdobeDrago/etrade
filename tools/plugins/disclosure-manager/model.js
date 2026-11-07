@@ -182,6 +182,11 @@ export function auditReferences(html, entries, namespace) {
     .map(({ disclosureId, label }) => [disclosureId, {
       id: disclosureId, label, anchor: numeric ? `${namespace}-${disclosureId}` : disclosureId,
     }]));
+  // New citations always identify a position; old identifiers are read-only aliases.
+  entries.forEach((item, index) => {
+    const target = targets.get(item.disclosureId);
+    if (target) targets.set(String(index + 1), target);
+  });
   if (numeric) {
     entries.forEach((item) => targets.set(
       `${namespace}-${item.disclosureId}`,
@@ -233,7 +238,10 @@ export function referenceMarkup(ids, entries) {
   if (!ids.length || ids.some((id) => !/^(?:[a-z][a-z0-9]*|[1-9]\d*)$/.test(id) || !valid.has(id))) {
     throw new Error('Select a disclosure from this set.');
   }
-  return `<sup>${[...new Set(ids)].join(',')}</sup>`;
+  const numbers = [...new Set(ids)].map((id) => (
+    entries.findIndex((entry) => entry.disclosureId === id) + 1
+  ));
+  return `<sup>${numbers.join(',')}</sup>`;
 }
 
 export async function readSource(context, path, request) {

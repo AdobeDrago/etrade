@@ -50,6 +50,8 @@ export default function decorateDisclosureReferences(main, disclosures = main?.q
     if (id && number > 0) {
       const target = { href: `#${item.id}`, number: String(number) };
       targets.set(id, target);
+      // New authoring selects the position even before a legacy set is converted.
+      targets.set(String(number), target);
       if (namespace) targets.set(`${namespace}-${id}`, target);
       // Pages may already author a–z IDs while preview still delivers the numeric schema.
       const legacyNumber = Number(id);

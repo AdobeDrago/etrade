@@ -83,7 +83,7 @@ test('explicit structured reference fields change while financial values remain 
   assert.equal(JSON.parse(result.source).data.description, '1.23% for 3 months');
 });
 
-test('schema transition preserves fragment choices and accepts old and numeric identities', () => {
+test('schema authoring preserves fragment choices and requires sequence numbers', () => {
   const schema = {
     title: 'Disclosure set', properties: { disclosures: { items: { properties: { disclosureId: { type: 'string', title: 'Identifier', pattern: '^[a-z][a-z0-9]*$' }, fragment: { $ref: '#/$defs/Fragment' } } } } }, $defs: { Fragment: { enum: ['/one', '/two'], enumNames: ['One', 'Two'] } }, custom: true,
   };
@@ -91,8 +91,8 @@ test('schema transition preserves fragment choices and accepts old and numeric i
   assert.deepEqual(changed.$defs, schema.$defs);
   assert.equal(changed.custom, true);
   const pattern = new RegExp(changed.properties.disclosures.items.properties.disclosureId.pattern);
-  ['a', 'disc1', '1', '123'].forEach((id) => assert.equal(pattern.test(id), true));
-  ['0', '01', 'A', 'a-b'].forEach((id) => assert.equal(pattern.test(id), false));
+  ['1', '123'].forEach((id) => assert.equal(pattern.test(id), true));
+  ['a', 'disc1', '0', '01', 'A', 'a-b'].forEach((id) => assert.equal(pattern.test(id), false));
   assert.equal(schema.properties.disclosures.items.properties.disclosureId.title, 'Identifier');
 });
 

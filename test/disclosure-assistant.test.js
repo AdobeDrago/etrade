@@ -225,3 +225,22 @@ test('inline hint identity never collides with an authored element', () => {
   assert.notEqual(document.querySelector('aside.disclosure-hint').id, existing.id);
   dispose();
 });
+
+test('manager suggests by sequence while the existing set still has letter IDs', () => {
+  const legacy = entries.map((entry, index) => ({ ...entry, disclosureId: ['a', 'b', 'c'][index] }));
+  const [candidate] = superscriptCandidates(snapshot('<sup>2</sup>'), legacy, 'homepage');
+  assert.equal(candidate?.linkable, true);
+});
+
+test('an unmatched superscript can choose an existing disclosure from manager alternatives', async () => {
+  const ui = await assistantHarness();
+  ui.emit('<sup>27</sup>'); ui.flush();
+  const options = ui.document.querySelectorAll('#assistant-alternative option');
+  assert.equal(options.length, 3);
+  ui.document.querySelector('#assistant-alternative option[value="3"]').selected = true;
+  ui.document.getElementById('assistant-choose').click();
+  await new Promise((resolve) => { setImmediate(resolve); });
+  assert.match(ui.writes[0].html, /#disclosure-homepage-3/);
+  assert.doesNotMatch(ui.writes[0].html, /<sup>27/);
+  ui.controller.dispose();
+});

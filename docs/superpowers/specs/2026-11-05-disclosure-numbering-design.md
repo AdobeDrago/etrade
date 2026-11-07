@@ -53,7 +53,7 @@ Retain the existing disclosure-set schema name and top-level fields: id, introdu
 - id remains the namespace, e.g. homepage.
 - disclosureId remains a string. For a migrated set, it is the canonical positive integer string for its position: "1", "2", ... "N".
 - Order is authoritative; manager-controlled renumbering writes the corresponding IDs. A numeric set with gaps, duplicate IDs, leading zeros or IDs out of position is invalid.
-- The transitional schema permits existing letter-first IDs or positive integer strings. Update its field label and descriptions to explain numbered authoring and manager reordering. Application validation enforces whole-set consistency because supported JSON Schema features cannot be assumed to express every invariant.
+- The authoring schema is numeric-only: `^[1-9][0-9]*$`, with the label Disclosure number. The renderer retains old letter references only while existing content is migrated. Application validation enforces whole-set consistency because supported JSON Schema features cannot be assumed to express every invariant.
 - Existing all-letter sets remain readable until explicitly migrated. A set mixing legacy identifiers and numeric identifiers is invalid and cannot be saved by the manager.
 - No separate editable number field or new permanent identity field is added.
 - The repository contains the schema change as a reviewed patch/template and an exact deployment procedure. Preserve the live schema's fragment enumeration and unrelated definitions when applying it. A developer must not replace the whole live schema with a reduced example.

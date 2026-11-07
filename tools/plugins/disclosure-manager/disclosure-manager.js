@@ -35,6 +35,8 @@ function status(message, error = false) {
 const dirty = () => order.some((index, position) => index !== position);
 const valid = () => model && !setIssues.some((issue) => issue.type === 'error');
 const needsRecovery = () => pending && !['complete', 'restored'].includes(pending.status);
+const savedEntries = () => (model?.data.disclosures || [])
+  .filter((item) => !emptyFragments.has(disclosureFragmentPath(item.fragment)));
 const entries = () => orderedEntries(model, order)
   .filter((item) => !emptyFragments.has(disclosureFragmentPath(item.fragment)));
 
@@ -73,7 +75,7 @@ function invalidateReview() {
 
 function renderAudit() {
   if (!model) return;
-  const auditEntries = valid() ? model.data.disclosures : [];
+  const auditEntries = valid() ? savedEntries() : [];
   const result = auditReferences(pageHtml, auditEntries, model.data.id);
   const issues = [...setIssues, ...result.issues];
   const errors = issues.filter((item) => item.type === 'error').length;
@@ -437,7 +439,7 @@ async function init() {
   assistant = mountDisclosureAssistant({
     document,
     sdk,
-    getEntries: () => model?.data.disclosures || [],
+    getEntries: savedEntries,
     getNamespace: () => model?.data.id,
     getFragments: () => fragmentContents,
     onStatus: status,

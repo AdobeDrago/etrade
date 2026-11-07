@@ -206,14 +206,14 @@ test('audit follows stable IDs across repeated, grouped, late, and reordered ref
     <a href="#disclosure-offer">Claim <sup>offer</sup></a></p>
     <div class="disclosures"><sup>legal</sup></div></main></body>`;
   const audit = auditReferences(html, entries);
-  assert.equal(audit.references, 5);
-  assert.equal(audit.issues.filter((issue) => issue.type === 'error').length, 4);
+  assert.equal(audit.references, 6);
+  assert.equal(audit.issues.filter((issue) => issue.type === 'error').length, 3);
   assert.equal(audit.issues.filter((issue) => issue.type === 'warn').length, 0);
   const changed = auditReferences(html, [...entries].reverse());
   assert.match(changed.issues[0].message, /2 \(#disclosure-offer\)/);
   const unknown = auditReferences('<body><main><sup>missing</sup></main></body>', entries);
   assert.equal(unknown.issues.filter((issue) => issue.type === 'warn').length, 2);
-  assert.equal(referenceMarkup(['fees', 'offer', 'fees'], entries), '<sup>fees,offer</sup>');
+  assert.equal(referenceMarkup(['fees', 'offer', 'fees'], entries), '<sup>2,1</sup>');
   assert.throws(() => referenceMarkup(['missing'], entries));
   assert.throws(() => referenceMarkup(['offer<script>'], entries));
 });
@@ -478,4 +478,21 @@ test('the manager assistant suggests a new demo superscript and applies the auth
   assert.equal(byId('assistant-link').disabled, true);
   byId('assistant-ordinary').click();
   await until(() => /ordinary superscript/.test(byId('status').textContent));
+});
+
+test('new references and audit use sequence positions during legacy set phaseout', () => {
+  assert.equal(referenceMarkup(['fees', 'offer'], entries), '<sup>2,1</sup>');
+  const audit = auditReferences('<body><main><p><sup>2,1</sup></p></main></body>', entries, 'homepage');
+  assert.equal(audit.references, 2);
+  assert.equal(audit.issues.some((issue) => issue.type === 'error'), false);
+});
+
+test('legacy helper choices use the same nonempty sequence as the rendered footer', async () => {
+  const { document } = await uiHarness('', async (host) => {
+    await putSource(host, '/disclosures/fragments/brokerage-offer', '<body><main></main></body>');
+    host.actions.getSelection = async () => '<sup>1</sup>';
+  });
+  document.getElementById('assistant-check').click();
+  await until(() => !document.getElementById('assistant-suggestion').hidden);
+  assert.match(document.getElementById('assistant-excerpt').textContent, /1 — Trading fees/);
 });

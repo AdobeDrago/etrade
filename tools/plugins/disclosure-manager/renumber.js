@@ -248,8 +248,8 @@ export function numberedDisclosureSchema(schema) {
   const { disclosures } = copy.properties;
   const identifier = disclosureIdentifierSchema(copy);
   identifier.title = 'Disclosure number';
-  identifier.description = 'Use Disclosure Manager to number disclosures and update references together. Existing letter identifiers remain valid until migrated.';
-  identifier.pattern = '^(?:[a-z][a-z0-9]*|[1-9][0-9]*)$';
+  identifier.description = "The disclosure's current sequence number, starting at 1. This value must match its position in the set. Reorder through Disclosure Manager so numbers and all affected references update together.";
+  identifier.pattern = '^[1-9][0-9]*$';
   disclosures.description = 'The order and disclosure numbers must agree. Reorder through Disclosure Manager so page references update together.';
   return copy;
 }
