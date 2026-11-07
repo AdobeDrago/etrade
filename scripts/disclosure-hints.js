@@ -1,9 +1,12 @@
+import mountInlineDisclosureHelper from './disclosure-inline.js';
+
 const mounted = new WeakMap();
 
-/** Read-only editor help lives outside authored content and never edits the host document. */
+/** Keep authoring help outside content; edits use the guarded native transaction adapter. */
 export default function mountDisclosureHints(doc, win) {
   if (!doc.body.classList.contains('quick-edit')) return null;
   if (mounted.has(doc)) return mounted.get(doc);
+  const disposeInline = mountInlineDisclosureHelper(doc, win);
   const hint = doc.createElement('aside');
   hint.className = 'disclosure-hint';
   let id = 'disclosure-hint';
@@ -16,7 +19,7 @@ export default function mountDisclosureHints(doc, win) {
   const excerpt = doc.createElement('p');
   const help = doc.createElement('p');
   help.className = 'disclosure-hint-help';
-  help.textContent = 'Edit the superscript to choose another number. Use Disclosure Manager for linking choices and reordering.';
+  help.textContent = 'Edit a numeric superscript for inline linking choices. Use Disclosure Manager to reorder disclosures.';
   hint.append(title, excerpt, help);
   doc.body.append(hint);
   let active;
@@ -71,6 +74,7 @@ export default function mountDisclosureHints(doc, win) {
   doc.addEventListener('scroll', hide, true);
   win.addEventListener?.('resize', hide);
   const dispose = () => {
+    disposeInline?.();
     hide();
     doc.removeEventListener('mouseover', show);
     doc.removeEventListener('focusin', show);
