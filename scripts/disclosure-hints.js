@@ -1,4 +1,7 @@
 import mountInlineDisclosureHelper from './disclosure-inline.js';
+import { listenDisclosureSaves } from './disclosure-sync.js';
+import { refreshDisclosureSets } from './disclosure-refresh.js';
+import decorateDisclosureReferences from './disclosure-references.js';
 
 const mounted = new WeakMap();
 
@@ -7,6 +10,10 @@ export default function mountDisclosureHints(doc, win) {
   if (!doc.body.classList.contains('quick-edit')) return null;
   if (mounted.has(doc)) return mounted.get(doc);
   const disposeInline = mountInlineDisclosureHelper(doc, win);
+  const disposeSync = listenDisclosureSaves(doc, win, async () => {
+    await refreshDisclosureSets(doc);
+    doc.querySelectorAll('main').forEach((main) => decorateDisclosureReferences(main));
+  });
   const hint = doc.createElement('aside');
   hint.className = 'disclosure-hint';
   let id = 'disclosure-hint';
@@ -75,6 +82,7 @@ export default function mountDisclosureHints(doc, win) {
   win.addEventListener?.('resize', hide);
   const dispose = () => {
     disposeInline?.();
+    disposeSync?.();
     hide();
     doc.removeEventListener('mouseover', show);
     doc.removeEventListener('focusin', show);
