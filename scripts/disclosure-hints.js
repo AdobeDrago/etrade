@@ -10,8 +10,8 @@ export default function mountDisclosureHints(doc, win) {
   if (!doc.body.classList.contains('quick-edit')) return null;
   if (mounted.has(doc)) return mounted.get(doc);
   const disposeInline = mountInlineDisclosureHelper(doc, win);
-  const disposeSync = listenDisclosureSaves(doc, win, async () => {
-    await refreshDisclosureSets(doc);
+  const disposeSync = listenDisclosureSaves(doc, win, async (change) => {
+    await refreshDisclosureSets(doc, change);
     doc.querySelectorAll('main').forEach((main) => decorateDisclosureReferences(main));
   });
   const hint = doc.createElement('aside');

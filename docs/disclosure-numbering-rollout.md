@@ -68,7 +68,7 @@ The inline helper runs in quick-edit even when Disclosure Manager is closed. It 
 
 New numeric citations also resolve against existing letter sets by their sequence during phaseout. Manager insertion and audit use the same positional contract. Old letter citations remain readable until the reviewed conversion updates their source.
 
-The manager signals a verified completed/restored batch through a same-origin BroadcastChannel. The quick-edit listener refreshes footer targets and static citations. It does not apply a second permutation: DA's native source collaboration carries saved superscript rewrites, then calls reloadEditable after settling. The current Canvas preview and inline plugin share the branch preview.da.live origin. Other origins do not receive that channel.
+The manager and quick-edit preview share the branch preview.da.live origin. The save integration described below now explicitly reconciles existing rendered references after a verified save; it no longer relies solely on native source collaboration to refresh the visible numbers. Other origins do not receive the same-origin channel.
 
 Verification: a saved-source heading probe updated the open Canvas without reload. A separate local compatibility page used DA's actual getSchema, EditorState and EditorView with the existing rendered homepage fragments. It showed all 13 choices, changed an unmatched superscript 27 to linked sequence 2, settled that link on blur, and showed the corresponding excerpt for a newly typed superscript 1. Screenshots are in test/screenshots/disclosure-inline-{sequence-choices,linked-sequence,matching-sequence}.png. The full shared-set conversion/reorder and DA Undo/save check still require the user to push these commits and run branch Canvas QA; no shared set was migrated by these checks.
 
@@ -79,3 +79,14 @@ The user pushed through `ff92216`, and GitHub's branch head was verified. The ex
 A fresh Canvas session loaded the three numbered disclosures and the corresponding namespaced links. The exact source transformation for swapping the first two entries was checked: expected existing references are `2`, `2`, `3,2`, `1`. The ready state is captured in `test/screenshots/disclosure-reorder-ready.png`.
 
 The actual manager save and post-save Canvas update remain unverified. Browser automation could read the plugin iframe, but its click actions failed with “Click target is no longer available” and keyboard targeting failed with “Keyboard focus root is no longer available.” A manual Move 1 down → Review changes action was requested; no reorder save was performed. Do not treat this ready state or the source-transform check as proof of the live end-to-end reorder.
+
+
+## Explicit automatic update after Save (November 8)
+
+The user selected updates after Save, rather than during dragging. The durable operation now pauses before its first content write for a bounded author-view capture. Its verified completion publishes the temporary old-to-new mapping and before/after set snapshots. The page JavaScript updates unchanged captured superscripts and standalone disclosure links once, including grouped references, then renders the footer from the verified saved order. Existing fragment paths remain the legal targets; no permanent identity field is added.
+
+The author footer retains the saved source snapshot until preview delivery agrees. This prevents a delayed preview cache from undoing the saved order. Numbers are unlinked while footer targets refresh, then linked against that new footer. DA still owns active editor state; the authenticated source batch remains responsible for persisted references.
+
+Regression coverage includes the actual save operation and same-origin channel, real footer rendering, native-replaced nodes, tooltip attributes, code/metadata exclusions, standalone links, late prepare timeouts and duplicate notifications. Recovery classifies plain original/already-target reference states when source/render correspondence is established. Mixed states or custom block/embedded recovery without a provable correspondence pause static links and ask the author to reopen the page, rather than sending old numbers to different legal content.
+
+These fixes are committed locally for the user to push. They do not count as a live Canvas reorder verification before that deployment.

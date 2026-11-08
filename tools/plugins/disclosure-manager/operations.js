@@ -202,6 +202,9 @@ export async function applyOperation(context, plan, request, options = {}) {
     }))),
   };
   await persist(context, operation, request);
+  try { await options.onPrepared?.(operation); } catch {
+    // Author-view availability must not invalidate the durable source operation.
+  }
   return execute(context, operation, request, options);
 }
 
@@ -215,10 +218,16 @@ export async function resumeOperation(context, operation, request, options = {})
       throw new Error(`A consumer changed during recovery: ${guard.path}. Restore and review again.`);
     }
   }));
+  try { await options.onPrepared?.({ ...current, direction: 'resume' }); } catch {
+    // Recovery still verifies and saves sources when no author view is connected.
+  }
   return execute(context, current, request, options);
 }
 
 export async function restoreOperation(context, operation, request, options = {}) {
   const current = await currentOperation(context, operation, request);
+  try { await options.onPrepared?.({ ...current, direction: 'restore' }); } catch {
+    // Restoring owned source snapshots remains possible if an author view is unavailable.
+  }
   return restore(context, current, request, options);
 }

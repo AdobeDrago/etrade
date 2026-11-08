@@ -9,7 +9,7 @@ import {
   applyOperation, readOperation, restoreOperation, resumeOperation,
 } from './operations.js';
 import mountDisclosureAssistant from './assistant.js';
-import { notifyDisclosureSave } from '../../../scripts/disclosure-sync.js';
+import { prepareAuthorSync, notifyAuthorSync } from './author-sync.js';
 
 const demo = new URLSearchParams(window.location.search).get('demo') === '1';
 const byId = (id) => document.getElementById(id);
@@ -329,7 +329,9 @@ async function save(approvedReview) {
 
 async function finishOperation(result, selection = []) {
   const paths = result.operation.writes.map((write) => write.path);
-  if (result.ok && !demo) notifyDisclosureSave(sdk.context, result.operation, window);
+  if (!demo && ['complete', 'restored'].includes(result.operation.status)) {
+    notifyAuthorSync(sdk.context, result.operation, window);
+  }
   await load();
   if (!result.ok) {
     status(`${result.message || 'Recovery could not finish.'} ${result.unresolved?.length ? `Review: ${result.unresolved.join(', ')}.` : 'Original sources were restored.'}`, true);
@@ -354,7 +356,10 @@ async function finishOperation(result, selection = []) {
 }
 
 const progress = ({ path, index, total }) => status(`Updating ${index + 1} of ${total}: ${path}`);
-const operationOptions = { onProgress: progress };
+const operationOptions = {
+  onProgress: progress,
+  onPrepared: (operation) => (demo ? undefined : prepareAuthorSync(sdk.context, operation, window)),
+};
 
 async function confirmSave() {
   if (!reviewed || reviewed.issues.length || busy) return;

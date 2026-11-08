@@ -1,6 +1,8 @@
 import { loadFragment } from '../fragment/fragment.js';
 import { decorateIcons } from '../../scripts/aem.js';
-import { disclosureFragmentPath, disclosureSetRequest, loadDisclosureSet } from '../../scripts/disclosure-sets.js';
+import {
+  disclosureFragmentPath, disclosureSetEntries, disclosureSetRequest, loadDisclosureSet,
+} from '../../scripts/disclosure-sets.js';
 import decorateDisclosureReferences, { clearDisclosureReferences } from '../../scripts/disclosure-references.js';
 import { registerDisclosureSet } from '../../scripts/disclosure-refresh.js';
 
@@ -24,7 +26,9 @@ function renderDisclosures(block, entries) {
   closing.className = 'disclosures-closing';
   const list = document.createElement('ol');
   list.className = 'disclosures-items';
-  entries.forEach(({ label, disclosureId, nodes }) => {
+  entries.forEach(({
+    label, disclosureId, nodes, path,
+  }) => {
     const content = document.createElement(/^\d+$/.test(label) ? 'li' : 'div');
     content.append(...nodes);
     if (!content.textContent.trim() && !content.querySelector('img, picture, .icon')) {
@@ -37,6 +41,7 @@ function renderDisclosures(block, entries) {
       content.id = `disclosure-${namespace ? `${namespace}-${disclosureId}` : disclosureId || number}`;
       content.setAttribute('value', String(number));
       if (disclosureId) content.dataset.disclosureId = disclosureId;
+      if (path) content.dataset.disclosureFragment = path;
       content.tabIndex = -1;
       list.append(content);
     } else if (/^closing$/i.test(label)) closing.append(content);
@@ -131,12 +136,16 @@ async function renderDocument(block, url) {
 }
 
 /** Fetch each document once, then clone it for every position in the set. */
-async function renderSet(block, url) {
-  const entries = await loadDisclosureSet(url);
+async function renderSet(block, url, snapshot) {
+  const saved = snapshot ? disclosureSetEntries(snapshot) : null;
+  let delivered;
+  try { delivered = await loadDisclosureSet(url); } catch (error) { if (!saved) throw error; }
+  const entries = saved || delivered;
+  const caughtUp = !saved || JSON.stringify(delivered) === JSON.stringify(saved);
   const signature = JSON.stringify(entries);
   if (!block.hidden && setSignatures.get(block) === signature) {
     finishDisclosures(block);
-    return;
+    return caughtUp;
   }
   const documents = new Map();
   entries.forEach(({ path }) => {
@@ -152,11 +161,12 @@ async function renderSet(block, url) {
         ? [...section.childNodes] : [section]
     )).map((node) => node.cloneNode(true));
     return {
-      label, disclosureId, namespace, nodes,
+      label, disclosureId, namespace, nodes, path,
     };
   }));
   renderDisclosures(block, rows);
   setSignatures.set(block, signature);
+  return caughtUp;
 }
 
 export default async function decorate(block) {
@@ -167,16 +177,17 @@ export default async function decorate(block) {
       const request = disclosureSetRequest(reference.href);
       if (request) {
         await renderSet(block, request);
-        registerDisclosureSet(block, async () => {
-          try { await renderSet(block, request); } catch (error) {
+        registerDisclosureSet(block, async (snapshot) => {
+          try { return await renderSet(block, request, snapshot); } catch (error) {
             block.replaceChildren();
             block.hidden = true;
             setSignatures.delete(block);
             clearDisclosureReferences(document.querySelector('main'), block.dataset.disclosureNamespace);
             // eslint-disable-next-line no-console
             console.error('Disclosure loading failed', error);
+            return false;
           }
-        });
+        }, request);
       } else {
         await renderDocument(block, reference.href);
       }

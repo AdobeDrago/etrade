@@ -692,3 +692,73 @@ test('numeric superscripts select the sequence while legacy identifiers are phas
   app.decorateReferences(app.document.querySelector('main'));
   assert.equal(markers[0].querySelector('a')?.getAttribute('href'), '#disclosure-offer');
 });
+
+test('author refresh uses the verified saved set while preview delivery is still old', async () => {
+  const original = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: `${fragments}/offer` }, { disclosureId: '2', fragment: `${fragments}/apy` }] };
+  const saved = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: `${fragments}/apy` }, { disclosureId: '2', fragment: `${fragments}/offer` }] };
+  const routes = new Map([
+    [endpoint, original],
+    [`${fragments}/offer.plain.html`, '<div><p>Offer terms</p></div>'],
+    [`${fragments}/apy.plain.html`, '<div><p>APY terms</p></div>'],
+  ]);
+  const app = await harness(routes, '<p><sup>1</sup></p>');
+  await app.decorate(app.block);
+  await app.refreshSets(app.document, { setPath: '/disclosures/sets/homepage', after: saved });
+  assert.equal(app.block.querySelector('.disclosures-items > li').textContent, 'APY terms');
+  assert.equal(app.block.querySelector('.disclosures-items > li').dataset.disclosureFragment, `${fragments}/apy`);
+  await app.refreshSets(app.document);
+  assert.equal(app.block.querySelector('.disclosures-items > li').textContent, 'APY terms');
+  routes.set(endpoint, saved);
+  await app.refreshSets(app.document);
+  routes.set(endpoint, original); // Once delivery agrees, subsequent delivery updates are observed.
+  await app.refreshSets(app.document);
+  assert.equal(app.block.querySelector('.disclosures-items > li').textContent, 'Offer terms');
+});
+
+test('the save notification remaps existing links and refreshes their actual targets without reload', async () => {
+  const { prepareDisclosureSave, notifyDisclosureSave, listenDisclosureSaves } = await import('../scripts/disclosure-sync.js');
+  const original = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: `${fragments}/offer` }, { disclosureId: '2', fragment: `${fragments}/apy` }] };
+  const saved = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: `${fragments}/apy` }, { disclosureId: '2', fragment: `${fragments}/offer` }] };
+  const app = await harness(new Map([
+    [endpoint, original], // Delivery intentionally remains old throughout the save.
+    [`${fragments}/offer.plain.html`, '<div><p>Offer terms</p></div>'],
+    [`${fragments}/apy.plain.html`, '<div><p>APY terms</p></div>'],
+  ]), '<p>Offer<sup>1</sup>; group<sup>2,1</sup>.</p>');
+  await app.decorate(app.block);
+  app.document.body.classList.add('quick-edit');
+  const win = { BroadcastChannel, location: new URL(preview) };
+  const context = { org: 'adobedrago', repo: 'etrade', path: '/home' };
+  const operation = {
+    ...context, id: 'saved-link-test', namespace: 'homepage', status: 'complete', setPath: '/disclosures/sets/homepage', affectedPages: ['/home'], mapping: [['1', '2'], ['2', '1']], before: original, after: saved,
+  };
+  let wake;
+  const waiting = new Promise((resolve) => { wake = resolve; });
+  const timeout = setTimeout(() => wake(), 1000);
+  const dispose = listenDisclosureSaves(app.document, win, async (change) => {
+    await app.refreshSets(app.document, change);
+    app.decorateReferences(app.document.querySelector('main'), app.block);
+    wake();
+  });
+  try {
+    assert.equal(await prepareDisclosureSave(context, operation, win), true);
+    notifyDisclosureSave(context, operation, win);
+    await waiting;
+    assert.deepEqual([...app.document.querySelectorAll('main sup')].map((el) => el.textContent), ['2', '1,2']);
+    assert.equal(app.document.querySelector('main sup a').getAttribute('href'), '#disclosure-homepage-2');
+    assert.equal(app.document.getElementById('disclosure-homepage-2').textContent, 'Offer terms');
+    await app.refreshSets(app.document);
+    assert.equal(app.document.getElementById('disclosure-homepage-2').textContent, 'Offer terms');
+  } finally { clearTimeout(timeout); dispose(); }
+});
+
+test('reference decoration leaves code examples outside the source citation contract', async () => {
+  const app = await harness(new Map([
+    [endpoint, { id: 'homepage', disclosures: [{ disclosureId: 'offer', fragment: `${fragments}/offer` }] }],
+    [`${fragments}/offer.plain.html`, '<div><p>Offer terms</p></div>'],
+  ]), '<p>Claim<sup>offer</sup></p><code>Example<sup>offer</sup></code><pre><sup>offer</sup></pre>');
+  await app.decorate(app.block);
+  assert.equal(app.document.querySelector('main p sup a').textContent, '1');
+  assert.equal(app.document.querySelector('code sup').textContent, 'offer');
+  assert.equal(app.document.querySelector('code a'), null);
+  assert.equal(app.document.querySelector('pre sup').textContent, 'offer');
+});

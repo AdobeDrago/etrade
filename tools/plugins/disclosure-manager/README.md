@@ -44,7 +44,7 @@ With a saved numbered set loaded, leave the manager open while authoring a numer
 
 Applying a suggestion requires DA's supported, version-guarded block replacement capability and an unambiguous current selection. Older hosts and ambiguous selections offer copy options. No unguarded replacement is attempted. Reordering or an unfinished recovery disables assistant edits until the set is saved.
 
-In Canvas quick-edit rendering, focusing or hovering a rendered disclosure reference shows its actual legal excerpt beside the reference. Escape closes this read-only hint. It lives outside authored content, does not alter an active editor, and is absent on the public website. Linking decisions stay in the manager.
+Canvas quick-edit also offers an inline numeric-superscript helper with matching excerpts and other existing disclosures. It applies guarded native editor transactions. Hover/focus on a rendered reference shows a read-only legal excerpt. Both helpers live outside authored content and are absent on the public website.
 
 ## Interrupted saves and collaboration
 
@@ -56,7 +56,7 @@ These checks are optimistic; the API has no multi-document transaction or atomic
 
 ## Schema rollout
 
-See [the schema and migration procedure](../../../docs/disclosure-numbering-rollout.md). The existing schema keeps its name, fragment choices and fields. Its identifier pattern transitions from letter-only to legacy-or-numeric strings; there is no separate editable number field. Form-based conversion is blocked until the live schema accepts the new numbers. JSON sets use their own explicit source contract.
+See [the schema and migration procedure](../../../docs/disclosure-numbering-rollout.md). The existing schema keeps its name, fragment choices and fields. Its identifier pattern is numeric-only (`^[1-9][0-9]*$`); there is no separate editable number field. Legacy IDs remain readable during content migration. Form-based conversion is blocked until the live schema accepts the new numbers. JSON sets use their own explicit source contract.
 
 ## Local review
 
@@ -65,3 +65,10 @@ Open `http://localhost:3000/tools/plugins/disclosure-manager/disclosure-manager.
 After conversion, **Try a new superscript (demo)** exercises assistant linking and ordinary-superscript choices against the same guarded interface in memory.
 
 Run `npm run test:disclosure-manager`, `npm run test:disclosures`, and `npm test` for transformation, discovery, recovery, editor lifecycle and interface checks. The demo does not replace authenticated Canvas checks of SDK editing, source permissions and preview propagation.
+
+
+## Automatic author update after Save
+
+Before source writes begin, the manager captures the open preview's existing references through its same-origin author channel. After every source is verified saved, the page applies the frozen number mapping once to unchanged static superscripts and standalone links, then refreshes their targets from the verified saved set. Grouped references update together. Native-updated or author-edited nodes are not blindly mapped again; active editor state stays under DA's control.
+
+Preview delivery may lag a source save. The author footer keeps the verified saved order until delivery catches up. Public preview/publishing still use their separate normal workflows. Ambiguous recovered views are left unlinked with a reopen notice, preserving legal-target safety.

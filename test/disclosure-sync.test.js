@@ -53,3 +53,125 @@ test('other pages, other sites and unfinished operations do not refresh this aut
     assert.equal(typeof dispose, 'function');
   } finally { dispose?.(); }
 });
+
+test('restoring a rotation uses its inverse mapping for existing rendered references', async () => {
+  const { prepareAuthorSync, notifyAuthorSync } = await import('../tools/plugins/disclosure-manager/author-sync.js');
+  const original = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/one' }, { disclosureId: '2', fragment: '/two' }, { disclosureId: '3', fragment: '/three' }] };
+  const target = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/three' }, { disclosureId: '2', fragment: '/one' }, { disclosureId: '3', fragment: '/two' }] };
+  const restore = {
+    ...operation,
+    direction: 'restore',
+    status: 'restored',
+    mapping: [['1', '2'], ['2', '3'], ['3', '1']],
+    writes: [{
+      kind: 'set', path: `${operation.setPath}.json`, original: JSON.stringify(original), target: JSON.stringify(target),
+    }],
+  };
+  const { document, win } = author();
+  document.querySelector('main').innerHTML = '<p>Offer<sup>2</sup></p>';
+  const footer = document.createElement('div');
+  footer.className = 'disclosures';
+  footer.innerHTML = '<ol class="disclosures-items"><li id="disclosure-homepage-1" data-disclosure-id="1" data-disclosure-fragment="/three">Three</li><li id="disclosure-homepage-2" data-disclosure-id="2" data-disclosure-fragment="/one">One</li><li id="disclosure-homepage-3" data-disclosure-id="3" data-disclosure-fragment="/two">Two</li></ol>';
+  document.body.append(footer);
+  let wake;
+  const waiting = new Promise((resolve) => { wake = resolve; });
+  const timeout = setTimeout(() => wake(), 1000);
+  const dispose = listenDisclosureSaves(document, win, () => wake());
+  try {
+    const current = { ...context, path: operation.affectedPages[0] };
+    assert.equal(await prepareAuthorSync(current, restore, win), true);
+    notifyAuthorSync(context, restore, win);
+    await waiting;
+    assert.equal(document.querySelector('sup').textContent, '1');
+  } finally { clearTimeout(timeout); dispose(); }
+});
+
+test('native-updated links are not clickable against the old footer while refresh is pending', async () => {
+  const { prepareDisclosureSave } = await import('../scripts/disclosure-sync.js');
+  const before = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/one' }, { disclosureId: '2', fragment: '/two' }] };
+  const after = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/two' }, { disclosureId: '2', fragment: '/one' }] };
+  const change = {
+    ...operation, mapping: [['1', '2'], ['2', '1']], before, after,
+  };
+  const { document, win } = author();
+  document.querySelector('main').innerHTML = '<p><sup>1</sup></p>';
+  const footer = document.createElement('div'); footer.className = 'disclosures';
+  footer.innerHTML = '<ol class="disclosures-items"><li id="disclosure-homepage-1" data-disclosure-id="1" data-disclosure-fragment="/one">One</li><li id="disclosure-homepage-2" data-disclosure-id="2" data-disclosure-fragment="/two">Two</li></ol>';
+  document.body.append(footer);
+  let wake;
+  const waiting = new Promise((resolve) => { wake = resolve; });
+  let linkCount;
+  const timeout = setTimeout(() => wake(), 1000);
+  const dispose = listenDisclosureSaves(document, win, () => { linkCount = document.querySelectorAll('main sup a').length; wake(); });
+  try {
+    await prepareDisclosureSave({ ...context, path: operation.affectedPages[0] }, change, win);
+    document.querySelector('sup').outerHTML = '<sup class="disclosures-reference" data-disclosure-ids="2"><a href="#disclosure-homepage-2" aria-label="Disclosure 2">2</a></sup>';
+    notifyDisclosureSave(context, change, win);
+    await waiting;
+    assert.equal(document.querySelector('main sup').textContent, '2');
+    assert.equal(linkCount, 0);
+  } finally { clearTimeout(timeout); dispose(); }
+});
+
+test('a prepare that times out behind an older refresh cannot capture already updated numbers', async () => {
+  const { prepareDisclosureSave } = await import('../scripts/disclosure-sync.js');
+  const before = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/one' }, { disclosureId: '2', fragment: '/two' }] };
+  const after = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/two' }, { disclosureId: '2', fragment: '/one' }] };
+  const change = {
+    ...operation, id: 'timed-out-operation', mapping: [['1', '2'], ['2', '1']], before, after,
+  };
+  const { document, win } = author();
+  document.querySelector('main').innerHTML = '<p><sup>1</sup></p>';
+  const footer = document.createElement('div'); footer.className = 'disclosures';
+  footer.innerHTML = '<ol class="disclosures-items"><li id="disclosure-homepage-1" data-disclosure-id="1" data-disclosure-fragment="/one">One</li><li id="disclosure-homepage-2" data-disclosure-id="2" data-disclosure-fragment="/two">Two</li></ol>';
+  document.body.append(footer);
+  let entered; let release; let wake;
+  const started = new Promise((resolve) => { entered = resolve; });
+  const blocked = new Promise((resolve) => { release = resolve; });
+  const done = new Promise((resolve) => { wake = resolve; });
+  const timeout = setTimeout(() => { release(); entered(); wake(); }, 1000);
+  const dispose = listenDisclosureSaves(document, win, async (message) => {
+    if (message.id === 'previous-operation') { entered(); await blocked; } else wake();
+  });
+  try {
+    notifyDisclosureSave(context, { ...operation, id: 'previous-operation' }, win);
+    await started;
+    const current = { ...context, path: operation.affectedPages[0] };
+    const ready = await prepareDisclosureSave(current, change, win, { timeout: 5 });
+    assert.equal(ready, false);
+    document.querySelector('sup').textContent = '2';
+    release();
+    notifyDisclosureSave(context, change, win);
+    await done;
+    assert.equal(document.querySelector('sup').textContent, '2');
+  } finally { clearTimeout(timeout); release(); dispose(); }
+});
+
+test('standalone terms links are restored with their new target after the footer refresh', async () => {
+  const { prepareDisclosureSave } = await import('../scripts/disclosure-sync.js');
+  const before = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/one' }, { disclosureId: '2', fragment: '/two' }] };
+  const after = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/two' }, { disclosureId: '2', fragment: '/one' }] };
+  const change = {
+    ...operation, id: 'standalone-save', mapping: [['1', '2'], ['2', '1']], before, after,
+  };
+  const { document, win } = author();
+  document.querySelector('main').innerHTML = '<p><a href="#disclosure-homepage-1">Full offer terms</a></p>';
+  const footer = document.createElement('div'); footer.className = 'disclosures';
+  footer.innerHTML = '<ol class="disclosures-items"><li id="disclosure-homepage-1" data-disclosure-id="1" data-disclosure-fragment="/one">One</li><li id="disclosure-homepage-2" data-disclosure-id="2" data-disclosure-fragment="/two">Two</li></ol>';
+  document.body.append(footer);
+  let wake;
+  const waiting = new Promise((resolve) => { wake = resolve; });
+  const timeout = setTimeout(() => wake(), 1000);
+  const dispose = listenDisclosureSaves(document, win, () => {
+    footer.innerHTML = '<ol class="disclosures-items"><li id="disclosure-homepage-1">Two</li><li id="disclosure-homepage-2">One</li></ol>';
+    wake();
+  });
+  try {
+    await prepareDisclosureSave({ ...context, path: operation.affectedPages[0] }, change, win);
+    notifyDisclosureSave(context, change, win);
+    await waiting;
+    await new Promise((resolve) => { setTimeout(resolve, 0); });
+    assert.equal(document.querySelector('main a')?.getAttribute('href'), '#disclosure-homepage-2');
+    assert.equal(document.querySelector('main a').textContent, 'Full offer terms');
+  } finally { clearTimeout(timeout); dispose(); }
+});
