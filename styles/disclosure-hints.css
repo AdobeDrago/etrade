@@ -1,0 +1,108 @@
+.disclosure-hint {
+  position: fixed;
+  z-index: 1200;
+  max-width: calc(100vw - 2rem);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--color-surface-default);
+  box-shadow: var(--shadow-floating);
+  color: var(--color-text-primary);
+  font: 0.875rem/1.5 Arial, sans-serif;
+}
+
+.disclosure-hint h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.disclosure-hint p {
+  margin: 0.5rem 0 0;
+}
+
+.disclosure-hint .disclosure-hint-help {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}
+
+.disclosure-inline {
+  position: fixed;
+  z-index: 1250;
+  max-width: calc(100vw - 2rem);
+  max-height: min(32rem, calc(100vh - 2rem));
+  overflow: auto;
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-floating);
+  font: 0.875rem/1.5 Arial, sans-serif;
+}
+
+.disclosure-inline p {
+  margin: 0 0 0.75rem;
+  white-space: pre-line;
+}
+
+.disclosure-inline h3 {
+  margin: 1rem 0 0.5rem;
+  font-size: 0.875rem;
+}
+
+.disclosure-inline button {
+  display: block;
+  width: 100%;
+  margin: 0.25rem 0;
+  border: 1px solid var(--color-border-default);
+  border-radius: 4px;
+  padding: 0.5rem;
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
+  font: inherit;
+  text-align: left;
+  white-space: normal;
+  cursor: pointer;
+}
+
+.disclosure-inline button:focus-visible {
+  outline: 2px solid var(--color-action-primary);
+  outline-offset: 2px;
+}
+
+.disclosure-inline .disclosure-inline-link,
+.disclosure-inline button[aria-pressed="true"] {
+  border-color: var(--color-action-primary);
+  font-weight: 700;
+}
+
+.disclosure-inline button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.disclosure-inline .disclosure-inline-choices {
+  max-height: 12rem;
+  overflow: auto;
+}
+
+.disclosure-inline .disclosure-inline-help {
+  margin-top: 0.75rem;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}
+
+.disclosure-sync-notice {
+  position: fixed;
+  z-index: 1300;
+  right: 1rem;
+  bottom: 1rem;
+  max-width: min(28rem, calc(100vw - 2rem));
+  border: 1px solid var(--color-border-control);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-floating);
+  font: 0.875rem/1.5 Arial, sans-serif;
+}

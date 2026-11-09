@@ -1,0 +1,17 @@
+{
+  "id": "disclosure-numbering-qa",
+  "disclosures": [
+    {
+      "disclosureId": "1",
+      "fragment": "/disclosures/fragments/brokerage-offer"
+    },
+    {
+      "disclosureId": "2",
+      "fragment": "/disclosures/fragments/trading-fees"
+    },
+    {
+      "disclosureId": "3",
+      "fragment": "/disclosures/fragments/futures-trading-fees"
+    }
+  ]
+}

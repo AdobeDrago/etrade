@@ -1,5 +1,6 @@
 /* eslint-env node, es2022 */
 import assert from 'node:assert/strict';
+import { webcrypto } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import vm from 'node:vm';
@@ -9,6 +10,7 @@ import {
   referenceMarkup, reorderedSource, resolveSetPath, saveOrder, sourceUrl, validateSet,
 } from '../tools/plugins/disclosure-manager/model.js';
 import { footerEntries, footerPreview, previewContent } from '../tools/plugins/disclosure-manager/preview.js';
+import demoSdk from '../tools/plugins/disclosure-manager/demo.js';
 
 // linkedom needs an explicit html wrapper; browser DOMParser adds one automatically.
 class BrowserParser {
@@ -185,6 +187,16 @@ test('invalid IDs, duplicates, legacy numbers and incomplete orders cannot be sa
   assert.throws(() => parseSetSource(source.replace('<p>disclosure-set</p>', '<p>other-schema</p>'), path), /schema/);
 });
 
+test('numbered audit resolves namespaced markers to canonical IDs and targets', () => {
+  const numbered = ['1', '2'].map((disclosureId) => ({ disclosureId, fragment: '/terms' }));
+  const audit = auditReferences('<body><main><sup>homepage-1</sup><sup>2</sup>'
+    + '<sup><a href="#disclosure-other-1">1</a></sup></main></body>', numbered, 'homepage');
+  assert.equal(audit.references, 2);
+  assert.equal(audit.issues.filter((issue) => issue.type !== 'ok').length, 0);
+  assert.match(audit.issues[0].message, /#disclosure-homepage-1/);
+  assert.match(audit.issues[1].message, /#disclosure-homepage-2/);
+});
+
 test('audit follows stable IDs across repeated, grouped, late, and reordered references', () => {
   const html = `<body><main><p><sup>offer</sup><sup>fees,offer</sup>
     <a href="#disclosure-offer"><sup>offer</sup></a>
@@ -194,14 +206,14 @@ test('audit follows stable IDs across repeated, grouped, late, and reordered ref
     <a href="#disclosure-offer">Claim <sup>offer</sup></a></p>
     <div class="disclosures"><sup>legal</sup></div></main></body>`;
   const audit = auditReferences(html, entries);
-  assert.equal(audit.references, 5);
-  assert.equal(audit.issues.filter((issue) => issue.type === 'error').length, 4);
+  assert.equal(audit.references, 6);
+  assert.equal(audit.issues.filter((issue) => issue.type === 'error').length, 3);
   assert.equal(audit.issues.filter((issue) => issue.type === 'warn').length, 0);
   const changed = auditReferences(html, [...entries].reverse());
   assert.match(changed.issues[0].message, /2 \(#disclosure-offer\)/);
   const unknown = auditReferences('<body><main><sup>missing</sup></main></body>', entries);
   assert.equal(unknown.issues.filter((issue) => issue.type === 'warn').length, 2);
-  assert.equal(referenceMarkup(['fees', 'offer', 'fees'], entries), '<sup>fees,offer</sup>');
+  assert.equal(referenceMarkup(['fees', 'offer', 'fees'], entries), '<sup>2,1</sup>');
   assert.throws(() => referenceMarkup(['missing'], entries));
   assert.throws(() => referenceMarkup(['offer<script>'], entries));
 });
@@ -240,12 +252,14 @@ test('changed sources and failed saves keep the original snapshot and never repo
   assert.deepEqual(model.data.disclosures, entries);
 });
 
-async function uiHarness() {
+async function uiHarness(query = '', configureSdk = null) {
   const base = new URL('../', import.meta.url);
   const entry = '/tools/plugins/disclosure-manager/disclosure-manager.js';
   const html = await readFile(new URL(`.${entry.replace(/\.js$/, '.html')}`, base), 'utf8');
   const { document, window } = parseHTML(html);
-  window.location = new URL('http://localhost:3000/tools/plugins/disclosure-manager/disclosure-manager.html?demo=1');
+  window.location = new URL(`http://localhost:3000/tools/plugins/disclosure-manager/disclosure-manager.html?${configureSdk ? 'host=1' : 'demo=1'}${query}`);
+  const hostSdk = configureSdk ? await demoSdk(() => {}) : undefined;
+  if (hostSdk) { await configureSdk(hostSdk); window.parent = {}; }
   const contextVm = vm.createContext({
     document,
     window,
@@ -257,8 +271,15 @@ async function uiHarness() {
     Blob,
     structuredClone,
     console,
+    crypto: webcrypto,
+    TextEncoder,
+    setTimeout,
+    clearTimeout,
   });
   const modules = new Map();
+  const hostModule = new vm.SyntheticModule(['default'], function initialize() {
+    this.setExport('default', Promise.resolve(hostSdk));
+  }, { context: contextVm });
   const moduleFor = (pathname) => {
     if (!modules.has(pathname)) {
       // Cache creation before reading so parallel imports share one module instance.
@@ -267,6 +288,11 @@ async function uiHarness() {
           context: contextVm,
           identifier: `http://localhost:3000${pathname}`,
           importModuleDynamically: async (specifier, parent) => {
+            if (specifier === 'https://da.live/nx/utils/sdk.js') {
+              await hostModule.link(() => {});
+              await hostModule.evaluate();
+              return hostModule;
+            }
             const child = await moduleFor(new URL(specifier, parent.identifier).pathname);
             if (child.status === 'unlinked') {
               await child.link((name, ref) => moduleFor(new URL(name, ref.identifier).pathname));
@@ -286,11 +312,17 @@ async function uiHarness() {
   ));
   await controller.evaluate();
   await controller.namespace.default;
-  return { document, window };
+  return { document, window, sdk: hostSdk };
+}
+
+async function putSource(sdk, sourcePath, html) {
+  const body = new FormData();
+  body.append('data', new Blob([html], { type: 'text/html' }), 'source.html');
+  await sdk.actions.daFetch(sourceUrl(sdk.context, sourcePath), { method: 'POST', body });
 }
 
 async function until(check) {
-  for (let attempt = 0; attempt < 50; attempt += 1) {
+  for (let attempt = 0; attempt < 150; attempt += 1) {
     if (check()) return;
     // Each poll depends on the asynchronous UI operation completing.
     // eslint-disable-next-line no-await-in-loop
@@ -299,7 +331,7 @@ async function until(check) {
   assert.fail('The UI did not finish its operation.');
 }
 
-test('demo UI loads, audits, reorders, saves, inserts grouped IDs, and refreshes without DA', async () => {
+test('demo UI reviews all affected sources before migrating and inserting grouped numbers', async () => {
   const { document, window } = await uiHarness();
   const byId = (id) => document.getElementById(id);
   const list = byId('disclosure-list');
@@ -321,16 +353,234 @@ test('demo UI loads, audits, reorders, saves, inserts grouped IDs, and refreshes
   assert.equal(byId('insert').disabled, true);
   assert.match(byId('audit-summary').textContent, /Proposed order/);
   byId('save').click();
-  await until(() => /Demo order saved/.test(byId('status').textContent));
+  await until(() => byId('change-review')?.hidden === false && !byId('confirm-save').disabled);
+  assert.match(byId('review-paths').textContent, /\/home/);
+  assert.match(byId('review-paths').textContent, /\/drafts\/offer/);
+  assert.equal(list.children[0].querySelector('.entry-id').textContent, 'fees');
+  byId('confirm-save').click();
+  await until(() => /Demo changes saved/.test(byId('status').textContent));
   assert.equal(byId('save').disabled, true);
   assert.equal(byId('insert').disabled, false);
   byId('insert').click();
-  assert.match(byId('demo-reference').textContent, /<sup>fees,offer<\/sup>/);
+  assert.match(byId('demo-reference').textContent, /<sup>1,2<\/sup>/);
+  assert.match(byId('changed-sources').textContent, /Preview/);
   byId('refresh').click();
   await until(() => /Loaded 4/.test(byId('status').textContent));
-  assert.equal(list.children[0].querySelector('.entry-id').textContent, 'fees');
+  assert.equal(list.children[0].querySelector('.entry-id').textContent, '1');
+  assert.match(list.children[0].querySelector('.entry-path').textContent, /trading-fees/);
   document.querySelector('[data-panel="audit"]').click();
   assert.equal(byId('audit').hidden, false);
   assert.equal(byId('manage').hidden, true);
   assert.ok(byId('audit-output').querySelector('.error'));
+});
+
+test('changing a proposed order invalidates its old change review', async () => {
+  const { document } = await uiHarness();
+  const byId = (id) => document.getElementById(id);
+  byId('save').click();
+  await until(() => byId('change-review')?.hidden === false && !byId('confirm-save').disabled);
+  byId('disclosure-list').children[0].querySelector('button[aria-label="Move offer down"]').click();
+  assert.equal(byId('change-review').hidden, true);
+  assert.equal(byId('confirm-save').disabled, true);
+});
+
+test('compact rows retain full disclosure text and discard never writes the proposed order', async () => {
+  let writes = 0;
+  const { document, sdk } = await uiHarness('', (host) => {
+    const request = host.actions.daFetch;
+    host.actions.daFetch = (url, options) => {
+      if (options?.method === 'POST') writes += 1;
+      return request(url, options);
+    };
+  });
+  const list = document.getElementById('disclosure-list');
+  assert.equal(list.children[0].querySelector('.entry-title').textContent, 'Brokerage offer');
+  assert.match(list.children[0].querySelector('details .entry-preview').textContent, /Account offer/);
+  const preview = document.getElementById('footer-preview').closest('details');
+  assert.ok(preview);
+  assert.equal(preview.hasAttribute('open'), false);
+  const original = await (await sdk.actions.daFetch(sourceUrl(context, '/disclosures/sets/homepage.json'))).text();
+  list.children[0].querySelector('button[aria-label="Move offer down"]').click();
+  document.getElementById('reset').click();
+  assert.equal(list.children[0].querySelector('.entry-title').textContent, 'Brokerage offer');
+  assert.equal(document.getElementById('reset').disabled, true);
+  assert.equal(writes, 0);
+  assert.equal(await (await sdk.actions.daFetch(sourceUrl(context, '/disclosures/sets/homepage.json'))).text(), original);
+});
+
+test('save footer follows review and back without discarding the proposed order', async () => {
+  const { document } = await uiHarness();
+  const byId = (id) => document.getElementById(id);
+  byId('disclosure-list').children[0].querySelector('button[aria-label="Move offer down"]').click();
+  byId('save').click();
+  await until(() => !byId('change-review').hidden && !byId('confirm-save').disabled);
+  assert.equal(byId('order-actions').hidden, true);
+  assert.equal(byId('review-actions').hidden, false);
+  assert.equal(byId('disclosure-workspace').hidden, true);
+  assert.match(byId('order-state').textContent, /Review/);
+  byId('cancel-review').click();
+  assert.equal(byId('order-actions').hidden, false);
+  assert.equal(byId('review-actions').hidden, true);
+  assert.equal(byId('disclosure-workspace').hidden, false);
+  assert.match(byId('order-state').textContent, /Unsaved/);
+  assert.equal(byId('disclosure-list').children[0].querySelector('.entry-id').textContent, 'fees');
+});
+
+test('helper selection feedback does not overwrite the manager save status', async () => {
+  const { document } = await uiHarness('', (host) => { host.actions.getSelection = async () => ''; });
+  const savedStatus = document.getElementById('status').textContent;
+  document.getElementById('assistant-check').click();
+  await until(() => /Select one superscript/.test(document.getElementById('assistant-status').textContent));
+  assert.equal(document.getElementById('status').textContent, savedStatus);
+  assert.equal(document.getElementById('disclosure-assistant').hidden, false);
+});
+
+test('a host without saveDocument requires acknowledgment before source review', async () => {
+  const { document, sdk } = await uiHarness('', (host) => { delete host.actions.saveDocument; });
+  const byId = (id) => document.getElementById(id);
+  byId('save').click();
+  await until(() => !byId('save').disabled);
+  assert.equal(byId('saved-page-notice').hidden, false);
+  assert.equal(byId('change-review').hidden, true);
+  byId('saved-page').checked = true;
+  byId('save').click();
+  await until(() => byId('change-review').hidden === false);
+  assert.equal(byId('confirm-save').disabled, false);
+  sdk.demo.addSuperscript();
+  assert.equal(byId('saved-page').checked, false);
+  assert.equal(byId('change-review').hidden, true);
+});
+
+test('numeric-collision consent approves only the exact reviewed sources and resets on cancel', async () => {
+  const { document, window, sdk } = await uiHarness('', async (host) => {
+    const current = await (await host.actions.daFetch(sourceUrl(host.context, '/home'))).text();
+    await putSource(host, '/home', current.replace('</main>', '<p>Check<sup>1</sup></p></main>'));
+  });
+  const byId = (id) => document.getElementById(id);
+  byId('save').click();
+  await until(() => !byId('numeric-confirmation').hidden);
+  await putSource(sdk, '/drafts/unseen', '<body><main><p>New<sup>2</sup></p>'
+    + '<div class="metadata"><div><div>Disclosures</div><div>/disclosures/sets/homepage.json</div>'
+    + '</div></div></main></body>');
+  byId('confirm-numeric').checked = true;
+  byId('confirm-numeric').dispatchEvent(new window.Event('change'));
+  await until(() => !byId('save').disabled);
+  assert.equal(byId('confirm-save').disabled, true);
+  assert.equal(byId('confirm-numeric').checked, false);
+  assert.match(byId('review-issues').textContent, /\/drafts\/unseen.*positional intent/);
+  byId('confirm-numeric').checked = true;
+  byId('confirm-numeric').dispatchEvent(new window.Event('change'));
+  await until(() => !byId('confirm-save').disabled);
+  assert.equal(byId('confirm-numeric').checked, true);
+  byId('cancel-review').click();
+  assert.equal(byId('confirm-numeric').checked, false);
+});
+
+test('reopening with an unfinished demo operation offers recovery and blocks a new reorder', async () => {
+  const { document } = await uiHarness('&recovery=1');
+  const byId = (id) => document.getElementById(id);
+  assert.equal(byId('recovery').hidden, false);
+  assert.match(byId('recovery-paths').textContent, /\/home/);
+  assert.equal(byId('save').disabled, true);
+  assert.equal(byId('resume-operation').disabled, false);
+  assert.equal(byId('restore-operation').disabled, false);
+});
+
+test('save failures show an author-facing error and preserve the source', async (t) => {
+  const cases = [
+    {
+      name: 'permission denied', response: 403, manifest: false, detail: /403/,
+    },
+    {
+      name: 'successful POST not retained', response: 200, manifest: false, detail: /verify/i,
+    },
+    {
+      name: 'recovery manifest denied', response: 403, manifest: true, detail: /403/,
+    },
+  ];
+  await Promise.all(cases.map((failure) => t.test(failure.name, async () => {
+    const { document, sdk } = await uiHarness('', (host) => {
+      const request = host.actions.daFetch;
+      host.actions.daFetch = (url, options) => {
+        const { pathname } = new URL(url);
+        const blocked = failure.manifest ? pathname.includes('/.da/') : pathname.endsWith('/home.html');
+        if (options?.method === 'POST' && blocked) return Promise.resolve(new Response('', { status: failure.response }));
+        return request(url, options);
+      };
+    });
+    const byId = (id) => document.getElementById(id);
+    const original = await (await sdk.actions.daFetch(sourceUrl(sdk.context, '/home'))).text();
+    byId('save').click();
+    await until(() => !byId('change-review').hidden && !byId('confirm-save').disabled);
+    byId('confirm-save').click();
+    await until(() => byId('status').classList.contains('error') && !byId('refresh').disabled);
+    assert.match(byId('status').textContent, /could not (?:save|verify)/i);
+    assert.match(byId('status').textContent, failure.detail);
+    assert.equal(byId('status').getAttribute('role'), 'status');
+    assert.equal(byId('status').getAttribute('aria-live'), 'polite');
+    assert.equal(byId('changed-sources').hidden, true);
+    assert.equal(await (await sdk.actions.daFetch(sourceUrl(sdk.context, '/home'))).text(), original);
+  })));
+});
+
+test('numeric reorder previews and saves keep selection attached to its original legal text', async () => {
+  const { document, window } = await uiHarness();
+  const byId = (id) => document.getElementById(id);
+  const saveReviewed = async () => {
+    byId('save').click();
+    await until(() => byId('change-review').hidden === false && !byId('confirm-save').disabled);
+    byId('confirm-save').click();
+    await until(() => /Demo changes saved/.test(byId('status').textContent));
+  };
+  await saveReviewed();
+  const checkbox = byId('disclosure-list').children[0].querySelector('input');
+  checkbox.checked = true;
+  checkbox.dispatchEvent(new window.Event('change'));
+  byId('disclosure-list').children[0].querySelector('button[aria-label="Move 1 down"]').click();
+  const previewDoc = new BrowserParser().parseFromString(byId('footer-preview').srcdoc, 'text/html');
+  assert.equal(previewDoc.querySelector('.preview-selected').dataset.disclosureId, '2');
+  assert.match(previewDoc.querySelector('.preview-selected').textContent, /Account offer/);
+  assert.equal(byId('insert').disabled, true);
+  await saveReviewed();
+  byId('insert').click();
+  assert.match(byId('demo-reference').textContent, /<sup>2<\/sup>/);
+  assert.match(byId('disclosure-list').children[1].textContent, /Account offer/);
+});
+
+test('the manager assistant suggests a new demo superscript and applies the author’s choice', async () => {
+  const { document } = await uiHarness();
+  const byId = (id) => document.getElementById(id);
+  byId('save').click();
+  await until(() => byId('change-review').hidden === false && !byId('confirm-save').disabled);
+  byId('confirm-save').click();
+  await until(() => /Demo changes saved/.test(byId('status').textContent));
+  assert.equal(byId('assistant-demo').hidden, false);
+  byId('assistant-demo').click();
+  await until(() => !byId('assistant-suggestion').hidden);
+  assert.match(byId('assistant-question').textContent, /3/);
+  assert.equal(byId('assistant-link').disabled, false);
+  byId('assistant-link').click();
+  await until(() => /Disclosure linked/.test(byId('assistant-status').textContent));
+  byId('assistant-demo').click();
+  await until(() => !byId('assistant-suggestion').hidden);
+  assert.equal(byId('assistant-link').disabled, true);
+  byId('assistant-ordinary').click();
+  await until(() => /ordinary superscript/.test(byId('assistant-status').textContent));
+});
+
+test('new references and audit use sequence positions during legacy set phaseout', () => {
+  assert.equal(referenceMarkup(['fees', 'offer'], entries), '<sup>2,1</sup>');
+  const audit = auditReferences('<body><main><p><sup>2,1</sup></p></main></body>', entries, 'homepage');
+  assert.equal(audit.references, 2);
+  assert.equal(audit.issues.some((issue) => issue.type === 'error'), false);
+});
+
+test('legacy helper choices use the same nonempty sequence as the rendered footer', async () => {
+  const { document } = await uiHarness('', async (host) => {
+    await putSource(host, '/disclosures/fragments/brokerage-offer', '<body><main></main></body>');
+    host.actions.getSelection = async () => '<sup>1</sup>';
+  });
+  document.getElementById('assistant-check').click();
+  await until(() => !document.getElementById('assistant-suggestion').hidden);
+  assert.match(document.getElementById('assistant-excerpt').textContent, /1 — Trading fees/);
 });

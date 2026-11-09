@@ -11,32 +11,76 @@
   </head>
   <body class="disclosure-manager">
     <header class="toolbar">
-      <div><p class="eyebrow">E*TRADE · Authoring</p><h1>Disclosure Manager</h1></div>
+      <h1>Disclosures</h1>
       <button id="refresh" type="button" disabled>Refresh</button>
     </header>
     <main>
       <p id="status" class="status" role="status" aria-live="polite">Open this tool from the DA Library. <a href="?demo=1">Try the local demo</a>.</p>
       <p id="source" class="source"></p>
+      <section id="recovery" class="batch-review" aria-labelledby="recovery-heading" hidden>
+        <h2 id="recovery-heading">Finish an interrupted change</h2>
+        <p>These sources may be partly updated. Resume the reviewed change or restore its original sources. Conflicting edits are preserved for review.</p>
+        <ul id="recovery-paths"></ul>
+        <div class="actions"><button id="resume-operation" type="button">Resume change</button><button id="restore-operation" type="button">Restore original sources</button></div>
+      </section>
       <nav class="tabs" aria-label="Manager views">
         <button type="button" data-panel="manage" aria-pressed="true" aria-controls="manage">Manage</button>
         <button type="button" data-panel="audit" aria-pressed="false" aria-controls="audit">Audit</button>
       </nav>
       <section id="manage" aria-label="Manage disclosures">
-        <p class="hint">Arrange the disclosures and check the resulting footer. Select items to highlight them in the preview or insert their references.</p>
-        <p class="shared-notice">This is a shared disclosure set. Saving its order affects every page that uses it; the disclosure text and page content stay in their source documents.</p>
-        <div class="manage-workspace">
-        <div><h2>Disclosure order</h2><p id="order-state" class="hint" role="status"></p><p class="hint">Drag a row or use Move up/down. Numbers update automatically.</p>
-        <ol id="disclosure-list" class="disclosure-list"></ol>
-        <div class="actions">
-          <button id="insert" class="primary" type="button" disabled>Insert reference</button>
-          <button id="save" type="button" disabled>Save shared order</button>
-          <button id="reset" type="button" disabled>Reset order</button>
+        <div class="list-tools">
+          <button id="assistant-check" type="button" aria-expanded="false" aria-controls="disclosure-assistant">Link selected superscript</button>
+          <button id="assistant-demo" type="button" hidden>Try a superscript (demo)</button>
         </div>
-        <p class="hint">Saving updates the disclosure set. Preview or publish the set in DA to make the new numbers visible on the site.</p>
+        <section id="disclosure-assistant" class="assistant" aria-labelledby="assistant-heading" hidden>
+          <div class="assistant-heading"><h2 id="assistant-heading">Disclosure helper</h2><button id="assistant-dismiss" type="button">Dismiss</button></div>
+          <p id="assistant-status" class="hint" role="status" aria-live="polite"></p>
+          <div id="assistant-suggestion" hidden>
+            <p id="assistant-question" role="status" aria-live="polite"></p>
+            <div id="assistant-excerpt" class="assistant-excerpt"></div>
+            <div id="assistant-apply-actions">
+              <div class="actions">
+                <button id="assistant-link" class="primary" type="button">Link disclosure</button>
+                <button id="assistant-ordinary" type="button">Keep ordinary</button>
+              </div>
+              <details class="assistant-alternatives">
+                <summary>Choose another disclosure</summary>
+                <label for="assistant-alternative">Existing disclosure</label>
+                <select id="assistant-alternative"></select>
+                <button id="assistant-choose" type="button">Use this disclosure</button>
+              </details>
+            </div>
+            <div id="assistant-copy-actions" class="actions" hidden>
+              <button id="assistant-copy-link" type="button">Copy reference</button>
+              <button id="assistant-copy-ordinary" type="button">Copy ordinary number</button>
+            </div>
+            <p id="assistant-ordinary-preview" class="hint"></p>
+            <textarea id="assistant-copy" class="assistant-copy" aria-label="Reference to copy" readonly hidden></textarea>
+          </div>
+        </section>
+        <div id="disclosure-workspace" class="manage-workspace">
+          <div><h2>Disclosure order</h2><p class="hint">Drag to reorder. Select numbers to insert references.</p>
+          <ol id="disclosure-list" class="disclosure-list"></ol></div>
+          <details class="footer-preview">
+            <summary>Preview footer</summary>
+            <p class="hint">Proposed order. Links are inactive.</p>
+            <iframe id="footer-preview" title="Disclosure footer preview" sandbox="" referrerpolicy="no-referrer"></iframe>
+          </details>
+          <details class="numbering-help"><summary>About numbering</summary>
+            <p class="hint">Reordering updates disclosure numbers and their references on every affected page. Save your page in DA before reviewing. Publishing is separate.</p>
+          </details>
+        </div>
+        <section id="change-review" class="batch-review" aria-labelledby="review-heading" hidden>
+          <h2 id="review-heading" tabindex="-1">Review numbering changes</h2>
+          <p id="review-summary"></p>
+          <ul id="review-paths"></ul>
+          <ul id="review-issues" class="audit-output"></ul>
+          <label id="numeric-confirmation" hidden><input id="confirm-numeric" type="checkbox"> I checked the listed numeric superscripts and confirm they are positional disclosure references.</label>
+          <p class="hint">Individual source saves are checked and recoverable. Other authors should wait until this change finishes before editing these sources.</p>
+        </section>
+        <p id="saved-page-notice" class="hint" hidden><label><input id="saved-page" type="checkbox"> I saved this page in DA before reviewing.</label> This editor cannot save it automatically.</p>
+        <div id="changed-sources" class="batch-review" hidden></div>
         <p id="demo-reference" class="example" hidden></p>
-        </div>
-        <section class="footer-preview" aria-labelledby="footer-preview-heading"><h2 id="footer-preview-heading">Footer preview</h2><p class="hint">Saved source text in the proposed order, using the site’s disclosure styles. Links are inactive and images show their text alternatives.</p><iframe id="footer-preview" title="Disclosure footer preview" sandbox="" referrerpolicy="no-referrer"></iframe></section>
-        </div>
       </section>
       <section id="audit" aria-label="Audit disclosures" hidden>
         <p class="hint">Checks the saved page and disclosure fragments. References inside separately loaded page content are outside this audit.</p>
@@ -44,5 +88,17 @@
         <ul id="audit-output" class="audit-output"></ul>
       </section>
     </main>
+    <footer id="save-bar" class="save-bar" aria-label="Disclosure changes">
+      <p id="order-state" class="hint" role="status"></p>
+      <div id="order-actions" class="actions">
+        <button id="insert" type="button" disabled hidden>Insert reference</button>
+        <button id="save" class="primary" type="button" disabled>Save order</button>
+        <button id="reset" type="button" disabled>Discard changes</button>
+      </div>
+      <div id="review-actions" class="actions" hidden>
+        <button id="confirm-save" class="primary" type="button" disabled>Save changes</button>
+        <button id="cancel-review" type="button">Back</button>
+      </div>
+    </footer>
   </body>
 </html>
