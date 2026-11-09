@@ -44,9 +44,11 @@ body.etrade-page:where(:not(.homepage, .welcome-back, .brokerage)) main > .secti
 .hero-product .hero-product-content .hero-product-eyebrow {
   margin: 0 0 var(--space-16);
   color: inherit;
+  font-family: var(--font-family-mono);
   font-size: var(--font-size-16);
   font-weight: var(--font-weight-regular);
   line-height: calc(20 / 16);
+  letter-spacing: var(--tracking-label);
 }
 
 .hero-product .hero-product-heading {
@@ -70,8 +72,7 @@ body.etrade-page:where(:not(.homepage, .welcome-back, .brokerage)) main > .secti
 }
 
 .hero-product .hero-product-media img {
-  aspect-ratio: 680 / 376;
-  object-fit: cover;
+  aspect-ratio: auto;
 }
 
 .hero-product .hero-product-offer a:any-link:not(.etrade-action) {
@@ -86,6 +87,7 @@ body.etrade-page:where(:not(.homepage, .welcome-back, .brokerage)) main > .secti
   margin: 0 0 var(--space-12);
   color: inherit;
   font-size: var(--font-size-20);
+  font-weight: var(--font-weight-semibold);
   line-height: calc(24 / 20);
 }
 
@@ -112,7 +114,7 @@ body.etrade-page:where(:not(.homepage, .welcome-back, .brokerage)) main > .secti
 
 @media (width >= 768px) {
   .hero-product {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-columns: minmax(0, calc((100% + var(--space-20)) * 5 / 12 - var(--space-20))) minmax(0, 1fr);
     gap: var(--space-20);
     text-align: left;
   }
@@ -120,7 +122,7 @@ body.etrade-page:where(:not(.homepage, .welcome-back, .brokerage)) main > .secti
   .hero-product .hero-product-content {
     grid-row: span 2;
     align-self: center;
-    padding: 0 var(--space-40);
+    padding: 0 calc((100% + var(--space-20)) / 12);
   }
 
   .hero-product .hero-product-heading {
@@ -137,19 +139,11 @@ body.etrade-page:where(:not(.homepage, .welcome-back, .brokerage)) main > .secti
   }
 
   .hero-product .hero-product-offer {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
-    align-items: center;
-    gap: var(--space-20);
     grid-column: 2;
   }
 
-  .hero-product.copy-only-offer .hero-product-offer {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .hero-product .hero-product-offer > * {
-    margin: 0;
+  .hero-product.no-image .hero-product-content {
+    padding-inline: var(--space-40);
   }
 
   .hero-product.no-image {
@@ -158,6 +152,23 @@ body.etrade-page:where(:not(.homepage, .welcome-back, .brokerage)) main > .secti
 
   .hero-product.no-image .hero-product-offer {
     grid-column: 1;
+  }
+}
+
+@media (width >= 992px) {
+  .hero-product .hero-product-offer {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) auto;
+    align-items: center;
+    gap: var(--space-20);
+  }
+
+  .hero-product.copy-only-offer .hero-product-offer {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .hero-product .hero-product-offer > * {
+    margin: 0;
   }
 }
 
