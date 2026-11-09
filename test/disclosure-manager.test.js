@@ -486,6 +486,43 @@ test('reopening with an unfinished demo operation offers recovery and blocks a n
   assert.equal(byId('restore-operation').disabled, false);
 });
 
+test('save failures show an author-facing error and preserve the source', async (t) => {
+  const cases = [
+    {
+      name: 'permission denied', response: 403, manifest: false, detail: /403/,
+    },
+    {
+      name: 'successful POST not retained', response: 200, manifest: false, detail: /verify/i,
+    },
+    {
+      name: 'recovery manifest denied', response: 403, manifest: true, detail: /403/,
+    },
+  ];
+  await Promise.all(cases.map((failure) => t.test(failure.name, async () => {
+    const { document, sdk } = await uiHarness('', (host) => {
+      const request = host.actions.daFetch;
+      host.actions.daFetch = (url, options) => {
+        const { pathname } = new URL(url);
+        const blocked = failure.manifest ? pathname.includes('/.da/') : pathname.endsWith('/home.html');
+        if (options?.method === 'POST' && blocked) return Promise.resolve(new Response('', { status: failure.response }));
+        return request(url, options);
+      };
+    });
+    const byId = (id) => document.getElementById(id);
+    const original = await (await sdk.actions.daFetch(sourceUrl(sdk.context, '/home'))).text();
+    byId('save').click();
+    await until(() => !byId('change-review').hidden && !byId('confirm-save').disabled);
+    byId('confirm-save').click();
+    await until(() => byId('status').classList.contains('error') && !byId('refresh').disabled);
+    assert.match(byId('status').textContent, /could not (?:save|verify)/i);
+    assert.match(byId('status').textContent, failure.detail);
+    assert.equal(byId('status').getAttribute('role'), 'status');
+    assert.equal(byId('status').getAttribute('aria-live'), 'polite');
+    assert.equal(byId('changed-sources').hidden, true);
+    assert.equal(await (await sdk.actions.daFetch(sourceUrl(sdk.context, '/home'))).text(), original);
+  })));
+});
+
 test('numeric reorder previews and saves keep selection attached to its original legal text', async () => {
   const { document, window } = await uiHarness();
   const byId = (id) => document.getElementById(id);
