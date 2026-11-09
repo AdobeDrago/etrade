@@ -91,3 +91,18 @@
   color: var(--color-text-secondary);
   font-size: 0.75rem;
 }
+
+.disclosure-sync-notice {
+  position: fixed;
+  z-index: 1300;
+  right: 1rem;
+  bottom: 1rem;
+  max-width: min(28rem, calc(100vw - 2rem));
+  border: 1px solid var(--color-border-control);
+  border-radius: 8px;
+  padding: 1rem;
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-floating);
+  font: 0.875rem/1.5 Arial, sans-serif;
+}

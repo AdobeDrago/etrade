@@ -65,3 +65,10 @@ Open `http://localhost:3000/tools/plugins/disclosure-manager/disclosure-manager.
 After conversion, **Try a new superscript (demo)** exercises assistant linking and ordinary-superscript choices against the same guarded interface in memory.
 
 Run `npm run test:disclosure-manager`, `npm run test:disclosures`, and `npm test` for transformation, discovery, recovery, editor lifecycle and interface checks. The demo does not replace authenticated Canvas checks of SDK editing, source permissions and preview propagation.
+
+
+## Automatic author update after Save
+
+Before source writes begin, the manager captures the open preview's existing references through its same-origin author channel. After every source is verified saved, the page applies the frozen number mapping once to unchanged static superscripts and standalone links, then refreshes their targets from the verified saved set. Grouped references update together. Native-updated or author-edited nodes are not blindly mapped again; active editor state stays under DA's control.
+
+Preview delivery may lag a source save. The author footer keeps the verified saved order until delivery catches up. Public preview/publishing still use their separate normal workflows. Ambiguous recovered views are left unlinked with a reopen notice, preserving legal-target safety.

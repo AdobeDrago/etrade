@@ -1,3 +1,7 @@
+const pausedDocuments = new WeakSet();
+
+export function pauseDisclosureReferences(doc) { pausedDocuments.add(doc); }
+
 /** Retain stable IDs only while the generated citation is still intact. */
 function referenceText(sup, targets) {
   const ids = sup.dataset.disclosureIds;
@@ -39,6 +43,7 @@ export function clearDisclosureReferences(main, namespace) {
 export default function decorateDisclosureReferences(main, disclosures = main?.querySelector('.disclosures')
   || document.querySelector('.disclosures:not([hidden])')) {
   if (!main || !disclosures || disclosures.hidden) return;
+  if (pausedDocuments.has(main.ownerDocument)) return;
   const targets = new Map();
   const namespace = disclosures.dataset.disclosureNamespace;
   const items = [...disclosures.querySelectorAll('.disclosures-items > li[id]')];
@@ -61,7 +66,8 @@ export default function decorateDisclosureReferences(main, disclosures = main?.q
     }
   });
   main.querySelectorAll('sup').forEach((sup) => {
-    if (sup.closest('.disclosures, .prosemirror-editor, .ProseMirror, [contenteditable="true"]')) return;
+    if (sup.closest('.disclosures, .metadata, .da-metadata, .da-form, .disclosure-set, code, pre, math, .prosemirror-editor, .ProseMirror, [contenteditable="true"], [data-disclosure-link-pending]')) return;
+    if (sup.closest('table')?.querySelector('tr')?.textContent.trim().toLowerCase() === 'metadata') return;
     const text = referenceText(sup, targets);
     const ids = text.split(/\s*,\s*/);
     const outerLink = sup.closest('a[href]');
