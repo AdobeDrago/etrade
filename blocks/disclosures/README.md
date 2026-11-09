@@ -20,7 +20,7 @@ The **Disclosures** row in the page's **Metadata** table can also point to a str
 | --- | --- |
 | Disclosures | /disclosures/sets/homepage |
 
-Create that document with the `disclosure-set` schema in DA. The set selects rich-text documents from the fragment directory. Each disclosure has a stable `disclosureId`; its position in the `disclosures` array determines its displayed number, starting at 1. Introduction, notice, logo, and closing entries do not count toward numbering. For example:
+Create that document with the `disclosure-set` schema in DA. The set selects rich-text documents from the fragment directory. New numeric sets use a string `disclosureId` that matches each item’s position: `"1"`, `"2"`, and so on. Reorder through Disclosure Manager so existing citations follow their legal text. Existing letter-ID sets remain readable until explicitly migrated. Introduction, notice, logo, and closing entries do not count toward numbering. For example:
 
 ```json
 {
@@ -31,8 +31,8 @@ Create that document with the `disclosure-set` schema in DA. The set selects ric
     { "kind": "logo", "fragment": "/disclosures/fragments/sipc-logo" }
   ],
   "disclosures": [
-    { "disclosureId": "offer", "fragment": "/disclosures/fragments/brokerage-offer" },
-    { "disclosureId": "fees", "fragment": "/disclosures/fragments/trading-fees" }
+    { "disclosureId": "1", "fragment": "/disclosures/fragments/brokerage-offer" },
+    { "disclosureId": "2", "fragment": "/disclosures/fragments/trading-fees" }
   ],
   "closing": [
     { "fragment": "/disclosures/fragments/corporate-closing" }
@@ -44,19 +44,21 @@ The loader uses Adobe's [structured-content delivery endpoint](https://www.aem.l
 
 Preview the set and every referenced fragment before testing on `.aem.page`; publish them before using them on `.aem.live` or the production site. Each unique document loads once per set. The renderer preserves authored order, bold/emphasis, links, anchor IDs, lists, and media without applying page button or auto-block transformations to the fragment body. Notice and logo entries use the existing disclosure styles and accessible logo labels.
 
-IDs must match `^[a-z][a-z0-9]*$`: `a`, `disc1`, `offer`, and `apy` are valid. Incomplete entries, invalid IDs, duplicate IDs after the first valid entry, and empty fragment bodies are skipped. The rendered items are numbered consecutively from 1 to N in set order. Reusing one fragment with different IDs is supported. If the set request or a referenced fragment fails, the region is hidden and a loading error is logged; no partial legal footer or fallback copy is generated. Previously delivered sets using `number`, inline Disclosures tables, and links to legacy disclosure documents retain their numeric behavior during migration. A set containing `disclosureId` uses the new schema throughout.
+Numeric IDs must exactly match nonempty disclosure positions and use a valid set namespace. Missing/empty legal fragments, mixed letter/numeric IDs, duplicates and gaps cannot silently shift numbering. The entire region is hidden on a failed numeric set. Existing letter-ID sets retain their earlier validation/skipping behavior while migration is pending.
 
-Author a claim with `<sup>offer</sup>`. Once its footer item exists, the inline auto-block helper converts it to `<sup><a href="#disclosure-offer" aria-label="Disclosure 1">1</a></sup>`. The footer item uses the same number and the stable `disclosure-offer` anchor. Moving `offer` to the second position makes both its claim marker and footer display 2, while the anchor remains unchanged. Citation order on the page does not affect numbering.
+Author a claim with `<sup>1</sup>`. For set `homepage`, it resolves to `#disclosure-homepage-1`, with visible text and accessible label 1. Moving that disclosure to position 2 through Disclosure Manager changes both its ID and its affected authored citations to 2. Manually editing a superscript from 1 to 2 instead chooses the current second disclosure.
 
-A comma-separated marker such as `<sup>fees,offer</sup>` becomes separate numbered links in that citation order. Each ID must exist in the rendered footer; unmatched markers and groups with any missing ID remain as authored. Ordinary superscripts and external links stay authored. Authors do not need to create links manually. Markers already wrapped in disclosure anchors are normalized without nesting links. The helper retains the original IDs in `data-disclosure-ids` so repeated decoration does not treat display numbers as identifiers.
+A comma-separated marker such as `<sup>2,1</sup>` becomes separate numbered links in that citation order. Explicit `homepage-1` markers also resolve in that selected set. Groups with unresolved targets and external links remain authored. A plain matching numeric superscript counts as a disclosure citation; use ordinary Unicode superscript notation, such as ², for an exponent. The authoring helper can assist with that choice.
+
+Legacy sets still accept their existing IDs, such as `offer`, until explicitly converted. Runtime data attributes preserve generated reference identity only while a link is intact; an author’s genuine edit takes precedence.
 
 Run `npm run test:disclosures` to verify set delivery, fragment composition, rich text, footnotes, and legacy rendering.
 
-The [Disclosure Manager DA plugin](../../tools/plugins/disclosure-manager/README.md) provides a reorder interface, stable-ID reference insertion, and an audit of the saved page. Register it in the DA Library using its setup instructions. It updates the disclosure set without rewriting page numbers; preview or publish the content separately after saving.
+The [Disclosure Manager DA plugin](../../tools/plugins/disclosure-manager/README.md) provides numbered reference insertion, a reviewed reorder/migration workflow, shared-consumer discovery and recovery for interrupted saves. Register it in the DA Library using its setup instructions. Preview every changed set and citation source together; publishing is separate. See the [schema rollout](../../docs/disclosure-numbering-rollout.md).
 
 Use a two-column **Disclosures** table. `Introduction` rows hold introductory rich text. Numbered rows (`1`, `2`, and so on) hold the corresponding legal copy. An optional `Closing` row follows the numbered list. Blank rows and empty cells are skipped. Links, lists, and inline formatting remain authored; the block has no legal-copy fallback.
 
-For legacy numeric tables and documents, numeric superscripts in the page content link to existing numbered entries. While a set still delivers the previous numeric schema, the JavaScript also converts single-letter superscripts `a`–`z` to the corresponding explicit numbers `1`–`26` and links them to those existing footer items. For example, `<sup>b</sup>` becomes `<sup><a href="#disclosure-2" aria-label="Disclosure 2">2</a></sup>`. This compatibility mapping uses the footer's explicit numbers, regardless of citation or item order, and only applies when the rendered disclosures contain no stable IDs. A comma-separated reference such as `5,9` or `e,i` becomes two links. References are left unchanged when any target is missing. Legacy numbered items retain `disclosure-N` IDs and can receive focus after anchor navigation. Numeric markers do not select items by their display number in ID-based sets; migrate those page markers to their corresponding IDs.
+For legacy numeric tables and documents, numeric superscripts in the page content link to existing numbered entries. While a set still delivers the previous numeric schema, the JavaScript also converts single-letter superscripts `a`–`z` to the corresponding explicit numbers `1`–`26` and links them to those existing footer items. For example, `<sup>b</sup>` becomes `<sup><a href="#disclosure-2" aria-label="Disclosure 2">2</a></sup>`. This compatibility mapping uses the footer's explicit numbers, regardless of citation or item order, and only applies when the rendered disclosures contain no stable IDs. A comma-separated reference such as `5,9` or `e,i` becomes two links. References are left unchanged when any target is missing. Legacy numbered items retain `disclosure-N` IDs and can receive focus after anchor navigation. Numeric markers do not select items by displayed position in legacy letter-ID sets; use Disclosure Manager to migrate the set and citations together.
 
 A one-cell block containing a single document link also loads an authored disclosure document. Avoid using both inline disclosures and page Metadata to define duplicate entries. Update offer rates, dates, eligibility, tiers, and associated disclosure copy together.
 

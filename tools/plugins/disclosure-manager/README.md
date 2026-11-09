@@ -24,18 +24,36 @@ The plugin connects through the [DA SDK](https://github.com/adobe/da-nx/blob/mai
 
 ## Authoring
 
-1. Save the page in DA. Its Metadata **Disclosures** row must reference an existing `/disclosures/sets/...` document using the `disclosure-set` schema, or a site JSON document with the same `disclosures` array. Full project preview/live URLs and Adobe structured-content delivery URLs are supported.
-2. Open Disclosure Manager from the Library. It reads the saved page, resolves its set, and checks the referenced fragment sources. Each item shows a title and excerpt from its fragment, plus its expected display number. Expand **Source and stable ID** for its source path and permanent reference ID. The footer preview includes introduction and closing fragments, follows the proposed order, and highlights selected disclosures. It uses the site disclosure styles in an inert sandbox: links are inactive and images show text alternatives. Empty fragments are excluded from numbering, matching the site's renderer. Missing fragments and invalid or duplicate IDs disable saving and inserting until corrected in the set editor.
-3. Drag items or use **Move up/down**. **Reset order** restores the loaded order. **Save shared order** saves only the set document; it preserves introduction, closing, schema metadata, fragment contents, other fields, and stable IDs. The page is never rewritten. If the source changed since loading, saving stops and asks you to refresh. This check does not provide an atomic lock against simultaneous edits.
-4. Place the editor cursor after a claim, open the manager, select one or more disclosures, and click **Insert reference**. Selection order determines the comma-separated marker, such as `<sup>fees,offer</sup>`. This inserts via the DA editor's `sendHTML` action, keeping the page's normal save/undo flow. Save the page afterward. Insert is disabled while a reorder is unsaved. Use a cursor with no selected claim text because insertion replaces the editor selection.
-5. Preview the changed set and every fragment in DA before reviewing `.aem.page`. Publish the set, fragments and page as needed for `.aem.live` or production. Saving the order does not preview or publish content.
+1. Save the current page in DA. Its Metadata **Disclosures** row selects a set under `/disclosures/sets/` or a site JSON document with the same structure.
+2. Open Disclosure Manager. Review each disclosure's title, excerpt and **Source and reference** details. The footer preview preserves supporting fragments and legal copy. Numeric sets require available, nonempty disclosure fragments; an item cannot be silently omitted and shift later numbers.
+3. Existing letter-ID sets offer **Convert to numbered references**. Numeric sets offer **Review changes** after a drag or **Move up/down**. The review shows the old-to-new mapping and every changed source. It checks all pages, drafts, nested fragments and supported structured fields. Other pages' normal hyperlinks are not embedded-content dependencies.
+4. Resolve every blocking issue before **Save changes**. A shared fragment used under incompatible sets must be separated or qualified first. Previously unresolved numeric superscripts in a legacy set require explicit confirmation of their positional-citation intent. The manager does not guess whether they are mathematical exponents.
+5. Saving updates the set and its citation sources together. Moving disclosure 1 to position 3 makes it ID 3 and changes existing citations 1 → 3, keeping their legal target. Manually editing a citation to 2 instead chooses the current second disclosure.
+6. **Insert reference** inserts selected saved numbers through DA's normal selection/save/undo flow, e.g. `<sup>2,1</sup>`. Insertion is disabled during an unsaved reorder. Put the cursor after the claim; insertion replaces a selected range.
+7. Preview the listed changed sources together, then publish separately through the site's normal workflow. A source save does not itself update preview delivery or publish anything.
 
-**Audit** checks the saved page's bare, grouped and already linked superscripts. It reports matching links, missing IDs, numeric markers that need migration, and references embedded in a larger link. External links are preserved. It reports disclosures without a reference in the saved page as an advisory: references inside separately loaded page fragments are outside this audit. Refresh after saving page edits to update the audit.
+The set's `id` namespaces its anchors: set `homepage`, number `1` targets `#disclosure-homepage-1`. Authors normally type plain superscript numbers; explicit `homepage-1` references are also supported for that selected set. Numeric IDs must exactly match array positions. Use the manager to reorder; editing only the structured form's order does not update page citations.
 
-Legacy numeric tables/documents require migration to an ID-based disclosure set before using the manager. It never guesses which existing numeric citation should become which stable ID. Rates, offer terms and legal copy remain authored in their existing documents.
+The **Audit** tab checks the saved current page, including grouped and linked citations. The batch review additionally discovers all affected sources. An unmatched marker remains authored. A plain numeric superscript matching the selected numeric set counts as a disclosure citation; use ordinary Unicode superscript characters, such as ², for an exponent with the same number.
+
+Legacy stable-ID rendering and old numeric legal documents remain compatible. Converting a structured set and its consumers is explicit. Legacy tables/documents must first be migrated to a structured set; the tool does not infer legal identities from arbitrary documents.
+
+## Interrupted saves and collaboration
+
+DA's Source API writes individual documents. The tool checks exact source snapshots and the complete consumer inventory before saving, verifies writes, and stores a recovery manifest under `/.da/disclosure-manager/renumber-jobs/`. The manifest contains original/target source snapshots and integrity hashes; credentials are never persisted. Completed manifests are retained when a new operation starts.
+
+If a save fails, the tool restores only sources still matching that operation's output. Collaborator edits are preserved and reported. Reopening the manager detects unfinished work and offers **Resume change** or **Restore original sources**. A new reorder stays blocked until recovery is resolved. A timed-out POST is checked by reading its actual result, so a permutation is not applied twice.
+
+These checks are optimistic; the API has no multi-document transaction or atomic edit lock. Authors should wait for the reviewed batch to finish before editing its sources. Review the entire changed batch before previewing or publishing.
+
+## Schema rollout
+
+See [the schema and migration procedure](../../../docs/disclosure-numbering-rollout.md). The existing schema keeps its name, fragment choices and fields. Its identifier pattern is numeric-only (`^[1-9][0-9]*$`); there is no separate editable number field. Legacy IDs remain readable during content migration. Form-based conversion is blocked until the live schema accepts the new numbers. JSON sets use their own explicit source contract.
 
 ## Local review
 
-Open `http://localhost:3000/tools/plugins/disclosure-manager/disclosure-manager.html?demo=1` for a standalone demo. It includes repeated and grouped references, a missing target, and an unreferenced disclosure. Reorder, save and insert operations stay in memory; no DA API or authentication calls occur. Refresh restores the current in-memory saved order; reloading the browser resets the demo.
+Open `http://localhost:3000/tools/plugins/disclosure-manager/disclosure-manager.html?demo=1` (or the port printed by AEM CLI). The demo includes two consuming pages, shared content, grouped/repeated citations, an unmatched marker and an unreferenced disclosure. Review and save use the real planning/recovery code with an in-memory API; they do not write DA content. Reloading the browser resets it. Add `&recovery=1` to inspect an interrupted operation with a collaborator conflict.
 
-Run `npm run test:disclosure-manager` for source parsing/preservation, audits, safe saves and the UI workflow. Run `npm run test:disclosures` for the site's automatic numbering/linking contract. The demo verifies the plugin interface; it does not replace testing SDK insertion and permissions inside the authenticated DA editor.
+After conversion, **Try a new superscript (demo)** exercises assistant linking and ordinary-superscript choices against the same guarded interface in memory.
+
+Run `npm run test:disclosure-manager`, `npm run test:disclosures`, and `npm test` for transformation, discovery, recovery, editor lifecycle and interface checks. The demo does not replace authenticated Canvas checks of SDK editing, source permissions and preview propagation.

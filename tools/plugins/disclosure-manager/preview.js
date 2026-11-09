@@ -1,4 +1,4 @@
-import { disclosureSetEntries } from '../../../scripts/disclosure-sets.js';
+import { disclosureSetEntries, disclosureSetMode } from '../../../scripts/disclosure-sets.js';
 import { orderedEntries } from './model.js';
 
 function textOf(element) {
@@ -46,7 +46,14 @@ export function previewContent(source) {
 }
 
 export function footerEntries(model, order) {
-  return disclosureSetEntries({ ...model.data, disclosures: orderedEntries(model, order) });
+  let disclosures = orderedEntries(model, order);
+  if (disclosureSetMode(model.data) === 'sequence') {
+    disclosures = disclosures.map((entry, index) => ({
+      ...entry,
+      disclosureId: String(index + 1),
+    }));
+  }
+  return disclosureSetEntries({ ...model.data, disclosures });
 }
 
 export function footerPreview(model, order, fragments, selected, origin) {
@@ -67,7 +74,8 @@ export function footerPreview(model, order, fragments, selected, origin) {
     if (disclosureId) {
       item.setAttribute('value', String(list.children.length + 1));
       item.dataset.disclosureId = disclosureId;
-      if (selected.has(disclosureId)) item.className = 'preview-selected';
+      const originalId = orderedEntries(model, order)[Number(label) - 1]?.disclosureId;
+      if (selected.has(originalId || disclosureId)) item.className = 'preview-selected';
       list.append(item);
     } else if (label === 'Closing') closing.append(item);
     else {

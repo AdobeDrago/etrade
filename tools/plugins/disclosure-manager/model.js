@@ -1,4 +1,4 @@
-import { disclosureFragmentPath, disclosureSetEntries } from '../../../scripts/disclosure-sets.js';
+import { disclosureFragmentPath, disclosureSetEntries, disclosureSetMode } from '../../../scripts/disclosure-sets.js';
 
 const parse = (html) => new DOMParser().parseFromString(html, 'text/html');
 
@@ -6,7 +6,7 @@ function rows(block) {
   return [...block.children].flatMap((row) => (row.tagName === 'TBODY' ? [...row.children] : [row]));
 }
 
-function cellFor(block, key) {
+export function cellFor(block, key) {
   return rows(block).find((row) => (
     row.children[0]?.textContent.trim().toLowerCase() === key.toLowerCase()
   ))?.children[1];
@@ -78,11 +78,13 @@ export function parseSetSource(source, path) {
   const list = block && cellFor(block, 'disclosures')?.querySelector('ul, ol');
   if (!list) throw new Error('No structured disclosures array found. Use the disclosure-set schema in DA.');
   const items = [...list.children].filter((item) => item.tagName === 'LI');
+  const entryBlocks = [];
   const disclosures = items.map((item) => {
     const reference = item.textContent.trim();
     if (!reference.startsWith('self://#')) throw new Error('Unsupported disclosure entry. Use a fragment and a stable disclosureId.');
     const target = blocks.find((entry) => entry.classList.contains(reference.slice(8).replaceAll('/', '-')));
     if (!target) throw new Error('A structured disclosure entry could not be resolved.');
+    entryBlocks.push(target);
     return {
       disclosureId: cellFor(target, 'disclosureId')?.textContent.trim(),
       fragment: cellFor(target, 'fragment')?.textContent.trim(),
@@ -102,17 +104,26 @@ export function parseSetSource(source, path) {
     doc,
     list,
     items,
-    data: { disclosures, introduction: supporting('introduction'), closing: supporting('closing') },
+    entryBlocks,
+    data: {
+      id: cellFor(block, 'id')?.textContent.trim(),
+      disclosures,
+      introduction: supporting('introduction'),
+      closing: supporting('closing'),
+    },
   };
 }
 
 export function validateSet(model) {
   const issues = [];
+  try { disclosureSetMode(model.data); } catch (error) {
+    issues.push({ type: 'error', message: error.message });
+  }
   const seen = new Set();
   model.data.disclosures.forEach((item, index) => {
     const id = item?.disclosureId;
-    if (typeof id !== 'string' || !/^[a-z][a-z0-9]*$/.test(id)) {
-      issues.push({ type: 'error', message: `Entry ${index + 1} needs a stable ID using lowercase letters and digits, starting with a letter.` });
+    if (typeof id !== 'string' || !/^(?:[a-z][a-z0-9]*|[1-9]\d*)$/.test(id)) {
+      issues.push({ type: 'error', message: `Entry ${index + 1} needs a valid disclosure identifier.` });
     } else if (seen.has(id)) {
       issues.push({ type: 'error', message: `Disclosure ID “${id}” appears more than once.` });
     }
@@ -148,6 +159,10 @@ export function orderedEntries(model, order) {
 export function reorderedSource(model, order) {
   if (validateSet(model).length) throw new Error('Fix the disclosure set errors before saving its order.');
   const entries = orderedEntries(model, order);
+  if (disclosureSetMode(model.data) === 'sequence'
+    && order.some((index, position) => index !== position)) {
+    throw new Error('Numeric reorders require the reviewed batch in Disclosure Manager.');
+  }
   if (model.payload) {
     const payload = structuredClone(model.payload);
     (payload.data ?? payload).disclosures = entries;
@@ -160,10 +175,24 @@ export function reorderedSource(model, order) {
 }
 
 /** Audit the same marker shapes the site's automatic linker accepts. */
-export function auditReferences(html, entries) {
+export function auditReferences(html, entries, namespace) {
   const doc = parse(html);
-  const targets = new Map(disclosureSetEntries({ disclosures: entries })
-    .map(({ disclosureId, label }) => [disclosureId, label]));
+  const numeric = namespace && entries.every((item) => /^[1-9]\d*$/.test(item.disclosureId));
+  const targets = new Map(disclosureSetEntries({ id: namespace, disclosures: entries })
+    .map(({ disclosureId, label }) => [disclosureId, {
+      id: disclosureId, label, anchor: numeric ? `${namespace}-${disclosureId}` : disclosureId,
+    }]));
+  // New citations always identify a position; old identifiers are read-only aliases.
+  entries.forEach((item, index) => {
+    const target = targets.get(item.disclosureId);
+    if (target) targets.set(String(index + 1), target);
+  });
+  if (numeric) {
+    entries.forEach((item) => targets.set(
+      `${namespace}-${item.disclosureId}`,
+      targets.get(item.disclosureId),
+    ));
+  }
   const used = new Set();
   const issues = [];
   let references = 0;
@@ -171,10 +200,14 @@ export function auditReferences(html, entries) {
     if (sup.closest('.disclosures, .metadata')) return;
     const outer = sup.closest('a[href]');
     const links = [...sup.querySelectorAll('a[href]'), ...(outer ? [outer] : [])];
-    if (links.some((link) => !/^#disclosure-[a-z0-9]+$/.test(link.getAttribute('href')))) return;
+    if (links.some((link) => !/^#disclosure-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(link.getAttribute('href')))) return;
+    if (numeric && links.some((link) => {
+      const target = link.getAttribute('href').slice('#disclosure-'.length);
+      return !targets.has(target) && !/^[1-9]\d*$/.test(target);
+    })) return;
     const text = sup.dataset.disclosureIds || sup.textContent.trim();
     const ids = text.split(/\s*,\s*/);
-    if (!ids.every((id) => /^[a-z][a-z0-9]*$|^\d+$/.test(id))) return;
+    if (!ids.every((id) => /^[a-z][a-z0-9-]*$|^\d+$/.test(id))) return;
     if (outer && (outer !== sup.parentElement || outer.children.length !== 1
       || outer.textContent.trim() !== sup.textContent.trim())) {
       issues.push({ type: 'error', message: `Marker “${text}” is inside a larger link and cannot be linked automatically.` });
@@ -182,11 +215,17 @@ export function auditReferences(html, entries) {
     }
     const missing = ids.filter((id) => !targets.has(id));
     if (missing.length) {
-      issues.push({ type: 'error', message: `Marker “${text}” has no matching ID for ${missing.join(', ')}. Use stable IDs rather than display numbers.` });
+      issues.push({ type: 'error', message: `Marker “${text}” has no matching ID for ${missing.join(', ')}. Use a reference from the selected set.` });
       return;
     }
-    ids.forEach((id) => { used.add(id); references += 1; });
-    issues.push({ type: 'ok', message: `Marker ${text} → ${ids.map((id) => `${targets.get(id)} (#disclosure-${id})`).join(', ')}.` });
+    ids.forEach((id) => { used.add(targets.get(id).id); references += 1; });
+    issues.push({
+      type: 'ok',
+      message: `Marker ${text} → ${ids.map((id) => {
+        const target = targets.get(id);
+        return `${target.label} (#disclosure-${target.anchor})`;
+      }).join(', ')}.`,
+    });
   });
   entries.forEach(({ disclosureId }) => {
     if (!used.has(disclosureId)) issues.push({ type: 'warn', message: `No reference to “${disclosureId}” in the saved page. Check separately loaded content before removing it.` });
@@ -196,10 +235,13 @@ export function auditReferences(html, entries) {
 
 export function referenceMarkup(ids, entries) {
   const valid = new Set(entries.map((item) => item.disclosureId));
-  if (!ids.length || ids.some((id) => !/^[a-z][a-z0-9]*$/.test(id) || !valid.has(id))) {
+  if (!ids.length || ids.some((id) => !/^(?:[a-z][a-z0-9]*|[1-9]\d*)$/.test(id) || !valid.has(id))) {
     throw new Error('Select a disclosure from this set.');
   }
-  return `<sup>${[...new Set(ids)].join(',')}</sup>`;
+  const numbers = [...new Set(ids)].map((id) => (
+    entries.findIndex((entry) => entry.disclosureId === id) + 1
+  ));
+  return `<sup>${numbers.join(',')}</sup>`;
 }
 
 export async function readSource(context, path, request) {
