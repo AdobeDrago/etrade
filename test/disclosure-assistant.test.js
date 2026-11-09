@@ -111,6 +111,24 @@ test('live suggestions show the matching excerpt and apply through the host guar
   ui.controller.dispose();
 });
 
+test('the helper appears only for contextual feedback and shows copying only as a fallback', async () => {
+  const ui = await assistantHarness();
+  const byId = (id) => ui.document.getElementById(id);
+  assert.equal(byId('disclosure-assistant').hidden, true);
+  ui.emit('<sup>2</sup>'); ui.flush();
+  assert.equal(byId('disclosure-assistant').hidden, false);
+  assert.equal(byId('assistant-apply-actions').hidden, false);
+  assert.equal(byId('assistant-copy-actions').hidden, true);
+  byId('assistant-dismiss').click();
+  assert.equal(byId('disclosure-assistant').hidden, true);
+  ui.controller.dispose();
+  const fallback = await assistantHarness(false);
+  fallback.emit('<sup>2</sup>'); fallback.flush();
+  assert.equal(fallback.document.getElementById('assistant-apply-actions').hidden, true);
+  assert.equal(fallback.document.getElementById('assistant-copy-actions').hidden, false);
+  fallback.controller.dispose();
+});
+
 test('a stale suggestion never writes, and dismissed suggestions do not immediately return', async () => {
   const ui = await assistantHarness();
   ui.emit('<sup>2</sup>'); ui.flush();

@@ -10,7 +10,7 @@ Deploy the plugin's HTML, CSS and JavaScript with the project's code first. In t
 | --- | --- | --- | --- | --- | --- |
 | Disclosure Manager | https://demo--etrade--adobedrago.aem.live/tools/plugins/disclosure-manager/disclosure-manager.html | | | inline | |
 
-The deployed plugin code lives on `demo`. Leave ref empty so the plugin is available from the regular editor URL. Open [the homepage editor](https://da.live/canvas#/adobedrago/etrade/home), then **Outline dropdown → Disclosure Manager**. In the classic editor use **Library → Disclosure Manager**. Use the plugin URL without `?demo=1` for real authoring. The URL's branch selects the plugin code; DA source content is shared across branches. An editor `?ref=demo` is only needed when reviewing the demo branch's site rendering inside DA. Review previewed content on [the demo homepage](https://demo--etrade--adobedrago.aem.page/home).
+The example uses plugin code deployed on `demo`; choose the branch hosting the version you want to review. Leave ref empty so the plugin is available from the regular editor URL. Open [the homepage editor](https://da.live/canvas#/adobedrago/etrade/home), then **Panels → Disclosure Manager**. In the classic editor use **Library → Disclosure Manager**. Use the plugin URL without `?demo=1` for real authoring. The URL's branch selects the plugin code; DA source content is shared across branches. An editor `?ref=demo` is only needed when reviewing the demo branch's site rendering inside DA. Review previewed content on [the demo homepage](https://demo--etrade--adobedrago.aem.page/home).
 
 For local development, run `npx -y @adobe/aem-cli up` and add a separate row:
 
@@ -25,8 +25,8 @@ The plugin connects through the [DA SDK](https://github.com/adobe/da-nx/blob/mai
 ## Authoring
 
 1. Save the current page in DA. Its Metadata **Disclosures** row selects a set under `/disclosures/sets/` or a site JSON document with the same structure.
-2. Open Disclosure Manager. Review each disclosure's title, excerpt and **Source and reference** details. The footer preview preserves supporting fragments and legal copy. Numeric sets require available, nonempty disclosure fragments; an item cannot be silently omitted and shift later numbers.
-3. Existing letter-ID sets offer **Convert to numbered references**. Numeric sets offer **Review changes** after a drag or **Move up/down**. The review shows the old-to-new mapping and every changed source. It checks all pages, drafts, nested fragments and supported structured fields. Other pages' normal hyperlinks are not embedded-content dependencies.
+2. Open Disclosure Manager. Each compact row shows a short fragment name and excerpt; expand **Details** for the full legal text and source path, or **Preview footer** for the proposed footer. Numeric sets require available, nonempty disclosure fragments; an item cannot be silently omitted and shift later numbers.
+3. Existing letter-ID sets offer **Convert to numbered references**. Numeric sets offer **Save order** in the pinned bottom bar after a drag or **Move up/down**. Both open a review showing the old-to-new mapping and every changed source. **Back** returns to the proposed order; **Discard changes** resets it without writing source. The review checks all pages, drafts, nested fragments and supported structured fields. Other pages' normal hyperlinks are not embedded-content dependencies.
 4. Resolve every blocking issue before **Save changes**. A shared fragment used under incompatible sets must be separated or qualified first. Previously unresolved numeric superscripts in a legacy set require explicit confirmation of their positional-citation intent. The manager does not guess whether they are mathematical exponents.
 5. Saving updates the set and its citation sources together. Moving disclosure 1 to position 3 makes it ID 3 and changes existing citations 1 → 3, keeping their legal target. Manually editing a citation to 2 instead chooses the current second disclosure.
 6. **Insert reference** inserts selected saved numbers through DA's normal selection/save/undo flow, e.g. `<sup>2,1</sup>`. Insertion is disabled during an unsaved reorder. Put the cursor after the claim; insertion replaces a selected range.
@@ -40,9 +40,9 @@ Legacy stable-ID rendering and old numeric legal documents remain compatible. Co
 
 ## Disclosure assistant
 
-With a saved numbered set loaded, leave the manager open while authoring a numeric superscript. The assistant offers the matching disclosure excerpt, **Link disclosure**, **Keep as ordinary superscript**, and **Dismiss**. **Check selected superscript** also checks a selected number or comma-separated group. Keeping an ordinary superscript explicitly converts its digits to Unicode superscript characters, such as `²`, retaining surrounding formatting.
+With a saved numbered set loaded, leave the manager open while authoring a numeric superscript. The helper appears for a relevant suggestion or feedback and offers the matching excerpt, **Link disclosure**, **Keep ordinary**, and **Dismiss**. **Link selected superscript** checks a selected number or comma-separated group. Expand **Choose another disclosure** for the existing alternatives. Keeping an ordinary superscript explicitly converts its digits to Unicode superscript characters, such as `²`, retaining surrounding formatting. Helper messages do not replace the Manager's save status.
 
-Applying a suggestion requires DA's supported, version-guarded block replacement capability and an unambiguous current selection. Older hosts and ambiguous selections offer copy options. No unguarded replacement is attempted. Reordering or an unfinished recovery disables assistant edits until the set is saved.
+Applying a suggestion requires DA's supported, version-guarded block replacement capability and an unambiguous current selection. Direct-edit controls are shown when supported; older hosts and ambiguous selections offer copy options. No unguarded replacement is attempted. Reordering or an unfinished recovery disables assistant edits until the set is saved.
 
 Canvas quick-edit also offers an inline numeric-superscript helper with matching excerpts and other existing disclosures. It applies guarded native editor transactions. Hover/focus on a rendered reference shows a read-only legal excerpt. Both helpers live outside authored content and are absent on the public website.
 
@@ -62,7 +62,7 @@ See [the schema and migration procedure](../../../docs/disclosure-numbering-roll
 
 Open `http://localhost:3000/tools/plugins/disclosure-manager/disclosure-manager.html?demo=1` (or the port printed by AEM CLI). The demo includes two consuming pages, shared content, grouped/repeated citations, an unmatched marker and an unreferenced disclosure. Review and save use the real planning/recovery code with an in-memory API; they do not write DA content. Reloading the browser resets it. Add `&recovery=1` to inspect an interrupted operation with a collaborator conflict.
 
-After conversion, **Try a new superscript (demo)** exercises assistant linking and ordinary-superscript choices against the same guarded interface in memory.
+After conversion, **Try a superscript (demo)** exercises helper linking and ordinary-superscript choices against the same guarded interface in memory.
 
 Run `npm run test:disclosure-manager`, `npm run test:disclosures`, and `npm test` for transformation, discovery, recovery, editor lifecycle and interface checks. The demo does not replace authenticated Canvas checks of SDK editing, source permissions and preview propagation.
 

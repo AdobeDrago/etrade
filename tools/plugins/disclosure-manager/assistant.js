@@ -112,6 +112,7 @@ export default function mountDisclosureAssistant({
   clearTimer = clearTimeout,
 }) {
   const byId = (id) => doc.getElementById(id);
+  const panel = byId('disclosure-assistant');
   const card = byId('assistant-suggestion');
   let latest;
   let baseline;
@@ -123,12 +124,18 @@ export default function mountDisclosureAssistant({
   const dismissed = new Set();
   const listeners = [];
   const report = (message, error = false) => {
+    panel.hidden = false;
+    byId('assistant-check').setAttribute('aria-expanded', 'true');
     byId('assistant-status').textContent = message;
     onStatus?.(message, error);
   };
-  const editable = () => candidate?.expected && canEdit() && !applying
-    && sdk.capabilities?.sendHTMLReplace === 1 && typeof sdk.actions.sendHTML === 'function';
+  const supported = () => Boolean(candidate?.expected
+    && sdk.capabilities?.sendHTMLReplace === 1 && typeof sdk.actions.sendHTML === 'function');
+  const editable = () => supported() && canEdit() && !applying;
   const controls = () => {
+    const direct = supported();
+    byId('assistant-apply-actions').hidden = !direct;
+    byId('assistant-copy-actions').hidden = !candidate || direct;
     byId('assistant-link').disabled = !editable() || !candidate?.linkable;
     byId('assistant-ordinary').disabled = !editable();
     byId('assistant-choose').disabled = !editable();
@@ -136,10 +143,19 @@ export default function mountDisclosureAssistant({
     byId('assistant-copy-link').disabled = !candidate?.linkable || !canEdit();
     byId('assistant-copy-ordinary').disabled = !candidate || !canEdit();
   };
-  const hide = () => { card.hidden = true; candidate = undefined; controls(); };
+  const hide = () => {
+    panel.hidden = true;
+    card.hidden = true;
+    candidate = undefined;
+    byId('assistant-check').setAttribute('aria-expanded', 'false');
+    controls();
+  };
   const show = (item) => {
     candidate = item;
+    panel.hidden = false;
+    byId('assistant-check').setAttribute('aria-expanded', 'true');
     card.hidden = false;
+    byId('assistant-status').textContent = '';
     byId('assistant-copy').hidden = true;
     byId('assistant-question').textContent = item.linkable
       ? `Link to disclosure ${item.numbers.join(', ')}?` : 'Is this an ordinary superscript?';
@@ -147,6 +163,8 @@ export default function mountDisclosureAssistant({
     const fragments = getFragments();
     const excerpt = byId('assistant-excerpt');
     excerpt.replaceChildren();
+    const alternatives = panel.querySelector('.assistant-alternatives');
+    alternatives.open = !item.linkable;
     item.numbers.forEach((number) => {
       const entry = entries[Number(number) - 1];
       const content = entry && fragments.get(disclosureFragmentPath(entry.fragment));
@@ -164,7 +182,7 @@ export default function mountDisclosureAssistant({
       return option;
     }));
     byId('assistant-ordinary-preview').textContent = `Ordinary superscript: ${ordinary(item.text)}`;
-    if (!editable()) byId('assistant-status').textContent = 'This selection supports copying. Apply controls require a supported Canvas block.';
+    if (!supported()) byId('assistant-status').textContent = 'Direct editing is unavailable for this selection. Copy and paste a reference instead.';
     controls();
   };
   const candidates = (value, options) => superscriptCandidates(
@@ -218,8 +236,8 @@ export default function mountDisclosureAssistant({
     if (!candidate || applying) return;
     if (candidate.expected && (latest?.html !== candidate.expected.html
       || latest?.selection?.blockIndex !== candidate.expected.blockIndex)) {
-      report('The page changed. Check the superscript again.', true);
       hide();
+      report('The page changed. Check the superscript again.', true);
       return;
     }
     if (!editable()) return;
@@ -305,7 +323,11 @@ export default function mountDisclosureAssistant({
   listen('assistant-ordinary', () => apply('ordinary'));
   listen('assistant-copy-link', () => copy('link'));
   listen('assistant-copy-ordinary', () => copy('ordinary'));
-  listen('assistant-dismiss', () => { if (candidate) dismissed.add(candidate.key); hide(); });
+  listen('assistant-dismiss', () => {
+    if (candidate) dismissed.add(candidate.key);
+    hide();
+    byId('assistant-check').focus();
+  });
   let unsubscribe;
   try { unsubscribe = sdk.actions.subscribeLiveDocument?.(receive); } catch {
     byId('assistant-status').textContent = 'Live suggestions are unavailable. Use Check selected superscript.';
