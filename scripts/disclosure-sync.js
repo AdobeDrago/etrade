@@ -11,6 +11,23 @@ const pathFor = (value) => (typeof value === 'string' && /^\/(?!\/)[^?#\\]*$/.te
   ? value.replace(/\.html$/, '').replace(/\/$/, '') : null);
 const completed = (operation) => ['complete', 'restored'].includes(operation?.status);
 
+function openChannel(win) {
+  try { return win.BroadcastChannel ? new win.BroadcastChannel(CHANNEL) : null; } catch {
+    return null;
+  }
+}
+
+function closeChannel(channel) {
+  try { channel?.close(); } catch {
+    // Optional author-view coordination must not fail an otherwise verified source save.
+  }
+}
+
+function sendMessage(channel, message) {
+  if (!channel) return false;
+  try { channel.postMessage(message); return true; } catch { return false; }
+}
+
 function validMapping(change) {
   if (!Array.isArray(change.mapping) || !change.mapping.length
     || change.mapping.length > 5000) return false;
@@ -78,38 +95,40 @@ function captureView(doc, data, path, recovering = false) {
 /** Capture author references before the first source write, with a bounded current-page ack. */
 export function prepareDisclosureSave(context, operation, win, { timeout = 350 } = {}) {
   const message = messageFor(context, operation);
-  if (!win.BroadcastChannel || !message?.mapping) return Promise.resolve(false);
-  const channel = new win.BroadcastChannel(CHANNEL);
+  if (!message?.mapping) return Promise.resolve(false);
+  const channel = openChannel(win);
+  if (!channel) return Promise.resolve(false);
   const outcome = operation.direction === 'restore' ? 'restored' : 'complete';
   return new Promise((resolve) => {
     const expires = Date.now() + timeout;
     let timer;
-    const finish = (ready) => { clearTimeout(timer); channel.close(); resolve(ready); };
+    const finish = (ready) => { clearTimeout(timer); closeChannel(channel); resolve(ready); };
     channel.onmessage = ({ data }) => {
       if (data?.phase === 'ready' && data.id === message.id && data.site === SITE
         && data.path === pathFor(context.path) && data.outcome === outcome) finish(true);
     };
     timer = setTimeout(() => finish(false), timeout);
-    channel.postMessage({
+    if (!sendMessage(channel, {
       ...message, phase: 'prepare', outcome, expires,
-    });
+    })) finish(false);
   });
 }
 
 /** Signal only a verified batch. Authored text is updated by DA source collaboration. */
 export function notifyDisclosureSave(context, operation, win) {
   const message = messageFor(context, operation);
-  if (!win.BroadcastChannel || !completed(operation) || !message) return false;
-  const channel = new win.BroadcastChannel(CHANNEL);
-  channel.postMessage({ ...message, phase: 'complete' });
-  channel.close();
-  return true;
+  if (!completed(operation) || !message) return false;
+  const channel = openChannel(win);
+  const sent = sendMessage(channel, { ...message, phase: 'complete' });
+  closeChannel(channel);
+  return sent;
 }
 
 /** Same-origin Canvas preview and inline manager share this standard browser channel. */
 export function listenDisclosureSaves(doc, win, refresh) {
-  if (!doc.body?.classList.contains('quick-edit') || !win.BroadcastChannel) return null;
-  const channel = new win.BroadcastChannel(CHANNEL);
+  if (!doc.body?.classList.contains('quick-edit')) return null;
+  const channel = openChannel(win);
+  if (!channel) return null;
   const seen = new Set();
   const prepared = new Map();
   let pending = Promise.resolve();
@@ -129,7 +148,7 @@ export function listenDisclosureSaves(doc, win, refresh) {
           prepared.set(key, captureView(doc, data, pathFor(win.location.pathname), data.direction === 'resume'));
           if (prepared.size > 20) prepared.delete(prepared.keys().next().value);
         }
-        channel.postMessage({
+        sendMessage(channel, {
           phase: 'ready', site: SITE, id: data.id, outcome: data.outcome, path: pathFor(win.location.pathname),
         });
       });
@@ -167,5 +186,5 @@ export function listenDisclosureSaves(doc, win, refresh) {
       console.error('Disclosure author refresh failed', error);
     });
   };
-  return () => { disposed = true; channel.close(); };
+  return () => { disposed = true; closeChannel(channel); };
 }

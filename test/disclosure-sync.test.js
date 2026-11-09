@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { parseHTML } from 'linkedom';
-import { notifyDisclosureSave, listenDisclosureSaves } from '../scripts/disclosure-sync.js';
+import { prepareDisclosureSave, notifyDisclosureSave, listenDisclosureSaves } from '../scripts/disclosure-sync.js';
 
 const operation = {
   id: 'qa-operation',
@@ -18,6 +18,58 @@ function author(path = operation.affectedPages[0]) {
   const { document } = parseHTML('<html><body class="quick-edit"><main></main></body></html>');
   return { document, win: { BroadcastChannel, location: new URL(`https://qa--etrade--adobedrago.preview.da.live${path}`) } };
 }
+
+function failingChannel(phase) {
+  return class extends BroadcastChannel {
+    constructor(name) {
+      if (phase === 'open') throw new Error('Channel blocked');
+      super(name);
+    }
+
+    postMessage(message) {
+      if (phase === 'send' || message.phase === phase) throw new Error('Channel send unavailable');
+      super.postMessage(message);
+    }
+  };
+}
+
+const numberedChange = {
+  ...operation,
+  mapping: [['1', '2'], ['2', '1']],
+  before: { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/one' }, { disclosureId: '2', fragment: '/two' }] },
+  after: { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/two' }, { disclosureId: '2', fragment: '/one' }] },
+};
+
+test('blocked channel creation leaves source saves and author setup available', async () => {
+  const { document, win } = author();
+  win.BroadcastChannel = failingChannel('open');
+  assert.equal(await prepareDisclosureSave(context, numberedChange, win), false);
+  assert.equal(notifyDisclosureSave(context, operation, win), false);
+  assert.equal(listenDisclosureSaves(document, win, () => assert.fail('No channel opened')), null);
+});
+
+test('failed channel sends resolve without turning a verified source save into an error', async () => {
+  const win = { BroadcastChannel: failingChannel('send') };
+  assert.equal(await prepareDisclosureSave(context, numberedChange, win), false);
+  assert.equal(notifyDisclosureSave(context, operation, win), false);
+});
+
+test('an acknowledgement send failure does not prevent the later saved-order refresh', async () => {
+  const { document, win } = author();
+  win.BroadcastChannel = failingChannel('ready');
+  let wake;
+  const arrived = new Promise((resolve) => { wake = resolve; });
+  let refreshed = false;
+  const dispose = listenDisclosureSaves(document, win, () => { refreshed = true; wake(); });
+  const timeout = setTimeout(() => wake(), 1000);
+  try {
+    const ready = await prepareDisclosureSave(context, numberedChange, win, { timeout: 100 });
+    assert.equal(ready, false);
+    assert.equal(notifyDisclosureSave(context, numberedChange, win), true);
+    await arrived;
+    assert.equal(refreshed, true);
+  } finally { clearTimeout(timeout); dispose?.(); }
+});
 
 test('verified saves notify the affected open author once without exposing a reorder permutation', async () => {
   const { document, win } = author();
@@ -87,7 +139,6 @@ test('restoring a rotation uses its inverse mapping for existing rendered refere
 });
 
 test('native-updated links are not clickable against the old footer while refresh is pending', async () => {
-  const { prepareDisclosureSave } = await import('../scripts/disclosure-sync.js');
   const before = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/one' }, { disclosureId: '2', fragment: '/two' }] };
   const after = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/two' }, { disclosureId: '2', fragment: '/one' }] };
   const change = {
@@ -114,7 +165,6 @@ test('native-updated links are not clickable against the old footer while refres
 });
 
 test('a prepare that times out behind an older refresh cannot capture already updated numbers', async () => {
-  const { prepareDisclosureSave } = await import('../scripts/disclosure-sync.js');
   const before = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/one' }, { disclosureId: '2', fragment: '/two' }] };
   const after = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/two' }, { disclosureId: '2', fragment: '/one' }] };
   const change = {
@@ -148,7 +198,6 @@ test('a prepare that times out behind an older refresh cannot capture already up
 });
 
 test('standalone terms links are restored with their new target after the footer refresh', async () => {
-  const { prepareDisclosureSave } = await import('../scripts/disclosure-sync.js');
   const before = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/one' }, { disclosureId: '2', fragment: '/two' }] };
   const after = { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/two' }, { disclosureId: '2', fragment: '/one' }] };
   const change = {
