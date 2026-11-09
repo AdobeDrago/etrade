@@ -138,6 +138,17 @@
   --color-library-hover: #f2eef9;
   --color-library-focus: #7344d8;
   --color-library-muted: #6d6378;
+
+  /* Our Accounts tabs; reference values measured on the live page. */
+  --color-accounts-surface: #f6f6f6;
+  --color-accounts-rule: #dfdfdf;
+  --color-accounts-tab-active: #f2f2f2;
+  --color-accounts-tab-edge: #cbcbcb;
+  --color-accounts-tab-text: rgb(51 51 51 / 70%);
+  --color-accounts-select-text: #63c;
+  --color-accounts-caret: #8651f2;
+  --color-accounts-card-border: #e4e4e4;
+  --color-accounts-disclaimer: #767676;
   --color-library-overlay: #fffffff5;
   --color-library-tray: #f4f1f8;
   --color-library-selected-border: #e3d8f6;
@@ -273,6 +284,7 @@
   --shadow-popover: 0 1px 3px rgb(36 36 36 / 10%), 0 6px 12px rgb(36 36 36 / 8%);
   --shadow-floating: 0 4px 20px rgb(18 18 19 / 20%);
   --shadow-tab: 0 -8px 18px rgb(18 18 19 / 12%);
+  --shadow-tab-accounts: 7px -10px 15px -7px rgb(51 51 51 / 30%), -7px -6px 15px -7px rgb(51 51 51 / 30%);
 
   /* Motion and layers. Local artwork can retain its own internal stacking order. */
   --motion-duration-fast: 150ms;
