@@ -56,7 +56,7 @@ These checks are optimistic; the API has no multi-document transaction or atomic
 
 ## Schema rollout
 
-See [the schema and migration procedure](../../../docs/disclosure-numbering-rollout.md). The existing schema keeps its name, fragment choices and fields. Its identifier pattern is numeric-only (`^[1-9][0-9]*$`); there is no separate editable number field. Legacy IDs remain readable during content migration. Form-based conversion is blocked until the live schema accepts the new numbers. JSON sets use their own explicit source contract.
+The existing schema keeps its name, fragment choices and fields. Its identifier pattern is numeric-only (`^[1-9][0-9]*$`); there is no separate editable number field. Legacy IDs remain readable during content migration. Form-based conversion is blocked until the live schema accepts the new numbers. JSON sets use their own explicit source contract.
 
 ## Local review
 

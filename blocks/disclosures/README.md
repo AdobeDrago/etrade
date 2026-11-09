@@ -54,7 +54,7 @@ Legacy sets still accept their existing IDs, such as `offer`, until explicitly c
 
 Run `npm run test:disclosures` to verify set delivery, fragment composition, rich text, footnotes, and legacy rendering.
 
-The [Disclosure Manager DA plugin](../../tools/plugins/disclosure-manager/README.md) provides numbered reference insertion, a reviewed reorder/migration workflow, shared-consumer discovery and recovery for interrupted saves. Register it in the DA Library using its setup instructions. Preview every changed set and citation source together; publishing is separate. See the [schema rollout](../../docs/disclosure-numbering-rollout.md).
+The [Disclosure Manager DA plugin](../../tools/plugins/disclosure-manager/README.md) provides numbered reference insertion, a reviewed reorder/migration workflow, shared-consumer discovery and recovery for interrupted saves. Register it in the DA Library using its setup instructions. Preview every changed set and citation source together; publishing is separate. Its guide includes the schema contract.
 
 Use a two-column **Disclosures** table. `Introduction` rows hold introductory rich text. Numbered rows (`1`, `2`, and so on) hold the corresponding legal copy. An optional `Closing` row follows the numbered list. Blank rows and empty cells are skipped. Links, lists, and inline formatting remain authored; the block has no legal-copy fallback.
 
