@@ -83,10 +83,23 @@ export async function readSiteInventory(context, request) {
 function dependencies(source, context) {
   const embedded = new Set();
   const sets = new Set();
+  const issues = [];
   let isSet = false;
   const addEmbedded = (value) => {
-    const path = localPath(value, context);
-    if (path) embedded.add(path);
+    try {
+      const path = localPath(value, context);
+      if (path) embedded.add(path);
+    } catch (error) {
+      issues.push(issue(`Invalid embedded content reference ${JSON.stringify(value)}: ${error.message}`));
+    }
+  };
+  const addSet = (value) => {
+    try {
+      const path = selectedSet(value, context);
+      if (path) sets.add(path);
+    } catch (error) {
+      issues.push(issue(`Invalid disclosure set reference ${JSON.stringify(value)}: ${error.message}`));
+    }
   };
   if (source.trimStart().startsWith('{')) {
     const payload = JSON.parse(source);
@@ -94,7 +107,7 @@ function dependencies(source, context) {
     isSet = Array.isArray(data.disclosures) && data.disclosures.every((entry) => entry?.fragment);
     if (!isSet) {
       const selected = data.disclosureSet ?? data.metadata?.disclosures;
-      if (selected) sets.add(selectedSet(selected, context));
+      if (selected) addSet(selected);
       const walk = (value) => {
         if (!value || typeof value !== 'object') return;
         Object.entries(value).forEach(([key, item]) => {
@@ -109,7 +122,7 @@ function dependencies(source, context) {
     isSet = Boolean(doc.querySelector('.disclosure-set'));
     if (!isSet) {
       const selected = pageDisclosurePath(source);
-      if (selected) sets.add(selectedSet(selected, context));
+      if (selected) addSet(selected);
       doc.querySelectorAll('main .fragment').forEach((block) => {
         addEmbedded(block.querySelector('a[href]')?.getAttribute('href') || block.textContent.trim());
       });
@@ -123,7 +136,7 @@ function dependencies(source, context) {
         const link = block.querySelector('a[href]');
         if (block.children.length === 1 && link
           && block.textContent.trim() === link.textContent.trim()) {
-          sets.add(selectedSet(link.getAttribute('href'), context));
+          addSet(link.getAttribute('href'));
         }
       });
       if (doc.querySelector('.da-form')) {
@@ -135,7 +148,9 @@ function dependencies(source, context) {
       }
     }
   }
-  return { embedded, sets, isSet };
+  return {
+    embedded, sets, isSet, issues,
+  };
 }
 
 async function readDocuments(context, paths, request) {
@@ -190,12 +205,15 @@ export async function planAffectedSources(context, model, order, request, option
     if (schemaGuard) result.guards.push(schemaGuard);
     result.scanned = sources.size;
     if (sources.get(model.path) !== model.source) throw new Error('The disclosure set changed since loading. Refresh before reviewing.');
-    const graph = new Map([...sources].map(([path, source]) => (
-      [path, dependencies(source, context)]
-    )));
+    const graph = new Map([...sources].map(([path, source]) => {
+      try { return [path, dependencies(source, context)]; } catch (error) {
+        throw new Error(`Could not inspect ${path}: ${error.message}`);
+      }
+    }));
     const incoming = new Set();
+    // Keep invalid edges local while tracing all valid consumers and shared-content conflicts.
     graph.forEach((node, path) => node.embedded.forEach((child) => {
-      if (!sources.has(child)) result.issues.push(issue(`Embedded source ${child} referenced by ${path} is missing from the site inventory.`));
+      if (!sources.has(child)) node.issues.push(issue(`Embedded source ${child} referenced by ${path} is missing from the site inventory.`));
       incoming.add(child);
     }));
     model.data.disclosures.forEach((entry) => {
@@ -225,6 +243,7 @@ export async function planAffectedSources(context, model, order, request, option
     });
     [...affected].sort().forEach((path) => {
       if (!sources.has(path)) return;
+      result.issues.push(...graph.get(path).issues.map((entry) => ({ ...entry, message: `${path}: ${entry.message}` })));
       const original = sources.get(path);
       const rewritten = rewriteDisclosureReferences(original, numbering, options);
       result.issues.push(...rewritten.issues.map((entry) => ({ ...entry, message: `${path}: ${entry.message}` })));

@@ -104,6 +104,30 @@ test('incomplete enumeration, unsafe returned paths and missing embedded sources
   assert.ok(missing.issues.some((issue) => issue.message.includes('/copy/nested')));
 });
 
+test('an invalid fragment on an unrelated page does not abort a complete consumer review', async () => {
+  const server = fixture([['/unrelated', page('/disclosures/sets/other.json', fragment('/broken/'))]]);
+  const result = await review(server.request);
+  assert.deepEqual(result.issues, []);
+  assert.ok(result.affectedPages.includes('/home'));
+  assert.match(result.writes.find((item) => item.path === '/home').target, /<sup>2<\/sup>/);
+  assert.equal(result.writes.some((item) => item.path === '/unrelated'), false);
+  assert.equal(result.scanned, server.sources.size);
+});
+
+test('an affected page reports its invalid reference without losing the consumer graph', async () => {
+  const server = fixture();
+  server.sources.set('/home', page(path, `${fragment('/broken/')}<p>Claim<sup>1</sup></p>`));
+  const result = await review(server.request);
+  assert.ok(result.affectedPages.includes('/home'));
+  assert.ok(result.issues.some((item) => item.message.includes('/home') && item.message.includes('/broken/')));
+});
+
+test('an invalid reference cannot conceal another consumer of shared citations', async () => {
+  const server = fixture([['/unrelated', page('/disclosures/sets/other.json', `${fragment('/broken/')} ${fragment('/copy/shared')}`)]]);
+  const result = await review(server.request);
+  assert.ok(result.issues.some((item) => /Shared source.*\/copy\/shared/.test(item.message) && item.message.includes('/unrelated')));
+});
+
 test('structured content dependencies and explicit citation fields are part of the affected graph', async () => {
   const server = fixture([['/cards/offer.json', JSON.stringify({ data: { bodyFragment: '/copy/nested', disclosureIds: ['1'], amount: 123 } })]]);
   server.sources.set('/home', page(path, fragment('/cards/offer.json')));
