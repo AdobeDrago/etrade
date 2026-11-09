@@ -56,7 +56,6 @@ main .section:not([data-section-layout="authored"]).tabs-accounts-container > .t
   --link-hover-color: var(--color-link-hover);
   --action-link-color: var(--color-link);
   --action-outline-hover-text: var(--color-action-primary-text);
-
   --tabs-accounts-surface: var(--color-accounts-surface);
   --tabs-accounts-rule: var(--color-accounts-rule);
   --tabs-accounts-tab-active: var(--color-accounts-tab-active);
