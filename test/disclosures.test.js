@@ -75,8 +75,125 @@ async function harness(routes = new Map(), body = '<p>References <sup>offer,apy<
     decorate: blockModule.namespace.default,
     decorateReferences: modules.get('/scripts/disclosure-references.js').namespace.default,
     loadFragment: modules.get('/blocks/fragment/fragment.js').namespace.loadFragment,
+    refreshSets: modules.get('/scripts/disclosure-refresh.js')?.namespace.refreshDisclosureSets
+      || (async () => {}),
   };
 }
+
+test('numeric identities match sequence positions and carry the set namespace', () => {
+  assert.deepEqual(disclosureSetEntries({
+    id: 'homepage',
+    disclosures: [
+      { disclosureId: '1', fragment: '/one' }, { disclosureId: '2', fragment: '/two' },
+    ],
+  }), [
+    {
+      label: '1', disclosureId: '1', namespace: 'homepage', path: '/one',
+    },
+    {
+      label: '2', disclosureId: '2', namespace: 'homepage', path: '/two',
+    },
+  ]);
+  [
+    { id: 'homepage', disclosures: [{ disclosureId: '2', fragment: '/two' }] },
+    { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/one' }, { disclosureId: 'a', fragment: '/two' }] },
+    { disclosures: [{ disclosureId: '1', fragment: '/one' }] },
+    { id: 'homepage', disclosures: [{ disclosureId: '01', fragment: '/one' }] },
+    { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: 'https://outside.example/one' }] },
+  ].forEach((set) => assert.throws(() => disclosureSetEntries(set), /numeric|sequence|namespace/i));
+});
+
+test('numeric references resolve plain and namespaced citations and respect a manual retarget', async () => {
+  const routes = new Map([
+    [endpoint, {
+      data: {
+        id: 'homepage',
+        disclosures: [
+          { disclosureId: '1', fragment: '/one' }, { disclosureId: '2', fragment: '/two' },
+        ],
+      },
+    }],
+    ['/one.plain.html', '<div><p>Offer terms</p></div>'],
+    ['/two.plain.html', '<div><p>Fee terms</p></div>'],
+  ]);
+  const app = await harness(routes, '<p><sup>1</sup> <sup>2,1</sup> <sup>homepage-2</sup> <sup>other-1</sup> <sup>™</sup> <sup><a href="https://example.com">1</a></sup></p>');
+  await app.decorate(app.block);
+  assert.deepEqual([...app.block.querySelectorAll('li')].map((li) => [li.id, li.getAttribute('value')]), [
+    ['disclosure-homepage-1', '1'], ['disclosure-homepage-2', '2'],
+  ]);
+  const main = app.document.querySelector('main');
+  assert.deepEqual([...main.querySelectorAll('.disclosures-reference')].map((sup) => sup.textContent), ['1', '2,1', '2']);
+  assert.equal(main.querySelectorAll('a a').length, 0);
+  const edited = main.querySelector('sup');
+  edited.querySelector('a').textContent = '2';
+  app.decorateReferences(main);
+  assert.equal(edited.querySelector('a').getAttribute('href'), '#disclosure-homepage-2');
+  assert.equal(edited.querySelector('a').getAttribute('aria-label'), 'Disclosure 2');
+  edited.querySelector('a').textContent = '99';
+  app.decorateReferences(main);
+  assert.equal(edited.textContent, '99');
+  assert.ok(!edited.querySelector('a'), 'an unresolved edited number must not retain a link');
+  assert.equal(edited.hasAttribute('data-disclosure-ids'), false);
+  assert.equal(main.querySelectorAll('sup')[3].textContent, 'other-1');
+  assert.equal(main.querySelectorAll('sup')[5].querySelector('a').getAttribute('href'), 'https://example.com');
+});
+
+test('an empty numeric disclosure cannot make the remaining identities shift position', async () => {
+  const app = await harness(new Map([
+    [endpoint, {
+      id: 'homepage',
+      disclosures: [
+        { disclosureId: '1', fragment: '/empty' }, { disclosureId: '2', fragment: '/two' },
+      ],
+    }],
+    ['/empty.plain.html', '<div></div>'], ['/two.plain.html', '<div><p>Second</p></div>'],
+  ]), '<p>Claim<sup>2</sup></p>');
+  await app.decorate(app.block);
+  assert.equal(app.block.hidden, true);
+  assert.equal(app.document.querySelector('main a'), null);
+  assert.equal(app.errors.length, 1);
+});
+
+test('editor refresh loads a newly previewed sequence before resolving edited citations', async () => {
+  const set = (first, second) => ({
+    id: 'homepage',
+    disclosures: [
+      { disclosureId: '1', fragment: first }, { disclosureId: '2', fragment: second },
+    ],
+  });
+  const routes = new Map([
+    [endpoint, set('/offer', '/fees')], ['/offer.plain.html', '<div><p>Offer terms</p></div>'],
+    ['/fees.plain.html', '<div><p>Fee terms</p></div>'],
+  ]);
+  const app = await harness(routes, '<p>Offer<sup>1</sup></p>');
+  await app.decorate(app.block);
+  routes.set(endpoint, set('/fees', '/offer'));
+  app.document.querySelector('main').innerHTML = '<p>Offer<sup>2</sup></p>';
+  await app.refreshSets(app.document);
+  assert.equal(app.block.querySelector('#disclosure-homepage-2').textContent, 'Offer terms');
+  assert.equal(app.document.querySelector('main sup a').getAttribute('href'), '#disclosure-homepage-2');
+  const link = app.document.querySelector('main sup a');
+  const previousRequests = app.requests.length;
+  await Promise.all([app.refreshSets(app.document), app.refreshSets(app.document)]);
+  assert.equal(app.document.querySelector('main sup a'), link);
+  assert.equal(app.requests.length - previousRequests, 1);
+});
+
+test('a failed target refresh removes stale generated links while preserving active editor markup', async () => {
+  const routes = new Map([
+    [endpoint, { id: 'homepage', disclosures: [{ disclosureId: '1', fragment: '/one' }] }],
+    ['/one.plain.html', '<div><p>Offer terms</p></div>'],
+  ]);
+  const app = await harness(routes, '<p>Claim<sup>1</sup></p><div contenteditable="true"><p>Editing<sup>1</sup></p></div>');
+  await app.decorate(app.block);
+  const active = app.document.querySelector('[contenteditable]').outerHTML;
+  routes.set(endpoint, new Error('Preview request unavailable'));
+  await app.refreshSets(app.document);
+  assert.equal(app.block.hidden, true);
+  assert.equal(app.document.querySelector('main > p a'), null);
+  assert.equal(app.document.querySelector('main > p sup').textContent, '1');
+  assert.equal(app.document.querySelector('[contenteditable]').outerHTML, active);
+});
 
 test('metadata paths select preview/live delivery, and explicit JSON paths load locally', () => {
   assert.equal(disclosureSetRequest('/disclosures/sets/homepage', preview), endpoint);
@@ -174,7 +291,7 @@ test('single-letter IDs use set order without legacy letter aliases', async () =
   assert.equal(app.document.querySelector('sup').textContent, '2,1');
   assert.deepEqual(
     [...app.document.querySelectorAll('sup a')].map((link) => link.getAttribute('href')),
-    ['#disclosure-a', '#disclosure-g'],
+    ['#disclosure-a', '#disclosure-g', '#disclosure-g'],
   );
   assert.equal(app.document.querySelector('sup:nth-child(2)').textContent, 'b');
   assert.equal(app.document.querySelector('sup:last-child').textContent, '1');
@@ -488,7 +605,7 @@ test('only matching markers are converted, with no nested anchors or external li
     <a href="/claim">Claim <sup>offer</sup></a></p>`);
   await app.decorate(app.block);
   const main = app.document.querySelector('main');
-  assert.equal(main.querySelectorAll('.disclosures-reference').length, 3);
+  assert.equal(main.querySelectorAll('.disclosures-reference').length, 4);
   assert.equal(main.querySelectorAll('a a').length, 0);
   assert.deepEqual(
     [...main.querySelectorAll('sup')].map((sup) => sup.textContent),
@@ -559,4 +676,19 @@ test('a reference refresh leaves live mini-editor markup under DA control', asyn
   await app.decorate(app.block);
   assert.equal(editor.innerHTML, before);
   assert.equal(app.document.querySelector('main > p sup a').getAttribute('href'), '#disclosure-offer');
+});
+
+test('numeric superscripts select the sequence while legacy identifiers are phased out', async () => {
+  const app = await harness(new Map([
+    [endpoint, { id: 'homepage', disclosures: [{ disclosureId: 'offer', fragment: `${fragments}/offer` }, { disclosureId: 'apy', fragment: `${fragments}/apy` }] }],
+    [`${fragments}/offer.plain.html`, '<div><p>Offer terms</p></div>'],
+    [`${fragments}/apy.plain.html`, '<div><p>APY terms</p></div>'],
+  ]), '<p><sup>2,1</sup> <sup>offer</sup></p>');
+  await app.decorate(app.block);
+  const markers = [...app.document.querySelectorAll('main sup')];
+  assert.equal(markers[0].querySelector('a')?.getAttribute('href'), '#disclosure-apy');
+  assert.equal(markers[1].querySelector('a')?.getAttribute('href'), '#disclosure-offer');
+  markers[0].innerHTML = '1'; // DA replaces static markup after the superscript settles.
+  app.decorateReferences(app.document.querySelector('main'));
+  assert.equal(markers[0].querySelector('a')?.getAttribute('href'), '#disclosure-offer');
 });
