@@ -8,6 +8,7 @@ import { planAffectedSources } from './inventory.js';
 import {
   applyOperation, readOperation, restoreOperation, resumeOperation,
 } from './operations.js';
+import mountDisclosureAssistant from './assistant.js';
 
 const demo = new URLSearchParams(window.location.search).get('demo') === '1';
 const byId = (id) => document.getElementById(id);
@@ -21,6 +22,7 @@ let setIssues = [];
 let reviewed;
 let pending;
 let liveHtml;
+let assistant;
 const selected = new Set();
 const emptyFragments = new Set();
 const fragmentContents = new Map();
@@ -59,6 +61,8 @@ function updateControls() {
   byId('confirm-save').disabled = busy || !reviewed || reviewed.issues.length > 0;
   byId('resume-operation').disabled = busy || !needsRecovery();
   byId('restore-operation').disabled = busy || !needsRecovery();
+  byId('assistant-demo').disabled = busy || !valid() || legacy || needsRecovery() || dirty();
+  assistant?.update();
 }
 
 function invalidateReview() {
@@ -263,6 +267,7 @@ async function load() {
   } finally {
     busy = false;
     updateControls();
+    assistant?.refresh();
   }
 }
 
@@ -433,7 +438,19 @@ async function init() {
     liveHtml = html;
   });
   await load();
+  assistant = mountDisclosureAssistant({
+    document,
+    sdk,
+    getEntries: savedEntries,
+    getNamespace: () => model?.data.id,
+    getFragments: () => fragmentContents,
+    onStatus: status,
+    canEdit: () => !busy && valid() && !dirty() && !needsRecovery(),
+  });
+  byId('assistant-demo').hidden = !demo;
+  byId('assistant-demo').addEventListener('click', () => sdk.demo?.addSuperscript());
   updateControls();
+  window.addEventListener('pagehide', () => assistant?.dispose(), { once: true });
 }
 
 const ready = init().catch((error) => status(error.message, true));

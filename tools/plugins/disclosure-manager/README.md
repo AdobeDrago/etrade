@@ -38,6 +38,14 @@ The **Audit** tab checks the saved current page, including grouped and linked ci
 
 Legacy stable-ID rendering and old numeric legal documents remain compatible. Converting a structured set and its consumers is explicit. Legacy tables/documents must first be migrated to a structured set; the tool does not infer legal identities from arbitrary documents.
 
+## Disclosure assistant
+
+With a saved numbered set loaded, leave the manager open while authoring a numeric superscript. The assistant offers the matching disclosure excerpt, **Link disclosure**, **Keep as ordinary superscript**, and **Dismiss**. **Check selected superscript** also checks a selected number or comma-separated group. Keeping an ordinary superscript explicitly converts its digits to Unicode superscript characters, such as `²`, retaining surrounding formatting.
+
+Applying a suggestion requires DA's supported, version-guarded block replacement capability and an unambiguous current selection. Older hosts and ambiguous selections offer copy options. No unguarded replacement is attempted. Reordering or an unfinished recovery disables assistant edits until the set is saved.
+
+Canvas quick-edit also offers an inline numeric-superscript helper with matching excerpts and other existing disclosures. It applies guarded native editor transactions. Hover/focus on a rendered reference shows a read-only legal excerpt. Both helpers live outside authored content and are absent on the public website.
+
 ## Interrupted saves and collaboration
 
 DA's Source API writes individual documents. The tool checks exact source snapshots and the complete consumer inventory before saving, verifies writes, and stores a recovery manifest under `/.da/disclosure-manager/renumber-jobs/`. The manifest contains original/target source snapshots and integrity hashes; credentials are never persisted. Completed manifests are retained when a new operation starts.

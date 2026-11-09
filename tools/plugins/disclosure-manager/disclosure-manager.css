@@ -133,6 +133,27 @@
   overflow-wrap: anywhere;
 }
 
+.disclosure-manager .assistant {
+  border: 1px solid #c8bde6;
+  border-radius: 8px;
+  margin: 0 0 1rem;
+  padding: 1rem;
+  background: #f0ebff;
+}
+
+.disclosure-manager .assistant-excerpt {
+  border-left: 3px solid #5627d8;
+  padding-left: 0.75rem;
+}
+
+.disclosure-manager .assistant-copy {
+  width: 100%;
+  min-height: 4rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  font: inherit;
+}
+
 .disclosure-manager .batch-review ul {
   padding-left: 1.25rem;
 }

@@ -206,6 +206,13 @@ export function decorateMain(main) {
   decorateButtons(main);
 }
 
+async function setupDisclosureHints(doc) {
+  if (!doc.body?.classList.contains('quick-edit')) return;
+  const { default: mountHints } = await import('./disclosure-hints.js');
+  await loadCSS(`${window.hlx.codeBasePath}/styles/disclosure-hints.css`);
+  mountHints(doc, window);
+}
+
 /** DA calls this for settled inline edits and scoped view updates, including detached DOM. */
 export async function reloadEditable(main) {
   decorateMain(main);
@@ -213,6 +220,7 @@ export async function reloadEditable(main) {
   await refreshDisclosureSets(main.ownerDocument);
   // Newly loaded disclosure blocks must exist before table and section citations resolve.
   decorateDisclosureReferences(main);
+  await setupDisclosureHints(main.ownerDocument);
 }
 
 /**
@@ -286,6 +294,8 @@ async function loadLazy(doc) {
     await loadBlock(disclosures);
   }
   if (hash) doc.getElementById(hash.substring(1))?.scrollIntoView();
+
+  await setupDisclosureHints(doc);
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();

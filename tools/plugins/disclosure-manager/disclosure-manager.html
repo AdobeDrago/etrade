@@ -28,6 +28,31 @@
         <button type="button" data-panel="audit" aria-pressed="false" aria-controls="audit">Audit</button>
       </nav>
       <section id="manage" aria-label="Manage disclosures">
+        <section id="disclosure-assistant" class="assistant" aria-labelledby="assistant-heading">
+          <h2 id="assistant-heading">Disclosure assistant</h2>
+          <p id="assistant-status" class="hint">While this panel is open, finish a superscript or check the selected one.</p>
+          <button id="assistant-check" type="button">Check selected superscript</button>
+          <button id="assistant-demo" type="button" hidden>Try a new superscript (demo)</button>
+          <div id="assistant-suggestion" hidden>
+            <p id="assistant-question" role="status" aria-live="polite"></p>
+            <div id="assistant-excerpt" class="assistant-excerpt"></div>
+            <label for="assistant-alternative">Other existing disclosures</label>
+            <select id="assistant-alternative"></select>
+            <button id="assistant-choose" type="button">Use selected disclosure</button>
+            <p id="assistant-ordinary-preview" class="hint"></p>
+            <div class="actions">
+              <button id="assistant-link" class="primary" type="button">Link disclosure</button>
+              <button id="assistant-ordinary" type="button">Keep as ordinary superscript</button>
+              <button id="assistant-dismiss" type="button">Dismiss</button>
+            </div>
+            <p class="hint">Ordinary superscripts use characters such as ² so they remain separate from disclosure references. Applying a change uses the editor’s normal undo/save flow.</p>
+            <div class="actions">
+              <button id="assistant-copy-link" type="button">Copy disclosure reference</button>
+              <button id="assistant-copy-ordinary" type="button">Copy ordinary superscript</button>
+            </div>
+            <textarea id="assistant-copy" class="assistant-copy" aria-label="Reference to copy" readonly hidden></textarea>
+          </div>
+        </section>
         <p class="hint">Arrange the disclosures and check the resulting footer. Select items to highlight them in the preview or insert their references.</p>
         <p class="shared-notice">This set can serve several pages. Reordering updates its numbers and every affected citation together. Save the current page in DA before reviewing changes.</p>
         <div class="manage-workspace">

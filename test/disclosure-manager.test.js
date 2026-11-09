@@ -459,9 +459,40 @@ test('numeric reorder previews and saves keep selection attached to its original
   assert.match(byId('disclosure-list').children[1].textContent, /Account offer/);
 });
 
+test('the manager assistant suggests a new demo superscript and applies the author’s choice', async () => {
+  const { document } = await uiHarness();
+  const byId = (id) => document.getElementById(id);
+  byId('save').click();
+  await until(() => byId('change-review').hidden === false && !byId('confirm-save').disabled);
+  byId('confirm-save').click();
+  await until(() => /Demo changes saved/.test(byId('status').textContent));
+  assert.equal(byId('assistant-demo').hidden, false);
+  byId('assistant-demo').click();
+  await until(() => !byId('assistant-suggestion').hidden);
+  assert.match(byId('assistant-question').textContent, /3/);
+  assert.equal(byId('assistant-link').disabled, false);
+  byId('assistant-link').click();
+  await until(() => /Disclosure linked/.test(byId('status').textContent));
+  byId('assistant-demo').click();
+  await until(() => !byId('assistant-suggestion').hidden);
+  assert.equal(byId('assistant-link').disabled, true);
+  byId('assistant-ordinary').click();
+  await until(() => /ordinary superscript/.test(byId('status').textContent));
+});
+
 test('new references and audit use sequence positions during legacy set phaseout', () => {
   assert.equal(referenceMarkup(['fees', 'offer'], entries), '<sup>2,1</sup>');
   const audit = auditReferences('<body><main><p><sup>2,1</sup></p></main></body>', entries, 'homepage');
   assert.equal(audit.references, 2);
   assert.equal(audit.issues.some((issue) => issue.type === 'error'), false);
+});
+
+test('legacy helper choices use the same nonempty sequence as the rendered footer', async () => {
+  const { document } = await uiHarness('', async (host) => {
+    await putSource(host, '/disclosures/fragments/brokerage-offer', '<body><main></main></body>');
+    host.actions.getSelection = async () => '<sup>1</sup>';
+  });
+  document.getElementById('assistant-check').click();
+  await until(() => !document.getElementById('assistant-suggestion').hidden);
+  assert.match(document.getElementById('assistant-excerpt').textContent, /1 — Trading fees/);
 });
