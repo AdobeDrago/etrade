@@ -43,6 +43,7 @@ test('real SDK uses the correct asynchronous URL and registers callbacks before 
   const controller = context.start();
   const script = context.document.querySelector('script');
   assert.equal(callbacksReady, true);
+  assert.equal(script.src, 'https://cdn2.etrade.net/1/1d/aempros/content/dam/onetrust/etpros/scripttemplates/otSDKStub.js');
   assert.equal(script.src, ONETRUST_SRC);
   assert.equal(script.async, true);
   assert.equal(script.getAttribute('data-domain-script'), ONETRUST_DOMAIN_ID);
@@ -182,9 +183,31 @@ test('preferences use the real API only once initialized; import failure is visi
   controller.openPreferences();
   assert.equal(opened, 0);
   context.win.OnetrustActiveGroups = ',C0002,C0004,';
+  context.document.body.innerHTML = '<div id="onetrust-pc-sdk"></div>';
   context.win.OptanonWrapper();
   await settle();
-  controller.openPreferences();
   assert.equal(opened, 1);
+  controller.openPreferences();
+  assert.equal(opened, 2);
   assert.equal(controller.snapshot().consentedModule, 'Load failed');
+});
+
+test('a preference request made while loading opens the real center once initialization finishes', () => {
+  const context = browser();
+  const controller = context.start();
+  controller.openPreferences();
+  controller.openPreferences();
+  let opened = 0;
+  context.win.OneTrust = { ToggleInfoDisplay: () => { opened += 1; } };
+  assert.equal(opened, 0);
+  context.win.OnetrustActiveGroups = ',C0001,';
+  context.win.OptanonWrapper();
+  assert.equal(opened, 0, 'Consent can initialize before the preference center is rendered');
+  context.document.body.innerHTML = '<div id="onetrust-pc-sdk"></div>';
+  context.win.OptanonWrapper();
+  assert.equal(opened, 1);
+  context.win.OptanonWrapper();
+  assert.equal(opened, 1);
+  assert.equal(controller.hasConsent(), false);
+  assert.equal(context.imports(), 0);
 });
