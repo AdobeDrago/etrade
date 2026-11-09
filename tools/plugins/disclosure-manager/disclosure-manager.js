@@ -50,16 +50,25 @@ function renderPreview() {
 function updateControls() {
   byId('refresh').disabled = busy || !sdk;
   const legacy = model && disclosureSetMode(model.data) !== 'sequence';
-  byId('save').textContent = legacy ? 'Convert to numbered references' : 'Review changes';
+  byId('save').textContent = legacy ? 'Convert to numbered references' : 'Save order';
   byId('save').disabled = busy || !valid() || needsRecovery() || (!dirty() && !legacy);
   byId('reset').disabled = busy || !model || !dirty();
   byId('insert').disabled = busy || !valid() || needsRecovery() || dirty() || !selected.size
     || (!demo && (sdk.context.view !== 'edit' || model.path === sdk.context.path.replace(/\.html$/, '')));
+  byId('insert').hidden = !selected.size;
+  byId('insert').title = dirty() ? 'Save the new order before inserting a reference.' : 'Insert the selected disclosure numbers.';
   document.querySelectorAll('.disclosure-item input, .move-actions button').forEach((control) => {
     control.disabled = busy || needsRecovery() || control.dataset.unavailable === 'true';
   });
   document.querySelectorAll('.disclosure-item').forEach((item) => { item.draggable = !busy && valid() && !needsRecovery(); });
   byId('confirm-save').disabled = busy || !reviewed || reviewed.issues.length > 0;
+  const reviewing = Boolean(reviewed) && !byId('change-review').hidden;
+  byId('order-actions').hidden = reviewing;
+  byId('review-actions').hidden = !reviewing;
+  byId('disclosure-workspace').hidden = reviewing;
+  let orderState = '';
+  if (model) orderState = `${dirty() ? 'Unsaved order' : 'Saved order'} · ${entries().length} numbered disclosures`;
+  byId('order-state').textContent = reviewing ? 'Review changes before saving' : orderState;
   byId('resume-operation').disabled = busy || !needsRecovery();
   byId('restore-operation').disabled = busy || !needsRecovery();
   byId('assistant-demo').disabled = busy || !valid() || legacy || needsRecovery() || dirty();
@@ -72,6 +81,9 @@ function invalidateReview() {
   byId('numeric-confirmation').hidden = true;
   byId('change-review').hidden = true;
   byId('confirm-save').disabled = true;
+  byId('order-actions').hidden = false;
+  byId('review-actions').hidden = true;
+  byId('disclosure-workspace').hidden = false;
 }
 
 function renderAudit() {
@@ -140,20 +152,25 @@ function render() {
     const fragmentContent = fragmentContents.get(disclosureFragmentPath(fragment));
     const title = document.createElement('strong');
     title.className = 'entry-title';
-    title.textContent = fragmentContent?.title || disclosureId || 'Unavailable disclosure';
+    const name = disclosureFragmentPath(fragment)?.split('/').at(-1).replace(/[-_]+/g, ' ');
+    title.textContent = name ? name.charAt(0).toUpperCase() + name.slice(1) : 'Unavailable disclosure';
+    title.title = title.textContent;
     const excerpt = document.createElement('p');
     excerpt.className = 'entry-excerpt';
-    excerpt.textContent = fragmentContent?.excerpt || 'No disclosure text is available.';
+    excerpt.textContent = fragmentContent?.excerpt || fragmentContent?.title || 'No disclosure text is available.';
     const id = document.createElement('span');
     id.className = 'entry-id';
-    id.textContent = disclosureId || 'Missing stable ID';
+    id.textContent = disclosureId || 'Missing reference';
     const path = document.createElement('span');
     path.className = 'entry-path';
     path.textContent = fragment || 'Missing fragment';
     const details = document.createElement('details');
     const summary = document.createElement('summary');
-    summary.textContent = 'Source and reference';
-    details.append(summary, id, path);
+    summary.textContent = 'Details';
+    const legal = document.createElement('div');
+    legal.className = 'entry-preview';
+    legal.innerHTML = fragmentContent?.html || '';
+    details.append(summary, legal, id, path);
     content.append(title, excerpt, details);
     const controls = document.createElement('div');
     controls.className = 'move-actions';
@@ -246,7 +263,8 @@ async function load() {
     link.href = `https://da.live/${route}#/${context.org}/${context.repo}${path}`;
     link.target = '_blank';
     link.rel = 'noopener';
-    link.textContent = `Edit set: ${path}`;
+    link.textContent = 'Edit set';
+    link.title = path;
     byId('source').replaceChildren(link);
     if (directSet) pageHtml = '';
     render();
@@ -319,6 +337,7 @@ async function save(approvedReview) {
     }));
     byId('numeric-confirmation').hidden = !reviewed.issues.some((issue) => /positional intent/.test(issue.message));
     status(reviewed.issues.length ? 'Resolve the listed issues before saving.' : 'Review the sources below, then choose Save changes.', reviewed.issues.length > 0);
+    byId('review-heading').focus();
   } catch (error) {
     status(error.message, true);
   } finally {
@@ -395,12 +414,15 @@ document.querySelectorAll('[data-panel]').forEach((button) => {
   button.addEventListener('click', () => {
     document.querySelectorAll('[data-panel]').forEach((tab) => tab.setAttribute('aria-pressed', String(tab === button)));
     ['manage', 'audit'].forEach((id) => { byId(id).hidden = id !== button.dataset.panel; });
+    byId('save-bar').hidden = button.dataset.panel !== 'manage';
   });
 });
 byId('refresh').addEventListener('click', load);
 byId('save').addEventListener('click', () => save());
 byId('confirm-save').addEventListener('click', confirmSave);
-byId('cancel-review').addEventListener('click', invalidateReview);
+byId('cancel-review').addEventListener('click', () => {
+  invalidateReview(); updateControls(); byId('save').focus();
+});
 byId('confirm-numeric').addEventListener('change', () => {
   const approved = byId('confirm-numeric').checked ? reviewed : undefined;
   save(approved);
@@ -449,7 +471,6 @@ async function init() {
     getEntries: savedEntries,
     getNamespace: () => model?.data.id,
     getFragments: () => fragmentContents,
-    onStatus: status,
     canEdit: () => !busy && valid() && !dirty() && !needsRecovery(),
   });
   byId('assistant-demo').hidden = !demo;

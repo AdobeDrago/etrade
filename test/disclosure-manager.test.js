@@ -384,6 +384,57 @@ test('changing a proposed order invalidates its old change review', async () => 
   assert.equal(byId('confirm-save').disabled, true);
 });
 
+test('compact rows retain full disclosure text and discard never writes the proposed order', async () => {
+  let writes = 0;
+  const { document, sdk } = await uiHarness('', (host) => {
+    const request = host.actions.daFetch;
+    host.actions.daFetch = (url, options) => {
+      if (options?.method === 'POST') writes += 1;
+      return request(url, options);
+    };
+  });
+  const list = document.getElementById('disclosure-list');
+  assert.equal(list.children[0].querySelector('.entry-title').textContent, 'Brokerage offer');
+  assert.match(list.children[0].querySelector('details .entry-preview').textContent, /Account offer/);
+  const preview = document.getElementById('footer-preview').closest('details');
+  assert.ok(preview);
+  assert.equal(preview.hasAttribute('open'), false);
+  const original = await (await sdk.actions.daFetch(sourceUrl(context, '/disclosures/sets/homepage.json'))).text();
+  list.children[0].querySelector('button[aria-label="Move offer down"]').click();
+  document.getElementById('reset').click();
+  assert.equal(list.children[0].querySelector('.entry-title').textContent, 'Brokerage offer');
+  assert.equal(document.getElementById('reset').disabled, true);
+  assert.equal(writes, 0);
+  assert.equal(await (await sdk.actions.daFetch(sourceUrl(context, '/disclosures/sets/homepage.json'))).text(), original);
+});
+
+test('save footer follows review and back without discarding the proposed order', async () => {
+  const { document } = await uiHarness();
+  const byId = (id) => document.getElementById(id);
+  byId('disclosure-list').children[0].querySelector('button[aria-label="Move offer down"]').click();
+  byId('save').click();
+  await until(() => !byId('change-review').hidden && !byId('confirm-save').disabled);
+  assert.equal(byId('order-actions').hidden, true);
+  assert.equal(byId('review-actions').hidden, false);
+  assert.equal(byId('disclosure-workspace').hidden, true);
+  assert.match(byId('order-state').textContent, /Review/);
+  byId('cancel-review').click();
+  assert.equal(byId('order-actions').hidden, false);
+  assert.equal(byId('review-actions').hidden, true);
+  assert.equal(byId('disclosure-workspace').hidden, false);
+  assert.match(byId('order-state').textContent, /Unsaved/);
+  assert.equal(byId('disclosure-list').children[0].querySelector('.entry-id').textContent, 'fees');
+});
+
+test('helper selection feedback does not overwrite the manager save status', async () => {
+  const { document } = await uiHarness('', (host) => { host.actions.getSelection = async () => ''; });
+  const savedStatus = document.getElementById('status').textContent;
+  document.getElementById('assistant-check').click();
+  await until(() => /Select one superscript/.test(document.getElementById('assistant-status').textContent));
+  assert.equal(document.getElementById('status').textContent, savedStatus);
+  assert.equal(document.getElementById('disclosure-assistant').hidden, false);
+});
+
 test('a host without saveDocument requires acknowledgment before source review', async () => {
   const { document, sdk } = await uiHarness('', (host) => { delete host.actions.saveDocument; });
   const byId = (id) => document.getElementById(id);
@@ -472,12 +523,12 @@ test('the manager assistant suggests a new demo superscript and applies the auth
   assert.match(byId('assistant-question').textContent, /3/);
   assert.equal(byId('assistant-link').disabled, false);
   byId('assistant-link').click();
-  await until(() => /Disclosure linked/.test(byId('status').textContent));
+  await until(() => /Disclosure linked/.test(byId('assistant-status').textContent));
   byId('assistant-demo').click();
   await until(() => !byId('assistant-suggestion').hidden);
   assert.equal(byId('assistant-link').disabled, true);
   byId('assistant-ordinary').click();
-  await until(() => /ordinary superscript/.test(byId('status').textContent));
+  await until(() => /ordinary superscript/.test(byId('assistant-status').textContent));
 });
 
 test('new references and audit use sequence positions during legacy set phaseout', () => {
