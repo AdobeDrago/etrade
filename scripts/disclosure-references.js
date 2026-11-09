@@ -1,4 +1,10 @@
 const pausedDocuments = new WeakSet();
+export const EDITOR_INDICATORS = '.prosemirror-editor, .ProseMirror, [contenteditable="true"]';
+export const REFERENCE_EXCLUSIONS = [
+  '.disclosures', '.metadata', '.da-metadata', '.da-form', '.disclosure-set', 'code', 'pre', 'math',
+  EDITOR_INDICATORS,
+].join(', ');
+const decorationExclusions = `${REFERENCE_EXCLUSIONS}, [data-disclosure-link-pending]`;
 
 export function pauseDisclosureReferences(doc) { pausedDocuments.add(doc); }
 
@@ -22,7 +28,7 @@ function referenceText(sup, targets) {
 /** Remove only generated, static references when their legal targets become unavailable. */
 export function clearDisclosureReferences(main, namespace) {
   main?.querySelectorAll('sup.disclosures-reference').forEach((sup) => {
-    if (sup.closest('.prosemirror-editor, .ProseMirror, [contenteditable="true"]')) return;
+    if (sup.closest(EDITOR_INDICATORS)) return;
     const links = [...sup.querySelectorAll('a[href]')];
     if (links.some((link) => {
       const href = link.getAttribute('href');
@@ -66,7 +72,9 @@ export default function decorateDisclosureReferences(main, disclosures = main?.q
     }
   });
   main.querySelectorAll('sup').forEach((sup) => {
-    if (sup.closest('.disclosures, .metadata, .da-metadata, .da-form, .disclosure-set, code, pre, math, .prosemirror-editor, .ProseMirror, [contenteditable="true"], [data-disclosure-link-pending]')) return;
+    if (sup.closest(decorationExclusions)) {
+      return;
+    }
     if (sup.closest('table')?.querySelector('tr')?.textContent.trim().toLowerCase() === 'metadata') return;
     const text = referenceText(sup, targets);
     const ids = text.split(/\s*,\s*/);

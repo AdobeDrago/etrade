@@ -1,11 +1,44 @@
 import { disclosureFragmentPath } from './disclosure-sets.js';
-import { pauseDisclosureReferences } from './disclosure-references.js';
+import { pauseDisclosureReferences, REFERENCE_EXCLUSIONS } from './disclosure-references.js';
 
 const identity = /^[a-z][a-z0-9]*$|^[1-9]\d*$/;
-const editor = '.disclosures, .metadata, .da-metadata, .da-form, .disclosure-set, code, pre, math, .prosemirror-editor, .ProseMirror, [contenteditable="true"]';
+const citationTags = new Set('A ABBR B BDI BDO BR CITE CODE DEL EM I INS MARK Q S SMALL SPAN STRONG SUB SUP U WBR'.split(' '));
+const maxCitationNodes = 256;
+const maxCitationDepth = 32;
+const maxCitationLength = 16 * 1024;
+
+/** Bound cloning to small, inert inline citations; leave unusual authored content untouched. */
+function cloneCitation(node) {
+  if (!node?.matches?.('sup, a')) return null;
+  const pending = [{ node, depth: 0 }];
+  let count = 0;
+  let length = 0;
+  while (pending.length) {
+    const { node: current, depth } = pending.pop();
+    count += 1;
+    if (count > maxCitationNodes || depth > maxCitationDepth) return null;
+    if (current.nodeType === 3) length += current.nodeValue.length;
+    else if (current.nodeType === 1) {
+      if (!citationTags.has(current.tagName)) return null;
+      for (let index = 0; index < current.attributes.length; index += 1) {
+        const { name, value } = current.attributes[index];
+        length += name.length + value.length;
+        if (/^on|^srcdoc$/i.test(name)
+          || (name === 'href' && !/^#disclosure-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value))
+          || (name === 'style' && /url\s*\(|expression\s*\(|@import/i.test(value))) return null;
+      }
+    } else return null;
+    if (length > maxCitationLength) return null;
+    for (let child = current.lastChild; child; child = child.previousSibling) {
+      pending.push({ node: child, depth: depth + 1 });
+      if (count + pending.length > maxCitationNodes) return null;
+    }
+  }
+  return node.cloneNode(true);
+}
 
 function excluded(sup) {
-  if (sup.closest(editor)) return true;
+  if (sup.closest(REFERENCE_EXCLUSIONS)) return true;
   return sup.closest('table')?.querySelector('tr')?.textContent.trim().toLowerCase() === 'metadata';
 }
 
@@ -143,7 +176,8 @@ function replaceTokens(sup, values) {
 }
 
 function citationHTML(node) {
-  const clone = node.cloneNode(true);
+  const clone = cloneCitation(node);
+  if (!clone) return null;
   [clone, ...clone.querySelectorAll('[aria-describedby]')].forEach((element) => {
     const ids = element.getAttribute('aria-describedby')?.split(/\s+/);
     if (!ids) return;
@@ -170,6 +204,9 @@ export function captureDisclosureRenumbering(doc, change, { allowUnbound = false
   const markers = [...doc.querySelectorAll('main sup')].flatMap((sup) => {
     if (excluded(sup)) return [];
     const outer = sup.closest('a[href]');
+    const node = outer || sup;
+    const beforeHTML = citationHTML(node);
+    if (beforeHTML === null) return [];
     if (outer && (outer !== sup.parentElement || outer.children.length !== 1
       || outer.textContent.trim() !== sup.textContent.trim())) return [];
     const links = [...sup.querySelectorAll('a[href]'), ...(outer ? [outer] : [])];
@@ -183,15 +220,15 @@ export function captureDisclosureRenumbering(doc, change, { allowUnbound = false
     if (!tokens.every((token) => identity.test(token) || token.startsWith(`${change.namespace}-`))) return [];
     const values = tokens.map(resolve);
     if (!values.every((value) => typeof value === 'string' && identity.test(value))) return [];
-    const replacement = sup.cloneNode(true);
+    const replacement = cloneCitation(sup);
+    if (!replacement) return [];
     replacement.querySelectorAll('a').forEach((link) => link.replaceWith(...link.childNodes));
     delete replacement.dataset.disclosureIds;
     replacement.classList.remove('disclosures-reference');
     replaceTokens(replacement, values);
     if (!outer && replacement.outerHTML === sup.outerHTML) return [];
-    const node = outer || sup;
     return [{
-      node, before: citationHTML(node), replacement, parent: node.parentElement,
+      node, before: beforeHTML, replacement, parent: node.parentElement,
     }];
   });
   const linked = [...doc.querySelectorAll('main a[href]')].flatMap((link) => {
@@ -200,7 +237,8 @@ export function captureDisclosureRenumbering(doc, change, { allowUnbound = false
     const id = href.slice('#disclosure-'.length).replace(`${change.namespace}-`, '');
     const value = resolve(id);
     if (!value) return [];
-    const replacement = link.cloneNode(true);
+    const replacement = cloneCitation(link);
+    if (!replacement) return [];
     replacement.setAttribute('href', anchorFor(value, change.namespace));
     return [{
       node: link, before: citationHTML(link), replacement, parent: link.parentElement,
@@ -215,9 +253,11 @@ export function applyDisclosureRenumbering(doc, captured) {
   captured.forEach(({
     node, before, replacement, parent,
   }) => {
-    if (!node.isConnected || node.ownerDocument !== doc || node.parentElement !== parent
+    if (!node?.isConnected || node.ownerDocument !== doc || node.parentElement !== parent
       || citationHTML(node) !== before || excluded(node)) return;
-    node.replaceWith(replacement.cloneNode(true));
+    const copy = cloneCitation(replacement);
+    if (!copy) return;
+    node.replaceWith(copy);
     count += 1;
   });
   return count;

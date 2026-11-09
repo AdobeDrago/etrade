@@ -26,6 +26,34 @@ test('verified reorder explicitly changes captured superscripts once and preserv
   assert.equal(applyDisclosureRenumbering(doc, captured), 0);
 });
 
+test('active content is left untouched while neighboring safe references are renumbered', () => {
+  const doc = page('<p><sup onclick="run()">1</sup><sup>1<script></script></sup><a href="#disclosure-qa-1"><iframe></iframe>Terms</a><sup>1</sup></p>');
+  const unsafe = [...doc.querySelectorAll('sup[onclick], sup:has(script), a:has(iframe)')];
+  const original = unsafe.map((node) => node.outerHTML);
+  const captured = captureDisclosureRenumbering(doc, change);
+  assert.equal(applyDisclosureRenumbering(doc, captured), 1);
+  assert.deepEqual(unsafe.map((node) => node.outerHTML), original);
+  assert.equal(doc.querySelector('p > sup:last-child').textContent, '2');
+});
+
+test('oversized and deeply nested citations do not block a neighboring reference update', () => {
+  const doc = page(`<p><a href="#disclosure-qa-1">${'Terms '.repeat(4000)}</a><sup>${'<span></span>'.repeat(300)}1</sup><sup>${'<span>'.repeat(40)}1${'</span>'.repeat(40)}</sup><sup>1</sup></p>`);
+  const original = [...doc.querySelector('p').children].slice(0, 3).map((node) => node.outerHTML);
+  assert.equal(applyDisclosureRenumbering(doc, captureDisclosureRenumbering(doc, change)), 1);
+  assert.deepEqual([...doc.querySelector('p').children].slice(0, 3).map((node) => node.outerHTML), original);
+  assert.equal(doc.querySelector('p > sup:last-child').textContent, '2');
+});
+
+test('missing or unsafe captured replacements cannot overwrite a safe reference', () => {
+  const doc = page('<p><sup>1</sup></p>');
+  const [captured] = captureDisclosureRenumbering(doc, change);
+  assert.equal(applyDisclosureRenumbering(doc, [{ ...captured, node: null }]), 0);
+  assert.equal(applyDisclosureRenumbering(doc, [{ ...captured, replacement: null }]), 0);
+  captured.replacement.setAttribute('onclick', 'run()');
+  assert.equal(applyDisclosureRenumbering(doc, [captured]), 0);
+  assert.equal(doc.querySelector('sup').textContent, '1');
+});
+
 test('native replacements and user edits after capture are never remapped again', () => {
   const doc = page('<p><sup>1</sup><sup>2</sup></p>');
   const captured = captureDisclosureRenumbering(doc, change);

@@ -1,7 +1,7 @@
 import mountInlineDisclosureHelper from './disclosure-inline.js';
 import { listenDisclosureSaves } from './disclosure-sync.js';
 import { refreshDisclosureSets } from './disclosure-refresh.js';
-import decorateDisclosureReferences from './disclosure-references.js';
+import decorateDisclosureReferences, { EDITOR_INDICATORS } from './disclosure-references.js';
 
 const mounted = new WeakMap();
 
@@ -42,7 +42,7 @@ export default function mountDisclosureHints(doc, win) {
   };
   const show = (event) => {
     const link = event.target.closest?.('sup.disclosures-reference a[href]');
-    if (!link || link.closest('.prosemirror-editor, .ProseMirror, [contenteditable="true"]')) return;
+    if (!link || link.closest(EDITOR_INDICATORS)) return;
     const href = link.getAttribute('href');
     if (!/^#disclosure-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(href)) return;
     const target = doc.getElementById(href.slice(1));
