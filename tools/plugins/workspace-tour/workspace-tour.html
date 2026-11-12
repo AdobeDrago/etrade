@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Author onboarding | E*TRADE</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="workspace-tour.css">
+  <script src="workspace-tour.js" type="module"></script>
+</head>
+<body class="workspace-tour">
+  <header class="tour-header">
+    <div class="tour-header-inner">
+      <img src="../../../icons/etrade-logo-dark.svg" width="217" height="54" alt="E*TRADE from Morgan Stanley">
+      <h1>Author onboarding</h1>
+    </div>
+  </header>
+  <main class="tour-shell">
+    <section class="tour-overview" id="tour-overview" aria-labelledby="tour-overview-title">
+      <div class="tour-intro">
+        <h2 id="tour-overview-title" tabindex="-1">Your first E*TRADE edit</h2>
+        <p id="tour-overview-description">Learn how to draft a page in Adobe Document Authoring, work with E*TRADE blocks and disclosures, and review your changes before publishing.</p>
+        <div class="tour-actions" id="tour-start-actions" hidden>
+          <button class="tour-button tour-primary" id="tour-start" type="button">Start tour</button>
+          <button class="tour-button tour-secondary" id="tour-restart" type="button" hidden>Start over</button>
+        </div>
+        <a href="../../../docs/site-handoff.html" target="_blank" rel="noopener">Open the site handoff guide</a>
+      </div>
+      <figure class="tour-example">
+        <img src="../../../docs/images/handoff/home.jpg" width="1265" height="712" alt="E*TRADE Home preview showing dark navigation above the campaign hero">
+        <figcaption>E*TRADE Home in preview</figcaption>
+      </figure>
+    </section>
+
+    <div class="tour-step-frame" id="tour-step-frame">
+      <div class="tour-progress" id="tour-progress-panel" hidden>
+        <label for="tour-progress" id="tour-count"></label>
+        <progress id="tour-progress"></progress>
+      </div>
+
+      <section class="tour-step" id="tour-workspace" data-tour-step aria-labelledby="tour-workspace-title">
+        <h2 id="tour-workspace-title" tabindex="-1">Get oriented in DA</h2>
+        <p>Open the <a href="https://da.live/#/adobedrago/etrade" target="_blank" rel="noopener">E*TRADE content workspace</a> to browse pages, shared fragments, and sheets. In the editor, use <strong>Layout</strong> for a visual view, <strong>Content</strong> to see the source structure, or <strong>Split</strong> to see both.</p>
+        <p>DA stores content. GitHub supplies the code that renders it. An editor ref such as <code>?ref=demo</code> selects code while using the same DA content across branches.</p>
+        <a href="../../../docs/site-handoff.html#environments" target="_blank" rel="noopener">Read about environments and ownership</a>
+      </section>
+
+      <section class="tour-step" id="tour-draft" data-tour-step aria-labelledby="tour-draft-title">
+        <h2 id="tour-draft-title" tabindex="-1">Start with a reviewed page</h2>
+        <p>For practice, copy the closest reviewed page to an agreed, unused draft path. For a routine edit, open the existing page and locate the section or block you own.</p>
+        <p>Review inherited copy, assets, destinations, metadata, and legal dependencies. Confirm which pieces are shared before editing them.</p>
+        <a href="../../../docs/site-handoff.html#new-page-checklist" target="_blank" rel="noopener">Open the new-page checklist</a>
+      </section>
+
+      <section class="tour-step" id="tour-blocks" data-tour-step aria-labelledby="tour-blocks-title">
+        <h2 id="tour-blocks-title" tabindex="-1">Edit a block table</h2>
+        <p>The merged first row names the block. Use the catalog to find its exact name, supported options, and required cells. A Cards Article table, for example, uses one complete row per card.</p>
+        <p>Keep one page H1, give informative images meaningful alt text, and put a CTA in its own linked paragraph where the block expects an action.</p>
+        <a href="../../../docs/site-handoff.html#block-catalog" target="_blank" rel="noopener">Find a block in the catalog</a>
+      </section>
+
+      <section class="tour-step" id="tour-metadata" data-tour-step aria-labelledby="tour-metadata-title">
+        <h2 id="tour-metadata-title" tabindex="-1">Set page and section metadata</h2>
+        <p>Use the page <strong>Metadata</strong> table for Title, Description, Image, Theme, and Disclosures. Put <strong>Section Metadata</strong> in the section it configures.</p>
+        <p><strong>Theme</strong> selects Purple or Charcoal. Section <strong>Color Scheme</strong> selects light or dark. <strong>Grid</strong> arranges whole blocks inside a section.</p>
+        <a href="../../../docs/site-handoff.html#metadata-reference" target="_blank" rel="noopener">Look up metadata fields and values</a>
+      </section>
+
+      <section class="tour-step" id="tour-shared" data-tour-step aria-labelledby="tour-shared-title">
+        <h2 id="tour-shared-title" tabindex="-1">Check shared content and disclosures</h2>
+        <p>Navigation, footer, and reusable fragments can feed multiple pages. Edit the shared source when the change should reach its consumers, then review those pages.</p>
+        <p>For ID-based disclosures, select the approved set in page metadata. Superscript the stable ID after the claim, such as <code>offer</code>. Use Disclosure Manager when available and verify every marker against the rendered footer.</p>
+        <a href="../../../docs/site-handoff.html#disclosures" target="_blank" rel="noopener">Review fragments and disclosure references</a>
+      </section>
+
+      <section class="tour-step" id="tour-integrations" data-tour-step aria-labelledby="tour-integrations-title">
+        <h2 id="tour-integrations-title" tabindex="-1">Preserve link and rate settings</h2>
+        <p>Keep campaign parameters and tracking markers when editing destinations. If Link Options is enabled, open it from <strong>Outline → Extensions</strong> to inspect a selected link or prepare a URL.</p>
+        <p>For a dynamic rate, keep the marker, such as <code>{{rate:base}}</code>, and its separate <strong>Rate settings</strong> cell in the same row. Review the rendered rate, units, and approved terms together.</p>
+        <ul class="tour-references">
+          <li><a href="../../../docs/site-handoff.html#authoring-tools" target="_blank" rel="noopener">Review authoring tools</a></li>
+          <li><a href="../../../docs/site-handoff.html#rates-data" target="_blank" rel="noopener">Look up rate and data settings</a></li>
+        </ul>
+      </section>
+
+      <section class="tour-step" id="tour-preview" data-tour-step aria-labelledby="tour-preview-title">
+        <h2 id="tour-preview-title" tabindex="-1">Preview and review</h2>
+        <p>Save the page and any changed dependencies. In Experience Workspace, open <strong>Send → Preview</strong> and choose <strong>Update</strong>. Check the resulting <code>.aem.page</code> URL on the intended code branch.</p>
+        <p>Review phone and desktop layouts, keyboard access, headings, image crops and alt text, final link destinations, rate state, and the complete legal footer.</p>
+        <a href="../../../docs/site-handoff.html#publish" target="_blank" rel="noopener">See the preview and release workflow</a>
+      </section>
+
+      <section class="tour-step" id="tour-publish" data-tour-step aria-labelledby="tour-publish-title">
+        <h2 id="tour-publish-title" tabindex="-1">Publish and verify</h2>
+        <p>After the required approvals and code deployment, publish changed shared fragments, disclosure sources, and target pages before the pages or navigation that reference them.</p>
+        <p>Use <strong>Preview &amp; Publish → Update</strong> for the page. Open its live URL, follow a real entry link, and verify the approved content and disclosures.</p>
+        <a href="../../../docs/site-handoff.html#publish" target="_blank" rel="noopener">Review release and dependency checks</a>
+      </section>
+
+      <div class="tour-footer" id="tour-controls" hidden>
+        <button class="tour-button tour-exit" id="tour-exit" type="button">Exit tour</button>
+        <div class="tour-actions">
+          <button class="tour-button tour-secondary" id="tour-back" type="button">Back</button>
+          <button class="tour-button tour-primary" id="tour-next" type="button">Next</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
