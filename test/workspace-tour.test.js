@@ -32,11 +32,11 @@ async function openTour(storage = new Map()) {
   };
 }
 
-test('authors can go back, exit, and resume the same step after reopening the panel', async () => {
+test('chapters keep independent progress when navigating and reopening the panel', async () => {
   const storage = new Map();
   const tour = await openTour(storage);
   assert.equal(tour.visibleSteps().length, 0);
-  tour.click('tour-start');
+  tour.click('tour-start-authoring');
   assert.equal(tour.visibleSteps()[0].id, 'tour-workspace');
   assert.equal(tour.find('tour-back').disabled, true);
   tour.click('tour-next');
@@ -46,21 +46,26 @@ test('authors can go back, exit, and resume the same step after reopening the pa
   tour.click('tour-next');
   tour.escape();
   assert.equal(tour.visibleSteps().length, 0);
+  tour.click('tour-start-site');
+  assert.equal(tour.visibleSteps()[0].id, 'tour-page-patterns');
+  tour.click('tour-next');
+  tour.click('tour-exit');
 
   const reopened = await openTour(storage);
-  assert.equal(reopened.find('tour-start').textContent, 'Continue tour');
-  reopened.click('tour-start');
+  assert.equal(reopened.find('tour-start-site').textContent, 'Continue at step 2');
+  assert.equal(reopened.find('tour-start-authoring').textContent, 'Continue at step 2');
+  reopened.click('tour-start-authoring');
   assert.equal(reopened.visibleSteps().length, 1);
   assert.equal(reopened.visibleSteps()[0].id, 'tour-draft');
   reopened.click('tour-exit');
-  reopened.click('tour-restart');
+  reopened.click('tour-restart-authoring');
   assert.equal(reopened.visibleSteps()[0].id, 'tour-workspace');
 });
 
-test('completion persists and the tour can be taken again', async () => {
+test('completion persists per chapter and a finished chapter can be replayed', async () => {
   const storage = new Map();
   const tour = await openTour(storage);
-  tour.click('tour-start');
+  tour.click('tour-start-authoring');
   const total = Number(tour.find('tour-progress').getAttribute('max'));
   assert.equal(total, 8);
   for (let step = 1; step <= total; step += 1) {
@@ -68,12 +73,21 @@ test('completion persists and the tour can be taken again', async () => {
     tour.click('tour-next');
   }
   assert.equal(tour.visibleSteps().length, 0);
-  assert.equal(tour.find('tour-overview-title').textContent, 'Tour complete');
 
   const reopened = await openTour(storage);
-  assert.equal(reopened.find('tour-start').textContent, 'Take the tour again');
-  reopened.click('tour-start');
+  assert.equal(reopened.find('tour-start-authoring').textContent, 'Retake completed chapter');
+  assert.equal(reopened.find('tour-start-site').textContent, 'Start chapter');
+  reopened.click('tour-start-authoring');
   assert.equal(reopened.visibleSteps()[0].id, 'tour-workspace');
+});
+
+test('saved progress from the original tour is kept for the authoring chapter', async () => {
+  const storage = new Map([['etrade-workspace-tour-v1', 'tour-preview']]);
+  const tour = await openTour(storage);
+  assert.equal(tour.find('tour-start-authoring').textContent, 'Continue at step 7');
+  assert.equal(tour.find('tour-start-tools').textContent, 'Start chapter');
+  tour.click('tour-start-authoring');
+  assert.equal(tour.visibleSteps()[0].id, 'tour-preview');
 });
 
 test('the tour works when an embedded browser blocks storage', async () => {
@@ -82,25 +96,31 @@ test('the tour works when an embedded browser blocks storage', async () => {
     set() { throw new Error('Storage blocked'); },
   };
   const tour = await openTour(storage);
-  tour.click('tour-start');
+  tour.click('tour-start-authoring');
   tour.click('tour-next');
   tour.click('tour-exit');
-  tour.click('tour-start');
+  tour.click('tour-start-authoring');
   assert.equal(tour.visibleSteps()[0].id, 'tour-draft');
 });
 
-test('every step can be read without JavaScript and links to an existing handoff section', async () => {
+test('every chapter has readable steps with examples and valid handoff references', async () => {
   const tour = parseHTML(await readFile(tourUrl, 'utf8')).document;
   const guide = parseHTML(await readFile(guideUrl, 'utf8')).document;
   const steps = [...tour.querySelectorAll('[data-tour-step]')];
-  assert.ok(steps.length > 0);
+  assert.deepEqual(
+    [...new Set(steps.map((step) => step.dataset.tourStep))],
+    ['site', 'data', 'tools', 'authoring'],
+  );
   steps.forEach((step) => {
     assert.equal(step.hidden, false);
-    const reference = step.querySelector('a[href*="site-handoff.html#"]');
-    assert.ok(reference, `${step.id} needs a handoff reference`);
-    const link = new URL(reference.getAttribute('href'), tourUrl);
-    assert.ok(guide.getElementById(link.hash.slice(1)), link.hash);
-    link.hash = '';
-    assert.equal(link.href, guideUrl.href);
+    assert.ok(step.querySelector('.tour-worked-example'), `${step.id} needs an example`);
+    const references = [...step.querySelectorAll('a[href*="site-handoff.html#"]')];
+    assert.ok(references.length, `${step.id} needs a handoff reference`);
+    references.forEach((reference) => {
+      const link = new URL(reference.getAttribute('href'), tourUrl);
+      assert.ok(guide.getElementById(link.hash.slice(1)), link.hash);
+      link.hash = '';
+      assert.equal(link.href, guideUrl.href);
+    });
   });
 });
