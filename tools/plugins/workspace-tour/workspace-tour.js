@@ -57,8 +57,8 @@ function showOverview() {
 
   chapters.forEach((chapter) => {
     const resumeIndex = savedIndex(chapter);
-    chapter.start.textContent = 'Start chapter';
-    if (chapter.savedStep === 'complete') chapter.start.textContent = 'Retake completed chapter';
+    chapter.start.textContent = 'Start topic';
+    if (chapter.savedStep === 'complete') chapter.start.textContent = 'Revisit completed topic';
     else if (resumeIndex >= 0) chapter.start.textContent = `Continue at step ${resumeIndex + 1}`;
     chapter.restart.hidden = resumeIndex <= 0;
   });

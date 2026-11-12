@@ -32,7 +32,7 @@ async function openTour(storage = new Map()) {
   };
 }
 
-test('chapters keep independent progress when navigating and reopening the panel', async () => {
+test('topics keep independent progress when navigating and reopening the panel', async () => {
   const storage = new Map();
   const tour = await openTour(storage);
   assert.equal(tour.visibleSteps().length, 0);
@@ -62,7 +62,7 @@ test('chapters keep independent progress when navigating and reopening the panel
   assert.equal(reopened.visibleSteps()[0].id, 'tour-workspace');
 });
 
-test('completion persists per chapter and a finished chapter can be replayed', async () => {
+test('completion persists per topic and a finished topic can be revisited', async () => {
   const storage = new Map();
   const tour = await openTour(storage);
   tour.click('tour-start-authoring');
@@ -75,17 +75,17 @@ test('completion persists per chapter and a finished chapter can be replayed', a
   assert.equal(tour.visibleSteps().length, 0);
 
   const reopened = await openTour(storage);
-  assert.equal(reopened.find('tour-start-authoring').textContent, 'Retake completed chapter');
-  assert.equal(reopened.find('tour-start-site').textContent, 'Start chapter');
+  assert.equal(reopened.find('tour-start-authoring').textContent, 'Revisit completed topic');
+  assert.equal(reopened.find('tour-start-site').textContent, 'Start topic');
   reopened.click('tour-start-authoring');
   assert.equal(reopened.visibleSteps()[0].id, 'tour-workspace');
 });
 
-test('saved progress from the original tour is kept for the authoring chapter', async () => {
+test('saved progress from the original tour is kept for the authoring topic', async () => {
   const storage = new Map([['etrade-workspace-tour-v1', 'tour-preview']]);
   const tour = await openTour(storage);
   assert.equal(tour.find('tour-start-authoring').textContent, 'Continue at step 7');
-  assert.equal(tour.find('tour-start-tools').textContent, 'Start chapter');
+  assert.equal(tour.find('tour-start-tools').textContent, 'Start topic');
   tour.click('tour-start-authoring');
   assert.equal(tour.visibleSteps()[0].id, 'tour-preview');
 });
@@ -103,7 +103,7 @@ test('the tour works when an embedded browser blocks storage', async () => {
   assert.equal(tour.visibleSteps()[0].id, 'tour-draft');
 });
 
-test('every chapter has readable steps with examples and valid handoff references', async () => {
+test('every topic has readable steps with examples and valid handoff references', async () => {
   const tour = parseHTML(await readFile(tourUrl, 'utf8')).document;
   const guide = parseHTML(await readFile(guideUrl, 'utf8')).document;
   const steps = [...tour.querySelectorAll('[data-tour-step]')];
