@@ -19,7 +19,7 @@ main .section > .carousel-story-wrapper {
   position: relative;
   display: flex;
   gap: var(--space-16);
-  margin: 1.75rem 0 0;
+  margin: var(--space-20) 0 0;
   padding: 0 0 var(--space-4);
   list-style: none;
   overflow-x: auto;
@@ -105,32 +105,27 @@ main .section > .carousel-story-wrapper {
   display: grid;
   place-items: center;
   width: var(--space-64);
-  height: var(--space-48);
+  height: var(--space-64);
   margin: 0;
   padding: 0;
   border: var(--border-width-thin) solid var(--color-border-default);
+  border-right: 0;
   border-radius: var(--radius-card) 0 0 var(--radius-card);
   background: var(--color-surface-default);
   color: var(--color-text-primary);
   cursor: pointer;
 }
 
-.carousel-story .carousel-story-nav button::before {
-  width: var(--space-10);
-  height: var(--space-10);
-  border: solid currentcolor;
-  border-width: var(--border-width-strong) var(--border-width-strong) 0 0;
-  content: '';
-  transform: rotate(-135deg);
+/* The original site draws 19.2px Material "keyboard_arrow" icons. */
+.carousel-story .carousel-story-arrow {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: currentcolor;
 }
 
 .carousel-story .carousel-story-nav .carousel-story-next {
-  border-left: 0;
+  border-right: var(--border-width-thin) solid var(--color-border-default);
   border-radius: 0 var(--radius-card) var(--radius-card) 0;
-}
-
-.carousel-story .carousel-story-nav .carousel-story-next::before {
-  transform: rotate(45deg);
 }
 
 .carousel-story .carousel-story-dots {
@@ -148,36 +143,40 @@ main .section > .carousel-story-wrapper {
 }
 
 .carousel-story .carousel-story-dots button {
-  position: relative;
-  width: 1.125rem;
-  height: 1.125rem;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 1.1875rem;
+  height: 1.1875rem;
   margin: 0;
   padding: 0;
-  border: 0;
+  border: var(--border-width-strong) solid transparent;
+  border-radius: var(--radius-round);
   background: transparent;
   cursor: pointer;
 }
 
 .carousel-story .carousel-story-dots button::before {
-  position: absolute;
-  inset: 0.3125rem;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: var(--radius-round);
   background: var(--color-text-primary);
   content: '';
 }
 
+/* The selected story has a thin purple ring around a larger purple dot. */
+.carousel-story .carousel-story-dots button[aria-current='true'] {
+  border: var(--border-width-thin) solid var(--color-link-hover);
+}
+
 .carousel-story .carousel-story-dots button[aria-current='true']::before {
+  width: 0.75rem;
+  height: 0.75rem;
   background: var(--color-link-hover);
 }
 
-.carousel-story .carousel-story-dots button[aria-current='true'] {
-  outline: var(--focus-ring-width) solid var(--color-link-hover);
-  border-radius: var(--radius-round);
-}
-
 .carousel-story .carousel-story-nav button:disabled {
-  color: var(--color-text-secondary);
-  background: var(--color-border-strong);
+  background: var(--palette-neutral-400);
   cursor: default;
 }
 

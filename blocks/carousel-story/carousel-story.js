@@ -2,6 +2,24 @@ import buildCards from '../../scripts/media-cards.js';
 
 let instance = 0;
 
+/** Material "keyboard_arrow" chevrons, matching the icons on the original site. */
+const ARROWS = [
+  'M15.41 16.59 10.83 12l4.58-4.59L14 6l-6 6 6 6z',
+  'M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z',
+];
+
+function arrow(path) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'carousel-story-arrow');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+  const shape = document.createElementNS(svg.namespaceURI, 'path');
+  shape.setAttribute('d', path);
+  svg.append(shape);
+  return svg;
+}
+
 export default function decorate(block) {
   const slides = buildCards(block);
   const cards = [...slides.children];
@@ -20,6 +38,7 @@ export default function decorate(block) {
     button.className = `carousel-story-${i ? 'next' : 'prev'}`;
     button.setAttribute('aria-label', `${i ? 'Next' : 'Previous'} story`);
     button.setAttribute('aria-controls', slides.id);
+    button.append(arrow(ARROWS[i]));
     nav.append(button);
   });
   const dots = document.createElement('div');
