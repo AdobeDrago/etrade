@@ -117,6 +117,24 @@
   margin: 0 0 1rem;
 }
 
+.tour-step .tour-worked-example {
+  padding: 0.75rem 0.9rem;
+  border-inline-start: 3px solid var(--tour-purple);
+  border-radius: 0.35rem;
+  background: var(--tour-surface);
+}
+
+.tour-worked-example > strong {
+  display: block;
+  margin-block-end: 0.15rem;
+  color: var(--tour-ink);
+}
+
+.tour-worked-example code {
+  display: inline-block;
+  max-inline-size: 100%;
+}
+
 .tour-example {
   overflow: hidden;
   margin: 0;

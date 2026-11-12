@@ -42,6 +42,7 @@
         <h2 id="tour-workspace-title" tabindex="-1">Get oriented in DA</h2>
         <p>Open the <a href="https://da.live/#/adobedrago/etrade" target="_blank" rel="noopener">E*TRADE content workspace</a> to browse pages, shared fragments, and sheets. In the editor, use <strong>Layout</strong> for a visual view, <strong>Content</strong> to see the source structure, or <strong>Split</strong> to see both.</p>
         <p>DA stores content. GitHub supplies the code that renders it. An editor ref such as <code>?ref=demo</code> selects code while using the same DA content across branches.</p>
+        <p class="tour-worked-example"><strong>Example</strong> Open Home with <code>?ref=demo</code> and switch to Split. Find the Hero Dark table in the content pane and compare its headline with the rendered hero.</p>
         <a href="../../../docs/site-handoff.html#environments" target="_blank" rel="noopener">Read about environments and ownership</a>
       </section>
 
@@ -49,6 +50,7 @@
         <h2 id="tour-draft-title" tabindex="-1">Start with a reviewed page</h2>
         <p>For practice, copy the closest reviewed page to an agreed, unused draft path. For a routine edit, open the existing page and locate the section or block you own.</p>
         <p>Review inherited copy, assets, destinations, metadata, and legal dependencies. Confirm which pieces are shared before editing them.</p>
+        <p class="tour-worked-example"><strong>Example</strong> Copy <code>/planning</code> to an unused draft path such as <code>/drafts/planning-review</code>. Review the inherited title, social image, and offer links before adding your approved copy.</p>
         <a href="../../../docs/site-handoff.html#new-page-checklist" target="_blank" rel="noopener">Open the new-page checklist</a>
       </section>
 
@@ -56,6 +58,7 @@
         <h2 id="tour-blocks-title" tabindex="-1">Edit a block table</h2>
         <p>The merged first row names the block. Use the catalog to find its exact name, supported options, and required cells. A Cards Article table, for example, uses one complete row per card.</p>
         <p>Keep one page H1, give informative images meaningful alt text, and put a CTA in its own linked paragraph where the block expects an action.</p>
+        <p class="tour-worked-example"><strong>Example</strong> In a Cards Article row, put the image and its alt text in the left cell. In the right cell, add “Plan for retirement” as an H3, supporting copy, and a “Read the guide” link in its own paragraph.</p>
         <a href="../../../docs/site-handoff.html#block-catalog" target="_blank" rel="noopener">Find a block in the catalog</a>
       </section>
 
@@ -63,6 +66,7 @@
         <h2 id="tour-metadata-title" tabindex="-1">Set page and section metadata</h2>
         <p>Use the page <strong>Metadata</strong> table for Title, Description, Image, Theme, and Disclosures. Put <strong>Section Metadata</strong> in the section it configures.</p>
         <p><strong>Theme</strong> selects Purple or Charcoal. Section <strong>Color Scheme</strong> selects light or dark. <strong>Grid</strong> arranges whole blocks inside a section.</p>
+        <p class="tour-worked-example"><strong>Example</strong> Set <code>Theme: Purple</code> in page Metadata. To place two blocks side by side in a dark section at desktop widths, add <code>Color Scheme: dark</code> and <code>Grid: 2</code> to that section’s Section Metadata.</p>
         <a href="../../../docs/site-handoff.html#metadata-reference" target="_blank" rel="noopener">Look up metadata fields and values</a>
       </section>
 
@@ -70,6 +74,7 @@
         <h2 id="tour-shared-title" tabindex="-1">Check shared content and disclosures</h2>
         <p>Navigation, footer, and reusable fragments can feed multiple pages. Edit the shared source when the change should reach its consumers, then review those pages.</p>
         <p>For ID-based disclosures, select the approved set in page metadata. Superscript the stable ID after the claim, such as <code>offer</code>. Use Disclosure Manager when available and verify every marker against the rendered footer.</p>
+        <p class="tour-worked-example"><strong>Example</strong> If the selected set contains <code>offer</code>, put that ID in superscript after the approved claim. In preview, follow the displayed number to <code>#disclosure-offer</code> and confirm that it opens the matching terms.</p>
         <a href="../../../docs/site-handoff.html#disclosures" target="_blank" rel="noopener">Review fragments and disclosure references</a>
       </section>
 
@@ -77,6 +82,7 @@
         <h2 id="tour-integrations-title" tabindex="-1">Preserve link and rate settings</h2>
         <p>Keep campaign parameters and tracking markers when editing destinations. If Link Options is enabled, open it from <strong>Outline → Extensions</strong> to inspect a selected link or prepare a URL.</p>
         <p>For a dynamic rate, keep the marker, such as <code>{{rate:base}}</code>, and its separate <strong>Rate settings</strong> cell in the same row. Review the rendered rate, units, and approved terms together.</p>
+        <p class="tour-worked-example"><strong>Example</strong> In a savings card, pair <code>{{rate:base}}% APY</code> with <code>Name: base</code> in the Rate settings cell. If you relabel its CTA, preserve destination parameters such as <code>icid=campaign</code> and <code>@tracking=savings-card</code>.</p>
         <ul class="tour-references">
           <li><a href="../../../docs/site-handoff.html#authoring-tools" target="_blank" rel="noopener">Review authoring tools</a></li>
           <li><a href="../../../docs/site-handoff.html#rates-data" target="_blank" rel="noopener">Look up rate and data settings</a></li>
@@ -87,6 +93,7 @@
         <h2 id="tour-preview-title" tabindex="-1">Preview and review</h2>
         <p>Save the page and any changed dependencies. In Experience Workspace, open <strong>Send → Preview</strong> and choose <strong>Update</strong>. Check the resulting <code>.aem.page</code> URL on the intended code branch.</p>
         <p>Review phone and desktop layouts, keyboard access, headings, image crops and alt text, final link destinations, rate state, and the complete legal footer.</p>
+        <p class="tour-worked-example"><strong>Example</strong> In the Planning draft preview, check the hero image crop at phone width. Then press Tab to reach the primary action and Enter to confirm that it opens the intended page.</p>
         <a href="../../../docs/site-handoff.html#publish" target="_blank" rel="noopener">See the preview and release workflow</a>
       </section>
 
@@ -94,6 +101,7 @@
         <h2 id="tour-publish-title" tabindex="-1">Publish and verify</h2>
         <p>After the required approvals and code deployment, publish changed shared fragments, disclosure sources, and target pages before the pages or navigation that reference them.</p>
         <p>Use <strong>Preview &amp; Publish → Update</strong> for the page. Open its live URL, follow a real entry link, and verify the approved content and disclosures.</p>
+        <p class="tour-worked-example"><strong>Example</strong> If an approved Planning update changes a legal fragment, publish that fragment first, then its disclosure set if it changed, and finally <code>/planning</code>. Open Planning from the live navigation and follow the disclosure marker to the updated terms.</p>
         <a href="../../../docs/site-handoff.html#publish" target="_blank" rel="noopener">Review release and dependency checks</a>
       </section>
 
