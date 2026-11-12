@@ -200,14 +200,37 @@ main .section > .carousel-story-wrapper {
 }
 
 @media (width >= 768px) {
+  .carousel-story .carousel-story-slides {
+    padding-bottom: 0;
+  }
+
   .carousel-story .carousel-story-card {
   flex-basis: calc((100% - var(--space-16)) / 2);
-}
-}
-
-@media (width >= 768px) {
-  .carousel-story .carousel-story-card {
     padding: var(--space-24);
+  }
+
+  .carousel-story .carousel-story-image img {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .carousel-story .carousel-story-body > p:last-child:not(.carousel-story-eyebrow) {
+    /* Match the original site's trailing paragraph spacing. */
+    margin-bottom: 0.569rem;
+  }
+
+  /* Round the line-height ratios up to avoid WebKit truncating the line boxes. */
+  .carousel-story .carousel-story-body .carousel-story-eyebrow {
+    line-height: 1.286;
+  }
+
+  .carousel-story .carousel-story-heading {
+    line-height: 1.143;
+  }
+
+  .carousel-story .carousel-story-dots button {
+    width: 1.1875rem;
+    height: 1.1875rem;
   }
 }
 
@@ -237,8 +260,10 @@ body.why-etrade .section:not([data-section-layout="authored"]):has(.carousel-sto
   }
 }
 
-body.why-etrade main > .section:not([data-section-layout="authored"]):has(.carousel-story) {
-  padding-bottom: 5.25rem;
+@media (width < 768px) {
+  body.why-etrade main > .section:not([data-section-layout="authored"]):has(.carousel-story) {
+    padding-bottom: 5.25rem;
+  }
 }
 
 /* Adapt to the space provided by the section, including enlarged text. */
