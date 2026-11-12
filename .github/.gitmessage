@@ -1,7 +1,7 @@
 # <type>(<scope>): <short description>
-# 
+#
 # <body>
-# 
+#
 # <footer>
 
 # Commit format follows Conventional Commits 1.0
@@ -28,5 +28,5 @@
 #   - Write the short description in the imperative mood, lowercase, no trailing period.
 #   - Keep the first line under 72 characters.
 #   - Separate the subject line from the body with a blank line.
-# 
+#
 # ------------------------------------------------------------------------------
