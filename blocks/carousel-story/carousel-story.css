@@ -225,6 +225,12 @@ body.why-etrade .section:not([data-section-layout="authored"]):has(.carousel-sto
   margin-bottom: var(--space-16);
 }
 
+/* The "Our story" eyebrow before the heading. */
+body.why-etrade .section:not([data-section-layout="authored"]):has(.carousel-story) .default-content-wrapper > p:has(+ h2) {
+  font-family: var(--font-family-mono);
+  letter-spacing: var(--tracking-tight);
+}
+
 @media (width >= 768px) {
   body.why-etrade .section:not([data-section-layout="authored"]):has(.carousel-story) .default-content-wrapper {
     max-width: 1000px;
