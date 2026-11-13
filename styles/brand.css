@@ -47,6 +47,7 @@
   --palette-neutral-900: #1c1a1e;
   --palette-neutral-950: #121213;
   --palette-purple-50: #f3f0ff;
+  --palette-purple-100: #deccff;
   --palette-purple-200: #cdb3ff;
   --palette-purple-250: #bc99ff;
   --palette-purple-300: #ab80ff;
@@ -105,7 +106,7 @@
   --color-footer-surface: var(--color-surface-inverse-raised);
   --color-footer-text: var(--color-text-inverse);
   --color-footer-link: var(--color-link-inverse-hover);
-  --color-footer-link-hover: var(--color-link-inverse-hover);
+  --color-footer-link-hover: var(--palette-purple-100);
   --footer-color-scheme: dark;
   --color-action-primary: var(--palette-purple-600);
 
@@ -125,6 +126,47 @@
   --color-chart-index-2: var(--palette-teal-700);
   --color-chart-index-3: var(--palette-olive-700);
   --color-chart-index-4: var(--palette-amber-700);
+
+  /* Existing FAQ and shared library/preview surfaces; preserve their reference values. */
+  --color-faq-divider: #ebebeb;
+  --color-faq-question: #333;
+  --color-faq-control: #63c;
+  --color-library-text: #292330;
+  --color-library-border: #e8e3ef;
+  --color-library-surface: #faf9fc;
+  --color-library-control: #64596f;
+  --color-library-hover: #f2eef9;
+  --color-library-focus: #7344d8;
+  --color-library-muted: #6d6378;
+
+  /* Our Accounts tabs; reference values measured on the live page. */
+  --color-accounts-surface: #f6f6f6;
+  --color-accounts-rule: #dfdfdf;
+  --color-accounts-tab-active: #f2f2f2;
+  --color-accounts-tab-edge: #cbcbcb;
+  --color-accounts-tab-text: rgb(51 51 51 / 70%);
+  --color-accounts-select-text: #63c;
+  --color-accounts-caret: #8651f2;
+  --color-accounts-card-border: #e4e4e4;
+  --color-accounts-disclaimer: #767676;
+  --color-library-overlay: #fffffff5;
+  --color-library-tray: #f4f1f8;
+  --color-library-selected-border: #e3d8f6;
+  --color-library-selected-text: #48238d;
+  --color-library-charcoal: #29252f;
+  --color-library-switch: #622bd9;
+  --color-library-description: #50465c;
+  --color-library-mixed-purple: #7846d8;
+  --color-library-purple-start: #9565f4;
+  --color-library-purple-end: #4a20b8;
+  --color-library-charcoal-start: #62606a;
+  --color-library-charcoal-end: #1c1a1e;
+  --color-library-shadow-strong: #2410561a;
+  --color-library-shadow-soft: #2410560d;
+  --color-library-icon-shadow: #0000000d;
+  --color-library-selected-shadow: #24105612;
+  --color-shadow-subtle: rgb(0 0 0 / 6%);
+  --color-shadow-raised: rgb(0 0 0 / 12%);
 
   /* Typography. Size suffixes give pixel equivalents at a 16px browser default.
      Keep the root font size unset so rem values respect browser preferences. */
@@ -242,6 +284,7 @@
   --shadow-popover: 0 1px 3px rgb(36 36 36 / 10%), 0 6px 12px rgb(36 36 36 / 8%);
   --shadow-floating: 0 4px 20px rgb(18 18 19 / 20%);
   --shadow-tab: 0 -8px 18px rgb(18 18 19 / 12%);
+  --shadow-tab-accounts: 7px -10px 15px -7px rgb(51 51 51 / 30%), -7px -6px 15px -7px rgb(51 51 51 / 30%);
 
   /* Motion and layers. Local artwork can retain its own internal stacking order. */
   --motion-duration-fast: 150ms;

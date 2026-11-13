@@ -83,7 +83,7 @@ body.homepage main > .section:not([data-section-layout="authored"]).banking-feat
   font-size: var(--font-size-32);
   font-weight: var(--font-weight-semibold);
   line-height: calc(36 / 32);
-  letter-spacing: var(--tracking-tight);
+  letter-spacing: -0.025rem;
 }
 
 .columns-feature .columns-feature-copy p {
@@ -98,11 +98,15 @@ body.homepage main > .section:not([data-section-layout="authored"]).banking-feat
 }
 
 .columns-feature .columns-feature-copy h2 + p {
-  margin-bottom: var(--space-30);
+  margin-bottom: var(--space-20);
 }
 
 .columns-feature .columns-feature-copy a:any-link:not(.etrade-action) {
   color: var(--action-link-color);
+}
+
+.columns-feature .columns-feature-copy sup a:any-link:not(.etrade-action) {
+  color: inherit;
 }
 
 .columns-feature.award .columns-feature-copy p {
@@ -112,6 +116,7 @@ body.homepage main > .section:not([data-section-layout="authored"]).banking-feat
 }
 
 .columns-feature .columns-feature-copy > p:first-child:has(+ h2) {
+  font-family: var(--font-family-mono);
   font-size: var(--font-size-16);
   font-weight: var(--font-weight-regular);
   margin-bottom: var(--space-16);
@@ -204,6 +209,36 @@ body.homepage main > .section:not([data-section-layout="authored"]).banking-feat
   .columns-feature .columns-feature-copy h2 {
     font-size: var(--font-size-44);
     line-height: calc(48 / 44);
+  }
+
+  .columns-feature .columns-feature-copy h2 + p {
+    margin-bottom: var(--space-40);
+  }
+
+  .columns-feature:not(.award, .band) .columns-feature-actions {
+    display: grid;
+    grid-template-columns: calc((100% + var(--space-20)) * 7 / 12 - var(--space-20)) minmax(0, 1fr);
+    justify-items: start;
+    gap: var(--space-20);
+  }
+
+  .columns-feature:not(.award, .band) .columns-feature-actions > :only-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (width < 768px) {
+  body.homepage .columns-feature:not(.award, .band) .columns-feature-copy {
+    text-align: center;
+  }
+
+  body.homepage .columns-feature:not(.award, .band) .columns-feature-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  body.homepage .columns-feature:not(.award, .band) .columns-feature-actions .etrade-action-secondary:any-link {
+    font-size: var(--font-size-17);
   }
 }
 
@@ -300,5 +335,74 @@ body.planning .columns-feature .columns-feature-copy h2 {
 @container block-layout (width < 22rem) {
   main .section .columns-feature {
     padding-inline: min(var(--space-20), 8%);
+  }
+}
+
+/* Homepage banking band: spacing and type measured on the live homepage. Other bands are unchanged. */
+body.homepage main > .section.banking-feature.columns-feature-container:not([data-section-layout="authored"]):has(> .columns-feature-wrapper > .columns-feature.band) {
+  padding-bottom: var(--space-80);
+}
+
+main .section.banking-feature .columns-feature.band {
+  padding-inline: 0;
+}
+
+main .section.banking-feature .columns-feature.band .columns-feature-media p {
+  margin-top: 0.9375rem;
+  font-size: var(--font-size-12);
+  line-height: calc(16 / 12);
+}
+
+main .section.banking-feature .columns-feature.band .columns-feature-copy p {
+  margin-bottom: 0.5687rem;
+}
+
+main .section.banking-feature .columns-feature.band .columns-feature-copy p:has(+ .columns-feature-actions) {
+  margin-bottom: var(--space-20);
+}
+
+main .section.banking-feature .columns-feature.band .columns-feature-actions .etrade-action-secondary:any-link {
+  min-height: 0;
+  padding: 0;
+}
+
+@media (width < 768px) {
+  main .section.banking-feature .columns-feature.band .columns-feature-copy {
+    text-align: center;
+  }
+
+  main .section.banking-feature .columns-feature.band .columns-feature-copy h2 {
+    font-size: var(--font-size-28);
+    line-height: calc(32 / 28);
+  }
+
+  main .section.banking-feature .columns-feature.band .columns-feature-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5625rem;
+  }
+
+  main .section.banking-feature .columns-feature.band .columns-feature-actions .etrade-action-secondary:any-link {
+    font-size: var(--font-size-17);
+    line-height: calc(20 / 17);
+  }
+}
+
+@media (width >= 768px) {
+  main .section.banking-feature .columns-feature.band .columns-feature-copy p:has(+ .columns-feature-actions) {
+    margin-bottom: var(--space-40);
+  }
+
+  /* Two equal action columns with the live 20px gutter; live buttons keep a 10px bottom margin. */
+  main .section.banking-feature .columns-feature.band .columns-feature-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-items: start;
+    gap: var(--space-20);
+    margin-bottom: var(--space-10);
+  }
+
+  main .section.banking-feature .columns-feature.band .columns-feature-actions .etrade-action-secondary:any-link {
+    line-height: calc(21 / 15);
   }
 }

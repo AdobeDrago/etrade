@@ -4,6 +4,7 @@ import {
 } from './tracking-attributes.js';
 import { readDemoSession, watchDemoNavigation, writeDemoSession } from './demo-session.js';
 import decorateRouteLinks from './route-links.js';
+import bindPrivacyChoices from './privacy.js';
 import { rememberLinkSource } from './link-source.js';
 
 const CATEGORY = /^C\d{4,}$/;
@@ -39,6 +40,7 @@ function restoredEvents(initial, limit, restoreConsent) {
 /** Shared by initial content, fragments and dynamically inserted links. */
 export function decorateTrackingLinks(root, base = root.baseURI || root.ownerDocument?.baseURI) {
   decorateRouteLinks(root, base);
+  bindPrivacyChoices(root);
   const links = [...root.querySelectorAll('a[href]')];
   if (root.matches?.('a[href]')) links.unshift(root);
   links.forEach((link) => {
@@ -56,7 +58,7 @@ export function decorateTrackingLinks(root, base = root.baseURI || root.ownerDoc
     link.removeAttribute('data-tracking-category');
     if (!validTrackingKey(key) || !required) return;
     link.dataset.trackingKey = key;
-    link.dataset.trackingCategory = required.join(',');
+    link.dataset.trackingCategory = required.length ? required.join(',') : 'none';
   });
 }
 

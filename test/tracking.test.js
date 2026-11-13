@@ -8,6 +8,19 @@ import mountTrackingControls from '../scripts/demo-tracking.js';
 const PAGE = 'https://demo--etrade--adobedrago.aem.page/home';
 const settle = () => new Promise((resolve) => { setImmediate(resolve); });
 
+test('explicit None events are ready without granting consent to other categories', async () => {
+  const queue = createTrackingQueue();
+  const sent = [];
+  await queue.setSender((event) => sent.push(event.key));
+  queue.track({ key: 'ungated', requiredCategories: 'none' });
+  queue.track({ key: 'advertising' });
+  await queue.flush();
+  assert.deepEqual(sent, ['ungated']);
+  assert.equal(queue.snapshot().consent.C0004, 'pending');
+  assert.equal(queue.snapshot().events[1].status, 'queued');
+  assert.equal(queue.track({ key: 'invalid', requiredCategories: '' }), null);
+});
+
 test('disconnecting a sender when an event becomes sending leaves it ready for a later adapter', async () => {
   const queue = createTrackingQueue();
   const calls = [];

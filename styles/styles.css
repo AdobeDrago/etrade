@@ -4,6 +4,7 @@
 @import url('sections.css');
 @import url('cards.css');
 
+
 /*
  * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -412,4 +413,19 @@ body.etrade-page .default-content-wrapper > p {
     font-size: var(--font-size-40);
     line-height: calc(44 / 40);
   }
+}
+
+/* Shared shell and inline references belong to the page, outside block scopes. */
+body > header {
+  container: header-chrome / inline-size;
+}
+
+.disclosures-reference a:any-link {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.disclosures-reference a:focus-visible {
+  outline: var(--focus-ring-width) solid currentcolor;
+  outline-offset: var(--focus-ring-offset);
 }

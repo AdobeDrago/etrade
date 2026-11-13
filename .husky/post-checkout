@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# Exit immediately if git is not available
+command -v git >/dev/null 2>&1 || exit 0
+
+# Check if a global commit template is already configured.
+# `|| true` keeps husky's `sh -e` from failing when none is set.
+GLOBAL_TEMPLATE=$(git config --global commit.template || true)
+
+if [ -z "$GLOBAL_TEMPLATE" ]; then
+    # Define repository-relative template path (.github/.gitmessage)
+    REPO_TEMPLATE=".github/.gitmessage"
+
+    if [ -f "$REPO_TEMPLATE" ]; then
+        # Set the local commit template relative to the repository root
+        git config --local commit.template "$REPO_TEMPLATE"
+    fi
+fi

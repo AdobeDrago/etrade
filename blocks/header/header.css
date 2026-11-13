@@ -1,7 +1,3 @@
-body > header {
-  container: header-chrome / inline-size
-}
-
 .header {
   --header-background: var(--color-surface-inverse);
   --header-surface: var(--color-surface-inverse-raised);
@@ -53,6 +49,7 @@ body > header {
 }
 
 .header [hidden] {
+  /* stylelint-disable-next-line declaration-no-important -- Hidden panels must override component display rules. */
   display: none !important;
 }
 
@@ -559,7 +556,7 @@ body > header {
 @media (width >= 1085px) {
   .header {
     --header-menu-column-width: 248px;
-    --header-menu-gap: 48px;
+    --header-menu-gap: var(--space-48);
   }
 
   .header .nav-shell {
@@ -956,14 +953,14 @@ body > header {
 @media (1135px < width <= 1200px) {
   .header {
     --header-menu-column-width: 244px;
-    --header-menu-gap: 40px;
+    --header-menu-gap: var(--space-40);
   }
 }
 
 @media (1085px <= width <= 1135px) {
   .header {
     --header-menu-column-width: 236px;
-    --header-menu-gap: 32px;
+    --header-menu-gap: var(--space-32);
   }
 }
 

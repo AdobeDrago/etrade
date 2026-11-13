@@ -15,8 +15,8 @@
       <button id="load-selection" type="button" disabled>Load selected link</button>
     </header>
     <main>
-      <p class="hint">Configure the link, copy its URL, then paste into DA’s Edit link dialog. Select a link before opening this tool to load its current settings.</p>
-      <p id="status" class="status" role="status" aria-live="polite">Paste a destination URL below, or open this tool inside DA to load a selected link.</p>
+      <p class="hint">Select link text in DA, then load it here. Configure its options and apply them directly when available, or copy its URL for DA’s Edit link dialog.</p>
+      <p id="status" class="status" role="status" aria-live="polite">Choose an action, enter a destination URL, or load a selected link from DA.</p>
       <p id="demo-notice" class="hint" hidden>Home example · This helper copies a URL. It does not change or publish DA content.</p>
       <p id="selection-label" class="hint"></p>
       <section class="link-summary" aria-labelledby="link-summary-heading">
@@ -25,18 +25,27 @@
           <dt>Wording</dt><dd id="summary-label"></dd>
           <dt>Destination</dt><dd id="summary-destination"></dd>
           <dt>Opening</dt><dd id="summary-opening"></dd>
+          <dt>Action</dt><dd id="summary-action"></dd>
           <dt>Page condition</dt><dd id="summary-condition"></dd>
           <dt>Click reporting</dt><dd id="summary-tracking"></dd>
           <dt>Required consent</dt><dd id="summary-consent"></dd>
         </dl>
-        <p class="hint">This summary updates as you edit. Reporting waits for all required consent categories. Wording and opening behavior are read from the selected link and stay in DA’s Edit link dialog.</p>
+        <p class="hint">This summary updates as you edit. Reporting waits for all required consent categories. Wording and normal-link opening behavior stay in DA’s Edit link dialog. Cookie preferences opens on the current page.</p>
       </section>
       <form id="link-form" novalidate>
         <fieldset id="fields">
           <legend>Link details</legend>
-          <label for="url">URL</label>
-          <input id="url" name="url" type="text" placeholder="/home or https://…" autocomplete="off" spellcheck="false" aria-describedby="url-help">
-          <p id="url-help" class="hint">Enter the destination. Tracking settings are managed below.</p>
+          <label for="link-action">Link action</label>
+          <select id="link-action" aria-describedby="link-action-help">
+            <option value="">Normal link</option>
+            <option value="privacy-preferences">Open cookie preferences</option>
+          </select>
+          <p id="link-action-help" class="hint">Cookie preferences opens OneTrust on the current page and needs no destination URL. The wording and icon can be changed independently.</p>
+          <div id="destination-fields">
+            <label for="url">URL</label>
+            <input id="url" name="url" type="text" placeholder="/home or https://…" autocomplete="off" spellcheck="false" aria-describedby="url-help">
+            <p id="url-help" class="hint">Enter the destination for a normal link.</p>
+          </div>
           <section class="tracking" aria-label="Tracking options">
             <label class="switch" for="track-clicks">
               <span><strong>Track clicks</strong><small>Add a reporting key to this link.</small></span>
@@ -51,6 +60,7 @@
                 <label for="category">Required consent</label>
                 <select id="category" aria-describedby="category-help">
                   <option value="C0004">Advertising · C0004</option>
+                  <option value="none">None</option>
                   <option value="C0002">Analytics · C0002</option>
                   <option value="C0002,C0004">Analytics + advertising · C0002, C0004</option>
                   <option value="custom">Custom category IDs</option>
@@ -63,7 +73,7 @@
               </details>
             </div>
           </section>
-          <section class="route-options" aria-label="Page path condition">
+          <section id="route-options" class="route-options" aria-label="Page path condition">
             <label class="switch" for="route-enabled">
               <span><strong>Change this link on matching pages</strong><small>One path rule with a default everywhere else.</small></span>
               <input id="route-enabled" type="checkbox" role="switch" aria-controls="route-fields">
@@ -76,7 +86,7 @@
               <input id="route-label" type="text" maxlength="160" placeholder="e.g. Explore brokerage accounts">
               <label for="route-url">Destination on matching pages</label>
               <input id="route-url" type="text" maxlength="2048" placeholder="/what-we-offer/our-accounts" spellcheck="false">
-              <p class="hint">Other pages keep the default URL above and the wording authored in DA. Both versions use the same tracking key, consent and opening behavior. This rule supports text links and text buttons; image and icon links keep their default.</p>
+              <p class="hint">Other pages keep the default URL above and the wording authored in DA. Both versions use the same action, tracking key, consent and opening behavior. This rule supports text links and text buttons; image and icon links keep their default.</p>
               <label for="preview-path">Preview on page path</label>
               <input id="preview-path" type="text" value="/home" spellcheck="false">
               <p id="route-preview" class="route-preview" role="status"></p>
@@ -89,6 +99,7 @@
             <p id="manual-copy" class="hint" hidden>Use ⌘C on Mac or Ctrl+C on Windows to copy the selected URL.</p>
           </section>
           <div class="actions">
+            <button id="apply" class="primary" type="button" disabled>Apply to selected link</button>
             <button id="copy" class="primary" type="submit">Copy URL</button>
             <button id="close" type="button" hidden>Close</button>
           </div>

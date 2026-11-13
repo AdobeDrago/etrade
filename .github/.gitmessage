@@ -1,0 +1,32 @@
+# <type>(<scope>): <short description>
+#
+# <body>
+#
+# <footer>
+
+# Commit format follows Conventional Commits 1.0
+# - Type must be one of the types listed below
+# - <body> and <footer> are optional
+# - all lowercase short description
+# - Lists of summaries for complex descriptions
+# ------------------------------------------------------------------------------
+# COMMIT TYPES:
+#   feat     : A new feature or significant added functionality
+#   fix      : A bug patch or correction
+#   docs     : Documentation changes only (e.g., README updates)
+#   style    : Code formatting, missing semi-colons, white-space changes
+#   refactor : Code restructuring that neither fixes a bug nor adds a feature
+#   perf     : Code changes that specifically improve performance
+#   test     : Adding missing tests or correcting existing tests
+#   build    : Changes affecting the build system or external dependencies
+#   ci       : Changes to CI configuration files and scripts
+#   chore    : Routine maintenance tasks or auxiliary tools
+#   revert   : Reverting a previous commit
+#
+# RULES:
+#   - Append a '!' after the type/scope for BREAKING CHANGES.
+#   - Write the short description in the imperative mood, lowercase, no trailing period.
+#   - Keep the first line under 72 characters.
+#   - Separate the subject line from the body with a blank line.
+#
+# ------------------------------------------------------------------------------
