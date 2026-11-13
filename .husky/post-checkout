@@ -3,8 +3,9 @@
 # Exit immediately if git is not available
 command -v git >/dev/null 2>&1 || exit 0
 
-# Check if a global commit template is already configured
-GLOBAL_TEMPLATE=$(git config --global commit.template)
+# Check if a global commit template is already configured.
+# `|| true` keeps husky's `sh -e` from failing when none is set.
+GLOBAL_TEMPLATE=$(git config --global commit.template || true)
 
 if [ -z "$GLOBAL_TEMPLATE" ]; then
     # Define repository-relative template path (.github/.gitmessage)
