@@ -225,6 +225,13 @@ body.homepage main > .section:not([data-section-layout="authored"]).banking-feat
   .columns-feature:not(.award, .band) .columns-feature-actions > :only-child {
     grid-column: 1 / -1;
   }
+
+  .columns-feature.light .columns-feature-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-20) var(--space-32);
+  }
 }
 
 @media (width < 768px) {
