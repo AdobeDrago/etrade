@@ -357,10 +357,11 @@ main .hero-dark .hero-dark-copy sup a:any-link {
 main .hero-dark.split .hero-dark-eyebrow :is(h1, h2, h3, p) {
   margin: 0 0 var(--space-16);
   color: inherit;
+  font-family: var(--font-family-mono);
   font-size: var(--font-size-16);
   font-weight: var(--font-weight-regular);
   line-height: calc(20 / 16);
-  letter-spacing: var(--tracking-tight);
+  letter-spacing: var(--tracking-display);
 }
 
 main .hero-dark.split .hero-dark-heading {
