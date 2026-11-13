@@ -1,3 +1,4 @@
+import loadStructuredCards from '../../scripts/structured-cards.js';
 import buildCards from '../../scripts/media-cards.js';
 
 let instance = 0;
@@ -20,7 +21,9 @@ function arrow(path) {
   return svg;
 }
 
-export default function decorate(block) {
+export default async function decorate(block) {
+  const structured = loadStructuredCards(block);
+  if (structured) await structured;
   const slides = buildCards(block);
   const cards = [...slides.children];
   if (!cards.length) return;
