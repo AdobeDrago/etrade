@@ -1,5 +1,5 @@
 import {
-  appendCardRow, fragmentReference, fragmentUrl, newCardBlock, siteContext,
+  appendCardRow, fragmentReference, fragmentUrl, newCardBlock, siteContext, validPath,
 } from './model.js';
 import { catalogFiles, createDirectory, previewCard } from './source.js';
 
@@ -14,6 +14,7 @@ export default function mountPicker(doc, sdk, fetchCard = fetch) {
   const catalogs = new Map();
   let kind = 'fragment';
   let paths = [];
+  let sourceError;
   let selected;
   let card;
   let live;
@@ -87,14 +88,19 @@ export default function mountPicker(doc, sdk, fetchCard = fetch) {
   }
 
   function renderResults() {
-    const term = byId('search').value.trim().toLowerCase();
+    const value = byId('search').value.trim();
+    const term = value.toLowerCase();
     const matched = paths.filter((path) => path.toLowerCase().includes(term));
-    byId('catalog-status').textContent = matched.length ? '' : 'No matching sources.';
+    const cardPath = value.replace(/(?:\.plain)?\.html$/i, '');
+    const direct = kind === 'card' && !matched.length && cardPath.startsWith('/cards/')
+      && !cardPath.endsWith('.json') && validPath(cardPath);
+    if (direct) matched.push(cardPath);
+    byId('catalog-status').textContent = sourceError || (matched.length ? '' : 'No matching sources.');
     byId('results').replaceChildren(...matched.map((path) => {
       const item = doc.createElement('li');
       const button = doc.createElement('button');
       button.type = 'button';
-      button.textContent = path;
+      button.textContent = direct ? `Preview ${path}` : path;
       if (path === selected) button.setAttribute('aria-current', 'true');
       button.addEventListener('click', () => select(path, button));
       item.append(button);
@@ -104,9 +110,12 @@ export default function mountPicker(doc, sdk, fetchCard = fetch) {
 
   async function show(next) {
     kind = next;
+    paths = [];
+    sourceError = undefined;
     clearPreview();
     tabs.forEach((tab) => tab.setAttribute('aria-pressed', String(tab.dataset.kind === next)));
     byId('search').disabled = true;
+    byId('search').placeholder = next === 'card' ? 'Search or enter a /cards/ path' : '';
     byId('results').replaceChildren();
     byId('retry').hidden = true;
     byId('catalog-status').textContent = 'Loading sources…';
@@ -120,8 +129,10 @@ export default function mountPicker(doc, sdk, fetchCard = fetch) {
     } catch (error) {
       catalogs.delete(next);
       if (kind !== next) return;
-      byId('catalog-status').textContent = error.message;
+      sourceError = error.message;
+      byId('search').disabled = next !== 'card';
       byId('retry').hidden = false;
+      renderResults();
     }
   }
 
