@@ -21,7 +21,7 @@ export default function mountPicker(doc, sdk, fetchCard = fetch) {
   let preview;
   let writing = false;
   const canTrackEdits = capabilities?.liveDocument === 1 && actions.subscribeLiveDocument;
-  const canEdit = context.view === 'edit' && typeof actions.sendHTML === 'function';
+  const canEdit = ['edit', 'canvas'].includes(context.view) && typeof actions.sendHTML === 'function';
 
   function updateActions() {
     const blockIndex = live?.selection?.blockIndex;

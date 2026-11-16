@@ -127,7 +127,7 @@ test('selecting a card enables the correct action as the editor selection moves'
   const writes = [];
   let update;
   const sdk = {
-    context,
+    context: { ...context, view: 'canvas' },
     capabilities: { liveDocument: 1, sendHTMLReplace: 1 },
     actions: {
       daFetch: sourceList,
