@@ -33,15 +33,16 @@ test('a card opens in the block specified by its schema and inserts a shared lin
 });
 
 test('a row appends to the matching selected block while preserving the original block and guarding the write', () => {
-  const html = '<main><div><div data-block-index="2" class="cards-product featured"><div><div><h3>Keep me</h3></div><div>Rate settings</div></div></div></div></main>';
-  const snapshot = { html, editable: true, selection: { blockIndex: 2 } };
+  const html = '<main><div><div data-block-index="2" class="cards-product other"><div><div>Other</div></div></div><div data-block-index="22" class="cards-product featured"><div><div><h3>Keep me</h3></div><div>Rate settings</div></div></div></div></main>';
+  const snapshot = { html, editable: true, selection: { blockIndex: 1 } };
   const next = appendCardRow(document, snapshot, record);
-  assert.deepEqual(next.expected, { html, blockIndex: 2 });
+  assert.deepEqual(next.expected, { html, blockIndex: 1 });
   const block = parse(next.html).querySelector('.cards-product.featured');
   assert.equal(block.children.length, 2);
   assert.equal(block.firstElementChild.innerHTML, '<div><h3>Keep me</h3></div><div>Rate settings</div>');
   assert.equal(block.lastElementChild.querySelector('a').getAttribute('href'), '/cards/product/featured');
-  assert.equal(appendCardRow(document, { ...snapshot, html: html.replace('cards-product', 'cards-account') }, record), null);
+  const differentFamily = html.replace('cards-product featured', 'cards-account featured');
+  assert.equal(appendCardRow(document, { ...snapshot, html: differentFamily }, record), null);
   assert.equal(appendCardRow(document, { ...snapshot, editable: false }, record), null);
 });
 
@@ -152,14 +153,14 @@ test('selecting a card enables the correct action as the editor selection moves'
   await waitUntil(() => !doc.getElementById('card').hidden);
   const append = doc.getElementById('append-card');
   const create = doc.getElementById('create-card');
-  const current = '<main><div><div class="cards-product" data-block-index="1"><div><div>Existing card</div></div></div></div></main>';
-  update({ html: current, editable: true, selection: { blockIndex: 1 } });
+  const current = '<main><div><div class="cards-product" data-block-index="2"><div><div>Existing card</div></div></div></div></main>';
+  update({ html: current, editable: true, selection: { blockIndex: 0 } });
   assert.equal(append.disabled, false);
   assert.equal(create.disabled, true);
   append.click();
   await waitUntil(() => doc.getElementById('status').textContent.includes('could not add'));
   assert.equal(writes[0].options.replace, true);
-  assert.deepEqual(writes[0].options.expected, { html: current, blockIndex: 1 });
+  assert.deepEqual(writes[0].options.expected, { html: current, blockIndex: 0 });
   const inserted = parse(writes[0].markup).querySelector('a');
   assert.equal(inserted.getAttribute('href'), '/cards/product/featured');
 

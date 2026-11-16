@@ -85,8 +85,12 @@ export function appendCardRow(doc, snapshot, record) {
     || typeof snapshot.html !== 'string') return null;
   const template = doc.createElement('template');
   template.innerHTML = snapshot.html;
-  const block = template.content.querySelector(`main > div > div[data-block-index="${blockIndex}"]`);
-  if (!block || [...block.classList][0] !== record.block) return null;
+  // Canvas selection is an ordinal. The HTML marker is a position in the editor document.
+  const blocks = template.content.querySelectorAll(
+    'main > div > div[data-block-index], main > div > div.library-metadata',
+  );
+  const block = blocks[blockIndex];
+  if (!block?.hasAttribute('data-block-index') || [...block.classList][0] !== record.block) return null;
   block.append(cardRow(doc, record, 'div', 'div'));
   return { html: block.outerHTML, expected: { html: snapshot.html, blockIndex } };
 }
