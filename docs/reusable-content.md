@@ -23,6 +23,6 @@ After the extension is deployed to main, update the existing entry in the **libr
 
 | title | path | format | icon | experience | ref |
 | --- | --- | --- | --- | --- | --- |
-| Reusable Content | https://main--etrade--adobedrago.aem.live/tools/plugins/reusable-content/reusable-content.html | | | inline | |
+| Reusable Content | https://main--etrade--adobedrago.aem.page/tools/plugins/reusable-content/reusable-content.html | | | inline | |
 
 For local testing, use a separate entry with `http://localhost:3000/tools/plugins/reusable-content/reusable-content.html`, experience `inline`, and ref `local`. Open [DA Canvas with the local plugin ref](https://da.live/canvas?ref=local#/adobedrago/etrade/home) while the local server is running.

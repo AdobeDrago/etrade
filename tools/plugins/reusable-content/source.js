@@ -14,7 +14,7 @@ function directoryEntries(path, items) {
   });
 }
 
-export function createDirectory(context, daFetch) {
+export function createDirectory(context, daFetch, daToken) {
   const { org, repo } = siteContext(context);
   const aem = `https://api.aem.live/${org}/sites/${repo}/source`;
   const da = `https://admin.da.live/list/${org}/${repo}`;
@@ -29,8 +29,12 @@ export function createDirectory(context, daFetch) {
       if (start > now) await new Promise((resolve) => { setTimeout(resolve, start - now); });
     }
     const headers = token ? { 'da-continuation-token': token } : {};
+    // DA's extension SDK adds Authorization. The AEM source bus also needs this header.
+    if (modern && daToken) headers['x-content-source-authorization'] = `Bearer ${daToken}`;
     const response = await daFetch(modern ? `${aem}${path}/` : `${da}${path}`, {
-      headers, signal: AbortSignal.timeout(10000),
+      headers,
+      signal: AbortSignal.timeout(10000),
+      ...(modern ? { redirect: 'error', referrerPolicy: 'unsafe-url' } : {}),
     });
     if (!response.ok) return { status: response.status };
     const items = await response.json();

@@ -6,9 +6,11 @@ import { catalogFiles, createDirectory, previewCard } from './source.js';
 export default function mountPicker(doc, sdk, fetchCard = fetch) {
   const byId = (id) => doc.getElementById(id);
   const tabs = [...doc.querySelectorAll('[data-kind]')];
-  const { context, actions, capabilities } = sdk;
+  const {
+    context, actions, capabilities, token,
+  } = sdk;
   const site = siteContext(context);
-  const list = createDirectory(context, actions.daFetch);
+  const list = createDirectory(context, actions.daFetch, token);
   const catalogs = new Map();
   let kind = 'fragment';
   let paths = [];
