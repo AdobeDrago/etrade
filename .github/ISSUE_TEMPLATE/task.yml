@@ -1,0 +1,51 @@
+name: Task
+description: Request something be done, changed, configured, authored, updated.
+title: "[Task]: "
+labels: ["task", "triage"]
+type: task
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Task Request - something needs to be authored, configured, updated, changed, integrated, documented, described, or done that is not a code change (which would be a Feature Request or Bug Report instead).
+  - type: textarea
+    id: what-to-do
+    attributes:
+      label: What is the task?
+      description: Also tell us, what did you expect to be able to see or accomplish that you couldn't?
+      placeholder: Tell us what needs to happen!
+      value: "A detailed description of the task and steps to complete, expected vs actual behavior. Provide validation steps/sequence/script/prompt to ensure that the configuration or task was completed correctly."
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Wich of these best describes the type of task?
+      options:
+        - Unknown or Other
+        - Research
+        - Visual updates
+        - Missing content
+        - Authoring
+        - Site interactivity
+        - Configuration
+        - Integrations
+        - Training or Enablement
+        - Documentation
+      default: 0
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output or instructions
+      description: Please copy and paste any relevant log output or instructions for the task. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+  - type: upload
+    id: screenshots
+    attributes:
+      label: Upload screenshots
+      description: If applicable, add screenshots, images, sketches, videos, or documents to help explain your task.
+    validations:
+      required: false
