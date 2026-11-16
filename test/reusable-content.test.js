@@ -86,6 +86,18 @@ test('the catalog separates Structured Cards from HTML fragments and skips non-d
   assert.deepEqual(fragments, ['/components/fragments/offer']);
 });
 
+test('the AEM source catalog sends the DA token in the content-source authorization header', async () => {
+  const list = createDirectory(context, (url, options) => {
+    if (url.startsWith('https://api.aem.live/')
+      && options.headers['x-content-source-authorization'] === 'Bearer example-da-token') {
+      return sourceList(url);
+    }
+    if (url.startsWith('https://admin.da.live/')) return Response.json([]);
+    return new Response(null, { status: 401 });
+  }, 'example-da-token');
+  assert.deepEqual(await catalogFiles(list, 'card'), ['/cards/product/featured']);
+});
+
 async function waitUntil(predicate) {
   const end = Date.now() + 2000;
   while (!predicate()) {
