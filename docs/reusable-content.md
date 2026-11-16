@@ -12,7 +12,7 @@ Insertion adds a reference to shared content. Edit the original fragment to upda
 
 ## Structured Cards
 
-In DA Canvas, choose **Structured Cards** and select a record under `/cards/`. The picker reads its Structured Content preview to identify the matching block. For example, `/cards/product/guide-core-brokerage` uses Cards Product.
+In DA Canvas, choose **Structured Cards** and select a record under `/cards/`. You can also enter its exact site-relative path and select **Preview**. The picker reads the Structured Content preview to identify the matching block. For example, `/cards/product/guide-core-brokerage` uses Cards Product.
 
 - Place the cursor inside a matching block and choose **Add row to selected block**. The shared card link goes in the last row. Existing rows and block variants are preserved.
 - Place the cursor in a paragraph between blocks and choose **Create matching block**. The picker inserts a new block with one linked card row.

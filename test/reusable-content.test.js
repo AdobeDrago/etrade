@@ -98,6 +98,20 @@ test('the AEM source catalog sends the DA token in the content-source authorizat
   assert.deepEqual(await catalogFiles(list, 'card'), ['/cards/product/featured']);
 });
 
+test('an empty AEM source response does not hide records from the DA source', async () => {
+  const list = createDirectory(context, (url) => {
+    if (url.startsWith('https://api.aem.live/')) return Response.json([]);
+    const path = new URL(url).pathname.replace('/list/adobedrago/etrade', '');
+    const entries = {
+      '': [{ name: 'cards' }],
+      '/cards': [{ name: 'product' }],
+      '/cards/product': [{ name: 'featured', ext: 'html' }],
+    };
+    return Response.json(entries[path] || []);
+  });
+  assert.deepEqual(await catalogFiles(list, 'card'), ['/cards/product/featured']);
+});
+
 async function waitUntil(predicate) {
   const end = Date.now() + 2000;
   while (!predicate()) {
@@ -109,7 +123,7 @@ async function waitUntil(predicate) {
 
 test('selecting a card enables the correct action as the editor selection moves', async () => {
   const html = await readFile(new URL('../tools/plugins/reusable-content/reusable-content.html', import.meta.url), 'utf8');
-  const { document: doc } = parseHTML(html);
+  const { document: doc, window } = parseHTML(html);
   const writes = [];
   let update;
   const sdk = {
@@ -155,4 +169,9 @@ test('selecting a card enables the correct action as the editor selection moves'
   create.click();
   assert.equal(writes[1].options, undefined);
   assert.equal(parse(writes[1].markup).querySelector('tr').textContent, 'cards-product');
+
+  const search = doc.getElementById('search');
+  search.value = '/cards/product/another.html';
+  search.dispatchEvent(new window.Event('input'));
+  assert.equal(doc.querySelector('#results button').textContent, 'Preview /cards/product/another');
 });

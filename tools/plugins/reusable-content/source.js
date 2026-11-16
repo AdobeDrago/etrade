@@ -64,8 +64,10 @@ export function createDirectory(context, daFetch, daToken) {
 
   async function backend() {
     const current = await page('', true).catch(() => ({}));
-    if (current.items) return { modern: true, root: current };
-    return { modern: false, root: await page('', false) };
+    if (current.items?.length) return { modern: true, root: current };
+    const legacy = await page('', false).catch(() => ({}));
+    if (legacy.items?.length || !current.items) return { modern: false, root: legacy };
+    return { modern: true, root: current };
   }
 
   let connection;
