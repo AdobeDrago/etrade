@@ -27,6 +27,8 @@ npm i
 npm run lint
 ```
 
+Run `npm run check` for full lint and regression tests. `npm ci` installs shared pre-commit and commit-message hooks. See [the guardrail policy](docs/lint-guardrails.md) and [contribution workflow](CONTRIBUTING.md) for scalable CSS, block boundaries, Conventional Commits and PR preview requirements.
+
 ## Local development
 
 1. Create a new repository based on the `aem-boilerplate` template
@@ -297,7 +299,7 @@ Choose **Libraries → OneTrust · real SDK** in Advanced settings, or open:
 - [Split startup: asynchronous CMP, tracking after consent](https://demo-controller--etrade--AdobeDrago.aem.page/home?perf=onetrust-real&perf-phase=early&perf-work=none).
 - [EDS: CMP three seconds after page content, tracking after consent](https://demo-controller--etrade--AdobeDrago.aem.page/home?perf=onetrust-real&perf-phase=eds&perf-work=none).
 
-Both versions use the real `https://cdn.cookielaw.org/scripttemplates/otSDKStub.js`, with the public domain ID `01953914-53cc-7833-b8d6-c9c9d7301ff9` from the referenced integration. Optional page metadata `onetrust-domain-id` can select another published OneTrust domain ID, including a `-test` ID. The SDK is asynchronous in both versions, and the page never waits for its network requests or initialization. These comparisons remain restricted to the existing exact demo/local hosts and require explicit selection.
+Both versions use E*TRADE's published OneTrust SDK at `https://cdn2.etrade.net/1/1d/aempros/content/dam/onetrust/etpros/scripttemplates/otSDKStub.js`, with public domain ID `01953914-53cc-7833-b8d6-c9c9d7301ff9`, verified on `us.etrade.com/home`. Optional page metadata `onetrust-domain-id` can select another published OneTrust domain ID, including a `-test` ID; its configuration must be available through this SDK host. The SDK is asynchronous in both versions, and the page never waits for its network requests or initialization. These comparisons remain restricted to the existing exact demo/local hosts and require explicit selection. Independently of comparison mode, links authored with **Link Options → Link action → Open cookie preferences** (`@privacy-preferences`) need no destination URL and load this same real SDK on demand and open its preference center after initialization. The runtime turns this reserved token into a same-page control, so the action stays on the current page even if the SDK fails. The icon does not activate the action; update the existing **Your Privacy Choices** link in `/footer` to `@privacy-preferences`. Older `@action=privacy-preferences` links remain recognized and are converted into the same action-only control.
 
 `scripts/onetrust.js` registers `OptanonWrapper` and `OneTrustGroupsUpdated` before injection, preserves an existing wrapper, checks already-reported groups, and deduplicates SDK setup. It requires both exact category IDs `C0002` and `C0004`, matching the example integration; validate these against your tenant when adopting it elsewhere. Initialization and changes dispatch real `consent.update` events with `source: 'onetrust'`. The existing `consented.js` integration hook imports once after those categories are granted. It currently contains no analytics/ad vendors. Revocation dispatches `consented: false`; future tracking integrations must stop their ongoing work on that event. Previously executed code cannot be unloaded by removing consent.
 

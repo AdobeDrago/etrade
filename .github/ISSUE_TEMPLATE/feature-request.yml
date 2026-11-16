@@ -1,0 +1,41 @@
+name: Feature Request
+description: Request a new feature or significant change in application behavior.
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+type: feat
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form is for feature requests and updates, not bug reports. Please use the Bug Report template for those.
+  - type: textarea
+    id: what-feature
+    attributes:
+      label: What feature or functionality would you like to request?
+      description: Also tell us, what did you try that you were not able to accomplish or what workaround is used for this today?
+      placeholder: Tell us about your new feature or update.
+      value: "Acceptance Criteria, testing steps to validate success before handoff, and a detailed description of the new feature or update needed."
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Wich of these best describes the type of feature?
+      options:
+        - Unknown or Other
+        - Visual updates
+        - New block or widget
+        - Authoring helper
+        - Site functionality
+        - Integrations
+      default: 0
+    validations:
+      required: true
+  - type: upload
+    id: screenshots
+    attributes:
+      label: Upload screenshots
+      description: If applicable, add screenshots, sketches, videos or supporting documents to help explain your feature request.
+    validations:
+      required: false

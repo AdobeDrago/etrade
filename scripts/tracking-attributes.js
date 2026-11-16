@@ -3,6 +3,7 @@ export const CATEGORY_PARAM = '@tracking-category';
 export const DEFAULT_CATEGORY = 'C0004';
 
 export function trackingCategories(value) {
+  if (value === 'none' || (Array.isArray(value) && value.length === 0)) return [];
   const list = Array.isArray(value) ? value : String(value).split(',');
   const result = [...new Set(list.map((item) => String(item).trim()))];
   return result.length && result.every((item) => /^C\d{4,}$/.test(item)) ? result : null;
@@ -51,7 +52,7 @@ export function authorTrackingHref(href, { enabled, key, category = DEFAULT_CATE
   const hash = hashAt < 0 ? '' : clean.slice(hashAt);
   let separator = target.includes('?') ? '&' : '?';
   if (/[?&]$/.test(target)) separator = '';
-  const consent = required.join(',');
+  const consent = required.length ? required.join(',') : 'none';
   const categoryParam = consent === DEFAULT_CATEGORY ? '' : `&${CATEGORY_PARAM}=${encodeURIComponent(consent)}`;
   return `${target}${separator}${KEY_PARAM}=${encodeURIComponent(key)}${categoryParam}${hash}`;
 }

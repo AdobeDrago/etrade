@@ -5,7 +5,7 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { parseHTML } from 'linkedom';
 
-async function harness(body, loadSection, theme = '', realCMP = false) {
+async function harness(body, loadSection, theme = '', realCMP = false, cookieBanner = false) {
   const { document, window } = parseHTML(`<html data-block-review><head></head><body>${body}</body></html>`);
   window.location = new URL(`http://localhost:3000/home${realCMP ? '?perf=onetrust-real&consent=accept' : ''}`);
   window.hlx = { codeBasePath: '' };
@@ -14,9 +14,10 @@ async function harness(body, loadSection, theme = '', realCMP = false) {
     document, window, URL, URLSearchParams, sessionStorage: { getItem: () => null },
   });
   const noop = () => {};
+  const events = [];
   const helpers = {
     loadHeader: noop,
-    loadFooter: noop,
+    loadFooter: () => events.push('footer'),
     decorateIcons: noop,
     decorateSections: noop,
     decorateBlocks: noop,
@@ -44,6 +45,7 @@ async function harness(body, loadSection, theme = '', realCMP = false) {
     },
     './demo-host.js': { default: () => realCMP },
     './tracking.js': { default: noop, decorateTrackingLinks: noop },
+    './cookie-banner.js': { default: () => events.push('cookie-banner'), cookieBannerRequested: () => cookieBanner },
   };
   const source = await readFile(new URL('../scripts/scripts.js', import.meta.url), 'utf8');
   const themeModule = new vm.SourceTextModule(await readFile(new URL('../scripts/page-theme.js', import.meta.url), 'utf8'), { context });
@@ -77,6 +79,7 @@ async function harness(body, loadSection, theme = '', realCMP = false) {
     loadPage: module.namespace.loadPage,
     decorateMain: module.namespace.decorateMain,
     imports,
+    events,
   };
 }
 
@@ -141,4 +144,13 @@ test('real OneTrust mode never imports the dummy consent override, even with con
   assert.equal(page.document.body.classList.contains('appear'), true);
   assert.ok(page.imports.includes('./demo-performance.js'));
   assert.equal(page.imports.includes('./consent-check.js'), false);
+});
+
+test('the explicit cookie banner takes priority over simulated performance and consent', async () => {
+  const page = await harness('<header></header><main></main><footer></footer>', () => {}, '', true, true);
+  await page.loadPage();
+  assert.equal(page.document.body.classList.contains('appear'), true);
+  assert.equal(page.imports.includes('./demo-performance.js'), false);
+  assert.equal(page.imports.includes('./consent-check.js'), false);
+  assert.deepEqual(page.events, ['cookie-banner', 'footer']);
 });

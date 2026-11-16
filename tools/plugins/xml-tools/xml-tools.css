@@ -10,6 +10,7 @@
 }
 
 .xml-tools [hidden] {
+  /* stylelint-disable-next-line declaration-no-important -- Hidden controls must override component display rules. */
   display: none !important;
 }
 
@@ -131,7 +132,7 @@
   resize: vertical;
 }
 
-.xml-tools :is(#xml-input, #xml-output, #page-xml-output) {
+.xml-tools :is([id="xml-input"],[id="xml-output"],[id="page-xml-output"]) {
   font: 0.75rem/1.6 ui-monospace, monospace;
 }
 
@@ -168,7 +169,7 @@
   color: #fff;
 }
 
-.xml-tools :is(#import, #export-page, #download-page) {
+.xml-tools :is([id="import"],[id="export-page"],[id="download-page"]) {
   margin-top: 0.75rem;
 }
 
@@ -265,7 +266,7 @@
   font-size: 1.125rem;
 }
 
-.xml-tools #page-preview {
+.xml-tools [id="page-preview"] {
   width: 100%;
   height: 23.75rem;
   border: 1px solid #dedbe8;
@@ -273,15 +274,15 @@
   background: #fff;
 }
 
-.xml-tools :is(#page-xml-input, #page-html-output) {
+.xml-tools :is([id="page-xml-input"],[id="page-html-output"]) {
   font: 0.75rem/1.6 ui-monospace, monospace;
 }
 
-.xml-tools #import-page {
+.xml-tools [id="import-page"] {
   margin-top: 0.75rem;
 }
 
-.xml-tools #page-import-status.error {
+.xml-tools [id="page-import-status"].error {
   color: #a51e32;
 }
 

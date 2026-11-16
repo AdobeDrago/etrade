@@ -303,6 +303,35 @@ test('inline Disclosures tables keep their existing labels, numbers and footnote
   assert.equal(app.document.querySelector('sup:last-child').textContent, '8');
 });
 
+test('external and speedbump links open in a new tab, while E*TRADE links stay put', async () => {
+  const app = await harness(new Map(), '');
+  const links = {
+    finra: 'https://brokercheck.finra.org/',
+    bank: 'https://us.etrade.com/speedbump/securities?target=https://www.chase.com/',
+    sipc: 'http://www.sipc.org',
+    rel: 'https://www.nfa.futures.org/',
+    pricing: 'https://us.etrade.com/what-we-offer/pricing-and-rates',
+    root: 'https://etrade.com/',
+    preview: '/l/fdic',
+    hash: '#disclosure-1',
+    mail: 'mailto:help@etrade.com',
+  };
+  app.block.innerHTML = `<div><div>1</div><div><p>${Object.entries(links).map(([key, href]) => (
+    `<a data-key="${key}" href="${href}"${key === 'rel' ? ' rel="nofollow"' : ''}>${key}</a>`
+  )).join(' ')}</p></div></div>`;
+  await app.decorate(app.block);
+  const link = (key) => app.block.querySelector(`[data-key="${key}"]`);
+  ['finra', 'bank', 'sipc', 'rel'].forEach((key) => {
+    assert.equal(link(key).getAttribute('target'), '_blank', key);
+  });
+  assert.equal(link('finra').getAttribute('rel'), 'noopener noreferrer');
+  assert.equal(link('rel').getAttribute('rel'), 'nofollow noopener noreferrer');
+  ['pricing', 'root', 'preview', 'hash', 'mail'].forEach((key) => {
+    assert.equal(link(key).hasAttribute('target'), false, key);
+    assert.equal(link(key).hasAttribute('rel'), false, key);
+  });
+});
+
 test('legacy rendered documents still load without page transformations', async () => {
   const app = await harness(new Map([
     ['/homepage-disclosures.plain.html', '<div><div class="disclosures"><ol class="disclosures-items"><li id="disclosure-7">Legacy document</li></ol></div></div>'],
