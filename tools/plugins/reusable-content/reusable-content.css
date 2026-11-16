@@ -77,6 +77,14 @@
 .reusable-content .details { overflow-wrap: anywhere; }
 .reusable-content .details h2 { font-size: 1.25rem; }
 
+.reusable-content .card-image {
+  display: block;
+  max-width: 100%;
+  max-height: 12rem;
+  object-fit: contain;
+  border-radius: 0.375rem;
+}
+
 .reusable-content .fragment-preview:not([hidden]) {
   display: flex;
   flex-direction: column;

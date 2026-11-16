@@ -46,6 +46,7 @@ export default function mountPicker(doc, sdk, fetchCard = fetch) {
     selected = undefined;
     card = undefined;
     byId('card').hidden = true;
+    byId('card-image')?.remove();
     byId('fragment').hidden = true;
     byId('fragment-frame').removeAttribute('src');
     byId('status').textContent = 'Select a source to preview it.';
@@ -79,6 +80,17 @@ export default function mountPicker(doc, sdk, fetchCard = fetch) {
       byId('card-title').textContent = result.title;
       byId('card-block').textContent = result.block;
       byId('card-description').textContent = result.description;
+      if (result.image) {
+        const image = doc.createElement('img');
+        image.id = 'card-image';
+        image.className = 'card-image';
+        image.alt = result.image.alt;
+        image.decoding = 'async';
+        image.referrerPolicy = 'no-referrer';
+        image.addEventListener('error', () => image.remove(), { once: true });
+        image.src = result.image.src;
+        byId('card-description').before(image);
+      }
       byId('card').hidden = false;
       byId('status').textContent = path;
       updateActions();
