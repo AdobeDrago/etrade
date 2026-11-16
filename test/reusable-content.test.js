@@ -1,0 +1,146 @@
+/* eslint-env node */
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import test from 'node:test';
+import { setTimeout as delay } from 'node:timers/promises';
+import { parseHTML } from 'linkedom';
+import {
+  cardRecord, newCardBlock, appendCardRow, fragmentReference,
+} from '../tools/plugins/reusable-content/model.js';
+import mountPicker from '../tools/plugins/reusable-content/reusable-content.js';
+import { catalogFiles, createDirectory } from '../tools/plugins/reusable-content/source.js';
+
+const { document } = parseHTML('<html></html>');
+const record = cardRecord('/cards/product/featured', {
+  metadata: { schemaName: 'card-product' },
+  data: { id: 'featured', title: 'Featured <card>', description: 'Shared product' },
+});
+
+function parse(html) {
+  const el = document.createElement('template');
+  el.innerHTML = html;
+  return el.content;
+}
+
+test('a card opens in the block specified by its schema and inserts a shared link as the only cell', () => {
+  const [name, row] = parse(newCardBlock(document, record)).querySelectorAll('tr');
+  assert.equal(name.textContent, 'cards-product');
+  assert.equal(row.children.length, 1);
+  const link = row.querySelector('a');
+  assert.equal(link.getAttribute('href'), '/cards/product/featured');
+  assert.equal(link.textContent, 'Featured <card>');
+  assert.equal(row.querySelector('card'), null);
+});
+
+test('a row appends to the matching selected block while preserving the original block and guarding the write', () => {
+  const html = '<main><div><div data-block-index="2" class="cards-product featured"><div><div><h3>Keep me</h3></div><div>Rate settings</div></div></div></div></main>';
+  const snapshot = { html, editable: true, selection: { blockIndex: 2 } };
+  const next = appendCardRow(document, snapshot, record);
+  assert.deepEqual(next.expected, { html, blockIndex: 2 });
+  const block = parse(next.html).querySelector('.cards-product.featured');
+  assert.equal(block.children.length, 2);
+  assert.equal(block.firstElementChild.innerHTML, '<div><h3>Keep me</h3></div><div>Rate settings</div>');
+  assert.equal(block.lastElementChild.querySelector('a').getAttribute('href'), '/cards/product/featured');
+  assert.equal(appendCardRow(document, { ...snapshot, html: html.replace('cards-product', 'cards-account') }, record), null);
+  assert.equal(appendCardRow(document, { ...snapshot, editable: false }, record), null);
+});
+
+test('non-card records and unsafe card paths cannot generate insertable card entries', () => {
+  const data = { id: 'x', title: 'X' };
+  assert.throws(() => cardRecord('/cards/product/../private', { metadata: { schemaName: 'card-product' }, data }));
+  assert.throws(() => cardRecord('/cards/product/featured', { metadata: { schemaName: 'disclosure-set' }, data }));
+  assert.throws(() => cardRecord('/cards/product/featured', { metadata: { schemaName: 'card-product' }, data: { title: 'X' } }));
+});
+
+test('HTML fragments still insert a single shared preview reference', () => {
+  const html = fragmentReference(document, { org: 'adobedrago', repo: 'etrade' }, '/components/fragments/promo');
+  const link = parse(html).querySelector('a.fragment');
+  assert.equal(link.getAttribute('href'), 'https://main--etrade--adobedrago.aem.page/components/fragments/promo');
+});
+
+const context = { org: 'adobedrago', repo: 'etrade', view: 'edit' };
+
+function sourceList(url) {
+  const { pathname } = new URL(url);
+  const path = pathname.replace('/adobedrago/sites/etrade/source', '');
+  const entries = new Map([
+    ['/', ['cards/', 'components/']],
+    ['/cards/', ['product/']],
+    ['/cards/product/', ['featured.html', 'data.json']],
+    ['/components/', ['fragments/']],
+    ['/components/fragments/', ['offer.html']],
+  ]);
+  return Response.json(entries.get(path).map((name) => ({
+    name,
+    'content-type': name.endsWith('/') ? 'application/folder' : 'text/html',
+  })));
+}
+
+test('the catalog separates Structured Cards from HTML fragments and skips non-document files', async () => {
+  const list = createDirectory(context, sourceList);
+  const [cards, fragments] = await Promise.all([
+    catalogFiles(list, 'card'),
+    catalogFiles(list, 'fragment'),
+  ]);
+  assert.deepEqual(cards, ['/cards/product/featured']);
+  assert.deepEqual(fragments, ['/components/fragments/offer']);
+});
+
+async function waitUntil(predicate) {
+  const end = Date.now() + 2000;
+  while (!predicate()) {
+    assert.ok(Date.now() < end, 'Timed out waiting for the picker');
+    // eslint-disable-next-line no-await-in-loop -- The catalog and preview update asynchronously.
+    await delay(10);
+  }
+}
+
+test('selecting a card enables the correct action as the editor selection moves', async () => {
+  const html = await readFile(new URL('../tools/plugins/reusable-content/reusable-content.html', import.meta.url), 'utf8');
+  const { document: doc } = parseHTML(html);
+  const writes = [];
+  let update;
+  const sdk = {
+    context,
+    capabilities: { liveDocument: 1, sendHTMLReplace: 1 },
+    actions: {
+      daFetch: sourceList,
+      subscribeLiveDocument(callback) { update = callback; },
+      sendHTML(markup, options) {
+        writes.push({ markup, options });
+        return options ? { ok: false, error: 'stale' } : undefined;
+      },
+    },
+  };
+  function fetchCard(url) {
+    assert.equal(url, 'https://da-sc.adobeaem.workers.dev/preview/adobedrago/etrade/cards/product/featured');
+    return Response.json({
+      metadata: { schemaName: 'card-product' },
+      data: { id: 'featured', title: 'Featured', description: 'One shared card' },
+    });
+  }
+  await mountPicker(doc, sdk, fetchCard);
+  doc.querySelector('[data-kind="card"]').click();
+  await waitUntil(() => doc.querySelector('#results button'));
+  doc.querySelector('#results button').click();
+  await waitUntil(() => !doc.getElementById('card').hidden);
+  const append = doc.getElementById('append-card');
+  const create = doc.getElementById('create-card');
+  const current = '<main><div><div class="cards-product" data-block-index="1"><div><div>Existing card</div></div></div></div></main>';
+  update({ html: current, editable: true, selection: { blockIndex: 1 } });
+  assert.equal(append.disabled, false);
+  assert.equal(create.disabled, true);
+  append.click();
+  await waitUntil(() => doc.getElementById('status').textContent.includes('could not add'));
+  assert.equal(writes[0].options.replace, true);
+  assert.deepEqual(writes[0].options.expected, { html: current, blockIndex: 1 });
+  const inserted = parse(writes[0].markup).querySelector('a');
+  assert.equal(inserted.getAttribute('href'), '/cards/product/featured');
+
+  update({ html: current, editable: true, selection: { blockIndex: null } });
+  assert.equal(append.disabled, true);
+  assert.equal(create.disabled, false);
+  create.click();
+  assert.equal(writes[1].options, undefined);
+  assert.equal(parse(writes[1].markup).querySelector('tr').textContent, 'cards-product');
+});

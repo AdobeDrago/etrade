@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Reusable Content</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="./reusable-content.css">
+    <script type="module" src="./reusable-content.js"></script>
+  </head>
+  <body class="reusable-content">
+    <main class="picker">
+      <section id="sources" class="sources" aria-label="Content sources">
+        <div class="source-types" role="group" aria-label="Source type">
+          <button type="button" data-kind="fragment" aria-pressed="true" disabled>Fragments</button>
+          <button type="button" data-kind="card" aria-pressed="false" disabled>Structured Cards</button>
+        </div>
+        <label for="search">Search by path</label>
+        <input id="search" type="search" autocomplete="off" disabled>
+        <p id="catalog-status" role="status">Connecting to the DA editor…</p>
+        <button type="button" id="retry" hidden>Retry</button>
+        <ul id="results" class="results" aria-label="Matching sources"></ul>
+      </section>
+      <div class="divider" role="separator" tabindex="0" aria-label="Resize file list"
+           aria-controls="sources" aria-orientation="vertical" aria-valuemin="192"
+           aria-valuemax="400" aria-valuenow="224"></div>
+      <section class="details" aria-label="Source preview">
+        <p id="status" role="status">Select a source to preview it.</p>
+        <div id="fragment" class="fragment-preview" hidden>
+          <button type="button" id="insert-fragment" disabled>Insert fragment</button>
+          <iframe title="Fragment preview" id="fragment-frame" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+        <div id="card" hidden>
+          <h2 id="card-title"></h2>
+          <p id="card-block"></p>
+          <p id="card-description"></p>
+          <div class="card-actions">
+            <button type="button" id="append-card" disabled>Add row to selected block</button>
+            <button type="button" id="create-card" disabled>Create matching block</button>
+          </div>
+          <p id="placement"></p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
