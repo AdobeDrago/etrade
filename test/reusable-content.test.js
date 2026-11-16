@@ -143,7 +143,12 @@ test('selecting a card enables the correct action as the editor selection moves'
     assert.equal(url, 'https://da-sc.adobeaem.workers.dev/preview/adobedrago/etrade/cards/product/featured');
     return Response.json({
       metadata: { schemaName: 'card-product' },
-      data: { id: 'featured', title: 'Featured', description: 'One shared card' },
+      data: {
+        id: 'featured',
+        title: 'Featured',
+        description: 'One shared card',
+        image: { src: './media_featured.png', alt: 'A preview of the account dashboard' },
+      },
     });
   }
   await mountPicker(doc, sdk, fetchCard);
@@ -151,6 +156,12 @@ test('selecting a card enables the correct action as the editor selection moves'
   await waitUntil(() => doc.querySelector('#results button'));
   doc.querySelector('#results button').click();
   await waitUntil(() => !doc.getElementById('card').hidden);
+  const image = doc.querySelector('#card img');
+  assert.equal(image.getAttribute('src'), 'https://main--etrade--adobedrago.aem.page/cards/product/media_featured.png');
+  assert.equal(image.getAttribute('alt'), 'A preview of the account dashboard');
+  image.dispatchEvent(new window.Event('error'));
+  assert.equal(doc.querySelector('#card img'), null);
+  assert.equal(doc.getElementById('card').hidden, false);
   const append = doc.getElementById('append-card');
   const create = doc.getElementById('create-card');
   const current = '<main><div><div class="cards-product" data-block-index="2"><div><div>Existing card</div></div></div></div></main>';

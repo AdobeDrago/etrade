@@ -1,3 +1,4 @@
+import { cardURL } from '../../../scripts/card-body.js';
 import { cardRecord, siteContext, validPath } from './model.js';
 
 function directoryEntries(path, items) {
@@ -125,5 +126,15 @@ export async function previewCard(context, path, fetchCard, signal) {
   const url = `https://da-sc.adobeaem.workers.dev/preview/${org}/${repo}${path}`;
   const response = await fetchCard(url, { signal, credentials: 'omit' });
   if (!response.ok) throw new Error('Card preview is unavailable. Preview the source in DA and try again.');
-  return cardRecord(path, await response.json());
+  const payload = await response.json();
+  const record = cardRecord(path, payload);
+  const { image } = payload.data;
+  const src = cardURL(image?.src, `https://main--${repo}--${org}.aem.page${path}`, true);
+  if (src) {
+    record.image = {
+      src: src.href,
+      alt: image.decorative !== true && typeof image.alt === 'string' ? image.alt.trim() : '',
+    };
+  }
+  return record;
 }
