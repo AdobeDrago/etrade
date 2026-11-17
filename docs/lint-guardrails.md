@@ -34,6 +34,8 @@ Repository checks inspect tracked and unignored local files, or the Git index wi
 
 CI runs full lint/tests and commit-message checks for pushes and pull requests. PR titles must follow Conventional Commits, with a nonempty subject and a header of at most 100 characters. PR descriptions must include an HTTPS URL for the actual branch under `--etrade--AdobeDrago.aem.page`, with slash branches normalized to hostname form. This verifies the URL's structure, not remote availability or the visual result.
 
+Commit bodies allow unwrapped lines, including GitHub-generated squash summaries. The 100-character limit applies to the commit header and PR title.
+
 `test/git-hooks.test.js` exercises real hooks in a disposable repository, including invalid commit messages, filenames with spaces and partially staged CSS. Rule tests verify rejected and accepted input rather than matching configuration text.
 
 GitHub branch protection is configured outside the repository. Make the workflow's `build` job required before merging to protected branches. Hooks provide early feedback; required CI provides merge enforcement.
