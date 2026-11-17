@@ -29,7 +29,7 @@ main .widget-calculator .widget-calculator-heading {
 }
 
 main .widget-calculator .widget-calculator-heading h2 {
-  margin: 0 0 var(--space-8);
+  margin: 0 0 var(--space-10);
   color: var(--text-color);
   font-size: var(--font-size-28);
   line-height: calc(32 / 28);
@@ -37,10 +37,10 @@ main .widget-calculator .widget-calculator-heading h2 {
 }
 
 main .widget-calculator .widget-calculator-heading p {
-  margin: 0;
+  margin: 0 0 0.5687rem;
   color: var(--text-color);
   font-size: var(--font-size-16);
-  line-height: calc(22 / 16);
+  line-height: calc(20 / 16);
 }
 
 /* Section styling belongs to the block present in that section. */
@@ -61,7 +61,8 @@ body.homepage .widget-calculator-container:not([data-section-layout="authored"])
   }
 }
 
-main .section:not([data-section-layout="authored"]):has(> .widget-calculator-wrapper > .widget-calculator) {
+/* A dark hero in the same section owns the section surface, as on the live homepage. */
+main .section:not([data-section-layout="authored"], :has(> .hero-dark-wrapper)):has(> .widget-calculator-wrapper > .widget-calculator) {
   --text-color: var(--color-text-primary);
   --link-color: var(--color-link);
   --link-hover-color: var(--color-link-hover);

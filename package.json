@@ -6,10 +6,10 @@
   "scripts": {
     "demo:rates": "node test/dynamic-rates-server.mjs",
     "demo:xml-tools": "node test/xml-demo-server.mjs",
-    "lint": "npm run lint:js && npm run lint:css",
-    "lint:css": "stylelint \"blocks/**/*.css\" \"styles/*.css\"",
+    "lint": "npm run lint:js && npm run lint:css && npm run lint:project",
+    "lint:css": "stylelint \"blocks/**/*.css\" \"styles/**/*.css\" \"tools/**/*.css\" \"docs/**/*.css\" --max-warnings 0",
     "lint:fix": "npm run lint:js -- --fix && npm run lint:css -- --fix",
-    "lint:js": "eslint .",
+    "lint:js": "eslint . --ext .js,.mjs,.cjs --max-warnings 0 --report-unused-disable-directives",
     "test": "node --experimental-vm-modules --test test/*.test.js",
     "test:accordion": "node --experimental-vm-modules --test test/accordion-faq.test.js",
     "test:blocks": "node --experimental-vm-modules --test test/remaining-blocks.test.js",
@@ -25,7 +25,13 @@
     "test:rates": "node --experimental-vm-modules --test test/bank-rates.test.js test/card-rates.test.js",
     "test:sections": "node --experimental-vm-modules --test test/section-authoring.test.js test/page-layout.test.js test/page-loading.test.js",
     "test:tracking": "node --experimental-vm-modules --test test/tracking.test.js",
-    "test:xml-tools": "node --experimental-vm-modules --test test/xml-tools.test.js"
+    "test:xml-tools": "node --experimental-vm-modules --test test/xml-tools.test.js",
+    "lint:project": "node tools/lint/project-checks.mjs",
+    "lint:staged": "node tools/lint/project-checks.mjs --staged && lint-staged",
+    "commitlint": "commitlint",
+    "check:pr": "node tools/lint/pr-checks.mjs",
+    "check": "npm run lint && npm test",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -39,11 +45,20 @@
   "homepage": "https://github.com/adobe/aem-boilerplate#readme",
   "devDependencies": {
     "@babel/eslint-parser": "7.29.9",
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
     "eslint": "8.57.1",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.32.0",
+    "husky": "9.1.7",
     "linkedom": "^0.18.13",
+    "lint-staged": "17.6.0",
+    "postcss-selector-parser": "7.1.7",
+    "postcss-value-parser": "4.2.0",
     "stylelint": "17.15.0",
     "stylelint-config-standard": "40.0.0"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }

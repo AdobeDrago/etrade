@@ -1,5 +1,6 @@
 import { decorateIcons, getMetadata } from '../../scripts/aem.js';
 import bindPrivacyChoices from '../../scripts/privacy.js';
+import openExternalLinks from '../../scripts/external-links.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 const ROLES = new Set(['brand', 'contact', 'social', 'column']);
@@ -7,10 +8,8 @@ const ROLES = new Set(['brand', 'contact', 'social', 'column']);
 function cleanLinks(content) {
   content.querySelectorAll('a[href]').forEach((link) => {
     link.classList.remove('button', 'primary', 'secondary', 'accent');
-    if (link.getAttribute('target') === '_blank') {
-      link.rel = [...new Set([...link.relList, 'noopener', 'noreferrer'])].join(' ');
-    }
   });
+  openExternalLinks(content);
   content.querySelectorAll('.button-wrapper').forEach((paragraph) => {
     paragraph.classList.remove('button-wrapper');
   });

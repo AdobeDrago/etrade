@@ -3,17 +3,6 @@
   outline-offset: var(--focus-ring-offset);
 }
 
-/* Inline disclosure references are auto-linked after the footer is available. */
-.disclosures-reference a:any-link {
-  color: inherit;
-  text-decoration: underline;
-}
-
-.disclosures-reference a:focus-visible {
-  outline: var(--focus-ring-width) solid currentcolor;
-  outline-offset: var(--focus-ring-offset);
-}
-
 .disclosures {
   --text-color: var(--color-text-primary);
   --link-color: var(--color-link);

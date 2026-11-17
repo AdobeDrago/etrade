@@ -15,6 +15,13 @@ inline links and superscripts remain authored. Standalone link paragraphs become
 styled actions. Use stable disclosure IDs in `<sup>` when the page uses a disclosure
 set; the footer resolves their displayed numbers.
 
+The eyebrow uses the shared monospace family at 16px with 1px letter spacing.
+Images retain their authored proportions rather than cropping to a fixed ratio.
+Offer content stacks below the image until 992px, where its heading, terms and
+action share a row. Author the promotional headline as an H2/H3/H4, followed by
+a separate terms paragraph and standalone link; a single combined paragraph
+cannot receive distinct headline and terms styling.
+
 ## Shared style system
 
 This block consumes the shared color, typography, spacing, border, focus and applicable motion tokens. Narrow section cells and enlarged text reflow within the block. Authored Section Metadata takes precedence over legacy surrounding section styles; content, links and existing interactions are preserved. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.

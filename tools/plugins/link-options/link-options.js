@@ -11,7 +11,7 @@ async function init() {
     return;
   }
   if (window.parent === window) return;
-  // Read-only selection access. Native DA editing remains responsible for save and undo.
+  // DA owns selection, guarded block replacement, save and undo.
   // eslint-disable-next-line import/no-unresolved
   const { default: DA_SDK } = await import('https://da.live/nx/utils/sdk.js');
   let timer;

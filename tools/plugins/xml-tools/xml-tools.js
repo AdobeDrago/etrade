@@ -17,7 +17,7 @@ if (!standalone) {
   (async () => {
     try {
       // DA owns authentication and refresh; no credentials are stored by the plugin.
-      // eslint-disable-next-line import/no-unresolved, import/extensions
+      // eslint-disable-next-line import/no-unresolved
       const { default: sdk } = await import('https://da.live/nx/utils/sdk.js');
       controller.connect(await sdk);
     } catch {

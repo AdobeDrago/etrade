@@ -80,12 +80,13 @@
   }
 }
 
+/* The digit overflows its line box, matching the original's 96px number in a 52px/64px line. */
 .cards-numbered .cards-numbered-ordinal {
   margin: 0 0 0.5687rem;
   padding: var(--space-48) 0;
-  font-size: var(--font-size-48);
-  font-weight: var(--font-weight-semibold);
-  line-height: calc(52 / 48);
+  font-size: var(--font-size-96);
+  font-weight: var(--font-weight-regular);
+  line-height: calc(52 / 96);
   letter-spacing: var(--tracking-display);
 }
 
@@ -97,8 +98,7 @@
 
   .cards-numbered .cards-numbered-ordinal {
     padding: var(--space-60) 0;
-    font-size: var(--font-size-64);
-    line-height: 1;
+    line-height: calc(64 / 96);
   }
 }
 

@@ -11,6 +11,15 @@ Edge Delivery Services. Read a block first. Omissions are in the repo or known.
 - Scope CSS to `.blockname`; `-wrapper`/`-container` are section classes.
 - `fragment/fragment.js` is the only cross-block import. Otherwise use `/scripts/`.
 
+## Checks and commits
+
+- Use Node.js 24+ and `npm ci` to install development tools and Husky hooks. Verify the hook files exist and `git config --get core.hooksPath` returns `.husky/_` before committing.
+- `pre-commit` checks staged code; `commit-msg` validates the new message. Hooks do not revalidate existing commit history.
+- Commit messages and PR titles use Conventional Commits, e.g. `fix(privacy): open cookie preferences`. Scope is optional; the full header must fit within 100 characters.
+- Before pushing, run `npm run check` and `npm run commitlint -- --from <pr-base-ref> --to HEAD`. Use the actual PR base ref, e.g. `origin/develop`; recheck the full range after merging the base branch.
+- Do not bypass failing local hooks with `--no-verify` or `HUSKY=0`. Repair missing hooks or fix the reported issue.
+- CI also validates the PR title and branch preview URL. See [CONTRIBUTING.md](CONTRIBUTING.md) and [lint guardrails](docs/lint-guardrails.md) for the complete policy.
+
 ## Outdated
 - `fstab.yaml`, `helix-query.yaml`, `paths.json` are retired. Config lives at tools.aem.live.
 
