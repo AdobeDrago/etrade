@@ -1,4 +1,3 @@
-/* eslint-disable */
 /* global WebImporter */
 /**
  * Parser for widget-calculator. Custom interactive block (base "widget" is not

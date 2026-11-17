@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Privacy link action review</title>
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="/blocks/footer/footer.css">
+    <script type="module">
+      import bindPrivacyChoices from '/scripts/privacy.js';
+      bindPrivacyChoices(document);
+      document.body.classList.add('appear');
+    </script>
+  </head>
+  <body>
+    <main class="section">
+      <h1>Privacy link action review</h1>
+      <p>The first link has an explicit action and no icon. It has no destination and opens the actual E*TRADE OneTrust preference center on this page.</p>
+      <p><a href="@privacy-preferences">Manage cookie preferences</a></p>
+      <p>The second link has the privacy icon and no action. It opens the authored privacy page normally.</p>
+      <p><a href="https://www.morganstanley.com/privacy-pledge" target="_blank" rel="noopener noreferrer">Privacy information <span class="icon icon-privacy-options"><img src="/icons/privacy-options.svg" alt=""></span></a></p>
+      <p><a href="#privacy-preferences">Go to the example section</a></p>
+      <h2 id="privacy-preferences">Example section</h2>
+      <p>The section link uses a normal fragment and does not open OneTrust.</p>
+      <p><a href="/tools/plugins/link-options/link-options.html">Open Link Options</a></p>
+    </main>
+  </body>
+</html>

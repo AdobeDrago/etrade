@@ -1,5 +1,5 @@
-export const ONETRUST_SRC = 'https://cdn.cookielaw.org/scripttemplates/otSDKStub.js';
-// Public domain identifier from the referenced OneTrust integration, not an API credential.
+export const ONETRUST_SRC = 'https://cdn2.etrade.net/1/1d/aempros/content/dam/onetrust/etpros/scripttemplates/otSDKStub.js';
+// Public domain identifier verified on us.etrade.com/home, not an API credential.
 export const ONETRUST_DOMAIN_ID = '01953914-53cc-7833-b8d6-c9c9d7301ff9';
 export const ONETRUST_REQUIRED_GROUPS = ['C0002', 'C0004'];
 
@@ -12,7 +12,10 @@ function groups(value) {
 
 /** Real CMP integration. A downloaded SDK never implies consent or initialization. */
 export default function startOneTrust(doc = document, win = window, options = {}) {
-  if (win.etradeOneTrust) return win.etradeOneTrust;
+  if (win.etradeOneTrust) {
+    win.etradeOneTrust.subscribe(options.onChange);
+    return win.etradeOneTrust;
+  }
   const domainId = options.domainId
     ?? doc.querySelector('meta[name="onetrust-domain-id"]')?.content.trim()
     ?? ONETRUST_DOMAIN_ID;
@@ -33,6 +36,9 @@ export default function startOneTrust(doc = document, win = window, options = {}
   };
   let timer;
   let consentedPromise;
+  let preferencesRequested = false;
+  const subscribers = new Set();
+  if (options.onChange) subscribers.add(options.onChange);
 
   function status() {
     if (state.sdkStatus === 'invalid') return 'OneTrust configuration is invalid · tracking stays off';
@@ -57,15 +63,29 @@ export default function startOneTrust(doc = document, win = window, options = {}
       status: status(),
       requiredGroups: [...requiredGroups],
       activeGroups: [...state.activeGroups],
-      canOpenPreferences: state.initialized && typeof win.OneTrust?.ToggleInfoDisplay === 'function',
+      // Consent callbacks can precede the vendor UI; opening earlier loses the request.
+      canOpenPreferences: state.initialized && typeof win.OneTrust?.ToggleInfoDisplay === 'function'
+        && Boolean(doc.querySelector('#onetrust-pc-sdk, #onetrust-banner-sdk')),
     }),
     hasConsent: () => state.initialized && state.consented,
+    subscribe(onChange) {
+      if (typeof onChange === 'function') subscribers.add(onChange);
+      return () => subscribers.delete(onChange);
+    },
     openPreferences() {
-      if (controller.snapshot().canOpenPreferences) win.OneTrust.ToggleInfoDisplay();
+      if (controller.snapshot().canOpenPreferences) {
+        preferencesRequested = false;
+        win.OneTrust.ToggleInfoDisplay();
+      } else preferencesRequested = true;
     },
   };
   win.etradeOneTrust = controller;
-  const publish = () => options.onChange?.(controller.snapshot());
+  const publish = () => {
+    subscribers.forEach((onChange) => onChange(controller.snapshot()));
+    if (preferencesRequested && controller.snapshot().canOpenPreferences) {
+      controller.openPreferences();
+    }
+  };
   const notifyConsent = () => win.dispatchEvent(new win.CustomEvent('consent.update', {
     detail: {
       consented: controller.hasConsent(),

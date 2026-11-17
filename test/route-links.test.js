@@ -73,3 +73,29 @@ test('image and icon links keep their default content and destination', () => {
   assert.equal(document.querySelector('img').alt, 'Company');
   document.querySelectorAll('a').forEach((link) => assert.equal(link.getAttribute('href'), '/default'));
 });
+
+test('cookie preference actions ignore destination changes while retaining tracking', () => {
+  const { document } = parseHTML('<html><body><a>Cookie settings</a></body></html>');
+  const link = document.querySelector('a');
+  link.setAttribute('href', authorRouteHref('/privacy?@tracking=privacy&@action=privacy-preferences#default', rule));
+  decorateTrackingLinks(link, `${base}/brokerage`);
+  assert.equal(link.getAttribute('href'), '#');
+  assert.equal(link.dataset.linkAction, 'privacy-preferences');
+  assert.equal(link.dataset.trackingKey, 'privacy');
+  assert.equal(link.textContent, 'Cookie settings');
+  const clone = link.cloneNode(true);
+  decorateTrackingLinks(clone, `${base}/brokerage`);
+  assert.equal(clone.dataset.linkAction, 'privacy-preferences');
+});
+
+test('a cookie action keeps no fallback when an authored route offers another destination', () => {
+  ['mailto:help@example.com', 'tel:123'].forEach((href) => {
+    const { document } = parseHTML('<html><body><a>Cookie settings</a></body></html>');
+    const link = document.querySelector('a');
+    link.setAttribute('href', authorRouteHref('/privacy?@action=privacy-preferences#cookies', { ...rule, href }));
+    decorateTrackingLinks(link, `${base}/brokerage`);
+    assert.equal(link.getAttribute('href'), '#');
+    assert.equal(link.dataset.linkAction, 'privacy-preferences');
+    assert.equal(link.textContent, 'Cookie settings');
+  });
+});

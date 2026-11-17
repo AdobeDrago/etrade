@@ -2,7 +2,7 @@
   margin: 0;
   background: #f7f6fa;
   color: #242035;
-  font: 14px/1.5 Arial, sans-serif;
+  font: 0.875rem/1.5 Arial, sans-serif;
 }
 
 .link-options * {
@@ -18,40 +18,40 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 1rem;
   border-bottom: 1px solid #dedbe8;
-  padding: 20px 24px;
+  padding: 1.25rem 1.5rem;
   background: #fff;
 }
 
 .link-options h1 {
   margin: 0;
-  font-size: 22px;
+  font-size: 1.375rem;
 }
 
 .link-options .eyebrow {
-  margin: 0 0 4px;
+  margin: 0 0 0.25rem;
   color: #5627d8;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 700;
 }
 
 .link-options main {
   max-width: 640px;
   margin: auto;
-  padding: 24px;
+  padding: 1.5rem;
 }
 
 .link-options .hint {
-  margin: 8px 0 18px;
+  margin: 0.5rem 0 1.125rem;
   color: #625a73;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .link-options .status {
   border-left: 3px solid #5627d8;
   border-radius: 4px;
-  padding: 12px;
+  padding: 0.75rem;
   background: #eee8ff;
 }
 
@@ -68,15 +68,15 @@
 }
 
 .link-options legend {
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
   padding: 0;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 700;
 }
 
 .link-options label {
   display: block;
-  margin: 16px 0 6px;
+  margin: 1rem 0 0.375rem;
   font-weight: 700;
 }
 
@@ -85,7 +85,7 @@
   min-height: 44px;
   border: 1px solid #bcb5ce;
   border-radius: 6px;
-  padding: 10px 12px;
+  padding: 0.625rem 0.75rem;
   background: #fff;
   color: inherit;
   font: inherit;
@@ -95,7 +95,7 @@
   min-height: 44px;
   border: 1px solid #bcb5ce;
   border-radius: 6px;
-  padding: 10px 14px;
+  padding: 0.625rem 0.875rem;
   background: #fff;
   color: inherit;
   font: inherit;
@@ -136,21 +136,21 @@
 .link-options .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 24px 0 12px;
+  gap: 0.5rem;
+  margin: 1.5rem 0 0.75rem;
 }
 
 .link-options .tracking {
   border-block: 1px solid #dedbe8;
-  margin-top: 24px;
-  padding: 16px 0;
+  margin-top: 1.5rem;
+  padding: 1rem 0;
 }
 
 .link-options .switch {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 1.25rem;
   margin: 0;
   cursor: pointer;
 }
@@ -195,7 +195,7 @@
 }
 
 .link-options details {
-  margin-top: 18px;
+  margin-top: 1.125rem;
 }
 
 .link-options summary {
@@ -208,7 +208,7 @@
 .link-options input[readonly] {
   background: #eeeaf5;
   font-family: monospace;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 @media (forced-colors: active) {
@@ -224,27 +224,27 @@
 @media (width < 400px) {
   .link-options main,
   .link-options .toolbar {
-    padding: 16px;
+    padding: 1rem;
   }
 }
 
 .link-options .link-summary {
   border: 1px solid #dedbe8;
   border-radius: 8px;
-  margin-bottom: 28px;
-  padding: 20px;
+  margin-bottom: 1.75rem;
+  padding: 1.25rem;
   background: #fff;
 }
 
 .link-options .link-summary h2 {
-  margin: 0 0 16px;
-  font-size: 18px;
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
 }
 
 .link-options .link-summary dl {
   display: grid;
   grid-template-columns: 110px minmax(0, 1fr);
-  gap: 10px 16px;
+  gap: 0.625rem 1rem;
   margin: 0;
 }
 
@@ -264,21 +264,21 @@
 @media (width < 400px) {
   .link-options .link-summary dl {
     grid-template-columns: minmax(0, 1fr);
-    gap: 4px;
+    gap: 0.25rem;
   }
 
   .link-options .link-summary dd {
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
   }
 }
 
 .link-options .route-options {
   border-bottom: 1px solid #dedbe8;
-  padding: 20px 0;
+  padding: 1.25rem 0;
 }
 
 .link-options .route-preview {
-  padding: 12px;
+  padding: 0.75rem;
   border-radius: 6px;
   background: #eee8ff;
   overflow-wrap: anywhere;

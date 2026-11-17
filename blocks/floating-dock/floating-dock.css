@@ -11,7 +11,7 @@
   align-items: center;
   gap: var(--space-8);
   border-radius: var(--radius-medium) var(--radius-medium) 0 0;
-  padding: var(--space-8) var(--space-8) calc(var(--space-8) + env(safe-area-inset-bottom, 0px));
+  padding: var(--space-8) var(--space-8) calc(var(--space-8) + env(safe-area-inset-bottom, var(--space-0)));
   background: var(--color-surface-inverse);
   color: var(--color-text-inverse);
   font-family: var(--font-family-body);

@@ -3,6 +3,9 @@ import {
   trackingCategories, trackingParameters, validTrackingKey,
 } from '../../../scripts/tracking-attributes.js';
 import { authorRouteHref, cleanRouteHref, routeSettings } from '../../../scripts/route-links.js';
+import {
+  authorActionHref, cleanActionHref, linkAction, PRIVACY_ACTION, PRIVACY_ACTION_HREF,
+} from '../../../scripts/link-actions.js';
 
 function fail(field, message) {
   throw Object.assign(new Error(message), { field });
@@ -16,6 +19,10 @@ export function readSelectedLink(html) {
   }
   const [link] = links;
   const href = link.getAttribute('href');
+  let action = linkAction(href);
+  if (cleanActionHref(href) === href && link.dataset.linkAction === PRIVACY_ACTION) {
+    action = PRIVACY_ACTION;
+  }
   const tracking = trackingParameters(href);
   if (!tracking.enabled && link.hasAttribute('data-tracking-key')) {
     tracking.enabled = true;
@@ -23,9 +30,10 @@ export function readSelectedLink(html) {
     tracking.category = link.dataset.trackingCategory ?? DEFAULT_CATEGORY;
   }
   return {
-    href: cleanRouteHref(cleanTrackingHref(href)),
+    href: action ? '' : cleanActionHref(cleanRouteHref(cleanTrackingHref(href))),
     label: link.textContent.trim() || link.querySelector('img')?.alt || 'Image link',
     target: link.getAttribute('target') || '_self',
+    action,
     route: routeSettings(href),
     ...tracking,
   };
@@ -35,26 +43,35 @@ export function readSelectedLink(html) {
 export function linkSummary(options) {
   const categories = trackingCategories(options.category);
   const names = { C0002: 'Analytics', C0004: 'Advertising' };
+  let consent = 'Choose valid consent categories';
+  if (categories?.length === 0) consent = 'None';
+  else if (categories) consent = categories.map((id) => `${names[id] || 'Custom category'} (${id})`).join(' + ');
   let opening = 'Keep the opening behavior set in DA';
   if (options.target === '_blank') opening = 'Opens in a new tab or window';
   else if (options.target === '_self') opening = 'Opens in the same tab';
   else if (options.target) opening = `Opens in target “${options.target}”`;
+  if (options.action === PRIVACY_ACTION) opening = 'Opens OneTrust cookie preferences on this page';
   return {
     label: options.label || 'Load a selected link to see its wording',
-    destination: options.href.trim() || 'Add a destination below',
+    destination: options.action === PRIVACY_ACTION ? 'No destination — stays on this page' : options.href.trim() || 'Add a destination below',
     opening,
-    condition: options.route?.enabled
+    action: options.action === PRIVACY_ACTION ? 'Open cookie preferences (OneTrust)' : 'Normal link',
+    condition: options.action !== PRIVACY_ACTION && options.route?.enabled
       ? `Alternate wording and destination under ${options.route.paths || 'the paths below'}; default everywhere else`
       : 'Same wording and destination on every page',
     tracking: options.enabled ? `Reports clicks using “${options.key.trim() || 'add a tracking key'}”` : 'Link click tracking is off',
     consent: options.enabled
-      ? categories?.map((id) => `${names[id] || 'Custom category'} (${id})`).join(' + ') || 'Choose valid consent categories'
+      ? consent
       : 'No consent category added by this tool',
   };
 }
 
 export function composeLinkURL(options) {
-  const href = options.href.trim();
+  if (options.action && options.action !== PRIVACY_ACTION) {
+    fail('link-action', 'Choose a supported link action.');
+  }
+  const isAction = options.action === PRIVACY_ACTION;
+  const href = isAction ? PRIVACY_ACTION_HREF : cleanActionHref(options.href.trim());
   const hasControls = [...href]
     .some((char) => char.charCodeAt(0) < 32 || char.charCodeAt(0) === 127);
   if (!href || hasControls) fail('url', 'Enter a valid destination URL.');
@@ -74,9 +91,9 @@ export function composeLinkURL(options) {
     fail('custom-category', 'Use consent category IDs such as C0004 or C0002,C0004.');
   }
   try {
-    return authorRouteHref(authorTrackingHref(href, {
+    return authorActionHref(authorRouteHref(authorTrackingHref(href, {
       enabled: options.enabled, key, category: required || DEFAULT_CATEGORY,
-    }), options.route);
+    }), isAction ? null : options.route), options.action);
   } catch (error) {
     const field = { label: 'route-label', href: 'route-url' }[error.field] || 'route-paths';
     throw Object.assign(error, { field });

@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Site onboarding | E*TRADE</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="workspace-tour.css">
+  <script src="workspace-tour.js" type="module"></script>
+</head>
+<body class="workspace-tour">
+  <header class="tour-header">
+    <div class="tour-header-inner">
+      <img src="../../../icons/etrade-logo-dark.svg" width="217" height="54" alt="E*TRADE from Morgan Stanley">
+      <h1>Site onboarding</h1>
+    </div>
+  </header>
+  <main class="tour-shell">
+    <section class="tour-overview" id="tour-overview" aria-labelledby="tour-overview-title">
+      <div class="tour-intro">
+        <h2 id="tour-overview-title">Explore the E*TRADE site</h2>
+        <p>See what the site can do, try its demos, and learn how to update and release content in Adobe Document Authoring.</p>
+        <a href="../../../docs/site-handoff.html" target="_blank" rel="noopener">Open the site handoff guide</a>
+      </div>
+      <figure class="tour-example">
+        <img src="../../../docs/images/handoff/home.jpg" width="1265" height="712" alt="E*TRADE Home preview showing dark navigation above the campaign hero">
+        <figcaption>E*TRADE Home in preview</figcaption>
+      </figure>
+      <div class="tour-chapters" id="tour-chapters" hidden>
+        <h3>Choose a topic</h3>
+        <ul class="tour-chapter-list">
+          <li class="tour-chapter" data-tour-chapter="site">
+            <h4 id="tour-title-site">Site experience</h4>
+            <p>Page patterns, navigation, blocks, and the design system.</p>
+            <div class="tour-actions">
+              <button class="tour-button tour-primary" id="tour-start-site" type="button" aria-describedby="tour-title-site" data-tour-start>Start topic</button>
+              <button class="tour-button tour-secondary" type="button" aria-describedby="tour-title-site" data-tour-restart hidden>Start over</button>
+            </div>
+          </li>
+          <li class="tour-chapter" data-tour-chapter="data">
+            <h4 id="tour-title-data">Data &amp; privacy</h4>
+            <p>Offer calculator, bank rates, market data, and consent-aware tracking.</p>
+            <div class="tour-actions">
+              <button class="tour-button tour-primary" id="tour-start-data" type="button" aria-describedby="tour-title-data" data-tour-start>Start topic</button>
+              <button class="tour-button tour-secondary" type="button" aria-describedby="tour-title-data" data-tour-restart hidden>Start over</button>
+            </div>
+          </li>
+          <li class="tour-chapter" data-tour-chapter="tools">
+            <h4 id="tour-title-tools">Workspace tools &amp; demos</h4>
+            <p>Block Library, DA extensions, content operations, and performance comparisons.</p>
+            <div class="tour-actions">
+              <button class="tour-button tour-primary" id="tour-start-tools" type="button" aria-describedby="tour-title-tools" data-tour-start>Start topic</button>
+              <button class="tour-button tour-secondary" type="button" aria-describedby="tour-title-tools" data-tour-restart hidden>Start over</button>
+            </div>
+          </li>
+          <li class="tour-chapter" data-tour-chapter="authoring">
+            <h4 id="tour-title-authoring">Authoring &amp; release</h4>
+            <p>Draft a page, edit its content, and verify the published result.</p>
+            <div class="tour-actions">
+              <button class="tour-button tour-primary" id="tour-start-authoring" type="button" aria-describedby="tour-title-authoring" data-tour-start>Start topic</button>
+              <button class="tour-button tour-secondary" id="tour-restart-authoring" type="button" aria-describedby="tour-title-authoring" data-tour-restart hidden>Start over</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="tour-step-frame" id="tour-step-frame">
+      <div class="tour-progress" id="tour-progress-panel" hidden>
+        <span class="tour-progress-chapter" id="tour-progress-chapter"></span>
+        <label for="tour-progress" id="tour-count"></label>
+        <progress id="tour-progress" aria-labelledby="tour-progress-chapter tour-count"></progress>
+      </div>
+
+      <section class="tour-step" id="tour-page-patterns" data-tour-step="site" aria-labelledby="tour-page-patterns-title">
+        <h2 id="tour-page-patterns-title" tabindex="-1">Explore the page patterns</h2>
+        <p>Home and Planning use Hero Dark for campaign and split layouts. Platforms uses Hero for copy over artwork. Hero Light gives Our Accounts a text-led introduction, while Hero Product supports product details and an offer on Brokerage. Welcome Hero pairs a campaign with a login panel.</p>
+        <p class="tour-worked-example"><strong>Example</strong> Compare the hero on <a href="https://demo--etrade--adobedrago.aem.page/home" target="_blank" rel="noopener">Home</a> with the split layout on <a href="https://demo--etrade--adobedrago.aem.page/why-etrade" target="_blank" rel="noopener">Why E*TRADE</a>. Both use Hero Dark with different layouts.</p>
+        <a href="../../../docs/site-handoff.html#templates" target="_blank" rel="noopener">See the page patterns</a>
+      </section>
+
+      <section class="tour-step" id="tour-navigation" data-tour-step="site" aria-labelledby="tour-navigation-title">
+        <h2 id="tour-navigation-title" tabindex="-1">Navigation, search, and account shortcuts</h2>
+        <p>Header and Footer load shared navigation. The header supplies desktop menus, a mobile drawer, and a search handoff. Floating Dock provides public offer, login, and account shortcuts.</p>
+        <p class="tour-worked-example"><strong>Example</strong> On <a href="https://demo--etrade--adobedrago.aem.page/home/welcome-back" target="_blank" rel="noopener">Welcome Back</a>, compare the desktop and phone layouts. The demo login panel hands off to the configured E*TRADE login destination. Authentication happens at that destination.</p>
+        <a href="../../../docs/site-handoff.html#custom-blocks" target="_blank" rel="noopener">Review the navigation and login boundaries</a>
+      </section>
+
+      <section class="tour-step" id="tour-cards" data-tour-step="site" aria-labelledby="tour-cards-title">
+        <h2 id="tour-cards-title" tabindex="-1">Compare the card families</h2>
+        <p>Cards, Cards Article, and Cards Platform present general content, articles, and platforms. Cards Account, Cards Product, and Cards Pricing present accounts, products, and fees. Cards Icon, Cards Award, and Cards Numbered cover tools, recognition, and ordered reasons.</p>
+        <p class="tour-worked-example"><strong>Example</strong> On Why E*TRADE, look for Cards Article (Promo) with campaign artwork. Compare it with Cards Pricing, where the amount leads and the fee details sit underneath.</p>
+        <a href="../../../docs/site-handoff.html#block-catalog" target="_blank" rel="noopener">Browse the full 32-block catalog</a>
+      </section>
+
+      <section class="tour-step" id="tour-interactions" data-tour-step="site" aria-labelledby="tour-interactions-title">
+        <h2 id="tour-interactions-title" tabindex="-1">Explore interactive and layout blocks</h2>
+        <p>Carousel Story groups customer stories, Tabs Accounts switches account categories, and Accordion FAQ reveals answers. Columns and Columns Feature pair related content. Banner Offer presents campaign actions, and Separator connects adjacent section surfaces.</p>
+        <p class="tour-worked-example"><strong>Example</strong> In Carousel Story on Why E*TRADE, use the previous and next controls to move between stories. In Tabs Accounts, switch categories to see each category’s own account list.</p>
+        <a href="../../../docs/site-handoff.html#block-selection" target="_blank" rel="noopener">Match a component to its content</a>
+      </section>
+
+      <section class="tour-step" id="tour-design-system" data-tour-step="site" aria-labelledby="tour-design-system-title">
+        <h2 id="tour-design-system-title" tabindex="-1">Try the design system</h2>
+        <p>Purple and Charcoal use shared colors, typography, spacing, card styles, and actions. Page family controls the site treatment. A section can set its own light or dark scheme, container width, grid, and spacing.</p>
+        <p class="tour-worked-example"><strong>Example</strong> In the <a href="../../style-system/style-system.html" target="_blank" rel="noopener">style showroom</a>, switch Page family from Purple to Charcoal, then set a dark Section scheme and two Blocks per row. Narrow the window to see how the grid adapts.</p>
+        <a href="../../../docs/site-handoff.html#design-system" target="_blank" rel="noopener">Review the design families</a>
+      </section>
+
+      <section class="tour-step" id="tour-calculator" data-tour-step="data" aria-labelledby="tour-calculator-title">
+        <h2 id="tour-calculator-title" tabindex="-1">Try the funding calculator</h2>
+        <p>Widget Calculator turns authored funding and cash-credit tiers into an interactive brokerage offer. It calculates from the configured tiers in the browser. Promo code, eligibility text, links, and disclosures come from the page.</p>
+        <p class="tour-worked-example"><strong>Example</strong> On <a href="https://demo--etrade--adobedrago.aem.page/home" target="_blank" rel="noopener">Home</a>, choose the highest funding tier using the desktop slider. Switch to a phone width and check that the dropdown shows the same open-ended range and credit.</p>
+        <a href="../../../docs/site-handoff.html#block-widget-calculator" target="_blank" rel="noopener">See the calculator controls and tier format</a>
+      </section>
+
+      <section class="tour-step" id="tour-bank-rates" data-tour-step="data" aria-labelledby="tour-bank-rates-title">
+        <h2 id="tour-bank-rates-title" tabindex="-1">See how bank rates resolve</h2>
+        <p>Supported cards, account tabs, and FAQs can pull selected savings, checking, or CD rates. A rate binding can use the approved service, a manual value, or a manual override with service lookup when the override is empty. The page supplies the units and terms.</p>
+        <p class="tour-worked-example"><strong>Example</strong> On a demo page with a balance-based savings rate, use <strong>Demo controls → Page tools</strong> to try two test balances. Check the rate result and then restore the authored balance. The override is local to the demo.</p>
+        <a href="../../../docs/site-handoff.html#rates-data" target="_blank" rel="noopener">Review rate modes, tiers, and fallbacks</a>
+      </section>
+
+      <section class="tour-step" id="tour-market-data" data-tour-step="data" aria-labelledby="tour-market-data-title">
+        <h2 id="tour-market-data-title" tabindex="-1">Explore the market data blocks</h2>
+        <p>Market Ticker shows a row of quotes. Market Overview adds index charts, symbol search, and recent searches. Market Top Five shows selectable stock, mutual fund, and ETF quotes with charts. The demo uses labeled samples. Live mode requires a working service and shows unavailable data if that service fails.</p>
+        <p class="tour-worked-example"><strong>Example</strong> On <a href="https://demo--etrade--adobedrago.aem.page/home/welcome-back" target="_blank" rel="noopener">Welcome Back</a>, switch Top Five from stocks to ETFs. Check that the symbols, charts, and disclaimer change together and that sample data is labeled.</p>
+        <a href="../../../docs/site-handoff.html#block-market-top-five" target="_blank" rel="noopener">See the market selectors and disclosures</a>
+      </section>
+
+      <section class="tour-step" id="tour-privacy-tracking" data-tour-step="data" aria-labelledby="tour-privacy-tracking-title">
+        <h2 id="tour-privacy-tracking-title" tabindex="-1">Review privacy and link tracking</h2>
+        <p>The footer’s Your Privacy Choices action opens OneTrust preferences where the SDK is configured. The demo cookie banner can be reviewed on preview with <code>?cookiebanner=true</code>. Authored tracking events wait for their required consent categories. Production delivery requires a connected sender.</p>
+        <p class="tour-worked-example"><strong>Example</strong> In <strong>Demo controls → Tracking</strong>, use a sample click to compare a pending event with an event eligible to send after simulated consent. Review actual page clicks in their separate queue.</p>
+        <a href="../../../docs/site-handoff.html#rates-data" target="_blank" rel="noopener">Review consent and analytics behavior</a>
+      </section>
+
+      <section class="tour-step" id="tour-library" data-tour-step="tools" aria-labelledby="tour-library-title">
+        <h2 id="tour-library-title" tabindex="-1">Find blocks and reusable content</h2>
+        <p>The Block Library pilot has six Hero Dark and Cards Article examples. Library Brief and Library Metadata (Guide) support guidance in library previews. The Widget loader gives developers a separate entry point for implemented widget assets.</p>
+        <p class="tour-worked-example"><strong>Example</strong> Compare Hero Dark variants in the <a href="https://demo--etrade--adobedrago.aem.page/library/blocks/hero-dark" target="_blank" rel="noopener">library preview</a>. In DA, the Reusable Content extension uses Adobe’s Fragment Picker to insert a shared reference, so a later source update can reach every page using it.</p>
+        <a href="../../../docs/site-handoff.html#block-authoring" target="_blank" rel="noopener">See the library pilot and block examples</a>
+      </section>
+
+      <section class="tour-step" id="tour-link-options" data-tour-step="tools" aria-labelledby="tour-link-options-title">
+        <h2 id="tour-link-options-title" tabindex="-1">Inspect links with Link Options</h2>
+        <p>Link Options reads a selected link or a pasted destination. It can set a tracking key and consent categories, configure a path-specific label and destination, or turn a link into a cookie preferences action. Supported Canvas selections can be updated directly. Copy URL also works for manual editing.</p>
+        <p class="tour-worked-example"><strong>Example</strong> In <a href="../link-options/link-options.html?demo=1" target="_blank" rel="noopener">the Link Options demo</a>, enable a rule for <code>/brokerage</code>. Compare the result for <code>/brokerage/learn</code> with the default link on <code>/home</code>.</p>
+        <a href="../../../docs/site-handoff.html#authoring-tools" target="_blank" rel="noopener">Review link actions and route rules</a>
+      </section>
+
+      <section class="tour-step" id="tour-disclosure-manager" data-tour-step="tools" aria-labelledby="tour-disclosure-manager-title">
+        <h2 id="tour-disclosure-manager-title" tabindex="-1">Review and reorder disclosures</h2>
+        <p>Disclosure Manager loads the page’s ID-based set, audits references in saved content, previews the legal footer, and can insert a reference at the cursor. Reordering changes the display numbers while preserving each disclosure’s stable ID.</p>
+        <p class="tour-worked-example"><strong>Example</strong> Open the <a href="../disclosure-manager/disclosure-manager.html?demo=1" target="_blank" rel="noopener">Disclosure Manager demo</a> and move a disclosure up. Compare the new footer numbers with the stable IDs in the disclosure list.</p>
+        <a href="../../../docs/site-handoff.html#disclosures" target="_blank" rel="noopener">Review disclosure sets, audit, and insertion</a>
+      </section>
+
+      <section class="tour-step" id="tour-import-export" data-tour-step="tools" aria-labelledby="tour-import-export-title">
+        <h2 id="tour-import-export-title" tabindex="-1">Move content with Import &amp; Export</h2>
+        <p>Import &amp; Export can download saved DA source as page XML and review supported XML or XHTML before import. The default creates a new page. Replacing the current page uses a comparison and confirmation. An advanced demo imports sample product XML into Adobe Structured Content and exports it back to XML.</p>
+        <p class="tour-worked-example"><strong>Example</strong> In the <a href="../xml-tools/xml-tools.html?demo=1" target="_blank" rel="noopener">Import &amp; Export demo</a>, choose <strong>Try page sample</strong>, review its sections and metadata, and download the resulting DA HTML.</p>
+        <a href="../../../docs/site-handoff.html#authoring-tools" target="_blank" rel="noopener">See the import formats and review workflow</a>
+      </section>
+
+      <section class="tour-step" id="tour-assistant-bulk" data-tour-step="tools" aria-labelledby="tour-assistant-bulk-title">
+        <h2 id="tour-assistant-bulk-title" tabindex="-1">Use DA’s assistant and bulk operations</h2>
+        <p>Where enabled, Adobe’s workspace assistant can make scoped copy or structure edits. Bulk operations can preview, publish, or version a list of saved pages and dependencies. Review a representative draft before applying the same change across pages.</p>
+        <p class="tour-worked-example"><strong>Example</strong> Ask the assistant to replace only the second Cards Article title with supplied copy and preserve its image, link, and tracking settings. Review the change, then use Bulk Preview on the affected drafts.</p>
+        <ul class="tour-references">
+          <li><a href="../../../docs/site-handoff.html#chat-content" target="_blank" rel="noopener">See assistant examples</a></li>
+          <li><a href="../../../docs/site-handoff.html#template-ops" target="_blank" rel="noopener">Review bulk operations</a></li>
+        </ul>
+      </section>
+
+      <section class="tour-step" id="tour-demo-controls" data-tour-step="tools" aria-labelledby="tour-demo-controls-title">
+        <h2 id="tour-demo-controls-title" tabindex="-1">Compare page loading in Demo controls</h2>
+        <p>Demo controls offers Page tools for finding features and testing balances, Performance for comparing loading strategies, and Tracking for inspecting queues. Performance compares the same captured tag weights with different loading and consent strategies. The measurements describe the demo run.</p>
+        <p class="tour-worked-example"><strong>Example</strong> On <a href="https://demo-controller--etrade--adobedrago.aem.page/home" target="_blank" rel="noopener">the performance demo</a>, save a Traditional run, then switch to EDS. Compare the loading sequence, LCP, and transferred bytes. Real OneTrust is a separate setting.</p>
+        <a href="../../../docs/site-handoff.html#custom-blocks" target="_blank" rel="noopener">Review demo controls and measurement limits</a>
+      </section>
+
+      <section class="tour-step" id="tour-workspace" data-tour-step="authoring" aria-labelledby="tour-workspace-title">
+        <h2 id="tour-workspace-title" tabindex="-1">Get oriented in DA</h2>
+        <p>Open the <a href="https://da.live/#/adobedrago/etrade" target="_blank" rel="noopener">E*TRADE content workspace</a> to browse pages, shared fragments, and sheets. In the editor, use <strong>Layout</strong> for a visual view, <strong>Content</strong> to see the source structure, or <strong>Split</strong> to see both.</p>
+        <p>DA stores content. GitHub supplies the code that renders it. An editor ref such as <code>?ref=demo</code> selects code while using the same DA content across branches.</p>
+        <p class="tour-worked-example"><strong>Example</strong> Open Home with <code>?ref=demo</code> and switch to Split. Find the Hero Dark table in the content pane and compare its headline with the rendered hero.</p>
+        <a href="../../../docs/site-handoff.html#environments" target="_blank" rel="noopener">Read about environments and ownership</a>
+      </section>
+
+      <section class="tour-step" id="tour-draft" data-tour-step="authoring" aria-labelledby="tour-draft-title">
+        <h2 id="tour-draft-title" tabindex="-1">Start with a reviewed page</h2>
+        <p>For practice, copy the closest reviewed page to an agreed, unused draft path. For a routine edit, open the existing page and locate the section or block you own.</p>
+        <p>Review inherited copy, assets, destinations, metadata, and legal dependencies. Confirm which pieces are shared before editing them.</p>
+        <p class="tour-worked-example"><strong>Example</strong> Copy <code>/planning</code> to an unused draft path such as <code>/drafts/planning-review</code>. Review the inherited title, social image, and offer links before adding your approved copy.</p>
+        <a href="../../../docs/site-handoff.html#new-page-checklist" target="_blank" rel="noopener">Open the new-page checklist</a>
+      </section>
+
+      <section class="tour-step" id="tour-blocks" data-tour-step="authoring" aria-labelledby="tour-blocks-title">
+        <h2 id="tour-blocks-title" tabindex="-1">Edit a block table</h2>
+        <p>The merged first row names the block. Use the catalog to find its exact name, supported options, and required cells. A Cards Article table, for example, uses one complete row per card.</p>
+        <p>Keep one page H1, give informative images meaningful alt text, and put a CTA in its own linked paragraph where the block expects an action.</p>
+        <p class="tour-worked-example"><strong>Example</strong> In a Cards Article row, put the image and its alt text in the left cell. In the right cell, add “Plan for retirement” as an H3, supporting copy, and a “Read the guide” link in its own paragraph.</p>
+        <a href="../../../docs/site-handoff.html#block-catalog" target="_blank" rel="noopener">Find a block in the catalog</a>
+      </section>
+
+      <section class="tour-step" id="tour-metadata" data-tour-step="authoring" aria-labelledby="tour-metadata-title">
+        <h2 id="tour-metadata-title" tabindex="-1">Set page and section metadata</h2>
+        <p>Use the page <strong>Metadata</strong> table for Title, Description, Image, Theme, and Disclosures. Put <strong>Section Metadata</strong> in the section it configures.</p>
+        <p><strong>Theme</strong> selects Purple or Charcoal. Section <strong>Color Scheme</strong> selects light or dark. <strong>Grid</strong> arranges whole blocks inside a section.</p>
+        <p class="tour-worked-example"><strong>Example</strong> Set <code>Theme: Purple</code> in page Metadata. To place two blocks side by side in a dark section at desktop widths, add <code>Color Scheme: dark</code> and <code>Grid: 2</code> to that section’s Section Metadata.</p>
+        <a href="../../../docs/site-handoff.html#metadata-reference" target="_blank" rel="noopener">Look up metadata fields and values</a>
+      </section>
+
+      <section class="tour-step" id="tour-shared" data-tour-step="authoring" aria-labelledby="tour-shared-title">
+        <h2 id="tour-shared-title" tabindex="-1">Check shared content and disclosures</h2>
+        <p>Navigation, footer, and reusable fragments can feed multiple pages. Edit the shared source when the change should reach its consumers, then review those pages.</p>
+        <p>For ID-based disclosures, select the approved set in page metadata. Superscript the stable ID after the claim, such as <code>offer</code>. Use Disclosure Manager when available and verify every marker against the rendered footer.</p>
+        <p class="tour-worked-example"><strong>Example</strong> If the selected set contains <code>offer</code>, put that ID in superscript after the approved claim. In preview, follow the displayed number to <code>#disclosure-offer</code> and confirm that it opens the matching terms.</p>
+        <a href="../../../docs/site-handoff.html#disclosures" target="_blank" rel="noopener">Review fragments and disclosure references</a>
+      </section>
+
+      <section class="tour-step" id="tour-integrations" data-tour-step="authoring" aria-labelledby="tour-integrations-title">
+        <h2 id="tour-integrations-title" tabindex="-1">Preserve link and rate settings</h2>
+        <p>Keep campaign parameters and tracking markers when editing destinations. If Link Options is enabled, open it from <strong>Outline → Extensions</strong> to inspect a selected link or prepare a URL.</p>
+        <p>For a dynamic rate, keep the marker, such as <code>{{rate:base}}</code>, and its separate <strong>Rate settings</strong> cell in the same row. Review the rendered rate, units, and approved terms together.</p>
+        <p class="tour-worked-example"><strong>Example</strong> In a savings card, pair <code>{{rate:base}}% APY</code> with <code>Name: base</code> in the Rate settings cell. If you relabel its CTA, preserve destination parameters such as <code>icid=campaign</code> and <code>@tracking=savings-card</code>.</p>
+        <ul class="tour-references">
+          <li><a href="../../../docs/site-handoff.html#authoring-tools" target="_blank" rel="noopener">Review authoring tools</a></li>
+          <li><a href="../../../docs/site-handoff.html#rates-data" target="_blank" rel="noopener">Look up rate and data settings</a></li>
+        </ul>
+      </section>
+
+      <section class="tour-step" id="tour-preview" data-tour-step="authoring" aria-labelledby="tour-preview-title">
+        <h2 id="tour-preview-title" tabindex="-1">Preview and review</h2>
+        <p>Save the page and any changed dependencies. In Experience Workspace, open <strong>Send → Preview</strong> and choose <strong>Update</strong>. Check the resulting <code>.aem.page</code> URL on the intended code branch.</p>
+        <p>Review phone and desktop layouts, keyboard access, headings, image crops and alt text, final link destinations, rate state, and the complete legal footer.</p>
+        <p class="tour-worked-example"><strong>Example</strong> In the Planning draft preview, check the hero image crop at phone width. Then press Tab to reach the primary action and Enter to confirm that it opens the intended page.</p>
+        <a href="../../../docs/site-handoff.html#publish" target="_blank" rel="noopener">See the preview and release workflow</a>
+      </section>
+
+      <section class="tour-step" id="tour-publish" data-tour-step="authoring" aria-labelledby="tour-publish-title">
+        <h2 id="tour-publish-title" tabindex="-1">Publish and verify</h2>
+        <p>After the required approvals and code deployment, publish changed shared fragments, disclosure sources, and target pages before the pages or navigation that reference them.</p>
+        <p>Use <strong>Preview &amp; Publish → Update</strong> for the page. Open its live URL, follow a real entry link, and verify the approved content and disclosures.</p>
+        <p class="tour-worked-example"><strong>Example</strong> If an approved Planning update changes a legal fragment, publish that fragment first, then its disclosure set if it changed, and finally <code>/planning</code>. Open Planning from the live navigation and follow the disclosure marker to the updated terms.</p>
+        <a href="../../../docs/site-handoff.html#publish" target="_blank" rel="noopener">Review release and dependency checks</a>
+      </section>
+
+      <div class="tour-footer" id="tour-controls" hidden>
+        <button class="tour-button tour-exit" id="tour-exit" type="button">All topics</button>
+        <div class="tour-actions">
+          <button class="tour-button tour-secondary" id="tour-back" type="button">Back</button>
+          <button class="tour-button tour-primary" id="tour-next" type="button">Next</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
