@@ -32,7 +32,26 @@ jobs:
       env:
         COMMIT_BASE: ${{ github.event.pull_request.base.sha }}
         COMMIT_HEAD: ${{ github.event.pull_request.head.sha }}
-      run: npm run commitlint -- --from "$COMMIT_BASE" --to "$COMMIT_HEAD"
+        BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+        HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+      shell: bash
+      run: |
+        if [[ "$BASE_BRANCH" != main || "$HEAD_BRANCH" != develop ]]; then
+          npm run commitlint -- --from "$COMMIT_BASE" --to "$COMMIT_HEAD"
+          exit
+        fi
+
+        # The first develop release under commitlint includes four legacy messages.
+        git log -z --format='%H%x00%B' --end-of-options "$COMMIT_BASE..$COMMIT_HEAD" |
+          while IFS= read -r -d '' commit && IFS= read -r -d '' message; do
+            case "$commit" in
+              d6ac61b9c1f0877b65307fff1c6e5af595392f22|\
+              69f4f15d0989b07ef8925e0e77c13311932e8a39|\
+              9dda71e6a5ad7e5ea5b3159f22967e29d5ef5971|\
+              da5a29e8652df4bb79ea56851126defc3efc7023) continue ;;
+            esac
+            printf '%s' "$message" | ./node_modules/.bin/commitlint
+          done
     - name: Validate pull request title
       if: github.event_name == 'pull_request'
       env:
