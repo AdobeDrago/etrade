@@ -1,5 +1,7 @@
 # Cards Numbered
 
+Structured card references are optional: keep ordinary authored rows, or mix in one `/cards/...` link per row. See [structured card authoring](../../docs/structured-cards.md) for schemas, field behavior and delivery.
+
 One row per reason: `[heading, description, standalone link]`.
 The block generates large ordinals from nonempty row order and uses a semantic
 ordered list. Reordering rows renumbers the cards without editing their copy.

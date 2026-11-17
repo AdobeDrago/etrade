@@ -22,9 +22,10 @@ export default function decorateCards(block, name) {
     }
     const first = body.firstElementChild;
     if (first?.matches('p')) {
-      let value = /^\s*\$?[\d,.]+[%¢]?\s*$/.test(first.textContent);
-      if (!value && first.querySelector('[data-rate-name]')) {
-        const copy = first.cloneNode(true);
+      const copy = first.cloneNode(true);
+      copy.querySelectorAll('sup').forEach((marker) => marker.remove());
+      let value = /^\s*\$?[\d,.]+[%¢]?\s*$/.test(copy.textContent);
+      if (!value && copy.querySelector('[data-rate-name]')) {
         copy.querySelectorAll('[data-rate-name]').forEach((marker) => marker.remove());
         value = /^\s*\$?\s*%?\s*$/.test(copy.textContent);
       }

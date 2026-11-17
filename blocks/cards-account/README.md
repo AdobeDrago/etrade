@@ -1,5 +1,7 @@
 # Cards Account
 
+Structured card references are optional: keep ordinary authored rows, or mix in one `/cards/...` link per row. See [structured card authoring](../../docs/structured-cards.md) for schemas, field behavior and delivery.
+
 Single block table, one row per account card. Put its heading, copy and CTA links in the content cell. Additional content cells are merged in order, empty rows are skipped, and inline disclosure links stay with their paragraphs.
 
 Standalone action paragraphs use the shared controls: the primary account action is outlined and later actions use text links. Actions align at the bottom without moving inline or legal links. Headings use 1.5rem on mobile and 1.75rem from 768px. Nested authored lists retain their normal layout.

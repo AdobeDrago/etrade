@@ -1,3 +1,4 @@
+import loadStructuredCards from '../../scripts/structured-cards.js';
 import decorateCardRates from '../../scripts/card-rates.js';
 import { groupActions } from '../../scripts/actions.js';
 
@@ -9,6 +10,8 @@ import { groupActions } from '../../scripts/actions.js';
  *   [ heading (account name), label/description paragraph(s), CTA link(s) ]
  */
 export default async function decorate(block) {
+  const structured = loadStructuredCards(block);
+  if (structured) await structured;
   const rates = decorateCardRates(block);
   const ul = document.createElement('ul');
   [...block.children].forEach((row) => {

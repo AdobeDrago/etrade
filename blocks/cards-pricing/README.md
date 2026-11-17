@@ -1,5 +1,7 @@
 # Cards Pricing
 
+Structured card references are optional: keep ordinary authored rows, or mix in one `/cards/...` link per row. See [structured card authoring](../../docs/structured-cards.md) for schemas, field behavior and delivery.
+
 Author one row per card in a **Cards Pricing** block. A single content cell is enough; additional cells are merged in reading order. Empty rows are skipped.
 
 Put the amount in the first paragraph (for example `$0`, `$0.65`, or `0.50%`), followed by an H3 label, supporting copy, and an optional standalone linked paragraph. The amount gets the large pricing treatment; labels use smaller headings. An offer card can start with its heading instead. Inline disclosure superscripts and links remain authored.

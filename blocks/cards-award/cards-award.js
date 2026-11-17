@@ -1,4 +1,8 @@
-export default function decorate(block) {
+import loadStructuredCards from '../../scripts/structured-cards.js';
+
+export default async function decorate(block) {
+  const structured = loadStructuredCards(block);
+  if (structured) await structured;
   const list = document.createElement('ul');
   [...block.children].forEach((row) => {
     const item = document.createElement('li');
