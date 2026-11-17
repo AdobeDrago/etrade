@@ -108,24 +108,28 @@ export default function decorate(block) {
     && previous.firstElementChild.matches('p') && previous.textContent.trim() === 'Home'
     && !previous.querySelector('a, img')) previous.classList.add('hero-dark-breadcrumb');
   const options = new Map();
+  const optionNames = ['media', 'media description'];
+  const isOverlay = block.classList.contains('overlay');
+  if (isOverlay) optionNames.push('mobile image');
   [...block.children].forEach((row) => {
     const [key, ...values] = row.children;
     const name = key?.textContent.trim().toLowerCase();
-    if (!values.length || !['media', 'media description'].includes(name)) return;
+    if (!values.length || !optionNames.includes(name)) return;
     const content = container(name.replaceAll(' ', '-'));
     values.forEach((cell) => content.append(...cell.childNodes));
     options.set(name, content);
     row.remove();
   });
   const heading = block.querySelector('h1, h2, h3');
-  const image = block.querySelector('picture, img');
+  const mobile = options.get('mobile image');
+  const image = block.querySelector('picture, img') || mobile?.querySelector('picture, img');
   const copy = container('copy');
   const media = container('media');
   const actions = container('actions');
   actions.classList.add('etrade-actions');
   const cells = [...block.children].flatMap((row) => [...row.children]);
   const imageCell = cells.find((cell) => image && cell.contains(image));
-  const hasCaption = cells.length > 1 && imageCell && !imageCell.querySelector('h1, h2, h3')
+  const hasCaption = (cells.length > 1 || isOverlay) && imageCell && !imageCell.querySelector('h1, h2, h3')
     && ![...imageCell.querySelectorAll('p')].some(standaloneAction);
 
   if (heading) {
@@ -133,8 +137,17 @@ export default function decorate(block) {
     heading.remove();
   }
   if (image) {
-    media.append(image);
     const img = image.matches('img') ? image : image.querySelector('img');
+    const mobileSrc = mobile?.querySelector('img[src]')?.getAttribute('src');
+    if (mobileSrc && img && !mobile.contains(image)) {
+      const picture = image.matches('picture') ? image : document.createElement('picture');
+      if (img === image) picture.append(img);
+      const source = document.createElement('source');
+      source.setAttribute('media', '(width < 768px)');
+      source.setAttribute('srcset', mobileSrc);
+      picture.prepend(source);
+      media.append(picture);
+    } else media.append(image);
     // Eager loading is only appropriate for the first section's hero image.
     if (img && block.closest('.section') === document.querySelector('main > .section')) {
       img.loading = 'eager';

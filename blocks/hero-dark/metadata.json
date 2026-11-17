@@ -13,6 +13,7 @@
     "lastUsed": "2026-10-06"
   },
   "options": [
+    { "name": "overlay", "class": "overlay", "description": "Places copy and CTAs over the image on wider layouts. Supports an image caption and an optional Mobile image row." },
     { "name": "split", "class": "split", "description": "Places copy beside media on desktop and stacks content before media on mobile. Supports optional Eyebrow, Heading, Content, Image and Offer rows." },
     { "name": "balanced", "class": "balanced", "description": "Uses equal text and image widths on desktop. Combine with split: Hero Dark (Split, Balanced)." },
     { "name": "inset", "class": "inset", "description": "Adds desktop copy padding. Combine with split: Hero Dark (Split, Inset)." }
