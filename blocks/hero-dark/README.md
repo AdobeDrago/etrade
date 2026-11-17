@@ -32,6 +32,12 @@ The block supplies its dark component surface regardless of the surrounding page
 
 No Universal Editor model is required; this project uses Document Authoring.
 
+## Overlay variant
+
+Use **Hero Dark (Overlay)** for a full-width headline above the image, with the copy and buttons over its top-left corner on wider layouts. On mobile or when the block has less than 44rem of space, the copy and buttons stack above the image. The caption is left-aligned below the artwork at every size.
+
+Keep the main image and its disclosure in a separate cell from the heading, body, and standalone CTA links. Add an optional two-cell row with **Mobile image** in the first cell and the alternate image in the second. The alternate is used below 768px. Give the main image alternative text that describes both versions of the artwork.
+
 ## Split variant
 
 Author **Hero Dark (Split)** for Planning and account detail pages. Use **Hero Dark (Split, Balanced)** for equal text/image columns (Why E*TRADE), or **Hero Dark (Split, Inset)** for additional desktop text padding (Brokerage). The unqualified **Hero Dark** table retains the existing homepage layout.

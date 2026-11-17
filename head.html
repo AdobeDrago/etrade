@@ -11,15 +11,13 @@
 <script nonce="aem">
   // Run during parsing: deferred block decoration is too late to prioritize this request.
   (() => {
-    const observer = new MutationObserver(() => {
-      const image = document.querySelector('main > div')
-        ?.querySelector('.hero-dark img, .hero-product img, .hero img, .welcome-hero img');
+    const preloadImage = (image, usePictureSources = true) => {
       if (!image?.getAttribute('src')) return;
-      const sources = [...(image.closest('picture')?.querySelectorAll('source') || [])];
+      const sources = usePictureSources ? [...(image.closest('picture')?.querySelectorAll('source') || [])] : [];
       const source = sources.find((candidate) => candidate.srcset
         && (!candidate.media || window.matchMedia(candidate.media).matches));
-      const srcset = source?.srcset || image.srcset;
-      const sizes = source?.sizes || image.sizes;
+      const srcset = usePictureSources && (source?.srcset || image.srcset);
+      const sizes = usePictureSources && (source?.sizes || image.sizes);
       const preload = document.createElement('link');
       preload.rel = 'preload';
       preload.as = 'image';
@@ -29,9 +27,42 @@
       if (sizes) preload.setAttribute('imagesizes', sizes);
       if (source?.type) preload.type = source.type;
       document.head.append(preload);
-      image.setAttribute('fetchpriority', 'high');
-      image.loading = 'eager';
+      if (usePictureSources) {
+        image.setAttribute('fetchpriority', 'high');
+        image.loading = 'eager';
+      }
+    };
+
+    const observer = new MutationObserver(() => {
+      const image = document.querySelector('main > div')
+        ?.querySelector('.hero-dark img, .hero-product img, .hero img, .welcome-hero img');
+      if (!image?.getAttribute('src')) return;
       observer.disconnect();
+      const overlay = image.closest('.hero-dark.overlay:not(.split)');
+      if (!overlay) {
+        preloadImage(image);
+        return;
+      }
+
+      // The alternate artwork can be authored before or after the primary image.
+      const preloadOverlay = () => {
+        let primary;
+        let mobile;
+        for (const row of overlay.children) {
+          const [label, ...values] = row.children;
+          const name = values.length && label.textContent.trim().toLowerCase();
+          if (name === 'mobile image') {
+            mobile = values.map((cell) => cell.querySelector('img[src]')).find(Boolean);
+          } else if (name !== 'media' && name !== 'media description') {
+            primary ||= row.querySelector('img[src]');
+          }
+        }
+        const useAlternate = primary && mobile && window.matchMedia('(width < 768px)').matches;
+        preloadImage(useAlternate ? mobile : primary || mobile, !useAlternate);
+      };
+      if (document.readyState === 'loading') {
+        document.addEventListener('readystatechange', preloadOverlay, { once: true });
+      } else preloadOverlay();
     });
     observer.observe(document.documentElement, { childList: true, subtree: true });
     document.addEventListener('DOMContentLoaded', () => observer.disconnect(), { once: true });
