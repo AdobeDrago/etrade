@@ -28,6 +28,12 @@ Combine it with Dark or Outline as needed. The default reading/layout order is
 unchanged. **Award** limits logo media to 200px for the brokerage recognition
 section.
 
+**Columns Feature (Dark, Media First, Outline, Band, Overlap)** places the
+copy in a bordered panel over the image. Put the image in the first cell and
+the copy in the second cell of the same row. On smaller screens, the panel
+overlaps the bottom of the image. For the Brokerage layout, set the section
+Theme to `Charcoal`, Background to `inverse-raised`, and Spacing to `xl`.
+
 ## Shared style system
 
 Explicit Light/Dark block options keep precedence. Otherwise the block reads both legacy dark sections and authored Color Scheme metadata. Band and Award keep a surface matching their selected theme. Narrow section cells stack media and copy, and Section Metadata owns the surrounding layout. See the [shared component styles](../../README.md#shared-component-styles) for ownership and validation on `etrade-style`.
