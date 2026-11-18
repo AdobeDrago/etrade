@@ -429,7 +429,7 @@ body > header {
 
 .disclosures-reference a:any-link {
   color: inherit;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .disclosures-reference a:focus-visible {
