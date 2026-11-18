@@ -408,6 +408,13 @@ body.etrade-page .default-content-wrapper > p {
   margin: 0 0 var(--space-20);
 }
 
+/* Section eyebrow: a paragraph authored directly before the section's H2. */
+body.etrade-page .default-content-wrapper > p:first-child:has(+ h2) {
+  margin-bottom: var(--space-16);
+  font-family: var(--font-family-mono);
+  letter-spacing: var(--tracking-tight);
+}
+
 @media (width >= 768px) {
   body.etrade-page .default-content-wrapper > :is(h2, h3) {
     font-size: var(--font-size-40);
