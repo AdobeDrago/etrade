@@ -393,6 +393,7 @@ main .section:not([data-section-layout="authored"]) > .accordion-faq-wrapper:has
   padding: 0;
   color: var(--accordion-faq-control-color);
   font-size: var(--text-supporting-size);
+  font-weight: var(--font-weight-regular);
   line-height: calc(18 / 13);
 }
 
