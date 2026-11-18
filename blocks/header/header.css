@@ -868,37 +868,7 @@
     font-weight: var(--font-weight-medium);
     line-height: 1;
     letter-spacing: var(--tracking-normal);
-  }
-
-  .header .nav-promo-cta:focus-visible {
-    outline-color: var(--color-focus);
-  }
-
-  .header .nav-promo-cta:hover {
-    background: var(--color-surface-hover);
-    color: var(--color-link-hover);
-  }
-
-  .header .nav-promo-cta-primary {
-    border-color: var(--color-action-primary);
-    background: var(--color-action-primary);
-    color: var(--color-action-primary-text);
-  }
-
-  .header .nav-promo-cta-primary:hover {
-    border-color: var(--color-action-primary-hover);
-    background: var(--color-action-primary-hover);
-    color: var(--color-action-primary-text);
-  }
-
-  .header .nav-promo-cta-secondary {
-    border-color: transparent;
-    padding-inline: 0;
-  }
-
-  .header .nav-promo-cta-secondary:hover {
-    background: none;
-    text-decoration: underline;
+    white-space: nowrap;
   }
 
   .header .nav-tools {
@@ -1117,4 +1087,27 @@
   .header .nav-chevron {
     transition: none;
   }
+}
+
+.header .nav-sections .nav-panel .nav-promo-cta:is(:hover, :focus) {
+  border-color: var(--color-action-primary-hover);
+  border-radius: var(--radius-control);
+  background: none;
+  outline: none;
+  text-decoration: none;
+}
+
+.header .nav-sections .nav-panel .nav-promo-cta:hover {
+  color: var(--header-link-hover-color);
+}
+
+.header .nav-sections .nav-panel .nav-promo-cta:focus {
+  color: var(--color-action-primary-hover);
+}
+
+.header .nav-sections .nav-panel .nav-promo-cta:focus-visible {
+  border-color: var(--color-link);
+  border-radius: 0;
+  outline: 0.25rem solid var(--color-focus-button);
+  outline-offset: 1px;
 }

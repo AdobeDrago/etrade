@@ -40,20 +40,10 @@ function icon(name, className = '') {
   return svg;
 }
 
-const promoButtonStyles = new Set(['primary', 'primary-outline', 'secondary']);
-
-/**
- * Author notations inside nav links: `:chevron-right:` adds a trailing arrow and
- * `:btn-primary:`, `:btn-primary-outline:` or `:btn-secondary:` styles a promo CTA.
- */
+/** Author notation inside nav links: `:chevron-right:` adds a trailing arrow. */
 function applyNotations(fragment) {
-  fragment.querySelectorAll('a span.icon').forEach((span) => {
-    const name = [...span.classList].find((c) => c.startsWith('icon-'))?.slice(5);
-    const link = span.closest('a');
-    if (name === 'chevron-right') link.dataset.navIcon = name;
-    else if (promoButtonStyles.has(name?.replace(/^btn-/, '')) && name.startsWith('btn-')) {
-      link.dataset.navButton = name.slice(4);
-    } else return;
+  fragment.querySelectorAll('a span.icon-chevron-right').forEach((span) => {
+    span.closest('a').dataset.navIcon = 'chevron-right';
     span.remove();
   });
 }
@@ -130,9 +120,6 @@ function makePromo(item) {
   }
   if (link || legacyLink) {
     const cta = cleanLink(link || legacyLink, 'nav-promo-cta');
-    const style = cta.dataset.navButton;
-    delete cta.dataset.navButton;
-    cta.classList.add(`nav-promo-cta-${style || 'primary-outline'}`);
     if (legacyLink) cta.textContent = 'Learn how';
     if (title && !cta.hasAttribute('aria-label')) {
       cta.setAttribute('aria-label', `${cta.textContent.trim()}: ${title.textContent.trim()}`);
@@ -204,7 +191,7 @@ function makePanel(list) {
     || item.querySelector(':scope > ul'));
   let column;
   [...list.children].forEach((item) => {
-    if (isPromoItem(item) || item.querySelector('img')) {
+    if (isPromoItem(item) || item.querySelector('picture, img:not(.icon > img)')) {
       const promo = makePromo(item);
       if (promo) promos.append(promo);
       return;

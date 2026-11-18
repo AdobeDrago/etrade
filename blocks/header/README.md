@@ -68,18 +68,11 @@ Author a promo as another item alongside the columns, with separate paragraphs f
 
 The CTA text and destination are preserved. The CTA text is excluded from the description. An authored H3 can replace the bold paragraph as the headline; bold text in the description, such as a promo code, then stays bold.
 
-### Link notations
+### Link notation
 
-Type these icon notations inside a link's text in DA. The marker is removed and only changes the presentation:
+Type `:chevron-right:` inside any menu link's text in DA, e.g. `More Accounts :chevron-right:`. The marker is removed and the link becomes the purple "more" link with the production 14px arrow after the text. `/icons/chevron-right.svg` exists so DA can resolve the notation; the header draws its own inline arrow so it inherits the link color in both themes.
 
-| Notation | Use | Result |
-| --- | --- | --- |
-| `:chevron-right:` | Any menu link, e.g. `More Accounts :chevron-right:` | Purple "more" link with the production 14px arrow after the text. |
-| `:btn-primary-outline:` | Promo CTA | Outlined purple button (the default when no notation is given). |
-| `:btn-primary:` | Promo CTA | Filled purple button. |
-| `:btn-secondary:` | Promo CTA | Borderless text link. |
-
-The matching files in `/icons/` exist so DA can resolve the notations; the header draws its own inline arrow so it inherits the link color in both themes. Images, headlines, descriptions, and CTAs are optional; an empty promo is skipped. Promo cards and descriptions are omitted from the mobile drill-down. The image's authored alternative text is preserved; use empty alt text for a decorative image. `Login`, `Column`, `Promo`, `Light`, and `Dark` markers are case insensitive.
+Images, headlines, descriptions, and CTAs are optional; an empty promo is skipped. Promo cards and descriptions are omitted from the mobile drill-down. The image's authored alternative text is preserved; use empty alt text for a decorative image. `Login`, `Column`, `Promo`, `Light`, and `Dark` markers are case insensitive.
 
 Logo image references can point to the existing SVG assets in `/icons/` and remain editable content. When migrating `/nav`, retain its previewed media or replace it with equivalent DA assets.
 
