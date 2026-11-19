@@ -928,7 +928,7 @@
           </a>
           <a class="url-card" href="https://main--etrade--adobedrago.aem.live/home">
             <span class="url-card-label"><span class="dot dot-green"></span>EDS live</span>
-            <span class="url-card-title">Check published content on main</span><span class="url-card-desc">Published DA content with main code. This host required sign-in during the November 18 check.</span>
+            <span class="url-card-title">Check published content on main</span><span class="url-card-desc">Sign in with authorized access to review published DA content. Anonymous requests receive HTTP 401 by design.</span>
           </a>
           <a class="url-card" href="https://da.live/#/adobedrago/etrade">
             <span class="url-card-label"><span class="dot dot-ink"></span>Document Authoring</span>
@@ -1166,8 +1166,7 @@
           <thead><tr><th scope="col">Where</th><th scope="col">Observed result</th></tr></thead>
           <tbody>
             <tr><td>EDS previews on develop and main</td><td>All <a href="#templates">six route-specific pages</a> loaded, as did <a href="https://develop--etrade--adobedrago.aem.page/platforms">Platforms</a> and <a href="https://develop--etrade--adobedrago.aem.page/what-we-offer/investment-choices">Investment Choices</a>. Both preview roots showed the AEM boilerplate. Use <a href="https://develop--etrade--adobedrago.aem.page/home">/home</a> to review the IPO campaign.</td></tr>
-            <tr><td>Pricing &amp; Rates</td><td><code>/what-we-offer/pricing-and-rates</code> returned 404 on both previews. Confirm the document path and preview it in DA before reviewing the fee tables, rate settings and disclosure references.</td></tr>
-            <tr><td>EDS live</td><td>The main live host returned HTTP 401 to an unauthenticated request. Verify published content with authorized access.</td></tr>
+            <tr><td>Pricing and Rates</td><td>The page is available on <a href="https://main--etrade--adobedrago.aem.page/what-we-offer/pricing-and-rates">main preview</a> and <a href="https://develop--etrade--adobedrago.aem.page/what-we-offer/pricing-and-rates">develop preview</a>. Its opening <a href="#block-banner-offer">Banner Offer</a> has one “Open an account” action and no image, so the heading, copy and action are centered.</td></tr>
             <tr><td>GitHub Pages</td><td>The <a href="https://develop--etrade--adobedrago.aem.page/docs/index.html#brand">restored brand reference</a> was available on develop. The <a href="https://adobedrago.github.io/etrade/">public root</a> and the main preview of <code>/docs/index.html</code> returned 404. The <a href="https://github.com/AdobeDrago/etrade/pull/117">sync to main</a> was still open. The <a href="site-handoff.html">site handoff guide</a> remained available at its own address.</td></tr>
           </tbody>
         </table>
@@ -1179,12 +1178,13 @@
           <tbody>
             <tr><td>Lead author and DA administrator</td><td>The registered menus and catalog choices were inspected in Canvas. On a disposable draft, insert a starter and a block, edit a cell, use Undo, save and reopen. Check the source heading of the guide and metadata entries listed alongside the Hero Dark examples. <a href="#block-gallery">Gallery findings</a></td></tr>
             <tr><td>Navigation author and developer</td><td>The develop preview of <code>/nav</code> still used one linked logo in the Brand section. When changing design families, review both logo schemes and the Login, Column and Promo roles in the shared document. Check the desktop menu and mobile drawer before retiring any compatibility behavior.</td></tr>
-            <tr><td>Content and legal owners</td><td>Confirm current eligibility, dates, fee tables and the matching disclosure text on each campaign. The November 19 Home preview’s first block was the IPO hero. Check the rendered legal footer and each claim after editing or moving shared content. Restore the Pricing preview before signing off that page.</td></tr>
+            <tr><td>Content and legal owners</td><td>Confirm current eligibility, dates, fee tables and the matching disclosure text on each campaign. The November 19 Home preview’s first block was the IPO hero. Check the rendered legal footer and each claim after editing or moving shared content. On Pricing and Rates, both promotional banners still list October 31, 2026 as the funding deadline. Confirm the approved offer terms before sign-off.</td></tr>
             <tr><td>Integration developer and release owner</td><td>Verify rate tiers, market timestamps, chart alignment, consent and any analytics receipt on the intended delivery host. Confirm published navigation and the intended production domain with authorized access. <a href="#rates-data">Data checks</a> · <a href="#tracking-demos">Tracking checks</a></td></tr>
           </tbody>
         </table>
         <h3>Issues to revisit with the next content review</h3>
         <ul class="req-list">
+          <li>Decide whether authors also need a <strong>Center</strong> option for <a href="#block-hero">Hero</a> and <a href="#block-hero-dark">Hero Dark</a> when a page calls for a centered introduction.</li>
           <li>Check the funding, direct-deposit and rollover links reported in the Our Accounts FAQ. <a href="https://github.com/AdobeDrago/etrade/issues/115">Our Accounts link report</a></li>
           <li>Compare Home’s FAQ and offer copy and the Brokerage section order with their approved references. <a href="https://github.com/AdobeDrago/etrade/issues/105">Home copy</a> · <a href="https://github.com/AdobeDrago/etrade/issues/83">Brokerage order</a></li>
           <li>Check disclosure superscripts in DA Canvas and follow the same references on the rendered page. <a href="https://github.com/AdobeDrago/etrade/issues/54">Canvas disclosure markers</a></li>
