@@ -10,6 +10,30 @@ import test from 'node:test';
 import projectIssues from '../tools/lint/project-checks.mjs';
 import previewIssues from '../tools/lint/pr-checks.mjs';
 
+test('commit messages accept generated squash bodies and enforce Conventional Commit headers', () => {
+  const body = '* Issue #30, #32 - Discrepancies on content and styles: '
+    + 'implemented CSS adjustments for columns feature block';
+  const header = `fix: ${'a'.repeat(95)}`;
+  const cases = [
+    { message: `chore(release): sync develop to main (#106)\n\n${body}\n`, rule: null },
+    { message: `${header}\n`, rule: null },
+    { message: `${header}a\n`, rule: 'header-max-length' },
+    { message: 'updated stuff\n', rule: 'type-empty' },
+    { message: 'fix:\n', rule: 'subject-empty' },
+  ];
+  cases.forEach(({ message, rule }) => {
+    const result = spawnSync(process.execPath, [resolve('node_modules/@commitlint/cli/cli.js')], {
+      input: message,
+      encoding: 'utf8',
+    });
+    const output = result.stdout + result.stderr;
+    if (rule) {
+      assert.notEqual(result.status, 0, message);
+      assert.ok(output.includes(rule), output);
+    } else assert.equal(result.status, 0, output);
+  });
+});
+
 test('project checks reject changed or deleted vendor code and allow the checked-in vendor', () => {
   assert.deepEqual(projectIssues(['scripts/aem.js'], () => readFileSync('scripts/aem.js')), []);
   assert.match(projectIssues(['scripts/aem.js'], () => Buffer.from('changed vendor')).join(), /vendored/);

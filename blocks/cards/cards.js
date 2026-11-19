@@ -1,6 +1,9 @@
+import loadStructuredCards from '../../scripts/structured-cards.js';
 import { createOptimizedPicture } from '../../scripts/aem.js';
 
-export default function decorate(block) {
+export default async function decorate(block) {
+  const structured = loadStructuredCards(block);
+  if (structured) await structured;
   /* change to ul, li */
   const ul = document.createElement('ul');
   [...block.children].forEach((row) => {

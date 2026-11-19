@@ -2,10 +2,12 @@ import { loadFragment } from '../fragment/fragment.js';
 import { decorateIcons } from '../../scripts/aem.js';
 import { disclosureFragmentPath, disclosureSetRequest, loadDisclosureSet } from '../../scripts/disclosure-sets.js';
 import decorateDisclosureReferences from '../../scripts/disclosure-references.js';
+import openExternalLinks from '../../scripts/external-links.js';
 
 function finishDisclosures(block) {
   decorateIcons(block);
   block.querySelectorAll('a').forEach((link) => link.classList.remove('button', 'primary', 'secondary', 'accent'));
+  openExternalLinks(block);
   block.hidden = !block.textContent.trim() && !block.querySelector('img, picture, .icon');
   if (!block.hidden) decorateDisclosureReferences(document.querySelector('main'), block);
 }

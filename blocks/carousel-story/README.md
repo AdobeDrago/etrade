@@ -1,5 +1,7 @@
 # Carousel Story
 
+Structured card references are optional: keep ordinary authored rows, or mix in one `/cards/...` link per row. See [structured card authoring](../../docs/structured-cards.md) for schemas, field behavior and delivery.
+
 One row per story: `[image | year paragraph, heading, description, optional standalone link]`.
 Two cards are visible on desktop; one on mobile. The list scrolls and snaps natively.
 Previous/Next stop at the boundaries, dots select stories, and a status reports

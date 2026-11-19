@@ -1,5 +1,7 @@
 # Cards Icon
 
+Structured card references are optional: keep ordinary authored rows, or mix in one `/cards/...` link per row. See [structured card authoring](../../docs/structured-cards.md) for schemas, field behavior and delivery.
+
 One row per audience: `[icon | heading, description, standalone link]`.
 The icon cell can contain an image, SVG, authored `.icon`, or one of these text names:
 `book`, `computer`, `goal`, `savings`, `tool-box-welcome-kit`, `umbrella`.

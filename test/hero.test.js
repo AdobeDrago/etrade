@@ -79,6 +79,35 @@ test('default homepage keeps headline/copy/media order, inline links, tracking a
   assert.equal(block.querySelector('img').getAttribute('fetchpriority'), 'high');
 });
 
+test('overlay uses the authored mobile artwork and keeps the desktop image and caption', async () => {
+  const mobile = row('Mobile image', '<picture><img src="/mobile.jpg" alt=""></picture>');
+  const content = '<div><div><h1>Campaign headline</h1><p><a href="/open">Open an account</a></p></div></div>';
+  const block = await render('hero-dark', `<div><div>${image}<p>Campaign disclosure.</p></div></div>${mobile}${content}`, 'overlay');
+  const media = block.querySelector('.hero-dark-media');
+  const sources = [...media.querySelectorAll('source')];
+  assert.equal(sources[0].getAttribute('media'), '(width < 768px)');
+  assert.equal(sources[0].getAttribute('srcset'), '/mobile.jpg');
+  assert.equal(sources[1].getAttribute('srcset'), '/hero.webp 2x');
+  assert.equal(block.querySelectorAll('img').length, 1);
+  assert.equal(media.querySelector('img').getAttribute('alt'), 'Authored media');
+  assert.equal(media.querySelector('img').getAttribute('fetchpriority'), 'high');
+  assert.equal(media.querySelector('p').textContent, 'Campaign disclosure.');
+  assert.equal(block.querySelector('.hero-dark-primary').getAttribute('href'), '/open');
+  assert.doesNotMatch(block.textContent, /Mobile image/);
+
+  const rawImage = '<div><div><img src="/desktop.jpg" alt="Campaign"></div></div>';
+  const rawBlock = await render('hero-dark', `${rawImage}${mobile}${content}`, 'overlay');
+  assert.equal(rawBlock.querySelector('picture > source').getAttribute('srcset'), '/mobile.jpg');
+  assert.equal(rawBlock.querySelector('picture > img').getAttribute('src'), '/desktop.jpg');
+
+  const mobileOnly = await render('hero-dark', `${mobile}${content}`, 'overlay');
+  assert.equal(mobileOnly.querySelector('.hero-dark-media img').getAttribute('src'), '/mobile.jpg');
+
+  const mediaOnly = await render('hero-dark', `<div><div>${image}<p>Campaign disclosure.</p></div></div>${mobile}`, 'overlay');
+  assert.equal(mediaOnly.querySelector('.hero-dark-media p')?.textContent, 'Campaign disclosure.');
+  assert.equal(mediaOnly.querySelector('.hero-dark-copy'), null);
+});
+
 test('split named rows keep eyebrow semantics, rich heading and offer separate from primary actions', async () => {
   const block = await render('hero-dark', [
     row('Image', image), row('Eyebrow', '<h1 id="account">Brokerage account</h1>'),

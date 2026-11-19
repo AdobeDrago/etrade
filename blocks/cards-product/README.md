@@ -1,5 +1,7 @@
 # Cards Product
 
+Structured card references are optional: keep ordinary authored rows, or mix in one `/cards/...` link per row. See [structured card authoring](../../docs/structured-cards.md) for schemas, field behavior and delivery.
+
 Author one row per card in a **Cards Product** block. Put an H3 product name, an optional H4 rate, supporting paragraphs, and an optional standalone linked paragraph in its cell. Additional cells are merged; empty rows are skipped.
 
 Rates, offer dates, legal references, CTA labels, and destinations belong in DA. The block preserves rich text and supplies a decorative arrow for standalone actions. Cards use one column below 768px and up to two above it, with safe wrapping and actions aligned at the bottom.

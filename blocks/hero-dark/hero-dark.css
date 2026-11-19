@@ -357,10 +357,11 @@ main .hero-dark .hero-dark-copy sup a:any-link {
 main .hero-dark.split .hero-dark-eyebrow :is(h1, h2, h3, p) {
   margin: 0 0 var(--space-16);
   color: inherit;
+  font-family: var(--font-family-mono);
   font-size: var(--font-size-16);
   font-weight: var(--font-weight-regular);
   line-height: calc(20 / 16);
-  letter-spacing: var(--tracking-tight);
+  letter-spacing: var(--tracking-display);
 }
 
 main .hero-dark.split .hero-dark-heading {
@@ -540,5 +541,78 @@ main .section .hero-dark .hero-dark-media {
   main .section .hero-dark:not(.split) a.hero-dark-primary:any-link {
     width: 100%;
     padding-inline: var(--space-30);
+  }
+}
+
+main .hero-dark.overlay:not(.split) .hero-dark-media :is(p, figcaption) {
+  font-size: var(--font-size-12);
+  line-height: calc(16 / 12);
+  text-align: start;
+}
+
+@container block-layout (width < 44rem) {
+  .hero-dark.overlay:not(.split) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  main .hero-dark.overlay:not(.split) > :is(.hero-dark-heading, .hero-dark-copy, .hero-dark-media) {
+    grid-area: auto;
+  }
+}
+
+@media (width >= 768px) {
+  @container block-layout (width >= 44rem) {
+    .hero-dark.overlay:not(.split, .no-image, .has-video) {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      align-items: start;
+      column-gap: var(--space-20);
+      isolation: isolate;
+    }
+
+    .hero-dark.overlay.no-heading {
+      --hero-dark-overlay-media-row: 1;
+    }
+
+    main .hero-dark.overlay:not(.split, .no-image, .has-video) > .hero-dark-heading {
+      grid-area: 1 / 1 / auto / -1;
+      margin: 0 0 var(--space-16);
+    }
+
+    .hero-dark.overlay:not(.split, .no-image, .has-video) > .hero-dark-copy {
+      z-index: 1;
+      grid-area: var(--hero-dark-overlay-media-row, 2) / 1 / auto / span var(--hero-dark-overlay-columns, 6);
+      margin: 0;
+      border-end-end-radius: var(--radius-card);
+      padding: 0 var(--space-32) clamp(var(--space-12), 1.5cqi, var(--space-20)) 0;
+      background: var(--color-surface-inverse);
+    }
+
+    main .hero-dark.overlay:not(.split, .no-image, .has-video) .hero-dark-copy p {
+      margin-bottom: var(--space-20);
+    }
+
+    .hero-dark.overlay:not(.split, .no-image, .has-video) .hero-dark-actions {
+      display: flex;
+      gap: var(--space-16) min(5cqi, var(--space-60));
+    }
+
+    .hero-dark.overlay:not(.split, .no-image, .has-video) > .hero-dark-media {
+      display: contents;
+    }
+
+    /* Share the image row with the copy and keep captions below both. */
+    .hero-dark.overlay:not(.split, .no-image, .has-video) .hero-dark-media > * {
+      grid-column: 1 / -1;
+    }
+
+    .hero-dark.overlay:not(.split, .no-image, .has-video) .hero-dark-media > :is(picture, img) {
+      grid-row: var(--hero-dark-overlay-media-row, 2);
+    }
+  }
+}
+
+@container block-layout (width >= 70rem) {
+  .hero-dark.overlay {
+    --hero-dark-overlay-columns: 5;
   }
 }

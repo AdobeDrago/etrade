@@ -56,13 +56,23 @@ main .section:not([data-section-layout="authored"]).tabs-accounts-container > .t
   --link-hover-color: var(--color-link-hover);
   --action-link-color: var(--color-link);
   --action-outline-hover-text: var(--color-action-primary-text);
+  --tabs-accounts-surface: var(--color-accounts-surface);
+  --tabs-accounts-rule: var(--color-accounts-rule);
+  --tabs-accounts-tab-active: var(--color-accounts-tab-active);
+  --tabs-accounts-tab-edge: var(--color-accounts-tab-edge);
+  --tabs-accounts-tab-text: var(--color-accounts-tab-text);
+  --tabs-accounts-select-text: var(--color-accounts-select-text);
+  --tabs-accounts-caret: var(--color-accounts-caret);
+  --tabs-accounts-card-border: var(--color-accounts-card-border);
+  --tabs-accounts-disclaimer: var(--color-accounts-disclaimer);
+  --tabs-accounts-tracking: -0.0131rem;
 
   color-scheme: light;
   min-width: 0;
   overflow-wrap: anywhere;
-  background: var(--color-surface-subtle);
+  background: var(--tabs-accounts-surface);
   color: var(--color-text-primary);
-  letter-spacing: var(--tracking-tight);
+  letter-spacing: var(--tabs-accounts-tracking);
 }
 
 .tabs-accounts .tabs-accounts-list {
@@ -96,36 +106,38 @@ main .section:not([data-section-layout="authored"]).tabs-accounts-container > .t
   width: 90%;
   height: 2.8125rem;
   margin: 0 auto;
-  padding: var(--space-8) var(--space-16);
+  padding: 0 5.25rem 0 2.625rem;
   border: var(--border-width-thin) solid var(--color-border-default);
-  border-radius: var(--radius-control);
+  border-radius: 3px;
   background: var(--color-surface-default);
-  color: var(--color-link);
+  color: var(--tabs-accounts-select-text);
   font: inherit;
   font-size: var(--font-size-18);
-  font-weight: var(--font-weight-semibold);
-  text-align: center;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  letter-spacing: normal;
+  text-align: left;
   text-transform: uppercase;
 }
 
 .tabs-accounts .tabs-accounts-mobile::before {
   position: absolute;
   top: 1.5625rem;
-  right: calc(5% + var(--space-80));
-  height: 2.1875rem;
-  border-left: var(--border-width-thin) solid var(--color-border-default);
+  right: calc(5% + 5.25rem);
+  height: 2.25rem;
+  border-left: var(--border-width-thin) solid var(--color-border-strong);
   content: '';
   pointer-events: none;
 }
 
 .tabs-accounts .tabs-accounts-mobile::after {
   position: absolute;
-  top: 2.3125rem;
-  right: calc(5% + var(--space-48));
+  top: 1.4375rem;
+  right: calc(5% + 3.8125rem);
   width: var(--space-8);
   height: var(--space-8);
-  border-right: var(--border-width-strong) solid var(--color-link-inverse);
-  border-bottom: var(--border-width-strong) solid var(--color-link-inverse);
+  border-right: var(--border-width-strong) solid var(--tabs-accounts-caret);
+  border-bottom: var(--border-width-strong) solid var(--tabs-accounts-caret);
   transform: rotate(45deg);
   content: '';
   pointer-events: none;
@@ -135,29 +147,40 @@ main .section:not([data-section-layout="authored"]).tabs-accounts-container > .t
   position: relative;
   flex: 1 1 auto;
   min-width: 0;
-  margin: -0.3125rem 0 0;
-  padding: var(--space-20) var(--space-12) var(--space-30);
+  margin: 0.0625rem 0 -0.0625rem;
+  padding: 1.375rem var(--space-12) var(--space-32);
   border: var(--border-width-thin) solid transparent;
-  border-top: 5px solid transparent;
+  border-top: 0;
+  border-bottom-width: 2px;
   border-radius: 0;
   background: transparent;
-  color: var(--color-text-secondary);
+  color: var(--tabs-accounts-tab-text);
   font: inherit;
   font-size: var(--font-size-11);
-  font-weight: var(--font-weight-semibold);
-  line-height: calc(16 / 11);
+  font-weight: var(--font-weight-bold);
+  line-height: calc(13 / 11);
+  letter-spacing: var(--tabs-accounts-tracking);
   text-transform: uppercase;
   white-space: nowrap;
   cursor: pointer;
 }
 
 .tabs-accounts .tabs-accounts-tab[aria-selected='true'] {
-  border-color: var(--color-border-default);
-  border-top-color: var(--color-link);
-  border-bottom-color: var(--color-surface-subtle);
-  background: var(--color-surface-subtle);
-  box-shadow: var(--shadow-tab);
+  border-color: var(--tabs-accounts-tab-edge);
+  border-bottom-color: var(--tabs-accounts-tab-active);
+  background: var(--tabs-accounts-tab-active);
+  box-shadow: var(--shadow-tab-accounts);
   color: var(--color-link);
+}
+
+.tabs-accounts .tabs-accounts-tab[aria-selected='true']::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 5px;
+  background: var(--color-link);
+  content: '';
 }
 
 .tabs-accounts .tabs-accounts-panel {
@@ -180,6 +203,7 @@ main .section:not([data-section-layout="authored"]).tabs-accounts-container > .t
   font-size: var(--font-size-24);
   font-weight: var(--font-weight-medium);
   line-height: calc(28 / 24);
+  letter-spacing: -0.025rem;
 }
 
 .tabs-accounts .tabs-accounts-panel > p {
@@ -192,20 +216,30 @@ main .section:not([data-section-layout="authored"]).tabs-accounts-container > .t
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-20);
-  margin: var(--space-20) 0 0;
+  margin: 1.1875rem 0 0;
   padding: 0;
   list-style: none;
 }
 
 .tabs-accounts .tabs-accounts-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-width: 0;
   padding: var(--space-30);
-  border: var(--border-width-thin) solid var(--color-border-default);
-  border-top: 5px solid var(--color-border-feature);
+  border: var(--border-width-thin) solid var(--tabs-accounts-card-border);
   border-radius: var(--radius-control);
   background: var(--color-surface-default);
+}
+
+.tabs-accounts .tabs-accounts-card::before {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  left: -1px;
+  height: 5px;
+  background: var(--color-border-feature);
+  content: '';
 }
 
 .tabs-accounts .tabs-accounts-card h3 {
@@ -268,19 +302,32 @@ main .section:not([data-section-layout="authored"]).tabs-accounts-container > .t
   margin-top: var(--space-20);
 }
 
+.tabs-accounts .tabs-accounts-card em {
+  color: var(--tabs-accounts-disclaimer);
+  font-size: var(--font-size-12);
+  font-style: normal;
+  line-height: calc(22 / 12);
+}
+
 .tabs-accounts .tabs-accounts-actions {
-  justify-content: space-between;
-  gap: var(--space-10);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9375rem;
   margin-top: auto;
-  padding-top: var(--space-12);
+  padding-top: 0;
 }
 
 .tabs-accounts .tabs-accounts-actions .etrade-action-secondary {
-  min-height: 2.0625rem;
-  padding: 0.5625rem 0;
+  min-height: 2.8125rem;
+  padding: 0.875rem 0;
   font-size: var(--font-size-13);
   font-weight: var(--font-weight-regular);
-  line-height: 1;
+  line-height: calc(15 / 13);
+}
+
+.tabs-accounts .tabs-accounts-actions .etrade-action-outline {
+  min-width: 0;
+  padding-inline: var(--space-30);
 }
 
 .tabs-accounts .etrade-action-icon {
@@ -300,7 +347,7 @@ main .section:not([data-section-layout="authored"]).tabs-accounts-container > .t
 }
 
 @media (width >= 768px) {
-  body main .section:not([data-section-layout="authored"]).tabs-accounts-container {
+  body main .section:not([data-section-layout="authored"]).tabs-accounts-container:has(> .default-content-wrapper) {
     padding-top: var(--space-30);
   }
 
@@ -333,11 +380,46 @@ main .section:not([data-section-layout="authored"]).tabs-accounts-container > .t
   .tabs-accounts .tabs-accounts-panel > p {
     line-height: calc(18 / 13);
   }
+
+  .tabs-accounts .tabs-accounts-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: var(--space-20);
+    padding-bottom: 0.9375rem;
+  }
+
+  .tabs-accounts .tabs-accounts-actions .etrade-action-secondary {
+    min-height: 2.0625rem;
+    padding: 0.5625rem 0;
+    line-height: 1;
+  }
+
+  .tabs-accounts .tabs-accounts-actions > .etrade-action {
+    justify-self: start;
+  }
+
+  .tabs-accounts .tabs-accounts-actions .etrade-action-outline {
+    padding-inline: 0.9375rem;
+  }
+
+  .tabs-accounts .tabs-accounts-card em {
+    line-height: 1.5;
+  }
 }
 
 @media (width >= 992px) {
+  .tabs-accounts {
+    background: linear-gradient(var(--color-surface-default) 0 4.3125rem, var(--tabs-accounts-rule) 4.3125rem 4.375rem, var(--tabs-accounts-surface) 4.375rem);
+  }
+
   .tabs-accounts .tabs-accounts-list {
     display: flex;
+    border-bottom: 0;
+  }
+
+  .tabs-accounts .tabs-accounts-panel {
+    padding-top: 1.9375rem;
   }
 
   .tabs-accounts .tabs-accounts-mobile {
