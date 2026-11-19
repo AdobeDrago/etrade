@@ -2104,7 +2104,8 @@ npm run check</code></pre>
       }
     } else {
       if (wasAtEnd) fragmentTarget = null;
-      const readingLine = parseFloat(sectionStyle.scrollMarginTop) + 1;
+      // Allow a line of text for heading movement as the web font loads.
+      const readingLine = parseFloat(sectionStyle.scrollMarginTop) + parseFloat(sectionStyle.lineHeight);
       section = sections.findLast((item) => item.getBoundingClientRect().top <= readingLine) || sections[0];
     }
     wasAtEnd = atEnd;
