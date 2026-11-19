@@ -355,6 +355,38 @@
   .spec-table tr:last-child td { border-bottom: none; }
   .spec-table td:first-child { font-weight: 700; color: var(--gray-900); }
 
+
+  /* Block definitions */
+  .block-directory {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+    gap: 16px 24px;
+    margin: 20px 0 28px;
+    padding: 16px 20px;
+    background: var(--gray-75);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+  }
+  .block-directory ul { display: flex; flex-wrap: wrap; gap: 3px 12px; list-style: none; margin-top: 4px; }
+  .block-directory a { display: inline-block; padding: 2px 0; }
+  .block-directory a, .definition-links a { text-underline-offset: 2px; }
+  #blocks .block-family { font-size: 18px; margin-top: 28px; }
+  .block-definition { scroll-margin-top: calc(var(--header-h) + 16px); border-bottom: 1px solid var(--gray-300); }
+  .block-definition > summary { cursor: pointer; padding: 12px 4px; color: var(--et-ink); }
+  .block-definition > summary::marker { color: var(--et-purple); }
+  .block-definition > summary strong { margin-left: 4px; font-size: 16px; }
+  .block-definition > summary span { display: block; margin-left: 20px; color: var(--gray-800); }
+  .block-definition > summary:hover strong { text-decoration: underline; }
+  .definition-body { padding: 0 4px 12px 24px; overflow-wrap: anywhere; }
+  .definition-body dt, .definition-body h4 { font-weight: 700; margin: 12px 0 2px; }
+  .definition-example { width: 100%; border-collapse: collapse; margin: 14px 0; table-layout: fixed; }
+  .definition-example caption { text-align: left; font-weight: 700; padding-bottom: 4px; }
+  .definition-example th, .definition-example td { vertical-align: top; text-align: left; border: 1px solid var(--gray-300); padding: 8px 10px; }
+  .definition-example th { background: var(--gray-100); }
+  .nav-document-example { margin: 4px 0 12px 20px; }
+  .definition-check strong { display: block; }
+  .definition-body .definition-links { font-size: 13px; margin-bottom: 2px; }
+
   /* ── STAT ROW ── */
   .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 16px 0; }
   .stat-card { border: 1px solid var(--gray-200); border-radius: 8px; padding: 16px; background: var(--gray-75); }
@@ -544,7 +576,7 @@
       <div class="sidebar-label">Reference</div>
       <a class="sidebar-link" href="#blocks">
         <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3.5A1.5 1.5 0 012.5 2h2A1.5 1.5 0 016 3.5v2A1.5 1.5 0 014.5 7h-2A1.5 1.5 0 011 5.5v-2zm5.5 0A1.5 1.5 0 018 2h2a1.5 1.5 0 011.5 1.5v2A1.5 1.5 0 0110 7H8A1.5 1.5 0 016.5 5.5v-2zm-5.5 5A1.5 1.5 0 012.5 7h2A1.5 1.5 0 016 8.5v2A1.5 1.5 0 014.5 12h-2A1.5 1.5 0 011 10.5v-2zm5.5 0A1.5 1.5 0 018 7h2a1.5 1.5 0 011.5 1.5v2A1.5 1.5 0 0110 12H8A1.5 1.5 0 016.5 10.5v-2z"/></svg>
-        Block library
+        Block definitions
       </a>
       <a class="sidebar-link" href="#dev-notes">
         <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
@@ -577,12 +609,13 @@
         <p>Editors maintain pages and shared content in Adobe Document Authoring (DA). Developers maintain blocks, styles and integrations in GitHub. A branch preview combines that branch’s code with previewed DA content. Publishing a DA document and merging a code change are separate release steps.</p>
         <div class="stat-row">
           <div class="stat-card"><div class="stat-num">6</div><div class="stat-label"><a href="#templates">Routes with page-specific layouts</a></div></div>
-          <div class="stat-card"><div class="stat-num">32</div><div class="stat-label"><a href="#blocks">Block implementations</a></div></div>
+          <div class="stat-card"><div class="stat-num">32</div><div class="stat-label"><a href="#blocks">Block definitions and examples</a></div></div>
           <div class="stat-card"><div class="stat-num">2</div><div class="stat-label"><a href="#brand">Design families</a></div></div>
         </div>
         <h3>Where to start</h3>
         <ul class="req-list">
           <li><strong>Making your first edit?</strong> <a href="#first-edit">Add a shared brokerage card to a draft</a>, then use the <a href="#authoring-reference">authoring reference</a> for section grids, images and buttons.</li>
+          <li><strong>Building a page?</strong> Look up the <a href="#blocks">block definitions and example tables</a>, including <a href="#block-hero-dark">Hero Dark</a> and <a href="#block-cards-product">Cards Product</a>.</li>
           <li><strong>Reviewing a change?</strong> Compare the <a href="https://develop--etrade--adobedrago.aem.page/home">develop preview</a> with <a href="https://main--etrade--adobedrago.aem.page/home">the same page on the main preview</a>. Check related fragments and disclosures with the page.</li>
           <li><strong>Maintaining the migration?</strong> Start with <a href="#architecture">how a change reaches a visitor</a>. The <a href="#import">import record</a> documents the original seven-page sample. The <a href="#next-steps">release checklist</a> covers the current authoring and code workflow.</li>
         </ul>
@@ -676,7 +709,7 @@
         <table class="spec-table">
           <thead><tr><th scope="col">Requirement</th><th scope="col">How to check it</th></tr></thead>
           <tbody>
-            <tr><td>Page structure</td><td>Use one page heading, section headings and card headings in reading order. Start with the tables in the <a href="site-handoff.html#block-catalog">handoff catalog</a>. Check the block’s README on develop for current options and row structure.</td></tr>
+            <tr><td>Page structure</td><td>Use one page heading, section headings and card headings in reading order. Use the <a href="#blocks">block definitions</a> for the table name, options and cell order.</td></tr>
             <tr><td>Responsive design</td><td>Check the chosen theme, image crop, text and action order on a phone and a desktop. Test keyboard access and enlarged text for menus, tabs, accordions and the carousel.</td></tr>
             <tr><td>Claims and legal copy</td><td>Keep each claim with its approved rate, fee or campaign terms. Preview the page’s disclosure set and its referenced documents, then follow the markers on the rendered page.</td></tr>
             <tr><td>Links and imagery</td><td>Preserve destinations, campaign parameters, disclosure references and image alternatives when importing or reusing content.</td></tr>
@@ -726,7 +759,7 @@
         <table class="spec-table">
           <thead><tr><th scope="col">Area</th><th scope="col">Available on develop</th></tr></thead>
           <tbody>
-            <tr><td>Page components</td><td>Responsive heroes, product and account cards, feature panels, tabs, FAQ, the story carousel and market-data blocks. See the <a href="#blocks">block library</a>.</td></tr>
+            <tr><td>Page components</td><td>Responsive heroes, product and account cards, feature panels, tabs, FAQ, the story carousel and market-data blocks. See the <a href="#blocks">block definitions</a>.</td></tr>
             <tr><td>Global navigation and legal content</td><td>Shared header and footer documents, theme-aware artwork, a floating dock and per-page disclosure sources. See <a href="#header">header</a> and <a href="#footer">footer</a>.</td></tr>
             <tr><td>Reusable Content</td><td>The DA Canvas extension can insert shared fragments, add a Structured Card to a matching block or create the matching block. The nine Cards blocks and Carousel Story accept linked card records alongside ordinary rows. See <a href="https://github.com/AdobeDrago/etrade/blob/develop/docs/reusable-content.md">Reusable Content</a> and the <a href="https://github.com/AdobeDrago/etrade/blob/develop/docs/structured-cards.md">schema map</a>.</td></tr>
             <tr><td>Authoring tools</td><td>Link Options configures tracking, routing and cookie-preference actions. Disclosure Manager edits shared sets. Import &amp; Export works with saved DA page sources. The onboarding tour provides in-editor examples. Access depends on the workspace’s extension registration.</td></tr>
@@ -978,21 +1011,706 @@
           <span class="section-icon icon-ink">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3.5A1.5 1.5 0 012.5 2h2A1.5 1.5 0 016 3.5v2A1.5 1.5 0 014.5 7h-2A1.5 1.5 0 011 5.5v-2zm5.5 0A1.5 1.5 0 018 2h2a1.5 1.5 0 011.5 1.5v2A1.5 1.5 0 0110 7H8A1.5 1.5 0 016.5 5.5v-2zm-5.5 5A1.5 1.5 0 012.5 7h2A1.5 1.5 0 016 8.5v2A1.5 1.5 0 014.5 12h-2A1.5 1.5 0 011 10.5v-2zm5.5 0A1.5 1.5 0 018 7h2a1.5 1.5 0 011.5 1.5v2A1.5 1.5 0 0110 12H8A1.5 1.5 0 016.5 10.5v-2z"/></svg>
           </span>
-          Block library
+          Block definitions
         </h2>
         <div class="section-rule"></div>
-        <p>For a first edit, use the <a href="#first-edit">shared-card walkthrough</a>. The <a href="site-handoff.html#block-catalog">handoff catalog</a> shows example tables for all 32 blocks. For additions since that guide, including the IPO hero and overlapping Brokerage panel, check the README in the <a href="https://github.com/AdobeDrago/etrade/tree/develop/blocks">block’s develop directory</a>.</p>
-        <table class="spec-table">
-          <thead><tr><th scope="col">Use</th><th scope="col">Blocks</th></tr></thead>
-          <tbody>
-            <tr><td>Lead a page</td><td>Hero, Hero Dark, Hero Light, Hero Product and Welcome Hero. Use the <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/hero-dark/README.md">Hero Dark overlay</a> for campaign artwork with a separate mobile image.</td></tr>
-            <tr><td>Compare or promote items</td><td>Cards, Cards Account, Cards Article, Cards Award, Cards Icon, Cards Numbered, Cards Platform, Cards Pricing and Cards Product. <a href="https://github.com/AdobeDrago/etrade/blob/develop/docs/structured-cards.md">Structured Card references</a> let the same record appear on multiple pages.</td></tr>
-            <tr><td>Compose a section</td><td>Columns, Columns Feature, Banner Offer and Separator. The <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/columns-feature/README.md">Columns Feature overlap option</a> places a copy panel over an image on Brokerage.</td></tr>
-            <tr><td>Explore or interact</td><td>Accordion FAQ, Tabs Accounts, Carousel Story and Widget Calculator. Carousel Story also accepts records using the <code>card-story</code> schema.</td></tr>
-            <tr><td>Show market data</td><td>Market Ticker, Market Overview and Market Top Five. Their data mode and source are page settings.</td></tr>
-            <tr><td>Share or extend content</td><td>Header, Footer, Floating Dock, Disclosures, Fragment, Widget and Library Brief. The last supplies author guidance in the DA block library.</td></tr>
-          </tbody>
-        </table>
+        <p>Choose a block to see how to author it in Adobe Document Authoring (DA). Each example shows the table name and cell order. Apply the indicated heading styles, insert images and links, and replace bracketed text with approved content. Header has its own four-section document example.</p>
+        <nav class="block-directory" aria-label="Block definitions by family">
+          <div>
+            <strong>Heroes</strong>
+            <ul>
+              <li><a href="#block-hero">Hero</a></li>
+              <li><a href="#block-hero-dark">Hero Dark</a></li>
+              <li><a href="#block-hero-light">Hero Light</a></li>
+              <li><a href="#block-hero-product">Hero Product</a></li>
+              <li><a href="#block-welcome-hero">Welcome Hero</a></li>
+            </ul>
+          </div>
+          <div>
+            <strong>Cards</strong>
+            <ul>
+              <li><a href="#block-cards">Cards</a></li>
+              <li><a href="#block-cards-account">Cards Account</a></li>
+              <li><a href="#block-cards-article">Cards Article</a></li>
+              <li><a href="#block-cards-award">Cards Award</a></li>
+              <li><a href="#block-cards-icon">Cards Icon</a></li>
+              <li><a href="#block-cards-numbered">Cards Numbered</a></li>
+              <li><a href="#block-cards-platform">Cards Platform</a></li>
+              <li><a href="#block-cards-pricing">Cards Pricing</a></li>
+              <li><a href="#block-cards-product">Cards Product</a></li>
+            </ul>
+          </div>
+          <div>
+            <strong>Section layouts</strong>
+            <ul>
+              <li><a href="#block-columns">Columns</a></li>
+              <li><a href="#block-columns-feature">Columns Feature</a></li>
+              <li><a href="#block-banner-offer">Banner Offer</a></li>
+              <li><a href="#block-separator">Separator</a></li>
+            </ul>
+          </div>
+          <div>
+            <strong>Interactive blocks</strong>
+            <ul>
+              <li><a href="#block-accordion-faq">Accordion FAQ</a></li>
+              <li><a href="#block-tabs-accounts">Tabs Accounts</a></li>
+              <li><a href="#block-carousel-story">Carousel Story</a></li>
+              <li><a href="#block-widget-calculator">Widget Calculator</a></li>
+            </ul>
+          </div>
+          <div>
+            <strong>Market data</strong>
+            <ul>
+              <li><a href="#block-market-ticker">Market Ticker</a></li>
+              <li><a href="#block-market-overview">Market Overview</a></li>
+              <li><a href="#block-market-top-five">Market Top Five</a></li>
+            </ul>
+          </div>
+          <div>
+            <strong>Navigation and shared content</strong>
+            <ul>
+              <li><a href="#block-header">Header</a></li>
+              <li><a href="#block-footer">Footer</a></li>
+              <li><a href="#block-disclosures">Disclosures</a></li>
+              <li><a href="#block-floating-dock">Floating Dock</a></li>
+              <li><a href="#block-fragment">Fragment</a></li>
+              <li><a href="#block-widget">Widget</a></li>
+              <li><a href="#block-library-brief">Library Brief</a></li>
+            </ul>
+          </div>
+        </nav>
+        <h3 class="block-family">Heroes</h3>
+        <details class="block-definition" id="block-hero" open>
+          <summary><strong>Hero</strong><span>Places a heading and actions over a full-width background image, as on Platforms.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Add a heading and copy in one cell and an image in another. The first image fills the background. Copy, image and actions are optional. To name the rows, use Eyebrow, Heading, Content and Image in the first cell and place each value in the next. Put each action link in its own paragraph.</dd>
+              <dt>Options and behavior</dt><dd>Default or Wide. Wide gives the Investment Choices introduction more room for copy on desktop. A hero without an image uses the purple background.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Hero</th></tr></thead>
+              <tbody>
+                <tr><td>H1: Trading platforms<br>Compare trading tools for web, desktop and mobile.<br>Link: Explore platforms → [approved platforms URL]</td><td>Insert the approved background image with its alternative text.</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Check the top-left-anchored crop at phone and desktop widths and verify that the heading stays legible over the artwork.</p>
+            <p class="definition-links"><a href="#block-hero" aria-label="Direct link to Hero">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/hero/README.md">Block README</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-hero-dark">
+          <summary><strong>Hero Dark</strong><span>Introduces a campaign with dark-surface copy, actions and media.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>The default and Overlay layouts use the first H1, H2 or H3, supporting paragraphs and optional standalone links. In the default layout, the first standalone link is the primary action. Put the image and its optional caption in their own cell. For a default hero with video, use an MP4 link in the Media row and describe it in Media description. Split accepts optional Eyebrow, Heading, Content, Image and Offer rows. Use a role in the first cell and rich content in the remaining cells.</dd>
+              <dt>Options and behavior</dt><dd>Default places copy above media. Overlay keeps the headline above the artwork and places supporting copy and actions over the image on wide layouts. A Mobile image row supplies alternate artwork below 768px. Split places text beside the image and optional offer. Split, Balanced gives both columns equal width. Split, Inset increases desktop copy padding.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Hero Dark (Overlay)</th></tr></thead>
+              <tbody>
+                <tr><td colspan="2">H1: Access to IPOs starts here<br>[Approved campaign description]<br>Link: Open an account → [approved application URL]</td></tr>
+                <tr><td colspan="2">Insert the desktop campaign image. Add its caption or disclosure in the same cell.</td></tr>
+                <tr><td>Mobile image</td><td>Insert the alternate phone artwork.</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Give the main image alternative text that works for both versions. On a narrow screen, check the alternate artwork, caption and actions in reading order.</p>
+            <p class="definition-links"><a href="#block-hero-dark" aria-label="Direct link to Hero Dark">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/hero-dark/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/hero-dark/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-hero-light">
+          <summary><strong>Hero Light</strong><span>Introduces a page with a heading, supporting text and optional links on the surrounding section surface.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Place the heading, paragraphs and standalone links in authored reading order. Cells and rows are combined. For a page introduction, use an H1. Headings and actions can be omitted when only copy is needed.</dd>
+              <dt>Options and behavior</dt><dd>The standard layout is text-only. The first plain standalone link becomes an outline button and later ones become secondary actions. Inline links remain in their sentences.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th>Hero Light</th></tr></thead>
+              <tbody>
+                <tr><td>H1 Our Accounts</td></tr>
+                <tr><td>[Approved account introduction.]</td></tr>
+                <tr><td>Standalone link labelled See all pricing and rates.</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Verify that the heading appears once and that the pricing link remains usable when the introduction switches from centered phone copy to left-aligned desktop copy.</p>
+            <p class="definition-links"><a href="#block-hero-light" aria-label="Direct link to Hero Light">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/hero-light/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/hero-light/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-hero-product">
+          <summary><strong>Hero Product</strong><span>Pairs a product introduction with an image and an optional offer beneath it, as on Brokerage.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Use a role in the first cell and its content in the next. Eyebrow, Heading, Content, Image and Offer are optional and can be reordered. Put each main action in its own paragraph. In Offer, separate the heading, approved terms and link into paragraphs. Imported unlabelled copy and image cells also work.</dd>
+              <dt>Options and behavior</dt><dd>The standard layout preserves the image’s proportions and stacks the copy, media and offer on mobile. The first plain action in Content is primary. The first plain Offer action is secondary.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Hero Product</th></tr></thead>
+              <tbody>
+                <tr><td>Eyebrow</td><td>Brokerage accounts</td></tr>
+                <tr><td>Heading</td><td>H1 [Product name]</td></tr>
+                <tr><td>Content</td><td>[Product description.] Add a standalone link labelled Open an account.</td></tr>
+                <tr><td>Image</td><td>Insert the approved product image with alternative text.</td></tr>
+                <tr><td>Offer</td><td>H3 [Offer title]. Add a terms paragraph and a standalone link to the offer details.</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Check that the full image and the offer’s separate headline, terms and link remain visible on phone and desktop.</p>
+            <p class="definition-links"><a href="#block-hero-product" aria-label="Direct link to Hero Product">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/hero-product/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/hero-product/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-welcome-hero">
+          <summary><strong>Welcome Hero</strong><span>Presents a welcome campaign alongside a sign-in panel, as on Welcome Back.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Use two-column rows labelled Login, Campaign and Image. All are optional. In Login, add a standalone link labelled Log on to enable the form. Recovery and help links may follow. In Campaign, use a heading, copy and standalone links. Image takes one background image for the entire hero.</dd>
+              <dt>Options and behavior</dt><dd>The standard layout shows the campaign beside the login panel on wide screens. On phones and in narrow containers, the login panel appears above the campaign. Keyboard and screen reader order follows the document, with campaign content first. Log on clears the form and opens the authored sign-in destination.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Welcome Hero</th></tr></thead>
+              <tbody>
+                <tr><td>Login</td><td>H2 Log on. Add a standalone Log on link to the approved sign-in URL.</td></tr>
+                <tr><td>Campaign</td><td>H1 Welcome back. Add the approved campaign paragraph and standalone link.</td></tr>
+                <tr><td>Image</td><td>Insert a campaign background with a crop that accommodates both panels.</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Check the phone layout, tab through both panels and follow the sign-in and recovery links. Keep important campaign information in text so it survives the background crop.</p>
+            <p class="definition-links"><a href="#block-welcome-hero" aria-label="Direct link to Welcome Hero">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/welcome-hero/README.md">Block README</a></p>
+          </div>
+        </details>
+        <h3 class="block-family">Cards</h3>
+        <p>Use one row per item. All nine Cards blocks and <a href="#block-carousel-story">Carousel Story</a> also accept shared records. To reuse one, put a single link to its <code>/cards/</code> document in its own row. You can mix shared and ordinary rows. See the <a href="#first-edit">worked example</a> and <a href="https://github.com/AdobeDrago/etrade/blob/develop/docs/structured-cards.md">structured card fields</a>.</p>
+        <details class="block-definition" id="block-cards">
+          <summary><strong>Cards</strong><span>Group related content when each item can use its own heading, copy, image and links.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Each nonempty row becomes one card. Put an optional picture in its own first cell, then the heading and rich text in the following cell. Extra cells and nested lists keep their reading order.</dd>
+              <dt>Options and behavior</dt><dd>Use the plain block name. The grid fits as many columns as the container allows. Card images use a 4:3 crop.</dd>
+              <dt>Shared card schema</dt><dd><code>card</code> · <a href="#first-edit">How to reference a card from DA</a></dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Cards</th></tr></thead>
+              <tbody>
+                <tr><td>Image of the trading screen with descriptive alternative text</td><td>H3: Trading platforms<br>Explore web, desktop and mobile tools.<br>Link: Explore platforms → /platforms</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Check that the crop keeps the subject visible, then tab through the links in reading order.</p>
+            <p class="definition-links"><a href="#block-cards" aria-label="Direct link to Cards">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards/README.md">Block README</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-cards-account">
+          <summary><strong>Cards Account</strong><span>Compare account types using a name, short description and account actions beneath an accent bar.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Use one row per account. Put the H3, description and each standalone action paragraph in the same cell. A separate Rate settings cell in that row can bind a rate marker. Extra content cells are read in order.</dd>
+              <dt>Options and behavior</dt><dd>Use the plain block name. The first action defaults to an outline and later actions to text links. The grid grows from one to three columns as space permits.</dd>
+              <dt>Shared card schema</dt><dd><code>card-account</code> · <a href="#first-edit">How to reference a card from DA</a></dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th>Cards Account</th></tr></thead>
+              <tbody>
+                <tr><td>H3: Brokerage Account<br>[Approved account description]<br>Link: Account details → /what-we-offer/our-accounts/brokerage-account</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Check action order and destination. If the account shows a rate, confirm its units, disclosure and value for the configured balance or term.</p>
+            <p class="definition-links"><a href="#block-cards-account" aria-label="Direct link to Cards Account">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-account/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-account/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-cards-article">
+          <summary><strong>Cards Article</strong><span>Link to editorial content or highlight a promotional story with artwork.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Each row is one article. Put the optional image in the first cell. In the second, put an optional introductory label in a paragraph before the H3, then a summary and a standalone link. Links in the summary stay inline.</dd>
+              <dt>Options and behavior</dt><dd>Default cards use inset 16:9 artwork. Promo places a copy panel over full-card artwork. Exactly four cards can form a four-column row when space permits.</dd>
+              <dt>Shared card schema</dt><dd><code>card-article</code> · <a href="#first-edit">How to reference a card from DA</a></dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Cards Article (Promo)</th></tr></thead>
+              <tbody>
+                <tr><td>Article artwork with alternative text</td><td>Thought leadership<br>H3: Expert research and insights from Morgan Stanley<br>Link: Explore library → [research library destination]</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Preview the crop and the label above the headline. Check that longer copy fits in the panel and the action opens the intended article or library.</p>
+            <p class="definition-links"><a href="#block-cards-article" aria-label="Direct link to Cards Article">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-article/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-article/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-cards-award">
+          <summary><strong>Cards Award</strong><span>Present a recognition with its attribution and the disclosure that qualifies the claim.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Use one row per award. The first cell can hold a badge image or :award: for a decorative trophy. The second holds the H3 award name, description, disclosure superscript and attribution. The media cell can be empty.</dd>
+              <dt>Options and behavior</dt><dd>Use the plain block name. Headings render as H3 and cards stack on phones, with up to three across on wider screens. Award names, dates and sources are authored.</dd>
+              <dt>Shared card schema</dt><dd><code>card-award</code> · <a href="#first-edit">How to reference a card from DA</a></dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Cards Award</th></tr></thead>
+              <tbody>
+                <tr><td>:award:</td><td>H3: [Approved award title and year]<br>[Recognition claim] [superscript disclosure ID]<br>[Awarding organization]</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Compare the title, year and attribution with the approved claim. Follow its numbered reference to the matching footer disclosure.</p>
+            <p class="definition-links"><a href="#block-cards-award" aria-label="Direct link to Cards Award">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-award/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-award/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-cards-icon">
+          <summary><strong>Cards Icon</strong><span>Help visitors choose an audience, planning goal or tool using short icon-led cards.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Put the icon in the first cell and an H3, description and optional standalone action in the second. Use an image or a supported icon name, such as book, home-lending or ira-selector. In a Planning offer row, enter offer in the first cell and the terms, disclosure and action in the second.</dd>
+              <dt>Options and behavior</dt><dd>Default shows up to three cards across. Welcome Back uses up to two with accent bars. Planning groups life events. Tools shows up to four cards and gives the first action an outline.</dd>
+              <dt>Shared card schema</dt><dd><code>card-icon</code> · <a href="#first-edit">How to reference a card from DA</a></dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Cards Icon (Tools)</th></tr></thead>
+              <tbody>
+                <tr><td>ira-selector</td><td>H3: IRA Selector<br>Compare Traditional and Roth IRA options.<br>Link: Get started → [IRA Selector destination]</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Check that the icon renders alongside the correct title and that the action opens the named tool. For an offer, check its terms and disclosure.</p>
+            <p class="definition-links"><a href="#block-cards-icon" aria-label="Direct link to Cards Icon">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-icon/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-icon/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-cards-numbered">
+          <summary><strong>Cards Numbered</strong><span>Show reasons or steps whose order matters.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Put each reason in one row. Its content cell holds an H3, description and optional standalone link. The block generates a number from the position of each nonempty row. Extra cells join that reason’s content.</dd>
+              <dt>Options and behavior</dt><dd>Use the plain block name. A numbered list stacks on mobile and can display up to three cards across. The large numerals follow the current row order.</dd>
+              <dt>Shared card schema</dt><dd><code>card-numbered</code> · <a href="#first-edit">How to reference a card from DA</a></dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th>Cards Numbered</th></tr></thead>
+              <tbody>
+                <tr><td>H3: Wide range of investments<br>[Description of the investment choices]<br>Link: Learn more → /what-we-offer/investment-choices</td></tr>
+                <tr><td>H3: Mobile trading<br>[Description of the mobile trading tools]<br>Link: Explore platforms → /platforms</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Move a draft row and confirm the cards renumber consecutively. Remove any number typed into a heading to avoid duplicate numbering.</p>
+            <p class="definition-links"><a href="#block-cards-numbered" aria-label="Direct link to Cards Numbered">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-numbered/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-numbered/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-cards-platform">
+          <summary><strong>Cards Platform</strong><span>Present platforms or investment choices with artwork and a link to each detail page.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Each row contains an optional image in the first cell and an H3, description and standalone link in the second. With a single standalone action, the link covers the card and inline links in the description remain independently usable.</dd>
+              <dt>Options and behavior</dt><dd>The default uses larger cards and an outlined first action. Compact uses full-width images, smaller left-aligned copy and a text action with a chevron. Both layouts stack on phones and can grow to three columns.</dd>
+              <dt>Shared card schema</dt><dd><code>card-platform</code> · <a href="#first-edit">How to reference a card from DA</a></dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Cards Platform</th></tr></thead>
+              <tbody>
+                <tr><td>Platform screenshot with alternative text</td><td>H3: Power E*TRADE<br>[Approved platform description]<br>Link: Learn more → [platform detail destination]</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Use the keyboard to reach the card action and any inline link separately. Check their destinations and the image crop on a phone.</p>
+            <p class="definition-links"><a href="#block-cards-platform" aria-label="Direct link to Cards Platform">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-platform/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-platform/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-cards-pricing">
+          <summary><strong>Cards Pricing</strong><span>Compare prominent prices or fees with the label, conditions and disclosure for each amount.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Begin a row with the amount alone in a paragraph, then its H3 label, supporting text and optional standalone link. An offer can start with its heading. For an explicitly bound bank rate, put its Rate settings in a separate cell in the same row. Trading fees are authored values.</dd>
+              <dt>Options and behavior</dt><dd>Default actions are outlined. Text Links uses arrow links. Band creates a dark blue summary with a shared action area below the amounts. Put the section H2 immediately before a Band table.</dd>
+              <dt>Shared card schema</dt><dd><code>card-pricing</code> · <a href="#first-edit">How to reference a card from DA</a></dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th>Cards Pricing (Text Links)</th></tr></thead>
+              <tbody>
+                <tr><td>$0<br>H3: Stocks<br>[Fee conditions and disclosure superscript]<br>Link: Learn more → [pricing details destination]</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Check that the numeric amount receives the large type and its fee label and disclosure appear on the same card. In Band, verify the shared action below the grid.</p>
+            <p class="definition-links"><a href="#block-cards-pricing" aria-label="Direct link to Cards Pricing">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-pricing/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-pricing/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-cards-product">
+          <summary><strong>Cards Product</strong><span>Compare named products with an optional rate and a product-detail action.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>In one row, put the product H3, optional rate H4, supporting paragraphs and standalone links in the content cell. For a dynamic rate, pair the numeric marker with a separate Rate settings cell in that row. Keep units and disclosures in the authored text.</dd>
+              <dt>Options and behavior</dt><dd>Default cards have outlined actions and fit up to two per row on wider screens. Three Columns raises that limit to three. Rates support manual, API and hybrid settings.</dd>
+              <dt>Shared card schema</dt><dd><code>card-product</code> · <a href="#first-edit">How to reference a card from DA</a></dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Cards Product (Three Columns)</th></tr></thead>
+              <tbody>
+                <tr><td>H3: Premium Savings Account<br>H4: {{rate:base}}% APY<br>[Approved base-rate terms and disclosure]<br>Link: Learn more → [savings product destination]</td><td>Rate settings<br>Name: base<br>Mode: api<br>Product: 3100<br>Field: advertisedAPY<br>Balance: 0<br>Fallback: -.--</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Preview the rate and its unavailable state. Check the base-rate label, any promotional rate, the approved terms and the link destination.</p>
+            <p class="definition-links"><a href="#block-cards-product" aria-label="Direct link to Cards Product">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-product/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-product/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <h3 class="block-family">Section layouts</h3>
+        <details class="block-definition" id="block-columns">
+          <summary><strong>Columns</strong><span>Place ordinary content side by side, such as explanatory text and a supporting image.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Author one table row for each horizontal group. Put the contents of each column in its own cell. The first row establishes the column-count class. Headings, paragraphs, lists, pictures and standalone links are optional. Use an image-only cell when it should receive the image-column treatment.</dd>
+              <dt>Options and behavior</dt><dd>Column count comes from the cells. Rows generally sit side by side from 900px and stack in narrow layouts. Image-only cells can move ahead of text on phones. The homepage pricing introduction has its own two-column layout.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Columns</th></tr></thead>
+              <tbody>
+                <tr><td>Heading 2: How the application works<br>Paragraph: [Approved introduction]</td><td>[Application illustration with descriptive alternative text]</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Check the reading order and image placement on a phone and in a narrow section. Follow any links in the text column.</p>
+            <p class="definition-links"><a href="#block-columns" aria-label="Direct link to Columns">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/columns/columns.js">Block implementation</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-columns-feature">
+          <summary><strong>Columns Feature</strong><span>Pair feature artwork with a heading, explanatory copy and actions. The Brokerage treatment places the copy in a bordered panel over the artwork.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Use one row with an image in one cell and copy in the other. The copy cell can include an eyebrow, Heading 2, paragraphs and standalone action links. For Overlap, put the image first and the copy second. Keep headings and links in the copy cell so the image cell is recognized as media.</dd>
+              <dt>Options and behavior</dt><dd>Light and Dark override the section surface. Image Right moves media to the right on wide layouts. Media First keeps a first-cell image ahead of copy on phones. Outline changes the first action, Band removes the outer card treatment, and Award limits recognition artwork. Overlap places the panel across the image’s side on wide layouts and over its lower edge on smaller layouts.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Columns Feature (Dark, Media First, Outline, Band, Overlap)</th></tr></thead>
+              <tbody>
+                <tr><td>[Platform screenshot with descriptive alternative text]</td><td>Eyebrow: Trading tools<br>Heading 2: Explore the platform<br>Paragraph: [Approved feature description]<br>Standalone link: Explore tools → [approved platform URL]</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> For the Brokerage treatment, set section Theme to Charcoal, Background to inverse-raised and Spacing to xl. Check the panel at desktop and phone widths and make sure the text and action stay legible over the artwork.</p>
+            <p class="definition-links"><a href="#block-columns-feature" aria-label="Direct link to Columns Feature">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/columns-feature/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/columns-feature/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-banner-offer">
+          <summary><strong>Banner Offer</strong><span>Present a campaign headline, terms and one or more actions together in a single band.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Author the campaign copy in one cell. Add a heading, terms, an optional promo code and each action as a separate linked paragraph. An optional image can go in its own cell. The block combines content from all rows in order and preserves links inside the terms.</dd>
+              <dt>Options and behavior</dt><dd>Default uses a dark surface and centers an offer with one action and no image. Light uses a compact light layout. Compact uses a dark layout with an outline action and an optional thumbnail. Banner artwork is hidden on phones.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Banner Offer (Compact)</th></tr></thead>
+              <tbody>
+                <tr><td>[Optional campaign image]</td><td>Heading 2: [Approved campaign headline]<br>Paragraph: [Approved eligibility and terms]<br>Standalone link: View offer details → [approved offer URL]</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> On a phone, confirm that the copy still communicates all terms with the artwork hidden. Follow the action and any inline legal links.</p>
+            <p class="definition-links"><a href="#block-banner-offer" aria-label="Direct link to Banner Offer">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/banner-offer/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/banner-offer/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-separator">
+          <summary><strong>Separator</strong><span>Draw a decorative stepped transition between two section backgrounds.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Place the table in its own section with a section break before and after it. All rows are optional. Use two cells per row for setting and value. Set the adjoining sections’ backgrounds in their own Section Metadata.</dd>
+              <dt>Options and behavior</dt><dd>First section color and Second section color accept CSS colors or light and dark. Line break location sets the bend from 0% to 100% and defaults to 50%. Height applies at all widths unless Mobile height overrides it. Both accept positive pixel values. With neither set, the defaults are 81px desktop and 45px phone. Line color sets the outline or accepts none.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Separator</th></tr></thead>
+              <tbody>
+                <tr><td>First section color</td><td>dark</td></tr>
+                <tr><td>Second section color</td><td>light</td></tr>
+                <tr><td>Line break location</td><td>50%</td></tr>
+                <tr><td>Height</td><td>81px</td></tr>
+                <tr><td>Mobile height</td><td>45px</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Check both edges against the actual neighboring section colors on desktop and phone. In its own section the divider should reach both sides without a gutter.</p>
+            <p class="definition-links"><a href="#block-separator" aria-label="Direct link to Separator">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/separator/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/separator/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <h3 class="block-family">Interactive blocks</h3>
+        <details class="block-definition" id="block-accordion-faq">
+          <summary><strong>Accordion FAQ</strong><span>Let readers open individual questions or expand all answers, including answers with lists, links or pricing tables.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Use one row per question. Put the question in the first cell and a rich-text answer in the second. Additional answer cells are joined in order. A separate Rate settings cell can bind a numeric marker in that answer. Place an optional section heading immediately before the table and an optional standalone link immediately after it.</dd>
+              <dt>Options and behavior</dt><dd>The default follows the section theme, then the page family. Purple uses divided rows with plus/minus controls. Charcoal uses rounded rows with chevrons. Flat selects divided rows in either family. Pricing is the older name for Flat.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Accordion FAQ (Flat)</th></tr></thead>
+              <tbody>
+                <tr><td>How do I find the forms?</td><td>Open the forms directory. Link “forms directory” to [approved forms URL].</td></tr>
+                <tr><td>Which documents should I bring?</td><td>A bulleted list of the documents approved for this process.</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Open a question with the keyboard, try Expand all and Collapse all, and follow an answer link. Keep table headers in native tables so readers can navigate wide answers on phones.</p>
+            <p class="definition-links"><a href="#block-accordion-faq" aria-label="Direct link to Accordion FAQ">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/accordion-faq/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/accordion-faq/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-tabs-accounts">
+          <summary><strong>Tabs Accounts</strong><span>Group account choices into categories that readers can switch with desktop tabs or a compact selection menu.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Author one row per category. The first cell is its plain-text label. The second holds the panel: optional Heading 2 and introduction, then a list with one account per item. Give each account a Heading 3, description and separate linked action paragraphs. Additional cells can hold content or named Rate settings for that panel.</dd>
+              <dt>Options and behavior</dt><dd>The first category opens by default. A zero-based fragment such as #tab_1 opens the second category. At wide widths, arrow keys move between tabs. Narrower layouts use a labeled select. Learn more links use text styling and application actions use outline styling.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Tabs Accounts</th></tr></thead>
+              <tbody>
+                <tr><td>Investing</td><td>Heading 2: Investing accounts<br>Introduction: [Approved category overview]<br>List item: Heading 3 [Account name], description, standalone Learn more link to [details URL] and Open an account link to [application URL].</td></tr>
+                <tr><td>Banking</td><td>Heading 2: Banking accounts<br>List item: Heading 3 [Bank account name], description and standalone Learn more link to [details URL].</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Switch every category with the keyboard and the phone select. Test a direct #tab_1 link and verify that each application action opens the intended account destination.</p>
+            <p class="definition-links"><a href="#block-tabs-accounts" aria-label="Direct link to Tabs Accounts">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/tabs-accounts/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/tabs-accounts/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-carousel-story">
+          <summary><strong>Carousel Story</strong><span>Tell a history or sequence as a horizontal series of stories.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Use one row per story. Put the optional image in the first cell. In the second, place the year or introductory label in a paragraph before the H3, followed by its description and optional standalone link. Put the rows in the desired sequence.</dd>
+              <dt>Options and behavior</dt><dd>Use the plain block name. One story fits in narrow layouts and two on wider screens. Visitors scroll, choose a dot or use Previous and Next. Controls appear when stories overflow. Stories advance on visitor input.</dd>
+              <dt>Shared card schema</dt><dd><code>card-story</code> · <a href="#first-edit">How to reference a card from DA</a></dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Carousel Story</th></tr></thead>
+              <tbody>
+                <tr><td>Archival image</td><td>1982<br>H3: An idea is born<br>[Approved account of the founding]</td></tr>
+                <tr><td>Archival image</td><td>1983<br>H3: The click heard ’round the world<br>[Approved account of the first online trade]</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Focus the story list and try Left, Right, Home and End. Confirm the visible-story announcement and selected dot update, and that the arrows stop at either end.</p>
+            <p class="definition-links"><a href="#block-carousel-story" aria-label="Direct link to Carousel Story">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/carousel-story/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/carousel-story/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-widget-calculator">
+          <summary><strong>Widget Calculator</strong><span>Show the approved cash credit for a selected funding tier. Visitors choose among authored thresholds.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Use two columns. Each tier row needs a positive whole-dollar funding threshold and its whole-dollar credit. An explicit zero credit is valid. Optional named rows are Heading, Description, Promo code, Primary CTA, Secondary CTA, Funding label, Credit label, Select label and Disclaimer. Omit the promo rows for a standalone calculator.</dd>
+              <dt>Options and behavior</dt><dd>A slider and a phone or narrow-container range selector share the same tiers. The highest range ends in a plus sign. Legacy empty credit cells can draw from a dated local snapshot. Enter each approved credit explicitly for a new campaign.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Widget Calculator</th></tr></thead>
+              <tbody>
+                <tr><td>Heading</td><td>[Approved calculator heading]</td></tr>
+                <tr><td>Funding label</td><td>Funding amount</td></tr>
+                <tr><td>Credit label</td><td>Cash credit</td></tr>
+                <tr><td>[First approved threshold in whole dollars]</td><td>[Approved credit for this threshold in whole dollars]</td></tr>
+                <tr><td>[Next approved threshold in whole dollars]</td><td>[Approved credit for the next threshold in whole dollars]</td></tr>
+                <tr><td>Disclaimer</td><td>[Approved campaign terms and disclosure references]</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Replace bracketed tier cells with numbers before preview. Step through every range, including the highest plus range, on both controls and compare the displayed credits with the approved campaign terms.</p>
+            <p class="definition-links"><a href="#block-widget-calculator" aria-label="Direct link to Widget Calculator">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/widget-calculator/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/widget-calculator/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <h3 class="block-family">Market data</h3>
+        <p>All three blocks use sample data from <code>/data/market-data.json</code> by default. Set <strong>Market Data Mode</strong> to <code>live</code> in page Metadata to use the configured service. A failed request displays an unavailable state and a Refresh control. Authors supply labels and disclosures. The selected data source supplies the numbers.</p>
+        <details class="block-definition" id="block-market-ticker">
+          <summary><strong>Market Ticker</strong><span>Shows quotes and signed changes for the Dow, Nasdaq, S&amp;P and 10-year Treasury.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>The table can be empty. To give the ticker an accessible name, enter Label in the first cell and the name in the second. The default is Market indices.</dd>
+              <dt>Options and behavior</dt><dd>The four index labels are fixed. Their quotes come from the selected market data source. The page setting Market Data Mode applies to this block and the other market blocks on the page.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Market Ticker</th></tr></thead>
+              <tbody>
+                <tr><td>Label</td><td>Market indices</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Confirm all four index labels appear. Check the sample or delay notice, then use Refresh. A missing quote should display an unavailable state.</p>
+            <p class="definition-links"><a href="#block-market-ticker" aria-label="Direct link to Market Ticker">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/market-ticker/README.md">Block README</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-market-overview">
+          <summary><strong>Market Overview</strong><span>Lets readers compare four index charts, inspect individual observations and look up a stock quote.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Use optional key and value rows. Heading sets the chart title. Search label names the quote lookup. An empty table uses Market overview and Get quotes.</dd>
+              <dt>Options and behavior</dt><dd>The four index tabs, chart data table and symbol lookup are built in. The selected data source supplies chart values and suggestions. Selecting a symbol opens its E*TRADE quote page.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Market Overview</th></tr></thead>
+              <tbody>
+                <tr><td>Heading</td><td>Market overview</td></tr>
+                <tr><td>Search label</td><td>Get quotes</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Use arrow keys to change indices, compare a chart point with its table row, then use the keyboard to select a suggested symbol.</p>
+            <p class="definition-links"><a href="#block-market-overview" aria-label="Direct link to Market Overview">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/market-overview/README.md">Block README</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-market-top-five">
+          <summary><strong>Market Top Five</strong><span>Shows up to five stocks, mutual funds or ETFs for the category a reader selects, with a disclosure for each category.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Use a setting in the first cell and its value in the second. Heading names the selector. Default sets the initial category. Add a disclaimer row for each of the three categories using its exact identifier followed by a space and disclaimer.</dd>
+              <dt>Options and behavior</dt><dd>Default accepts TopDivYieldStocks, MostSearchedMFs or TopETFs and falls back to stocks when omitted or unrecognized. To rename any category, add its identifier followed by a space and label. Keep the identifier in Default even when the displayed label changes.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Market Top Five</th></tr></thead>
+              <tbody>
+                <tr><td>Heading</td><td>Top five</td></tr>
+                <tr><td>Default</td><td>TopETFs</td></tr>
+                <tr><td>TopETFs label</td><td>Top performing ETFs</td></tr>
+                <tr><td>TopDivYieldStocks disclaimer</td><td>[Approved stock disclosure]</td></tr>
+                <tr><td>MostSearchedMFs disclaimer</td><td>[Approved mutual fund disclosure]</td></tr>
+                <tr><td>TopETFs disclaimer</td><td>[Approved ETF disclosure]</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Switch through all three categories. Open Disclaimer each time and compare its text with the approved copy for that category. A missing disclosure leaves its control hidden.</p>
+            <p class="definition-links"><a href="#block-market-top-five" aria-label="Direct link to Market Top Five">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/market-top-five/README.md">Block README</a></p>
+          </div>
+        </details>
+        <h3 class="block-family">Navigation and shared content</h3>
+        <details class="block-definition" id="block-header">
+          <summary><strong>Header</strong><span>Builds public navigation from the shared /nav document or the local fragment named in page metadata Nav.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Author four document sections in order, separated by horizontal rules. Keep empty positions when omitting a role. Utility is a bulleted list, Brand a list of linked logo variants, Main navigation a list of links or nested menus, and Account action a single optional link. The example lists the four sections of the source document.</dd>
+              <dt>Options and behavior</dt><dd>Use page metadata Header Theme (light or dark) to override the page family’s header palette. Header Logo Light and Header Logo Dark can override the image. Login marks the utility item shown beside mobile search. Column and Promo mark nested desktop menu entries. Nav Link Base and Search Action configure destinations.</dd>
+            </dl>
+            <h4>Navigation document (/nav), in section order</h4>
+            <ol class="nav-document-example">
+              <li><strong>Utility links</strong> — Bulleted item with a Login paragraph followed by the Log on link.</li>
+              <li><strong>Brand</strong> — One bullet for Light and one for Dark. Put each marker in a paragraph, then add its linked logo image and alternative text.</li>
+              <li><strong>Main navigation</strong> — Bulleted item Trading &amp; Investing with a nested Column item containing an Accounts heading link and its child links.</li>
+              <li><strong>Account action</strong> — Standalone link labelled Open an account.</li>
+            </ol>
+            <p class="definition-check"><strong>Check in preview</strong> Open a desktop submenu with the keyboard, press Escape and check focus return. Below 1085px, check the drawer, Back control and marked login link.</p>
+            <p class="definition-links"><a href="#block-header" aria-label="Direct link to Header">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/header/README.md">Block README</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-footer">
+          <summary><strong>Footer</strong><span>Supplies global contact details, social links, navigation and optional branding from /footer or the fragment chosen in page metadata Footer.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Create one Footer table in the source document. Each row has a role and a content cell. Contact holds a heading and telephone link. Social holds a list of labelled links. Repeat Column for each heading and link list. Brand accepts a linked logo with alternative text. Rows can be omitted or reordered. Include at least one populated role.</dd>
+              <dt>Options and behavior</dt><dd>The page family selects the light or dark footer. An optional icon can accompany a labelled social link. Use the @privacy-preferences link action for the OneTrust preference center. Page metadata Disclosures controls legal content after the footer.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Footer</th></tr></thead>
+              <tbody>
+                <tr><td>Contact</td><td>H2 Contact us. Add a telephone link using the approved number.</td></tr>
+                <tr><td>Social</td><td>Bulleted link labelled Visit our LinkedIn page, with an optional :social-linkedin: icon.</td></tr>
+                <tr><td>Column</td><td>H3 Resources. Add a bulleted list of links, including Your Privacy Choices with destination @privacy-preferences.</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> On a page using this footer, follow the telephone and social links, then open Your Privacy Choices and confirm that cookie preferences opens on the page.</p>
+            <p class="definition-links"><a href="#block-footer" aria-label="Direct link to Footer">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/footer/README.md">Block README</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/footer/metadata.json">Block metadata</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-disclosures">
+          <summary><strong>Disclosures</strong><span>Displays approved legal copy inline or after the global footer and links numbered references to their entries.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>For an inline table, put a role or number in the first cell and rich text in the second. Introduction, Notice, Logo and Closing are optional. Numeric rows hold the corresponding legal copy. A single-cell block containing just a source link loads that document or structured set instead.</dd>
+              <dt>Options and behavior</dt><dd>For after-footer delivery, set page metadata Disclosures to a legal document or a disclosure-set source. Rich-text documents use top-level ordered lists for numbered items. Structured sets use stable IDs such as offer and number nonempty items in set order. Add the matching ID as superscript at the claim. If a referenced fragment fails to load, the entire region is hidden.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Disclosures</th></tr></thead>
+              <tbody>
+                <tr><td>Introduction</td><td>[Approved introductory text.]</td></tr>
+                <tr><td>1</td><td>[Approved text for numbered disclosure 1.]</td></tr>
+                <tr><td>Closing</td><td>[Approved closing statement.]</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> For this numeric example, follow superscript 1 to its entry. For a structured set, follow the superscript ID and confirm its displayed number after reordering the set.</p>
+            <p class="definition-links"><a href="#block-disclosures" aria-label="Direct link to Disclosures">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/disclosures/README.md">Block README</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-floating-dock">
+          <summary><strong>Floating Dock</strong><span>Keeps account and offer actions in reach as visitors scroll.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Use one block per page. In each row, put the action type in the first cell and a labelled link in the second. Include at least one link. All roles are optional. The first primary link becomes the main button. Empty or unlabelled links are skipped.</dd>
+              <dt>Options and behavior</dt><dd>Offer and login add their respective icons. Primary selects the main action and additional types become secondary links. A single row of three linked cells also supports the existing imported labels. Home can create the dock from its original sticky campaign links.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Floating Dock</th></tr></thead>
+              <tbody>
+                <tr><td>offer</td><td>Link labelled View offer to the approved offer page.</td></tr>
+                <tr><td>login</td><td>Link labelled Log on to the approved sign-in page.</td></tr>
+                <tr><td>primary</td><td>Link labelled Open an account to the account-opening page.</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> With primary and secondary actions present, check that the primary link stays visible below 768px. Open the other actions and press Escape to return focus to the toggle.</p>
+            <p class="definition-links"><a href="#block-floating-dock" aria-label="Direct link to Floating Dock">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/floating-dock/README.md">Block README</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-fragment">
+          <summary><strong>Fragment</strong><span>Reuse an authored document wherever its content should follow the same source.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Use one cell containing the extensionless, root-relative path of the local source, as a link or plain text. A standalone link whose path contains /fragments/ can also expand automatically. Keep that link in its own paragraph because automatic loading replaces the paragraph.</dd>
+              <dt>Options and behavior</dt><dd>An explicit Fragment block alone in its section preserves the source’s sections. Beside other blocks, its source sections are flattened into that shared section. The loader fetches the local document’s plain HTML. Preview or publish the source separately from its consuming pages.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th>Fragment</th></tr></thead>
+              <tbody>
+                <tr><td>/fragments/[shared-source-name]</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Replace the placeholder with the reviewed source path. Preview that source and each affected page, checking section backgrounds, repeated headings, links and images.</p>
+            <p class="definition-links"><a href="#block-fragment" aria-label="Direct link to Fragment">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/fragment/fragment.js">Block implementation</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-widget">
+          <summary><strong>Widget</strong><span>Load a developer-supplied component with its own HTML, styles and JavaScript.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Use one cell containing an actual hyperlink to /widgets/[implemented-name].html. A standalone link to a /widgets/ path can also create the block automatically. The loader uses the widget’s folder and filename to request matching .html, .css and .js assets from the site code.</dd>
+              <dt>Options and behavior</dt><dd>Query parameters become data attributes for the implementation to read. This checkout contains the loader but has no widgets/ asset directory. Obtain a deployed widget path before using this block. The funding calculator uses the separate Widget Calculator table.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th>Widget</th></tr></thead>
+              <tbody>
+                <tr><td>Link: Open [implemented widget name] → /widgets/[implemented-name].html</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Confirm the three matching files exist in the branch used for preview and that the widget loads and responds to the keyboard.</p>
+            <p class="definition-links"><a href="#block-widget" aria-label="Direct link to Widget">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/widget/widget.js">Block implementation</a></p>
+          </div>
+        </details>
+        <details class="block-definition" id="block-library-brief">
+          <summary><strong>Library Brief</strong><span>Adds collapsible author guidance to a block library gallery while keeping the guide out of DA’s insertable examples.</span></summary>
+          <div class="definition-body">
+            <dl>
+              <dt>How to author it</dt><dd>Use a two-column Library Metadata (Guide) table. Title and Description are optional plain-text settings. Add at least one other row with a descriptive label and nonempty rich text. Place actual example blocks in separate sections after the guide.</dd>
+              <dt>Options and behavior</dt><dd>On local and preview gallery pages the Guide option becomes a Library Brief. The title defaults to Authoring guide. Legacy Library Brief tables still render and remain available to the native picker until their heading is updated.</dd>
+            </dl>
+            <table class="definition-example">
+              <caption>Example in DA</caption>
+              <thead><tr><th colspan="2">Library Metadata (Guide)</th></tr></thead>
+              <tbody>
+                <tr><td>Title</td><td>Hero Dark authoring guide</td></tr>
+                <tr><td>Description</td><td>Choose a layout and prepare the artwork.</td></tr>
+                <tr><td>Table structure</td><td>Put the heading and supporting copy in their own paragraphs. Put the image and caption together in a separate cell.</td></tr>
+                <tr><td>Supported options</td><td>Use Overlay for copy over the image on wide screens.</td></tr>
+              </tbody>
+            </table>
+            <p class="definition-check"><strong>Check in preview</strong> Expand the guide in gallery preview. In the DA Blocks picker, verify the example is available to insert and the guide itself is absent.</p>
+            <p class="definition-links"><a href="#block-library-brief" aria-label="Direct link to Library Brief">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/library-brief/README.md">Block README</a></p>
+          </div>
+        </details>
       </section>
 
       <!-- DEVELOPER NOTES -->
@@ -1023,6 +1741,21 @@ npm run check</code></pre>
 </div>
 
 <script>
+  // Open the definition when someone follows or shares its direct link.
+  function openLinkedDefinition() {
+    const target = document.getElementById(window.location.hash.slice(1));
+    if (target?.matches('details.block-definition') && !target.open) {
+      target.open = true;
+      target.scrollIntoView();
+    }
+  }
+  window.addEventListener('hashchange', openLinkedDefinition);
+  openLinkedDefinition();
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href^="#block-"]');
+    if (link && link.hash === window.location.hash) openLinkedDefinition();
+  });
+
   // Highlight the sidebar link for the section currently in view.
   const links = [...document.querySelectorAll('.sidebar-link')];
   const byId = new Map(links.map((a) => [a.getAttribute('href').slice(1), a]));
