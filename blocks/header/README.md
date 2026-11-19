@@ -66,7 +66,13 @@ Author a promo as another item alongside the columns, with separate paragraphs f
 </li>
 ```
 
-The CTA text and destination are preserved. The CTA text is excluded from the description. Images, headlines, descriptions, and CTAs are optional; an empty promo is skipped. Promo cards and descriptions are omitted from the mobile drill-down. The image's authored alternative text is preserved; use empty alt text for a decorative image. `Login`, `Column`, `Promo`, `Light`, and `Dark` markers are case insensitive.
+The CTA text and destination are preserved. The CTA text is excluded from the description. An authored H3 can replace the bold paragraph as the headline; bold text in the description, such as a promo code, then stays bold.
+
+### Link notation
+
+Type `:chevron-right:` inside any menu link's text in DA, e.g. `More Accounts :chevron-right:`. The marker is removed and the link becomes the purple "more" link with the production 14px arrow after the text. `/icons/chevron-right.svg` exists so DA can resolve the notation; the header draws its own inline arrow so it inherits the link color in both themes.
+
+Images, headlines, descriptions, and CTAs are optional; an empty promo is skipped. Promo cards and descriptions are omitted from the mobile drill-down. The image's authored alternative text is preserved; use empty alt text for a decorative image. `Login`, `Column`, `Promo`, `Light`, and `Dark` markers are case insensitive.
 
 Logo image references can point to the existing SVG assets in `/icons/` and remain editable content. When migrating `/nav`, retain its previewed media or replace it with equivalent DA assets.
 
