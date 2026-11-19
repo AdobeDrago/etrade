@@ -122,6 +122,7 @@
     top: var(--header-h);
     height: calc(100vh - var(--header-h));
     overflow-y: auto;
+    overscroll-behavior-y: contain;
     border-right: 1px solid var(--gray-200);
     background: var(--gray-75);
     padding: 24px 0 40px;
@@ -150,14 +151,15 @@
     transition: background 0.1s, color 0.1s, border-color 0.1s;
   }
   .sidebar-link:hover { background: var(--gray-200); color: var(--gray-900); }
-  .sidebar-link.active {
+  .sidebar-link:focus-visible { outline: 2px solid var(--et-purple); outline-offset: -2px; }
+  .sidebar-link[aria-current="location"] {
     background: var(--et-pale-purple);
     color: var(--et-purple-text);
     border-left-color: var(--et-purple);
     font-weight: 700;
   }
   .sidebar-link .icon { width: 16px; height: 16px; opacity: 0.6; flex-shrink: 0; }
-  .sidebar-link.active .icon { opacity: 1; }
+  .sidebar-link[aria-current="location"] .icon { opacity: 1; }
 
   /* ── MAIN ── */
   .main { flex: 1; min-width: 0; padding: 48px 56px 80px; }
@@ -518,10 +520,21 @@
   <nav class="sidebar" aria-label="Page navigation">
     <div class="sidebar-section">
       <div class="sidebar-label">E*TRADE</div>
-      <a class="sidebar-link active" href="#overview">
+      <a class="sidebar-link" href="#overview">
         <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h5v5H2zm7 0h5v5H9zM2 9h5v5H2zm7 0h5v5H9z"/></svg>
         Overview
       </a>
+      <a class="sidebar-link" href="#architecture">Delivery architecture</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Authoring</div>
+      <a class="sidebar-link" href="#page-workflow">Create a page or campaign</a>
+      <a class="sidebar-link" href="#first-edit">Add a brokerage card</a>
+      <a class="sidebar-link" href="#authoring-reference">Authoring reference</a>
+      <a class="sidebar-link" href="#plugins">Plugins &amp; libraries</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Project</div>
       <a class="sidebar-link" href="#use-case">
         <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2.75A.75.75 0 012.75 2h7.5a.75.75 0 01.53.22l3 3a.75.75 0 01.22.53v7.5a.75.75 0 01-.75.75h-10.5a.75.75 0 01-.75-.75V2.75zM5 6.5a.5.5 0 000 1h6a.5.5 0 000-1H5zm0 2.5a.5.5 0 000 1h6a.5.5 0 000-1H5zm0 2.5a.5.5 0 000 1h4a.5.5 0 000-1H5z"/></svg>
         Use case &amp; requirements
@@ -530,19 +543,11 @@
         <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M7.775 3.275a.75.75 0 001.06 1.06l1.25-1.25a2 2 0 112.83 2.83l-2.5 2.5a2 2 0 01-2.83 0 .75.75 0 00-1.06 1.06 3.5 3.5 0 004.95 0l2.5-2.5a3.5 3.5 0 00-4.95-4.95l-1.25 1.25zm-4.69 9.64a2 2 0 010-2.83l2.5-2.5a2 2 0 012.83 0 .75.75 0 001.06-1.06 3.5 3.5 0 00-4.95 0l-2.5 2.5a3.5 3.5 0 004.95 4.95l1.25-1.25a.75.75 0 00-1.06-1.06l-1.25 1.25a2 2 0 01-2.83 0z"/></svg>
         Key references
       </a>
+      <a class="sidebar-link" href="#assistant-workflows">Authoring assistant</a>
       <a class="sidebar-link" href="#deliverables">
         <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 2A2.5 2.5 0 002 4.5v7A2.5 2.5 0 004.5 14h7a2.5 2.5 0 002.5-2.5v-7A2.5 2.5 0 0011.5 2h-7zM5 5.5A.5.5 0 015.5 5h5a.5.5 0 010 1h-5A.5.5 0 015 5.5zm0 2.5a.5.5 0 01.5-.5h5a.5.5 0 010 1h-5A.5.5 0 015 8zm.5 2a.5.5 0 000 1h3a.5.5 0 000-1h-3z"/></svg>
         Deliverables
       </a>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">Site handoff</div>
-      <a class="sidebar-link" href="#architecture">Delivery architecture</a>
-      <a class="sidebar-link" href="#page-workflow">Create a page or campaign</a>
-      <a class="sidebar-link" href="#first-edit">Add a brokerage card</a>
-      <a class="sidebar-link" href="#authoring-reference">Authoring reference</a>
-      <a class="sidebar-link" href="#plugins">Plugins &amp; libraries</a>
-      <a class="sidebar-link" href="#assistant-workflows">Authoring assistant</a>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">Site chrome</div>
@@ -579,10 +584,6 @@
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">Handoff</div>
-      <a class="sidebar-link" href="#rates-data">Bank rates &amp; market data</a>
-      <a class="sidebar-link" href="#tracking-demos">Tracking &amp; demo controls</a>
-      <a class="sidebar-link" href="#shared-source-review">Shared and bulk changes</a>
-      <a class="sidebar-link" href="#release-recovery">Release checks &amp; recovery</a>
       <a class="sidebar-link" href="#decisions">
         <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 4.5A2.5 2.5 0 014.5 2h7A2.5 2.5 0 0114 4.5v5a2.5 2.5 0 01-2.5 2.5H6.7l-3 2.4A.5.5 0 013 14v-2H4.5A2.5 2.5 0 012 9.5v-5z"/></svg>
         Implementation decisions
@@ -591,16 +592,18 @@
         <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0114.082 15H1.918a1.75 1.75 0 01-1.543-2.575L6.457 1.047zM8 5a.75.75 0 00-.75.75v2.5a.75.75 0 001.5 0v-2.5A.75.75 0 008 5zm0 6a1 1 0 100-2 1 1 0 000 2z"/></svg>
         Open items
       </a>
+      <a class="sidebar-link" href="#rates-data">Bank rates &amp; market data</a>
+      <a class="sidebar-link" href="#tracking-demos">Tracking &amp; demo controls</a>
+      <a class="sidebar-link" href="#shared-source-review">Shared and bulk changes</a>
       <a class="sidebar-link" href="#next-steps">
         <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8.22 2.97a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06l2.97-2.97H3.75a.75.75 0 010-1.5h7.44L8.22 4.03a.75.75 0 010-1.06z"/></svg>
         Next steps
       </a>
+      <a class="sidebar-link" href="#release-recovery">Release checks &amp; recovery</a>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">Reference</div>
       <a class="sidebar-link" href="#block-gallery">Choose a block</a>
-      <a class="sidebar-link" href="#technical-reference">Technical references</a>
-      <a class="sidebar-link" href="#guide-maintenance">Handoff ownership</a>
       <a class="sidebar-link" href="#blocks">
         <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3.5A1.5 1.5 0 012.5 2h2A1.5 1.5 0 016 3.5v2A1.5 1.5 0 014.5 7h-2A1.5 1.5 0 011 5.5v-2zm5.5 0A1.5 1.5 0 018 2h2a1.5 1.5 0 011.5 1.5v2A1.5 1.5 0 0110 7H8A1.5 1.5 0 016.5 5.5v-2zm-5.5 5A1.5 1.5 0 012.5 7h2A1.5 1.5 0 016 8.5v2A1.5 1.5 0 014.5 12h-2A1.5 1.5 0 011 10.5v-2zm5.5 0A1.5 1.5 0 018 7h2a1.5 1.5 0 011.5 1.5v2A1.5 1.5 0 0110 12H8A1.5 1.5 0 016.5 10.5v-2z"/></svg>
         Block definitions
@@ -609,6 +612,8 @@
         <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
         Developer notes
       </a>
+      <a class="sidebar-link" href="#technical-reference">Technical references</a>
+      <a class="sidebar-link" href="#guide-maintenance">Handoff ownership</a>
     </div>
   </nav>
 
@@ -2072,27 +2077,81 @@ npm run check</code></pre>
       target.scrollIntoView();
     }
   }
-  window.addEventListener('hashchange', openLinkedDefinition);
-  openLinkedDefinition();
-  document.addEventListener('click', (event) => {
-    const link = event.target.closest('a[href^="#block-"]');
-    if (link && link.hash === window.location.hash) openLinkedDefinition();
-  });
 
-  // Highlight the sidebar link for the section currently in view.
-  const links = [...document.querySelectorAll('.sidebar-link')];
-  const byId = new Map(links.map((a) => [a.getAttribute('href').slice(1), a]));
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        const link = byId.get(entry.target.id);
-        if (!link) return;
-        links.forEach((a) => a.classList.remove('active'));
-        link.classList.add('active');
+  const sidebar = document.querySelector('.sidebar');
+  const sectionSelector = '.page-hero[id], .doc-section[id]';
+  const sections = [...document.querySelectorAll(sectionSelector)];
+  const links = new Map([...sidebar.querySelectorAll('a')].map((link) => [link.hash.slice(1), link]));
+  const sectionStyle = getComputedStyle(document.querySelector('.doc-section'));
+  let activeLink;
+  let fragmentTarget;
+  let wasAtEnd = false;
+  let pending = false;
+  let revealRequested = true;
+
+  function updateSidebar() {
+    pending = false;
+    const atEnd = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1;
+    let section;
+    if (atEnd) {
+      section = sections.at(-1);
+      // Several end-of-page anchors can land at the same scroll position.
+      if (fragmentTarget) {
+        const margin = parseFloat(getComputedStyle(fragmentTarget).scrollMarginTop);
+        if (fragmentTarget.getBoundingClientRect().top >= margin - 1) {
+          section = fragmentTarget.closest(sectionSelector) || section;
+        }
       }
-    });
-  }, { rootMargin: '-20% 0px -70% 0px' });
-  document.querySelectorAll('.doc-section, .page-hero').forEach((s) => { if (s.id) observer.observe(s); });
+    } else {
+      if (wasAtEnd) fragmentTarget = null;
+      const readingLine = parseFloat(sectionStyle.scrollMarginTop) + 1;
+      section = sections.findLast((item) => item.getBoundingClientRect().top <= readingLine) || sections[0];
+    }
+    wasAtEnd = atEnd;
+
+    const link = links.get(section.id);
+    if (link === activeLink && !revealRequested) return;
+    revealRequested = false;
+    activeLink?.removeAttribute('aria-current');
+    link.setAttribute('aria-current', 'location');
+    activeLink = link;
+    if (!sidebar.clientHeight) return;
+
+    // Reveal the link within the sidebar without moving the page or keyboard focus.
+    const menu = sidebar.getBoundingClientRect();
+    const row = link.getBoundingClientRect();
+    if (row.top < menu.top) sidebar.scrollTop += row.top - menu.top;
+    else if (row.bottom > menu.bottom) sidebar.scrollTop += row.bottom - menu.bottom;
+  }
+
+  function scheduleUpdate() {
+    if (!pending) {
+      pending = true;
+      requestAnimationFrame(updateSidebar);
+    }
+  }
+
+  function requestReveal() {
+    revealRequested = true;
+    scheduleUpdate();
+  }
+
+  function followFragment() {
+    openLinkedDefinition();
+    fragmentTarget = document.querySelector(':target');
+    requestReveal();
+  }
+
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href^="#"]');
+    if (link && link.hash === window.location.hash) followFragment();
+  });
+  window.addEventListener('hashchange', followFragment);
+  window.addEventListener('pageshow', followFragment);
+  window.addEventListener('scroll', scheduleUpdate, { passive: true });
+  window.addEventListener('resize', requestReveal);
+  new ResizeObserver(scheduleUpdate).observe(document.querySelector('main'));
+  followFragment();
 </script>
 
 </body>
