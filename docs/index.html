@@ -102,7 +102,8 @@
     background: var(--et-purple);
     color: #fff;
     font-size: 11px;
-    padding: 3px 10px;
+    padding: 5px 12px;
+    text-decoration: none;
     border-radius: 12px;
     letter-spacing: 0.04em;
     font-weight: 700;
@@ -356,6 +357,18 @@
   .spec-table td:first-child { font-weight: 700; color: var(--gray-900); }
 
 
+  /* Topic navigation and authoring references */
+  .topnav-badge:hover { text-decoration: underline; }
+  #handoff-topics, .doc-section h3[id] { scroll-margin-top: calc(var(--header-h) + 20px); }
+  .topic-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 16px 28px; }
+  .topic-grid > div { padding-top: 8px; border-top: 1px solid var(--gray-300); }
+  .topic-grid ul { display: flex; flex-wrap: wrap; gap: 4px 12px; list-style: none; padding-top: 4px; }
+  .topic-grid a { display: inline-block; padding: 2px 0; text-underline-offset: 2px; }
+  .handoff-table { table-layout: fixed; overflow-wrap: anywhere; }
+  .handoff-table th:first-child { width: 32%; }
+  .spec-table caption { text-align: left; font-weight: 700; margin-bottom: 4px; }
+  .doc-section blockquote { margin: 8px 0 16px; padding: 8px 16px; border-left: 3px solid var(--et-purple); background: var(--gray-75); }
+
   /* Block definitions */
   .block-directory {
     display: grid;
@@ -495,7 +508,7 @@
   </a>
   <div class="topnav-divider"></div>
   <span class="topnav-title">us.etrade.com — AEM → EDS Migration · Handoff Playbook</span>
-  <span class="topnav-badge">Handoff</span>
+  <a class="topnav-badge" href="#handoff-topics">Contents</a>
 </nav>
 
 <!-- LAYOUT -->
@@ -525,9 +538,11 @@
     <div class="sidebar-section">
       <div class="sidebar-label">Site handoff</div>
       <a class="sidebar-link" href="#architecture">Delivery architecture</a>
+      <a class="sidebar-link" href="#page-workflow">Create a page or campaign</a>
       <a class="sidebar-link" href="#first-edit">Add a brokerage card</a>
       <a class="sidebar-link" href="#authoring-reference">Authoring reference</a>
       <a class="sidebar-link" href="#plugins">Plugins &amp; libraries</a>
+      <a class="sidebar-link" href="#assistant-workflows">Authoring assistant</a>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">Site chrome</div>
@@ -564,6 +579,10 @@
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">Handoff</div>
+      <a class="sidebar-link" href="#rates-data">Bank rates &amp; market data</a>
+      <a class="sidebar-link" href="#tracking-demos">Tracking &amp; demo controls</a>
+      <a class="sidebar-link" href="#shared-source-review">Shared and bulk changes</a>
+      <a class="sidebar-link" href="#release-recovery">Release checks &amp; recovery</a>
       <a class="sidebar-link" href="#decisions">
         <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 4.5A2.5 2.5 0 014.5 2h7A2.5 2.5 0 0114 4.5v5a2.5 2.5 0 01-2.5 2.5H6.7l-3 2.4A.5.5 0 013 14v-2H4.5A2.5 2.5 0 012 9.5v-5z"/></svg>
         Implementation decisions
@@ -579,6 +598,9 @@
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">Reference</div>
+      <a class="sidebar-link" href="#block-gallery">Choose a block</a>
+      <a class="sidebar-link" href="#technical-reference">Technical references</a>
+      <a class="sidebar-link" href="#guide-maintenance">Handoff ownership</a>
       <a class="sidebar-link" href="#blocks">
         <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3.5A1.5 1.5 0 012.5 2h2A1.5 1.5 0 016 3.5v2A1.5 1.5 0 014.5 7h-2A1.5 1.5 0 011 5.5v-2zm5.5 0A1.5 1.5 0 018 2h2a1.5 1.5 0 011.5 1.5v2A1.5 1.5 0 0110 7H8A1.5 1.5 0 016.5 5.5v-2zm-5.5 5A1.5 1.5 0 012.5 7h2A1.5 1.5 0 016 8.5v2A1.5 1.5 0 014.5 12h-2A1.5 1.5 0 011 10.5v-2zm5.5 0A1.5 1.5 0 018 7h2a1.5 1.5 0 011.5 1.5v2A1.5 1.5 0 0110 12H8A1.5 1.5 0 016.5 10.5v-2z"/></svg>
         Block definitions
@@ -599,7 +621,7 @@
         <div class="page-hero-eyebrow">E*TRADE · Prospect Site Migration</div>
         <h1>E*TRADE on Edge Delivery Services</h1>
         <p class="page-hero-sub">Migration playbook for the E*TRADE prospect site. Use it to find the right preview, see how a page is assembled, and check what still needs review before publication.</p>
-        <p>Updated <time datetime="2026-11-19">November 19, 2026</time> against <a href="https://github.com/AdobeDrago/etrade/tree/94877ea968a6aca87bc4f5e1e0c249ec520e13c0">develop at 94877ea</a>.</p>
+        <p>Updated <time datetime="2026-11-19">November 19, 2026</time> against <a href="https://github.com/AdobeDrago/etrade/tree/1fd3de2e9be8d749d13736b9ba5819e67dd32cf4">develop at 1fd3de2</a>.</p>
       </div>
 
       <!-- PROJECT OVERVIEW -->
@@ -625,6 +647,62 @@
           <li><strong>Reviewing a change?</strong> Compare the <a href="https://develop--etrade--adobedrago.aem.page/home">develop preview</a> with <a href="https://main--etrade--adobedrago.aem.page/home">the same page on the main preview</a>. Check related fragments and disclosures with the page.</li>
           <li><strong>Maintaining the migration?</strong> Start with <a href="#architecture">how a change reaches a visitor</a>. The <a href="#import">import record</a> documents the original seven-page sample. The <a href="#next-steps">release checklist</a> covers the current authoring and code workflow.</li>
         </ul>
+        <nav id="handoff-topics" aria-labelledby="handoff-topics-title">
+          <h3 id="handoff-topics-title">Playbook contents</h3>
+          <div class="topic-grid">
+            <div>
+              <strong>Plan and author</strong>
+              <ul>
+                <li><a href="#architecture">Delivery architecture</a></li>
+                <li><a href="#page-workflow">Create a page or campaign</a></li>
+                <li><a href="#templates">Page patterns</a></li>
+                <li><a href="#first-edit">First shared card</a></li>
+                <li><a href="#assistant-workflows">Assistant examples</a></li>
+              </ul>
+            </div>
+            <div>
+              <strong>Look up a field or component</strong>
+              <ul>
+                <li><a href="#metadata-reference">Page metadata</a></li>
+                <li><a href="#section-metadata-reference">Section metadata</a></li>
+                <li><a href="#asset-reference">Artwork</a></li>
+                <li><a href="#link-presentation">Links and buttons</a></li>
+                <li><a href="#brand">Brand</a></li>
+                <li><a href="#block-gallery">Choose a block</a></li>
+                <li><a href="#blocks">All 32 definitions</a></li>
+              </ul>
+            </div>
+            <div>
+              <strong>Work with shared tools and data</strong>
+              <ul>
+                <li><a href="#plugins">Plugins and libraries</a></li>
+                <li><a href="#shared-source-review">Shared and bulk changes</a></li>
+                <li><a href="#header">Navigation</a></li>
+                <li><a href="#footer">Footer and disclosures</a></li>
+                <li><a href="#rates-data">Rates and market data</a></li>
+                <li><a href="#tracking-demos">Tracking and demo controls</a></li>
+              </ul>
+            </div>
+            <div>
+              <strong>Review, release and support</strong>
+              <ul>
+                <li><a href="#use-case">Requirements</a></li>
+                <li><a href="#references">Environments</a></li>
+                <li><a href="#deliverables">Deliverables</a></li>
+                <li><a href="#import">Import history</a></li>
+                <li><a href="#fidelity">Visual checks</a></li>
+                <li><a href="#decisions">Implementation decisions</a></li>
+                <li><a href="#next-steps">Release</a></li>
+                <li><a href="#release-recovery">Recovery and unpublishing</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+                <li><a href="#limitations">Open checks</a></li>
+                <li><a href="#dev-notes">Developer notes</a></li>
+                <li><a href="#technical-reference">Technical references</a></li>
+                <li><a href="#guide-maintenance">Handoff ownership</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
       </section>
 
       <section class="doc-section" id="architecture">
@@ -644,7 +722,20 @@
             <li><strong>Release</strong>Merge through <code>develop</code> to <code>main</code> to ship the layout.</li>
           </ol>
         </figure>
-        <p>This playbook follows a third path. Edit <code>docs/index.html</code> on a Git branch, review its preview, then release to <code>main</code> for GitHub Pages. <a href="site-handoff.html#environments">Environments and ownership</a></p>
+        <p>Authors own page copy, headings, images, links and metadata. Content and legal owners approve claims, fees, campaign dates and disclosures. The DA administrator maintains workspace registrations. Developers own code and service integrations. Site configuration lives at <a href="https://tools.aem.live/">tools.aem.live</a>. The administrator configures editor libraries in <a href="#plugins">DA</a>.</p>
+        <p>This playbook follows a third path. Edit <code>docs/index.html</code> on a Git branch, review its preview, then release to <code>main</code> for GitHub Pages. <a href="#references">Environment links</a></p>
+      </section>
+
+      <section class="doc-section" id="page-workflow">
+        <h2>Create a page or update a campaign</h2>
+        <div class="section-rule"></div>
+        <ol class="req-list">
+          <li><strong>Choose the page and its owner.</strong> For an existing page, open the exact path and find the block to edit. For a new page, agree on an unused path and a content owner. Create a page in the intended DA folder and choose <strong>Panels → Library → Templates</strong> to preview a starting layout, or copy a reviewed page to that path. <a href="https://www.aem.live/docs/ew/authoring/editing-docs">Create and edit pages in Experience Workspace</a></li>
+          <li><strong>Review what the copy inherited.</strong> Update the title, description and social image. Check its design family, navigation overrides, campaign links, data settings and disclosure set. A starter supplies a local copy of its tables. Any links in those tables to shared cards or fragments still use the original sources. <a href="#templates">E*TRADE page patterns</a></li>
+          <li><strong>Review a campaign as one change.</strong> Match the headline, amount, eligibility, dates, promo code, calculator thresholds and credits with the offer page and its legal copy. Confirm the approved values with the content and legal owners. Follow the actions from the hero, banner and floating dock to their intended destinations.</li>
+          <li><strong>Preview the draft with its dependencies.</strong> Use one H1 for the page and native headings for sections and cards. Check the table names, row order, image crops and legal references at desktop and phone widths. Enlarge the text to 200% and follow the actions with the keyboard. <a href="#metadata-reference">Page settings</a> · <a href="#blocks">Block definitions</a></li>
+          <li><strong>Check the route into the page.</strong> Identify the menu, campaign or other page that should link to the new URL. For a move, agree how the old path will redirect. Review the actual link, page title and social image in preview. Publish approved dependencies and the destination before releasing links that point to it. Then visit the published page from an entry link. <a href="#next-steps">Preview and release steps</a></li>
+        </ol>
       </section>
 
       <section class="doc-section" id="first-edit">
@@ -681,8 +772,22 @@
           Authoring reference
         </h2>
         <div class="section-rule"></div>
-        <h3>Page and section metadata</h3>
-        <p>Use one <strong>Metadata</strong> table for page-wide choices such as the design family (<code>Theme</code>) and legal source (<code>Disclosures</code>). Insert a horizontal rule to start a new section. To arrange two blocks side by side, put this table in their section, with the first row merged across both columns.</p>
+        <h3 id="metadata-reference">Page metadata</h3>
+        <p>Put these fields in the page’s two-column <strong>Metadata</strong> table. A page value takes precedence over a shared default in a published bulk metadata sheet. Preview and publish a changed sheet separately. When copying a page, check each inherited value against the new page and its claims. <a href="https://www.aem.live/docs/metadata">Page metadata</a> · <a href="https://www.aem.live/docs/bulk-metadata">Bulk metadata</a></p>
+        <table class="spec-table handoff-table">
+          <thead><tr><th scope="col">Field</th><th scope="col">What to enter or check</th></tr></thead>
+          <tbody>
+            <tr><td>Title, Description, Image</td><td>Supply the approved page title, summary and social image. Inspect the delivered metadata after preview, especially when starting from a copy.</td></tr>
+            <tr><td>Theme, Header Theme</td><td>Use <code>Purple</code> or <code>Charcoal</code> for the page family. A valid <strong>Header Theme</strong> (<code>light</code> or <code>dark</code>) wins for the header, followed by an explicit Header block variant, a legacy page light/dark setting, then the family default. Purple defaults to a light header. With no family the header defaults to dark. <a href="#brand">Brand reference</a></td></tr>
+            <tr><td>Nav, Footer, Disclosures</td><td>Navigation and footer normally load <code>/nav</code> and <code>/footer</code>. An alternate path selects a different shared source. For after-footer legal copy, set <strong>Disclosures</strong> to the approved document or set. Preview each changed source as well as its consuming page.</td></tr>
+            <tr><td>Header Logo Light, Header Logo Dark</td><td>An approved image URL overrides the selected Brand image for that header scheme. The authored logo link and alternative text still come from the navigation document.</td></tr>
+            <tr><td>Nav Link Base, Search Action</td><td>An absolute HTTP(S) Nav Link Base resolves root-relative menu links against that host, except <code>/home</code>. Header search submits to <code>https://us.etrade.com/search</code> unless Search Action supplies another destination.</td></tr>
+            <tr><td>Bank rates source, Bank rates endpoint</td><td><code>direct</code> uses GET by default. <code>aggregate</code> uses POST. An endpoint override must match the supported service or same-origin route. Put a card’s product, balance, term and rate marker in its own row’s <strong>Rate settings</strong> cell.</td></tr>
+            <tr><td>Market Data Mode, Market Data Base, Market Data Sample</td><td>Omit the mode for bundled samples or enter <code>live</code> for service data. A same-origin proxy base needs a trailing slash. The bundled sample is <code>/data/market-data.json</code>. Additional test-fixture paths are restricted to localhost. Live mode ignores the sample setting.</td></tr>
+          </tbody>
+        </table>
+        <h3 id="section-metadata-reference">Section metadata</h3>
+        <p>Add <strong>Section Metadata</strong> inside the section it describes. Omit a field to retain the existing layout or its equivalent legacy Style option. For example, this table arranges two whole blocks side by side.</p>
         <table class="spec-table">
           <thead><tr><th colspan="2">Section Metadata</th></tr></thead>
           <tbody>
@@ -691,15 +796,43 @@
             <tr><th scope="row">Gap</th><td>m</td></tr>
           </tbody>
         </table>
-        <p>This grid stacks the blocks below 768px. A section introduction spans both columns. Use <code>Spacing</code> to adjust padding above and below the section. <a href="site-handoff.html#metadata-reference">Page and section fields</a></p>
+        <table class="spec-table handoff-table">
+          <thead><tr><th scope="col">Field</th><th scope="col">Supported values and behavior</th></tr></thead>
+          <tbody>
+            <tr><td>Theme, Color Scheme</td><td>Theme sets the local <code>Purple</code> or <code>Charcoal</code> family. A section normally inherits the page family. Color Scheme sets <code>light</code> or <code>dark</code> for the section. An explicit scheme takes precedence over older style settings and the scheme inferred from a named background. An explicit block surface such as <strong>Columns Feature (Dark)</strong> keeps its own styling.</td></tr>
+            <tr><td>Container, Grid</td><td><code>narrow</code> and <code>standard</code> cap the width at 800px and 1200px including gutters. <code>full</code> removes side gutters. Grid accepts <code>1</code> through <code>6</code> whole blocks per row. It stacks below 768px, uses up to two columns from 768px and the requested count from 1200px. Default content spans the grid. Each Cards row remains a card inside its own block.</td></tr>
+            <tr><td>Gap, Spacing</td><td>Both accept <code>none</code>, <code>xs</code>, <code>s</code>, <code>m</code>, <code>l</code>, <code>xl</code> and <code>xxl</code>. Gap separates grid cells. Spacing sets section padding above and below content. A block controls its own internal padding.</td></tr>
+            <tr><td>Background, Background Color, Background Image</td><td>Choose <code>default</code>, <code>page</code>, <code>subtle</code>, <code>inverse</code>, <code>inverse-raised</code> or <code>highlight</code>, or use a supported color, brand token or gradient. Background Color takes precedence over text in Background. Insert an actual image in Background Image for a decorative layer. Choose a readable Color Scheme and keep meaningful artwork and copy in the block.</td></tr>
+            <tr><td>Align, Anchor, ID</td><td>Align accepts <code>left</code>, <code>center</code> or <code>right</code> for default content. A unique Anchor such as <code>featured-products</code> gives the section a direct link. It takes precedence over ID and accepts an optional leading <code>#</code>.</td></tr>
+            <tr><td>Style</td><td>Existing names such as <code>grid-3</code>, <code>gap-m</code> and <code>center</code> are supported. Explicit fields take precedence over equivalent legacy options. <a href="https://github.com/AdobeDrago/etrade/blob/develop/README.md#flexible-section-authoring">Layout settings and spacing scale</a></td></tr>
+          </tbody>
+        </table>
         <figure class="handoff-figure">
           <img src="images/handoff/style-system.jpg" width="1265" height="712" loading="lazy" decoding="async" alt="E*TRADE style showroom with controls for the design family, section layout and card grid">
           <figcaption>Try the grid and theme controls in the <a href="https://develop--etrade--adobedrago.aem.page/tools/style-system/style-system.html">style showroom</a> before applying settings in DA. Showroom selections affect its preview only.</figcaption>
         </figure>
-        <h3>Images and alternative text</h3>
-        <p>The Cards block crops images to 4:3. Cards Article uses 16:9 by default. Keep the subject inside the crop on phone and desktop. Hero Product preserves the source proportions. Describe what an informative image adds, leave decorative images’ alternative text empty, and give an image-only link a name that tells readers its destination. Keep rates and offer terms in the copy. <a href="site-handoff.html#asset-reference">Image preparation guide</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/hero-product/README.md">Current Hero Product image rules</a></p>
-        <h3>Inline links and actions</h3>
-        <p>Link words within a sentence for an inline link. For a button in ordinary default content, put a descriptive link alone in its paragraph and make it bold for a primary button or italic for an outline. Blocks can assign actions by position. Hero Dark uses the first standalone link in its main copy as the primary action and later ones as secondary actions. Preserve campaign parameters when editing a destination. <a href="site-handoff.html#branding">Link formatting and block exceptions</a></p>
+        <h3 id="asset-reference">Artwork and alternative text</h3>
+        <p>The Cards block crops images to 4:3. Cards Article uses 16:9 by default. Keep the subject inside the crop on phone and desktop. Hero Product preserves the source proportions. Describe what an informative image adds, leave decorative images’ alternative text empty, and give an image-only link a name that tells readers its destination. Keep rates and offer terms in the copy. <a href="https://www.aem.live/docs/ew/authoring/adding-media">Add or replace media in DA</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/hero-product/README.md">Current Hero Product image rules</a></p>
+        <p>Identify the block variant, the approved asset, its alternative text and any caption or disclosure. Specify the alternate artwork when the campaign has a mobile version. Replace the image in DA and revisit the description when its subject changes.</p>
+        <table class="spec-table">
+          <thead><tr><th scope="col">Placement</th><th scope="col">Check in the rendered page</th></tr></thead>
+          <tbody>
+            <tr><td>Background hero</td><td><a href="#block-hero">Hero</a> crops from the top left. <a href="#block-welcome-hero">Welcome Hero</a> crops from the center, and its sign-in panel covers part of the artwork on wide screens. Check the subject and text at both widths.</td></tr>
+            <tr><td>Campaign media</td><td><a href="#block-hero-dark">Hero Dark (Overlay)</a> accepts a separate Mobile image row. <a href="#block-banner-offer">Banner Offer</a> hides its artwork on phones. Keep essential offer wording and disclosures in the page text.</td></tr>
+            <tr><td>Cards and logos</td><td>Check <a href="#block-cards-article">Cards Article (Promo)</a> with the longest headline over its artwork. Use square artwork for <a href="#block-cards-award">Cards Award</a> and review header and footer logos against their actual backgrounds. At 200% text size, check that captions, links and controls are still readable.</td></tr>
+          </tbody>
+        </table>
+        <h3 id="link-presentation">How links become actions</h3>
+        <p>A link’s position matters as much as its formatting. For a link within a sentence, select just the descriptive words. For a standalone action, give the link a paragraph of its own and preserve the destination, campaign parameters and any fragment identifier.</p>
+        <table class="spec-table">
+          <thead><tr><th scope="col">Where the link appears</th><th scope="col">What readers see</th></tr></thead>
+          <tbody>
+            <tr><td>Ordinary text outside a block or action group</td><td>A plain standalone link stays a text link. Bold gives it primary-button styling, italic gives it an outline, and bold plus italic gives it accent styling. A link embedded within a sentence remains inline.</td></tr>
+            <tr><td>A page or pricing introduction</td><td>The <a href="#templates">six route-specific layouts</a> group eligible standalone links. Pricing introductions also group them on other routes. Usually the first is primary and later ones are text actions. The awards section uses a text action first and the Planning icon section uses an outline. A bold-and-italic accent link in these groups becomes primary.</td></tr>
+            <tr><td>Inside a block</td><td><a href="#block-hero-dark">Hero Dark</a> assigns primary and secondary actions by order. <a href="#block-hero-light">Hero Light</a> starts with an outline and honors bold or italic overrides. In <a href="#block-tabs-accounts">Tabs Accounts</a>, links beginning with “Learn more” use the text treatment and other account actions use outlines.</td></tr>
+          </tbody>
+        </table>
+        <p>Follow each link from preview and inspect its final destination. When a block draws an arrow beside a text action, author the link label once. <a href="https://github.com/AdobeDrago/etrade/blob/develop/scripts/actions.js">Shared action rules</a> · <a href="#plugins">Link Options and tracking</a></p>
       </section>
 
       <section class="doc-section" id="plugins">
@@ -744,8 +877,8 @@
 
         <h3>Panels → Library</h3>
         <ul class="req-list">
-          <li><strong>Blocks</strong> opens the site’s catalog of block examples. Insert an example into your draft, then edit its cells. Look up the supported fields and variants in the <a href="#blocks">32 block definitions</a>.</li>
-          <li><strong>Templates</strong> opens the site’s page-template catalog. Use it to find a starting layout. The <a href="#templates">page patterns</a> show how the reviewed E*TRADE routes are assembled.</li>
+          <li><strong>Blocks</strong> showed 20 block families in the regular Canvas menu on November 19. Expand a family to choose an example, insert it into your draft, then edit its cells. Look up the supported fields and variants in the <a href="#blocks">32 block definitions</a>.</li>
+          <li><strong>Templates</strong> offered <strong>Homepage</strong>, <strong>What We Offer</strong> and <strong>Editorial (Planning / Why E*TRADE)</strong> in Canvas on November 19. Use Preview to check a starter before adding it. The <a href="#templates">page patterns</a> show how the reviewed E*TRADE routes are assembled.</li>
         </ul>
         <h3 id="plugin-legacy">Disclosure Manager Legacy</h3>
         <p>The tenth library entry appears under <strong>Extensions</strong> when Canvas uses the <code>demo</code> ref. It works with letter IDs such as <code>offer</code>. <strong>Save shared order</strong> updates the set alone. <strong>Insert reference</strong> adds the stable ID at the cursor for the author to save with the page. <a href="https://da.live/canvas?ref=demo#/adobedrago/etrade/home">Open Canvas with the demo ref</a> · <a href="https://demo--etrade--adobedrago.aem.page/tools/plugins/disclosure-manager/disclosure-manager.html?demo=1">Try the legacy manager</a>.</p>
@@ -804,6 +937,17 @@
         <p>The <a href="site-handoff.html">site handoff guide</a> covers everyday authoring. The <a href="https://github.com/AdobeDrago/etrade/tree/develop">develop source</a> contains block contracts, tests and integration details.</p>
       </section>
 
+      <section class="doc-section" id="assistant-workflows">
+        <h2>Use the authoring assistant on a draft</h2>
+        <div class="section-rule"></div>
+        <p>Where the Experience Workspace assistant is enabled, give it the draft path, a supported block, the approved material and the limits of the edit. You can attach copy or artwork with the plus button. Review the requested changes before confirming them. <a href="https://www.aem.live/docs/ew/authoring/assistant">Adobe Assistant panel</a></p>
+        <h3>Revise one card</h3>
+        <blockquote>On my draft, replace the title and description in the second authored Cards Article row with the two lines I attached. Keep the image, alternative text, standalone action, destination and disclosure reference. Show the changed row and leave the draft unpublished.</blockquote>
+        <h3>Build a library example</h3>
+        <blockquote>Use the supplied Cards Article table to prepare a draft library example. Keep one card per row, with the image in its own cell and the heading, body and standalone link together in the other cell. Put the authoring notes in a separate Library Metadata (Guide) table. Show the proposed source and list the artwork or links that still need review.</blockquote>
+        <p>After an edit, compare the saved source with the approved copy, including superscripts, link parameters, heading levels and any rate settings. For new structure, inspect the native DA table and preview at the intended URL. A gallery example also needs its catalog entry and an insertion check through <strong>Panels → Library → Blocks</strong>. Try editing the inserted example, using Undo, saving and reloading. <a href="https://github.com/AdobeDrago/etrade/blob/develop/docs/block-library-pilot.md">Library source examples and insertion checks</a></p>
+      </section>
+
       <!-- DELIVERABLES -->
       <section class="doc-section" id="deliverables">
         <h2>
@@ -820,7 +964,7 @@
             <tr><td>Global navigation and legal content</td><td>Shared header and footer documents, theme-aware artwork, a floating dock and per-page disclosure sources. See <a href="#header">header</a> and <a href="#footer">footer</a>.</td></tr>
             <tr><td>Reusable Content</td><td>The DA Canvas extension can insert shared fragments, add a Structured Card to a matching block or create the matching block. The nine Cards blocks and Carousel Story accept linked card records alongside ordinary rows. See <a href="https://github.com/AdobeDrago/etrade/blob/develop/docs/reusable-content.md">Reusable Content</a> and the <a href="https://github.com/AdobeDrago/etrade/blob/develop/docs/structured-cards.md">schema map</a>.</td></tr>
             <tr><td>Authoring tools</td><td>Open the <a href="#plugins">plugins and libraries guide</a> for the exact Canvas menu entries, the registered versions of Link Options and Disclosure Manager, and the XML import and export workflow.</td></tr>
-            <tr><td>Rates and market data</td><td>Supported blocks can use manual or service-backed bank rates. The market blocks support sample and live data modes. Verify the selected source, timestamp and unavailable state on the delivery host. See the <a href="site-handoff.html#rates-data">integration guide</a>.</td></tr>
+            <tr><td>Rates and market data</td><td>Supported blocks can use manual or service-backed bank rates. The market blocks support sample and live data modes. Verify the selected source, timestamp and unavailable state on the delivery host. See the <a href="#rates-data">integration guide</a>.</td></tr>
           </tbody>
         </table>
       </section>
@@ -842,8 +986,9 @@
           <li><strong>Main navigation.</strong> Use a link for a direct destination or a nested list for a menu. Mark each link group with <code class="code-inline">Column</code>. A <code class="code-inline">Promo</code> item can supply its own image, heading, copy and call to action.</li>
           <li><strong>Account action.</strong> Add the account-opening link here. It appears in the desktop bar and in the mobile drawer.</li>
         </ol>
+        <p>In a <strong>Promo</strong> item, an H3 can supply the headline and preserve bold text such as a promo code in the description. For a purple “more” link with a trailing arrow, include the <code>:chevron-right:</code> icon in the linked text, for example <strong>More Accounts :chevron-right:</strong>. Preview the link in the menu and confirm the icon and accessible label. <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/header/README.md#link-notation">Navigation authoring rules</a></p>
         <p>At 1085px and wider, one menu opens at a time. Panels with three or more link columns span the bar. Below 1085px, the drawer uses Back buttons and omits promo cards. Check the skip link, use Arrow Down to enter a desktop panel, then press Escape to return to its trigger.</p>
-        <p>Search submits the visitor’s query to E*TRADE’s public search endpoint. Page metadata <code class="code-inline">Search Action</code> can change that destination. Sign-in follows the authored link. <a href="site-handoff.html#block-header">Header authoring example</a></p>
+        <p>Search submits the visitor’s query to E*TRADE’s public search endpoint. Page metadata <code class="code-inline">Search Action</code> can change that destination. Sign-in follows the authored link. <a href="#block-header">Header authoring example</a></p>
       </section>
 
       <!-- FOOTER -->
@@ -863,11 +1008,11 @@
           <li><strong>Your Privacy Choices.</strong> Enter <code class="code-inline">@privacy-preferences</code> in DA’s native Edit link dialog. On the site code documented here, this action opens the OneTrust preference center after it initializes. The <a href="#plugin-link-options">registered Link Options panel</a> handles tracking and path rules. The separate Privacy &amp; Cookies link keeps its destination.</li>
         </ul>
         <div class="notice info">
-          <span>For legal copy after the footer, set page metadata <code class="code-inline">Disclosures</code> to the approved document or set. Preview it with the page and follow each disclosure reference to its text. <a href="site-handoff.html#disclosures">Disclosure authoring guide</a></span>
+          <span>For legal copy after the footer, set page metadata <code class="code-inline">Disclosures</code> to the approved document or set. Preview it with the page and follow each disclosure reference to its text. <a href="#plugin-disclosure-manager">Disclosure Manager workflows</a></span>
         </div>
         <h3>Match a claim to its disclosure</h3>
         <p>For a letter-ID set on <code>develop</code>, enter the matching ID as a superscript after the claim and save the page. If <code>offer</code> is first in the set, preview shows <strong>1</strong> linked to <code>#disclosure-offer</code>. For a converted set on compatible code, the first item in set <code>homepage</code> links to <code>#disclosure-homepage-1</code>. Follow the marker to its wording after previewing the fragments, set and page together. See the <a href="#plugin-disclosure-manager">numbered manager</a> and the <a href="#plugin-legacy">legacy workflow</a>.</p>
-        <p><a href="site-handoff.html#block-footer">Footer authoring example</a> · <a href="#plugin-link-options">Link Options instructions</a></p>
+        <p><a href="#block-footer">Footer authoring example</a> · <a href="#plugin-link-options">Link Options instructions</a></p>
       </section>
 
       <!-- BRAND -->
@@ -970,6 +1115,7 @@
         <table class="spec-table">
           <thead><tr><th scope="col">Page or component</th><th scope="col">What to check in preview</th></tr></thead>
           <tbody>
+            <tr><td>Global navigation</td><td>Open a desktop menu with a promo. Check the H3, bold text in its description, the linked call to action, and the visible keyboard focus on header buttons. Check that a “more” link displays its trailing arrow once. <a href="#header">Author the shared navigation</a></td></tr>
             <tr><td>Home campaign</td><td>For <strong>Hero Dark (Overlay)</strong>, the heading sits above the artwork. Copy and actions overlap its top-left corner on wide layouts and stack above the image on narrow ones. An optional Mobile image row supplies alternate artwork below 768px. The default Hero Dark keeps its copy above the image. <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/hero-dark/README.md">Hero Dark variants</a></td></tr>
             <tr><td>Home features and cards</td><td>Check wrapping and alignment of the light feature’s actions, the centered introduction above the product cards on wide screens, and the spacing above each card action. <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-product/cards-product.css">Product card styles</a></td></tr>
             <tr><td>Our Accounts</td><td>Compare the light hero typography, active tab treatment and FAQ section spacing. At a narrow width, switch categories with the menu and verify that the matching panel appears. <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/tabs-accounts/README.md">Account tabs</a></td></tr>
@@ -1010,24 +1156,77 @@
           Open items
         </h2>
         <div class="section-rule"></div>
-        <h3>Preview and release status on November 18, 2026</h3>
+        <h3>Preview and release status on November 19, 2026</h3>
         <table class="spec-table">
           <thead><tr><th scope="col">Where</th><th scope="col">Observed result</th></tr></thead>
           <tbody>
             <tr><td>EDS previews on develop and main</td><td>All <a href="#templates">six route-specific pages</a> loaded, as did <a href="https://develop--etrade--adobedrago.aem.page/platforms">Platforms</a> and <a href="https://develop--etrade--adobedrago.aem.page/what-we-offer/investment-choices">Investment Choices</a>. Both preview roots showed the AEM boilerplate. Use <a href="https://develop--etrade--adobedrago.aem.page/home">/home</a> to review the IPO campaign.</td></tr>
             <tr><td>Pricing &amp; Rates</td><td><code>/what-we-offer/pricing-and-rates</code> returned 404 on both previews. Confirm the document path and preview it in DA before reviewing the fee tables, rate settings and disclosure references.</td></tr>
             <tr><td>EDS live</td><td>The main live host returned HTTP 401 to an unauthenticated request. Verify published content with authorized access.</td></tr>
-            <tr><td>GitHub Pages</td><td>The <a href="https://develop--etrade--adobedrago.aem.page/docs/index.html#brand">restored brand reference</a> was available on develop. The public playbook root returned 404 while the <a href="https://github.com/AdobeDrago/etrade/pull/117">release to main</a> was open. The <a href="site-handoff.html">site handoff guide</a> remained available at its own address.</td></tr>
+            <tr><td>GitHub Pages</td><td>The <a href="https://develop--etrade--adobedrago.aem.page/docs/index.html#brand">restored brand reference</a> was available on develop. The <a href="https://adobedrago.github.io/etrade/">public root</a> and the main preview of <code>/docs/index.html</code> returned 404. The <a href="https://github.com/AdobeDrago/etrade/pull/117">sync to main</a> was still open. The <a href="site-handoff.html">site handoff guide</a> remained available at its own address.</td></tr>
           </tbody>
         </table>
         <h3>Integration checks</h3>
         <p>The Welcome Back form clears its inputs and directs visitors to the authored sign-in URL. Authentication happens at that destination. Tracked links queue consent-aware events. Sending those events to analytics requires a configured sender. See the <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/welcome-hero/README.md">Welcome Hero contract</a> and <a href="https://github.com/AdobeDrago/etrade/blob/develop/README.md#authored-link-tracking">tracking configuration</a>.</p>
+        <h3>Checks still to record</h3>
+        <table class="spec-table handoff-table">
+          <thead><tr><th scope="col">Reviewer</th><th scope="col">What to verify</th></tr></thead>
+          <tbody>
+            <tr><td>Lead author and DA administrator</td><td>The registered menus and catalog choices were inspected in Canvas. On a disposable draft, insert a starter and a block, edit a cell, use Undo, save and reopen. Check the source heading of the guide and metadata entries listed alongside the Hero Dark examples. <a href="#block-gallery">Gallery findings</a></td></tr>
+            <tr><td>Navigation author and developer</td><td>The develop preview of <code>/nav</code> still used one linked logo in the Brand section. When changing design families, review both logo schemes and the Login, Column and Promo roles in the shared document. Check the desktop menu and mobile drawer before retiring any compatibility behavior.</td></tr>
+            <tr><td>Content and legal owners</td><td>Confirm current eligibility, dates, fee tables and the matching disclosure text on each campaign. The November 19 Home preview’s first block was the IPO hero. Check the rendered legal footer and each claim after editing or moving shared content. Restore the Pricing preview before signing off that page.</td></tr>
+            <tr><td>Integration developer and release owner</td><td>Verify rate tiers, market timestamps, chart alignment, consent and any analytics receipt on the intended delivery host. Confirm published navigation and the intended production domain with authorized access. <a href="#rates-data">Data checks</a> · <a href="#tracking-demos">Tracking checks</a></td></tr>
+          </tbody>
+        </table>
         <h3>Issues to revisit with the next content review</h3>
         <ul class="req-list">
           <li>Check the funding, direct-deposit and rollover links reported in the Our Accounts FAQ. <a href="https://github.com/AdobeDrago/etrade/issues/115">Our Accounts link report</a></li>
           <li>Compare Home’s FAQ and offer copy and the Brokerage section order with their approved references. <a href="https://github.com/AdobeDrago/etrade/issues/105">Home copy</a> · <a href="https://github.com/AdobeDrago/etrade/issues/83">Brokerage order</a></li>
           <li>Check disclosure superscripts in DA Canvas and follow the same references on the rendered page. <a href="https://github.com/AdobeDrago/etrade/issues/54">Canvas disclosure markers</a></li>
         </ul>
+      </section>
+
+      <section class="doc-section" id="rates-data">
+        <h2>Bank rates and market data</h2>
+        <div class="section-rule"></div>
+        <h3>Bind a number to a bank product</h3>
+        <p>Cards Account, Cards Product, Cards Pricing, Tabs Accounts and Accordion FAQ can display a rate inside authored copy. In a card, tab panel or FAQ answer, put the marker in the text and add a separate <strong>Rate settings</strong> cell in the same row. Enter each setting as a separate paragraph. Omit Name for <code>{{rate}}</code> or supply Name to match a marker such as <code>{{rate:cd12}}</code>. Keep the percent sign, APY label, campaign dates, promotional terms and disclosure reference with the claim.</p>
+        <table class="spec-table">
+          <caption>Example settings for the disclosure APY of a 12-month CD</caption>
+          <thead><tr><th scope="col">Text in the content cell</th><th scope="col">Paragraphs in the settings cell</th></tr></thead>
+          <tbody><tr><td><code>{{rate:cd12}}% APY</code></td><td><strong>Rate settings</strong><br>Name: cd12<br>Mode: api<br>Product: 3500<br>Field: disclosureAPY<br>Term: 12M<br>Fallback: -.--</td></tr></tbody>
+        </table>
+        <p>For API and hybrid bindings, savings (<code>3100</code>) and checking (<code>4240</code>) use <code>advertisedAPY</code>, <code>disclosureAPY</code> or <code>finalRate</code> with a numeric <strong>Balance</strong>. Zero selects the base tier when the source defines it. For a specific CD maturity (<code>3500</code>), use <code>disclosureAPY</code> or <code>finalRate</code> with a <strong>Term</strong> such as <code>12M</code>. To show a CD range, use <code>minDisclosureAPY</code> and <code>maxDisclosureAPY</code> with separate named markers and omit both Balance and Term. The base-rate service supplies standard bank rates. Enter approved promotional APYs separately.</p>
+        <p><strong>API</strong> requests the configured rate. <strong>Manual</strong> displays an approved numeric Override. <strong>Hybrid</strong> uses a valid override, including zero, or requests the API when the override is empty. An approved numeric fallback or the literal <code>-.--</code> can be displayed when a value is unavailable. Without a fallback, an unresolved rate displays an em dash. Page metadata <strong>Bank rates source</strong> selects <code>direct</code> (GET) or <code>aggregate</code> (POST). Verify access on the delivery host. The sample JSON under <code>/phx/pros/</code> requires an explicit test endpoint. <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/cards-product/README.md#optional-dynamic-rates">Rate settings and supported fields</a></p>
+        <h3>Check the selected market service</h3>
+        <p>The three market blocks share the labeled sample file <code>/data/market-data.json</code>. Set page metadata <strong>Market Data Mode</strong> to <code>live</code> to use the E*TRADE service. A same-origin proxy specified by <strong>Market Data Base</strong> must end in a slash and implement the same endpoints. A failed live request shows an unavailable state and can be retried with <strong>Refresh</strong>.</p>
+        <p>In preview, compare the quote timestamp with the service response, check the 10-year Treasury’s displayed price against the supplied value divided by ten, and switch Top Five between stocks, mutual funds and ETFs. Treasury change values keep the service’s units. Top Five matches quotes and charts by position in the response. For each category, match the symbols to their charts and read its authored disclaimer. <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/market-ticker/README.md">Quote source and units</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/market-top-five/README.md">Top Five charts and disclosures</a></p>
+      </section>
+
+      <section class="doc-section" id="tracking-demos">
+        <h2>Link tracking and demo controls</h2>
+        <div class="section-rule"></div>
+        <p>To track an offer link, use <a href="#plugin-link-options">Link Options</a> to assign a key. For example, <code>/home?icid=campaign&amp;@tracking=home-hero#offer</code> sends the visitor to <code>/home?icid=campaign#offer</code>. The site retains the key for the click event. The default category is Advertising (<code>C0004</code>). Analytics uses <code>C0002</code>. If the link specifies both categories, both must be granted.</p>
+        <ol class="req-list">
+          <li>Open <strong>Demo controls → Tracking</strong> on the demo preview. Find the link by its key. <strong>Test in sample queue</strong> lets you try a click, grant or decline sample consent, and inspect the result without following the destination. The separate page-event log records actual clicks under the visitor’s real consent choices.</li>
+          <li>Open <strong>Page tools</strong> to try a dummy balance on a supported bank-rate card. Choose the authored balance again after the check. In <strong>Performance</strong>, save a baseline and compare Traditional and EDS loading on the same page, viewport and settings.</li>
+        </ol>
+        <p>The controls run on localhost and the <code>demo</code> and <code>demo-controller</code> AEM preview hosts. Performance runs exercise simulated tag payloads unless the real OneTrust SDK is explicitly selected. A sample receipt confirms delivery to the in-page demo receiver. Production analytics requires a connected consent-aware sender and a separate check at the destination. <a href="https://demo-controller--etrade--adobedrago.aem.page/home">Open the demo homepage</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/README.md#authored-link-tracking">Tracking and consent behavior</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/README.md#third-party-performance-demo">Performance comparison controls</a></p>
+      </section>
+
+      <section class="doc-section" id="shared-source-review">
+        <h2>Review a change across pages</h2>
+        <div class="section-rule"></div>
+        <table class="spec-table">
+          <thead><tr><th scope="col">Requested change</th><th scope="col">Where to edit and what to review</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Change a shared offer</th><td>Edit the referenced fragment or Structured Card. List its consuming pages, preview its rich-text body if it has one, and check each placement with the surrounding background, image crop and action links. A page copied from a starter has its own local content.</td></tr>
+            <tr><th scope="row">Change disclosure wording or order</th><td>Edit the legal fragment for wording and the set for order. Open each page that uses the source, including claims inside shared content. Check the complete after-footer text and follow the claim markers. Use the manager that matches the set’s schema. <a href="#plugin-disclosure-manager">Disclosure Manager</a> · <a href="#footer">Rendered references</a></td></tr>
+            <tr><th scope="row">Change one shared link for Brokerage</th><td>Use a Link Options path rule for alternate wording and destination. Try the shared link on the matching path, a descendant and a page outside the rule. Preserve its campaign query and anchor. <a href="https://github.com/AdobeDrago/etrade/blob/develop/tools/plugins/link-options/README.md">Route rule examples</a></td></tr>
+            <tr><th scope="row">Change artwork or a component’s appearance</th><td>Update the art and its alternative text at their shared source. Check each consuming block’s crop. For site-wide color, type or spacing, review the shared token and its consumers in Purple and Charcoal, at phone width and with enlarged text. For a single section, try its supported metadata in the style showroom. <a href="#authoring-reference">Assets and section settings</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/docs/style-system.md#making-a-change">Style ownership</a></td></tr>
+          </tbody>
+        </table>
+        <p>For a release batch, select the reviewed documents in the content browser and choose <strong>Share</strong> to copy their URLs. In <strong>Apps → Bulk</strong>, paste the list and select Preview, Publish, Version or Index. Version accepts a release label. Expand the success and error counts to check individual URLs. Publish dependencies in the order described in the <a href="#next-steps">release checklist</a>. <a href="https://www.aem.live/docs/ew/authoring/bulk-operations">Adobe bulk operations</a></p>
       </section>
 
       <!-- NEXT STEPS -->
@@ -1044,22 +1243,55 @@
           <li><strong>Preview in DA.</strong> Save the changed sources and page. In Experience Workspace, open <strong>Send</strong>, choose <strong>Preview</strong>, then <strong>Update</strong>. Open the resulting page with the branch code you want to review.</li>
           <li><strong>Review.</strong> Compare the branch preview with the reference at desktop and phone widths. Check image crops, tabs, FAQ links, sign-in handoffs and disclosure markers on the affected page.</li>
           <li><strong>Release code.</strong> Merge reviewed feature work into <code>develop</code>, then sync the reviewed changes to <code>main</code>. Check the affected path on the <a href="https://main--etrade--adobedrago.aem.page/home">main preview</a> with that version of the code.</li>
-          <li><strong>Publish content.</strong> Publish changed card bodies and disclosure fragments first, then the card records or disclosure sets that reference them, and finally the page. For each approved source, choose <strong>Preview &amp; Publish</strong> in the Send menu, then <strong>Update</strong>. With live access, open the exact route and verify its links, artwork and disclosures. <a href="site-handoff.html#publish">Publishing checklist</a> · <a href="https://www.aem.live/docs/ew/authoring/publishing">Adobe editor instructions</a></li>
+          <li><strong>Publish content.</strong> Publish changed card bodies and disclosure fragments first, then the card records or disclosure sets that reference them, and finally the page. For each approved source, choose <strong>Preview &amp; Publish</strong> in the Send menu, then <strong>Update</strong>. With live access, open the exact route and verify its links, artwork and disclosures. <a href="#release-recovery">Release and recovery checks</a> · <a href="https://www.aem.live/docs/ew/authoring/publishing">Adobe editor instructions</a></li>
           <li><strong>Verify documentation.</strong> When a release includes this file, wait for the Pages deployment in <a href="https://github.com/AdobeDrago/etrade/actions">GitHub Actions</a>, open the documentation root and follow the README’s brand link.</li>
         </ol>
-        <h3>When a change affects several pages</h3>
-        <p>List the pages that use the shared fragment, card or disclosure set. Preview one representative draft first. For a larger rollout, paste the reviewed URLs into <strong>Apps → Bulk</strong> in Experience Workspace, run Preview and inspect the result for each URL. Independently copied pages need their own edits. <a href="site-handoff.html#template-ops">Shared and bulk changes</a></p>
+        <p>For a multi-page release, use the <a href="#shared-source-review">shared-source and bulk review</a>. For a failed review, unwanted edit or retired URL, see <a href="#release-recovery">release checks and page recovery</a>.</p>
         <h3 id="troubleshooting">When the preview looks wrong</h3>
         <table class="spec-table">
           <thead><tr><th scope="col">Symptom</th><th scope="col">What to check first</th></tr></thead>
           <tbody>
+            <tr><th scope="row">A page returns 404</th><td>Confirm its exact DA path and preview status. If the saved source has been previewed, check routing for that path on the affected host. Record the full URL and status when handing off. <a href="https://www.aem.live/docs/sidekick-errors">Sidekick error messages</a></td></tr>
+            <tr><th scope="row">The block appears as an ordinary table, or a card is missing</th><td>Check the merged block heading, spelling and variant against its definition. Keep an ordinary card together in one row. For a shared card, preview its record and rich body. If it still fails, compare the delivered <code>.plain.html</code> with the block’s expected cells on that code branch. <a href="#blocks">Block definitions</a></td></tr>
+            <tr><th scope="row">One section has the wrong colors</th><td>Read the page Theme, then the section Theme, Color Scheme and Background. Check the block’s own surface and any explicit Header Theme. Preview on both sides of the section break. <a href="#brand">Brand and theme defaults</a></td></tr>
+            <tr><th scope="row">A tracked click stays Ready</th><td>Check the authored reporting key and required consent categories. A ready event can wait for an analytics sender. A connected sample receiver in Demo controls handles sample events only. <a href="https://github.com/AdobeDrago/etrade/blob/develop/README.md#authored-link-tracking">Tracking queue and sender behavior</a></td></tr>
             <tr><td>A saved edit is missing</td><td>Compare the DA document path and preview URL. Preview the shared source as well as the page that references it. For a layout change, check which code branch the URL uses.</td></tr>
             <tr><td>A disclosure marker is unresolved, or the legal footer is missing</td><td>Check the page’s Disclosures metadata and compare its superscript with the set’s letter ID or position number. For a numbered set, confirm the preview uses compatible site code. Preview the set and its fragments, then follow references on the rendered page. <a href="#plugin-disclosure-manager">Manager and audit workflow</a>.</td></tr>
-            <tr><td>A rate displays a marker or an unavailable value</td><td>For <code>{{rate:base}}% APY</code>, check that the separate <strong>Rate settings</strong> cell in that row contains <code>Name: base</code>. The rate source supplies the number. Check the selected product, balance or term and the configured source. Keep the approved APY wording, dates and legal copy with the claim. <a href="site-handoff.html#rates-data">Rate settings and fallback behavior</a></td></tr>
+            <tr><td>A rate displays a marker or an unavailable value</td><td>For <code>{{rate:base}}% APY</code>, check that the separate <strong>Rate settings</strong> cell in that row contains <code>Name: base</code>. The rate source supplies the number. Check the selected product, balance or term and the configured source. Keep the approved APY wording, dates and legal copy with the claim. <a href="#rates-data">Rate settings and fallback behavior</a></td></tr>
             <tr><td>A Canvas extension is missing</td><td>Look under <strong>Panels → Extensions</strong> and check the editor ref. Blocks and Templates appear under <strong>Library</strong>. Compare the missing item with the <a href="#plugins">registered plugins and libraries</a>.</td></tr>
           </tbody>
         </table>
-        <p><a href="site-handoff.html#troubleshooting">More symptoms and checks in the handoff guide</a></p>
+        <p>For an unwanted assistant change, compare the saved version before restoring it. For a publishing error, check the URL, permissions and source status. <a href="#release-recovery">Recover a page</a> · <a href="https://www.aem.live/docs/sidekick-errors">Sidekick error reference</a></p>
+      </section>
+
+      <section class="doc-section" id="release-recovery">
+        <h2>Release checks and page recovery</h2>
+        <div class="section-rule"></div>
+        <ul class="req-list">
+          <li><strong>Before publication.</strong> Where the site has Preflight configured, run it in the tools panel. Open failed checks, review their suggestions and rerun after correcting the source. The content and legal reviewers still verify campaign wording, rates, dates and disclosure targets. <a href="https://www.aem.live/docs/ew/administering/preflight">Preflight in Experience Workspace</a></li>
+          <li><strong>Recover an unwanted edit.</strong> Open Versions, choose a version and select Compare to see it beside the current document. Restore replaces the current document with that version. Check the restored page and any independently edited shared sources before updating preview or live delivery. <a href="https://www.aem.live/docs/ew/authoring/version-history">Compare and restore versions</a></li>
+          <li><strong>Retire a page.</strong> Review incoming links with the site owner and agree on the replacement destination or redirect. In Experience Workspace, <strong>Prepare → Unpublish</strong> removes both preview and published delivery for that document. Verify the old URL and each changed navigation link. <a href="https://www.aem.live/docs/ew/authoring/publishing">Adobe’s unpublishing procedure</a></li>
+        </ul>
+      </section>
+
+      <section class="doc-section" id="block-gallery">
+        <h2>Choose a block from the gallery</h2>
+        <div class="section-rule"></div>
+        <p>In Canvas, choose <strong>Panels → Library → Blocks</strong>. Pick an example whose rows match the content you have. In <strong>Content</strong> view, inspect its merged table heading, options and cells. In <strong>Split</strong> view, check the structure alongside the rendered layout. Insert the example into your draft and replace its sample copy, destinations and artwork. <a href="https://www.aem.live/docs/ew/authoring/editing-docs">Editor views</a></p>
+        <table class="spec-table">
+          <thead><tr><th scope="col">What the reader needs</th><th scope="col">Which example to choose</th></tr></thead>
+          <tbody>
+            <tr><td>A page introduction</td><td><a href="#block-hero-light">Hero Light</a> holds a text introduction. <a href="#block-hero">Hero</a> uses background artwork. <a href="#block-hero-dark">Hero Dark (Split)</a> places copy beside media. For a separate product offer below the image, inspect the named rows in <a href="#block-hero-product">Hero Product</a>.</td></tr>
+            <tr><td>An account, rate or fee comparison</td><td><a href="#block-cards-account">Cards Account</a> emphasizes an account action, <a href="#block-cards-product">Cards Product</a> pairs a product name with an optional rate, and <a href="#block-cards-pricing">Cards Pricing</a> emphasizes the first amount. <a href="#block-tabs-accounts">Tabs Accounts</a> groups accounts into selectable categories.</td></tr>
+            <tr><td>A reusable feature or promotion</td><td>Use <a href="#block-columns-feature">Columns Feature</a> for media, copy and actions, or <a href="#block-columns">Columns</a> for simple side-by-side content. Insert the example as a local table when each page needs its own copy. Insert a <a href="#block-fragment">Fragment</a> or <a href="#first-edit">shared card</a> when future source edits should reach every page that uses it.</td></tr>
+          </tbody>
+        </table>
+        <figure class="handoff-figure">
+          <img src="images/handoff/library-hero-dark.jpg" width="1265" height="712" loading="lazy" decoding="async" alt="Hero Dark gallery showing the authoring guide and a campaign hero example">
+          <figcaption>Hero Dark gallery from the October 29 handoff review. Open the current picker in Canvas to see which examples are available today.</figcaption>
+        </figure>
+        <p>On November 19 the Canvas Hero Dark picker offered Campaign hero, Split hero, Balanced split hero, Inset split hero and Overlay hero. It also listed Authoring guide and metadata. Choose a named hero example when adding page content. <a href="#block-hero-dark">Hero Dark definition</a></p>
+        <p>On a block gallery preview, open the authoring guide for that family and compare the variants. The floating <strong>Theme</strong> control lets you try Purple or Charcoal. <strong>Use page default</strong> restores the authored appearance. The switch affects the gallery preview for the session. <a href="#block-library-brief">How gallery guides and examples are authored</a></p>
       </section>
 
       <!-- BLOCK LIBRARY -->
@@ -1160,7 +1392,7 @@
           <div class="definition-body">
             <dl>
               <dt>How to author it</dt><dd>The default and Overlay layouts use the first H1, H2 or H3, supporting paragraphs and optional standalone links. In the default layout, the first standalone link is the primary action. Put the image and its optional caption in their own cell. For a default hero with video, use an MP4 link in the Media row and describe it in Media description. Split accepts optional Eyebrow, Heading, Content, Image and Offer rows. Use a role in the first cell and rich content in the remaining cells.</dd>
-              <dt>Options and behavior</dt><dd>Default places copy above media. Overlay keeps the headline above the artwork and places supporting copy and actions over the image on wide layouts. A Mobile image row supplies alternate artwork below 768px. Split places text beside the image and optional offer. Split, Balanced gives both columns equal width. Split, Inset increases desktop copy padding.</dd>
+              <dt>Options and behavior</dt><dd>Default places copy above media. Overlay keeps the headline above the artwork and places supporting copy and actions over the image on wide layouts. A Mobile image row supplies alternate artwork below 768px. Split supports images and places text beside the image and optional offer. Split, Balanced gives both columns equal width. Split, Inset increases desktop copy padding.</dd>
             </dl>
             <table class="definition-example">
               <caption>Example in DA</caption>
@@ -1595,7 +1827,7 @@
           <div class="definition-body">
             <dl>
               <dt>How to author it</dt><dd>Use optional key and value rows. Heading sets the chart title. Search label names the quote lookup. An empty table uses Market overview and Get quotes.</dd>
-              <dt>Options and behavior</dt><dd>The four index tabs, chart data table and symbol lookup are built in. The selected data source supplies chart values and suggestions. Selecting a symbol opens its E*TRADE quote page.</dd>
+              <dt>Options and behavior</dt><dd>The four index tabs, chart data table and symbol lookup are built in. The selected data source supplies chart values and suggestions. Selecting a symbol opens its E*TRADE quote page. Returning to the page in the same tab can restore the five most recent searches.</dd>
             </dl>
             <table class="definition-example">
               <caption>Example in DA</caption>
@@ -1687,7 +1919,7 @@
                 <tr><td>Closing</td><td>[Approved closing statement.]</td></tr>
               </tbody>
             </table>
-            <p class="definition-check"><strong>Check in preview</strong> For this numeric example, follow superscript 1 to its entry. For a structured set, follow the superscript ID and confirm its displayed number after reordering the set.</p>
+            <p class="definition-check"><strong>Check in preview</strong> For this numeric example, follow superscript 1 to its entry. For a structured set, follow the superscript and confirm the target wording and displayed number after a reviewed reorder.</p>
             <p class="definition-links"><a href="#block-disclosures" aria-label="Direct link to Disclosures">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/disclosures/README.md">Block README</a></p>
           </div>
         </details>
@@ -1764,7 +1996,7 @@
                 <tr><td>Supported options</td><td>Use Overlay for copy over the image on wide screens.</td></tr>
               </tbody>
             </table>
-            <p class="definition-check"><strong>Check in preview</strong> Expand the guide in gallery preview. In the DA Blocks picker, verify the example is available to insert and the guide itself is absent.</p>
+            <p class="definition-check"><strong>Check in preview</strong> Expand the guide in gallery preview, then open the corresponding family in the DA Blocks picker. Check which entries can be inserted. If guidance is listed there, review its source heading. <a href="#block-gallery">Observed Hero Dark picker entries</a>.</p>
             <p class="definition-links"><a href="#block-library-brief" aria-label="Direct link to Library Brief">Direct link</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/blocks/library-brief/README.md">Block README</a></p>
           </div>
         </details>
@@ -1789,8 +2021,42 @@ npm run check</code></pre>
         <h3>Prepare a change for review</h3>
         <p>Scope CSS to the block, keep shared helpers in <code>scripts/</code> and leave the vendored <code>scripts/aem.js</code> intact. Check the affected page at wide and narrow widths, with keyboard navigation and enlarged text.</p>
         <p>Commit messages and PR titles use Conventional Commits. Before pushing a feature branch targeting <code>develop</code>, run <code>npm run commitlint -- --from origin/develop --to HEAD</code> alongside <code>npm run check</code>. Include an actual branch preview URL in the PR. See the <a href="https://github.com/AdobeDrago/etrade/blob/develop/CONTRIBUTING.md">contribution guide</a>.</p>
+        <p><code>blocks/fragment/fragment.js</code> is the only cross-block import. Put other shared logic in <code>scripts/</code>. Manage EDS site configuration at <a href="https://tools.aem.live/">tools.aem.live</a>. Check the Husky hooks and run the full commit range again after merging the base branch. <a href="https://github.com/AdobeDrago/etrade/blob/develop/AGENTS.md">Repository rules</a></p>
         <h3>Maintain this playbook</h3>
         <p>Edit <code>docs/index.html</code> and keep the <a href="#brand">brand reference</a> address stable. Review the file at <code>/docs/index.html</code> on the branch preview. Once the change reaches <code>main</code> and Pages deploys, check the <a href="https://adobedrago.github.io/etrade/">public playbook</a> and its <a href="https://adobedrago.github.io/etrade/#brand">brand link</a>.</p>
+      </section>
+
+      <section class="doc-section" id="technical-reference">
+        <h2>Technical reference</h2>
+        <div class="section-rule"></div>
+        <h3>Where the site behavior lives</h3>
+        <ul class="req-list">
+          <li><strong>Markup and layout.</strong> The page loader builds automatic blocks before individual decorators run. Page theme and Section Metadata have separate interpreters. <a href="https://github.com/AdobeDrago/etrade/blob/develop/scripts/scripts.js">Page loader</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/scripts/page-theme.js">Theme selection</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/scripts/section-authoring.js">Section settings</a></li>
+          <li><strong>Data services.</strong> Check how the client selects its endpoint, matches the requested product or symbol and represents an unavailable result. Confirm the response on the intended delivery host. <a href="https://github.com/AdobeDrago/etrade/blob/develop/scripts/bank-rates.js">Bank rates</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/scripts/market-data.js">Market data</a></li>
+          <li><strong>Library authoring.</strong> Use the native table fixtures to check insert, edit, Undo and save/reload on a draft after changing a library example or registration. <a href="https://github.com/AdobeDrago/etrade/blob/develop/docs/block-library-pilot.md">Block library pilot and acceptance checks</a></li>
+        </ul>
+        <h3 id="adobe-documentation">Adobe documentation by task</h3>
+        <table class="spec-table">
+          <thead><tr><th scope="col">Task</th><th scope="col">Platform documentation</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Find and edit documents</th><td><a href="https://www.aem.live/docs/ew/about">Experience Workspace</a> · <a href="https://www.aem.live/docs/ew/authoring/browsing-content">Browse content</a> · <a href="https://www.aem.live/docs/ew/authoring/editing-docs">Edit pages</a> · <a href="https://www.aem.live/docs/ew/authoring/assistant">Assistant panel</a></td></tr>
+            <tr><th scope="row">Prepare artwork and structure</th><td><a href="https://www.aem.live/docs/ew/authoring/adding-media">Add media</a> · <a href="https://www.aem.live/docs/limits">Delivery limits</a> · <a href="https://www.aem.live/developer/markup-sections-blocks">Markup, sections and blocks</a></td></tr>
+            <tr><th scope="row">Share content and settings</th><td><a href="https://www.aem.live/docs/fragments">Fragments</a> · <a href="https://www.aem.live/docs/metadata">Page metadata</a> · <a href="https://www.aem.live/docs/bulk-metadata">Bulk metadata</a> · <a href="https://www.aem.live/docs/ew/administering/set-up-library">Library setup</a></td></tr>
+            <tr><th scope="row">Review and deliver a change</th><td><a href="https://www.aem.live/docs/ew/authoring/publishing">Publish or unpublish</a> · <a href="https://www.aem.live/docs/sidekick">Sidekick on a rendered page</a> · <a href="https://www.aem.live/docs/ew/authoring/bulk-operations">Bulk operations</a> · <a href="#release-recovery">Preflight and version recovery</a></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="doc-section" id="guide-maintenance">
+        <h2>Maintaining the handoff</h2>
+        <div class="section-rule"></div>
+        <p>Assign a lead author to DA examples and editor instructions, a developer to block behavior and service contracts, and a content or legal reviewer to claims and their sources. The DA administrator can verify which panels and libraries open under a particular editor ref. Record the reviewer and outcome with the affected change.</p>
+        <ul class="req-list">
+          <li><strong>For a code change,</strong> record the branch and commit. Update the affected block definition, sample table and any metadata or image guidance. Check that the direct link still opens the right definition on phone and desktop.</li>
+          <li><strong>For an editor or delivery check,</strong> record the date, path, editor ref or delivery host, and the action that succeeded. Distinguish opening a panel from inserting and saving a block, and a successful preview from a verified live result.</li>
+          <li><strong>For a new campaign or connected service,</strong> review the source and its consuming page together. Use current approved artwork and copy in DA. Date any screenshots and sample responses retained in the guide so later reviewers can reproduce the comparison.</li>
+        </ul>
+        <p>The original handoff records its October 2026 screenshots and <code>demo</code> code reference. Use the dated implementation reference at the top of this playbook for this version. <a href="site-handoff.html#guide-maintenance">Original handoff change record</a> · <a href="#limitations">Dated delivery checks</a></p>
       </section>
 
     </div>
