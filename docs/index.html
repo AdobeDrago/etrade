@@ -386,6 +386,10 @@
   .nav-document-example { margin: 4px 0 12px 20px; }
   .definition-check strong { display: block; }
   .definition-body .definition-links { font-size: 13px; margin-bottom: 2px; }
+  .plugin-table { table-layout: fixed; overflow-wrap: anywhere; }
+  .plugin-table th:first-child { width: 27%; }
+  .plugin-table tbody th { background: transparent; font-size: inherit; letter-spacing: normal; text-transform: none; vertical-align: top; color: var(--gray-900); border-bottom-width: 1px; }
+  .plugin-table tr[id], #plugin-legacy { scroll-margin-top: calc(var(--header-h) + 16px); }
 
   /* ── STAT ROW ── */
   .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 16px 0; }
@@ -523,6 +527,7 @@
       <a class="sidebar-link" href="#architecture">Delivery architecture</a>
       <a class="sidebar-link" href="#first-edit">Add a brokerage card</a>
       <a class="sidebar-link" href="#authoring-reference">Authoring reference</a>
+      <a class="sidebar-link" href="#plugins">Plugins &amp; libraries</a>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-label">Site chrome</div>
@@ -610,6 +615,7 @@
         <div class="stat-row">
           <div class="stat-card"><div class="stat-num">6</div><div class="stat-label"><a href="#templates">Routes with page-specific layouts</a></div></div>
           <div class="stat-card"><div class="stat-num">32</div><div class="stat-label"><a href="#blocks">Block definitions and examples</a></div></div>
+          <div class="stat-card"><div class="stat-num">7</div><div class="stat-label"><a href="#plugins">Entries in Canvas → Extensions</a></div></div>
           <div class="stat-card"><div class="stat-num">2</div><div class="stat-label"><a href="#brand">Design families</a></div></div>
         </div>
         <h3>Where to start</h3>
@@ -696,6 +702,57 @@
         <p>Link words within a sentence for an inline link. For a button in ordinary default content, put a descriptive link alone in its paragraph and make it bold for a primary button or italic for an outline. Blocks can assign actions by position. Hero Dark uses the first standalone link in its main copy as the primary action and later ones as secondary actions. Preserve campaign parameters when editing a destination. <a href="site-handoff.html#branding">Link formatting and block exceptions</a></p>
       </section>
 
+      <section class="doc-section" id="plugins">
+        <h2>Authoring plugins &amp; libraries</h2>
+        <div class="section-rule"></div>
+        <p>Open <a href="https://da.live/canvas#/adobedrago/etrade/home">E*TRADE Home in DA Canvas</a> and choose <strong>Panels</strong> beside <strong>Outline</strong>. The menu lists seven entries under <strong>Extensions</strong> and two catalogs under <strong>Library</strong>. In the classic editor, open <strong>Library</strong>.</p>
+
+        <h3>Panels → Extensions</h3>
+        <table class="spec-table plugin-table" aria-label="Extensions in the regular Canvas menu">
+          <thead><tr><th scope="col">Menu entry</th><th scope="col">When and how to use it</th></tr></thead>
+          <tbody>
+            <tr id="plugin-reusable-content">
+              <th scope="row">Reusable Content</th>
+              <td>Reuse a shared source on a page. Under <strong>Fragments</strong>, find a document and choose <strong>Insert fragment</strong>. Under <strong>Structured Cards</strong>, preview a card, then add a row to a matching block or create a block between paragraphs. The classic editor supports fragments. <a href="#first-edit">Work through a brokerage card example</a>.</td>
+            </tr>
+            <tr id="plugin-link-options">
+              <th scope="row">Link Options</th>
+              <td>Select a link and choose <strong>Load selected link</strong>, or paste its destination. Set click tracking and consent, or change the wording and destination for matching page paths. The registered version uses <strong>Copy URL</strong>. Paste the result into DA’s <strong>Edit link → URL</strong> field. The newer version on <code>develop</code> also supports applying a change directly in an editable Canvas block. <a href="https://demo--etrade--adobedrago.aem.page/tools/plugins/link-options/link-options.html?demo=1">Try the registered version with a sample link</a>.</td>
+            </tr>
+            <tr id="plugin-import-export">
+              <th scope="row">Import &amp; Export</th>
+              <td>Save the page, choose <strong>Export this page</strong>, then <strong>Download page XML</strong>. To import a page XML export or XHTML with a <code>main</code> element, choose <strong>Review page XML</strong>. Creating a new DA page is the default. Replacing the current page offers a saved-page backup and requires confirmation to overwrite its content and metadata. <a href="https://demo--etrade--adobedrago.aem.page/tools/plugins/xml-tools/xml-tools.html?demo=1">Try an import and download DA HTML</a>.</td>
+            </tr>
+            <tr id="plugin-media">
+              <th scope="row">Media</th>
+              <td>Browse media from Adobe’s media picker while editing a page. This entry and <strong>Media Library</strong> point to the same Adobe tool.</td>
+            </tr>
+            <tr id="plugin-media-library">
+              <th scope="row">Media Library</th>
+              <td>Open the media picker in a full-size dialog. Canvas labels this entry <strong>Media Library (opens in dialog)</strong>.</td>
+            </tr>
+            <tr id="plugin-disclosure-manager">
+              <th scope="row">Disclosure Manager</th>
+              <td>Work with the disclosure set referenced by the saved page. For a numbered set, place the cursor after a claim and choose <strong>Insert reference</strong>. To reorder, move an entry and choose <strong>Save order</strong>. Review the old and new numbers and affected sources before <strong>Save changes</strong> updates the set and its citations. Preview the changed sources together. Converting a letter-ID set requires compatible page code and schema. <a href="https://codex-rework-disclosure-numbering--etrade--adobedrago.aem.page/tools/plugins/disclosure-manager/disclosure-manager.html?demo=1">Try numbering with sample content</a> · <a href="https://github.com/AdobeDrago/etrade/blob/codex/rework-disclosure-numbering/docs/disclosure-numbering-rollout.md">Conversion guide</a>.</td>
+            </tr>
+            <tr id="plugin-onboarding-tour">
+              <th scope="row">E*TRADE Onboarding Tour</th>
+              <td>The panel opens as <strong>Site onboarding</strong>. Choose a topic covering the site, data and privacy, workspace tools, or authoring and release. The tour remembers progress in the browser when storage is available. <a href="https://codex-etrade-onboarding-tour--etrade--adobedrago.aem.page/tools/plugins/workspace-tour/workspace-tour.html">Open the tour</a>.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Panels → Library</h3>
+        <ul class="req-list">
+          <li><strong>Blocks</strong> opens the site’s catalog of block examples. Insert an example into your draft, then edit its cells. Look up the supported fields and variants in the <a href="#blocks">32 block definitions</a>.</li>
+          <li><strong>Templates</strong> opens the site’s page-template catalog. Use it to find a starting layout. The <a href="#templates">page patterns</a> show how the reviewed E*TRADE routes are assembled.</li>
+        </ul>
+        <h3 id="plugin-legacy">Disclosure Manager Legacy</h3>
+        <p>The tenth library entry appears under <strong>Extensions</strong> when Canvas uses the <code>demo</code> ref. It works with letter IDs such as <code>offer</code>. <strong>Save shared order</strong> updates the set alone. <strong>Insert reference</strong> adds the stable ID at the cursor for the author to save with the page. <a href="https://da.live/canvas?ref=demo#/adobedrago/etrade/home">Open Canvas with the demo ref</a> · <a href="https://demo--etrade--adobedrago.aem.page/tools/plugins/disclosure-manager/disclosure-manager.html?demo=1">Try the legacy manager</a>.</p>
+        <h3>Where the menu comes from</h3>
+        <p>The <strong>library</strong> sheet in <a href="https://da.live/config#/adobedrago/etrade/">E*TRADE’s DA site configuration</a> supplied these ten entries on November 19, 2026. The <strong>title</strong> is the menu label, <strong>path</strong> selects the deployed tool or catalog, <strong>experience</strong> controls how it opens, and <strong>ref</strong> can limit it to a matching editor URL. Developers maintain the five project plugins in <a href="https://github.com/AdobeDrago/etrade/tree/develop/tools/plugins">tools/plugins</a>. When a panel differs from <code>develop</code>, check its registered path first. <a href="https://docs.da.live/developers/tutorials/eds-micro-frontends/2">Adobe’s library registration guide</a>.</p>
+      </section>
+
       <!-- USE CASE & REQUIREMENTS -->
       <section class="doc-section" id="use-case">
         <h2>
@@ -762,7 +819,7 @@
             <tr><td>Page components</td><td>Responsive heroes, product and account cards, feature panels, tabs, FAQ, the story carousel and market-data blocks. See the <a href="#blocks">block definitions</a>.</td></tr>
             <tr><td>Global navigation and legal content</td><td>Shared header and footer documents, theme-aware artwork, a floating dock and per-page disclosure sources. See <a href="#header">header</a> and <a href="#footer">footer</a>.</td></tr>
             <tr><td>Reusable Content</td><td>The DA Canvas extension can insert shared fragments, add a Structured Card to a matching block or create the matching block. The nine Cards blocks and Carousel Story accept linked card records alongside ordinary rows. See <a href="https://github.com/AdobeDrago/etrade/blob/develop/docs/reusable-content.md">Reusable Content</a> and the <a href="https://github.com/AdobeDrago/etrade/blob/develop/docs/structured-cards.md">schema map</a>.</td></tr>
-            <tr><td>Authoring tools</td><td>Link Options configures tracking, routing and cookie-preference actions. Disclosure Manager edits shared sets. Import &amp; Export works with saved DA page sources. The onboarding tour provides in-editor examples. Access depends on the workspace’s extension registration.</td></tr>
+            <tr><td>Authoring tools</td><td>Open the <a href="#plugins">plugins and libraries guide</a> for the exact Canvas menu entries, the registered versions of Link Options and Disclosure Manager, and the XML import and export workflow.</td></tr>
             <tr><td>Rates and market data</td><td>Supported blocks can use manual or service-backed bank rates. The market blocks support sample and live data modes. Verify the selected source, timestamp and unavailable state on the delivery host. See the <a href="site-handoff.html#rates-data">integration guide</a>.</td></tr>
           </tbody>
         </table>
@@ -803,14 +860,14 @@
         <ul class="req-list">
           <li><strong>Contact and social.</strong> Put the heading and telephone link in a Contact row. In the Social row, give each link a label or an image with alternative text so visitors can identify its destination.</li>
           <li><strong>Navigation and artwork.</strong> Repeat Column rows for heading-and-link lists. An optional Brand row takes a linked logo. Columns stack below 768px and stay expanded. External links and E*TRADE partner exit pages open in a new tab.</li>
-          <li><strong>Your Privacy Choices.</strong> Choose “Open cookie preferences” in Link Options and paste <code class="code-inline">@privacy-preferences</code> into the DA link dialog. The action opens the OneTrust preference center on the current page once it initializes. The separate Privacy &amp; Cookies link keeps its destination.</li>
+          <li><strong>Your Privacy Choices.</strong> Enter <code class="code-inline">@privacy-preferences</code> in DA’s native Edit link dialog. On the site code documented here, this action opens the OneTrust preference center after it initializes. The <a href="#plugin-link-options">registered Link Options panel</a> handles tracking and path rules. The separate Privacy &amp; Cookies link keeps its destination.</li>
         </ul>
         <div class="notice info">
           <span>For legal copy after the footer, set page metadata <code class="code-inline">Disclosures</code> to the approved document or set. Preview it with the page and follow each disclosure reference to its text. <a href="site-handoff.html#disclosures">Disclosure authoring guide</a></span>
         </div>
         <h3>Match a claim to its disclosure</h3>
-        <p>For a page using a structured disclosure set, put the cursor after the claim in DA. In Disclosure Manager, insert the matching stable ID, such as <code>offer</code>, and save the page. If the item is first in the set, preview shows a superscript <strong>1</strong> linked to <code>#disclosure-offer</code>. Reordering the shared set changes the displayed numbers on every page that uses it. Preview the legal fragments, set and page together, then follow the marker to its wording. <a href="site-handoff.html#disclosures">Disclosure Manager workflow</a></p>
-        <p><a href="site-handoff.html#block-footer">Footer authoring example</a> · <a href="https://github.com/AdobeDrago/etrade/blob/develop/tools/plugins/link-options/README.md">Link Options instructions</a></p>
+        <p>For a letter-ID set on <code>develop</code>, enter the matching ID as a superscript after the claim and save the page. If <code>offer</code> is first in the set, preview shows <strong>1</strong> linked to <code>#disclosure-offer</code>. For a converted set on compatible code, the first item in set <code>homepage</code> links to <code>#disclosure-homepage-1</code>. Follow the marker to its wording after previewing the fragments, set and page together. See the <a href="#plugin-disclosure-manager">numbered manager</a> and the <a href="#plugin-legacy">legacy workflow</a>.</p>
+        <p><a href="site-handoff.html#block-footer">Footer authoring example</a> · <a href="#plugin-link-options">Link Options instructions</a></p>
       </section>
 
       <!-- BRAND -->
@@ -896,7 +953,7 @@
             <tr><td><a href="https://develop--etrade--adobedrago.aem.page/why-etrade"><code class="code-inline">/why-etrade</code></a></td><td>Balanced split Hero Dark, an “Our story” carousel, audience icon cards and promotional articles.</td></tr>
           </tbody>
         </table>
-        <p>Platforms, Investment Choices and Pricing &amp; Rates share an original importer. The site applies its six route-specific layouts by pathname. When copying a reviewed DA page to a new path, check its section metadata, block variants and disclosure references in preview. Starter-template registration is tracked separately in the <a href="site-handoff.html#open-items">handoff checklist</a>. See <a href="site-handoff.html#templates">page patterns</a> for examples.</p>
+        <p>Platforms, Investment Choices and Pricing &amp; Rates share an original importer. The site applies its six route-specific layouts by pathname. When copying a reviewed DA page to a new path, check its section metadata, block variants and disclosure references in preview. Find the registered Templates catalog under <a href="#plugins">Panels → Library</a>. See <a href="site-handoff.html#templates">page patterns</a> for examples.</p>
       </section>
 
       <!-- VISUAL FIDELITY -->
@@ -938,7 +995,7 @@
             <tr><td>DA owns page content</td><td>Edit copy, links, artwork, legal text and block options in their source documents. A new Git branch still reads shared DA content. Use a draft document for experiments.</td></tr>
             <tr><td>Blocks own their presentation</td><td>Choose a documented variant before adding one. Page and Section Metadata control the surrounding layout and theme. Shared tokens provide type, colors, spacing and focus styles.</td></tr>
             <tr><td>Reusable sources have their own lifecycle</td><td>Copy a block table for an independent edit. Use a fragment or a Structured Card for shared content. Preview or publish each changed source and review the pages that consume it.</td></tr>
-            <tr><td>Legal references use stable IDs</td><td>In a structured disclosure set, the item’s order determines its displayed number. Keep the stable ID with the claim when moving a card or section. See <a href="site-handoff.html#disclosures">shared content and disclosures</a>.</td></tr>
+            <tr><td>Legal references follow their set format</td><td>On <code>develop</code>, keep a letter ID with its claim and let the set determine the displayed number. In the numbered workflow, the <a href="#plugin-disclosure-manager">registered Disclosure Manager</a> reviews the affected citations before saving a reorder.</td></tr>
             <tr><td>Code and content ship separately</td><td>GitHub supplies branch code. DA supplies previewed or published content. GitHub Pages serves this playbook from the <code>docs</code> directory on <code>main</code>.</td></tr>
           </tbody>
         </table>
@@ -997,9 +1054,9 @@
           <thead><tr><th scope="col">Symptom</th><th scope="col">What to check first</th></tr></thead>
           <tbody>
             <tr><td>A saved edit is missing</td><td>Compare the DA document path and preview URL. Preview the shared source as well as the page that references it. For a layout change, check which code branch the URL uses.</td></tr>
-            <tr><td>A disclosure marker still shows letters, or the legal footer is missing</td><td>Match the superscript ID to the page’s disclosure set. Preview the set and each referenced fragment. Disclosure Manager audits the saved page. Check references inside shared fragments on the rendered page too.</td></tr>
+            <tr><td>A disclosure marker is unresolved, or the legal footer is missing</td><td>Check the page’s Disclosures metadata and compare its superscript with the set’s letter ID or position number. For a numbered set, confirm the preview uses compatible site code. Preview the set and its fragments, then follow references on the rendered page. <a href="#plugin-disclosure-manager">Manager and audit workflow</a>.</td></tr>
             <tr><td>A rate displays a marker or an unavailable value</td><td>For <code>{{rate:base}}% APY</code>, check that the separate <strong>Rate settings</strong> cell in that row contains <code>Name: base</code>. The rate source supplies the number. Check the selected product, balance or term and the configured source. Keep the approved APY wording, dates and legal copy with the claim. <a href="site-handoff.html#rates-data">Rate settings and fallback behavior</a></td></tr>
-            <tr><td>A Canvas extension is missing</td><td>Check the editor’s Extensions panel and the selected ref. The DA administrator can verify the extension’s URL and registration in the site’s library configuration.</td></tr>
+            <tr><td>A Canvas extension is missing</td><td>Look under <strong>Panels → Extensions</strong> and check the editor ref. Blocks and Templates appear under <strong>Library</strong>. Compare the missing item with the <a href="#plugins">registered plugins and libraries</a>.</td></tr>
           </tbody>
         </table>
         <p><a href="site-handoff.html#troubleshooting">More symptoms and checks in the handoff guide</a></p>
@@ -1619,7 +1676,7 @@
           <div class="definition-body">
             <dl>
               <dt>How to author it</dt><dd>For an inline table, put a role or number in the first cell and rich text in the second. Introduction, Notice, Logo and Closing are optional. Numeric rows hold the corresponding legal copy. A single-cell block containing just a source link loads that document or structured set instead.</dd>
-              <dt>Options and behavior</dt><dd>For after-footer delivery, set page metadata Disclosures to a legal document or a disclosure-set source. Rich-text documents use top-level ordered lists for numbered items. Structured sets use stable IDs such as offer and number nonempty items in set order. Add the matching ID as superscript at the claim. If a referenced fragment fails to load, the entire region is hidden.</dd>
+              <dt>Options and behavior</dt><dd>For after-footer delivery, set page metadata Disclosures to a legal document or a disclosure-set source. Rich-text documents use top-level ordered lists for numbered items. On <code>develop</code>, structured sets use stable IDs such as <code>offer</code> and number nonempty items in set order. Add the matching ID as superscript at the claim. If a referenced fragment fails to load, the entire region is hidden. See the <a href="#plugin-disclosure-manager">numbered-set workflow</a> for sites using the newer renderer.</dd>
             </dl>
             <table class="definition-example">
               <caption>Example in DA</caption>
