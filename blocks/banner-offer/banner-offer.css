@@ -75,15 +75,12 @@ main .banner-offer .banner-offer-copy p {
   width: 100%;
 }
 
-.banner-offer sup a:any-link {
-  color: inherit;
-}
-
 .banner-offer a:any-link:not(.etrade-action) {
   color: var(--action-link-color);
 }
 
-main .banner-offer.light sup a:any-link {
+/* Disclosure references keep the heading or copy color, as on the reference. */
+.banner-offer sup a:any-link:not(.etrade-action) {
   color: inherit;
 }
 
@@ -188,29 +185,77 @@ main .section:not([data-section-layout="authored"]).banner-offer-container:has(.
   }
 
   .banner-offer:not(.light, .compact) .banner-offer-heading {
-  font-size: var(--font-size-32);
-  line-height: calc(36 / 32);
-}
+    font-size: var(--font-size-32);
+    line-height: calc(36 / 32);
+  }
 
   .banner-offer:not(.light, .compact) .banner-offer-actions a {
-  width: auto;
-}
+    width: auto;
+  }
 
   .banner-offer:not(.light, .compact, .no-media) {
-  grid-template-columns: 1fr 1fr;
-  column-gap: var(--space-40);
-  padding: var(--space-40);
-}
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--space-20);
+    padding: var(--space-20);
+  }
 
   .banner-offer:not(.light, .compact) .banner-offer-media {
-  display: block;
-  grid-row: span 3;
-  align-self: center;
-}
+    display: block;
+    grid-row: 1 / -1;
+    align-self: center;
+  }
 
   .banner-offer:not(.light, .compact, .no-media) > :not(.banner-offer-media) {
-  grid-column: 2;
-}
+    grid-column: 2;
+  }
+
+  /* Image split beside the copy, matching the Brokerage reference. Narrow blocks stack below. */
+  @container block-layout (width >= 38rem) {
+    /* The flexible first and last rows centre the copy against the image. */
+    .banner-offer:not(.light, .compact, .no-media) {
+      grid-template-rows: 1fr repeat(3, auto) 1fr;
+    }
+
+    /* From 992px the copy spans the middle ten of the half's twelve columns. */
+    @media (width >= 992px) {
+      .banner-offer:not(.light, .compact, .no-media) > :not(.banner-offer-media) {
+        padding-inline: calc((100% + var(--space-20)) / 12);
+      }
+    }
+
+    main .banner-offer:not(.light, .compact, .no-media) .banner-offer-heading {
+      grid-row: 2;
+      margin-bottom: var(--space-20);
+      font-size: var(--font-size-40);
+      line-height: calc(44 / 40);
+    }
+
+    .banner-offer:not(.light, .compact, .no-media) .banner-offer-copy {
+      grid-row: 3;
+    }
+
+    .banner-offer:not(.light, .compact, .no-media) .banner-offer-copy p + p {
+      margin-top: var(--space-24);
+    }
+
+    /* The secondary link starts five twelfths across the copy, as on the reference.
+       Its 10px bottom margin matches the reference button and sets the centred position. */
+    .banner-offer:not(.light, .compact, .no-media) .banner-offer-actions {
+      display: grid;
+      grid-row: 4;
+      grid-template-columns:
+        minmax(max-content, calc((100% + var(--space-20)) * 5 / 12 - var(--space-20)))
+        minmax(0, 1fr);
+      justify-items: start;
+      column-gap: var(--space-20);
+      margin: var(--space-24) 0 var(--space-10);
+    }
+
+    /* Percentage padding is ignored when sizing a grid track; the fixed value keeps the button on one line. */
+    .banner-offer:not(.light, .compact, .no-media) .banner-offer-actions .etrade-action-primary:any-link {
+      padding-inline: 0.9375rem;
+    }
+  }
 }
 
 .banner-offer.compact {
