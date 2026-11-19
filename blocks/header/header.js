@@ -27,6 +27,7 @@ function icon(name, className = '') {
     search: 'M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zM9.5 14a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z',
     close: 'M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z',
     chevron: 'M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z',
+    'chevron-right': 'm12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z',
   };
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('class', `nav-icon ${className}`.trim());
@@ -37,6 +38,21 @@ function icon(name, className = '') {
   path.setAttribute('d', paths[name]);
   svg.append(path);
   return svg;
+}
+
+/** Author notation inside nav links: `:chevron-right:` adds a trailing arrow. */
+function applyNotations(fragment) {
+  fragment.querySelectorAll('a span.icon-chevron-right').forEach((span) => {
+    span.closest('a').dataset.navIcon = 'chevron-right';
+    span.remove();
+  });
+}
+
+function withNotation(link) {
+  if (link?.dataset.navIcon === 'chevron-right') {
+    link.append(icon('chevron-right', 'nav-link-icon'));
+  }
+  return link;
 }
 
 function cleanLink(link, className = '') {
@@ -79,16 +95,29 @@ function makePromo(item) {
   const legacyLink = !link && !isPromoItem(item) ? item.querySelector('a:has(img)') : null;
   const card = element('article', 'nav-promo');
   const content = element('div', 'nav-promo-content');
-  const title = item.querySelector('strong');
+  const heading = item.querySelector('h2, h3, h4, h5, h6');
+  const title = heading || item.querySelector('strong');
   const copy = item.cloneNode(true);
   if (isPromoItem(copy)) copy.querySelector(':scope > p').remove();
-  copy.querySelectorAll('picture, img, strong').forEach((el) => el.remove());
+  copy.querySelectorAll(`picture, img, ${heading ? 'h2, h3, h4, h5, h6' : 'strong'}`)
+    .forEach((el) => el.remove());
   copy.querySelectorAll('a').forEach((a) => {
     if (legacyLink) a.replaceWith(...a.childNodes);
     else a.remove();
   });
-  if (title) content.append(element('h3', '', title.textContent));
-  if (copy.textContent.trim()) content.append(element('p', '', copy.textContent.trim()));
+  if (title) content.append(element('h3', '', title.textContent.trim()));
+  if (copy.textContent.trim()) {
+    const description = element('p');
+    copy.querySelectorAll('p').forEach((p) => {
+      if (!p.textContent.trim()) return;
+      if (description.childNodes.length) description.append(' ');
+      p.querySelectorAll(':scope *:not(strong, b, em, i, sup, sub, br)')
+        .forEach((el) => el.replaceWith(...el.childNodes));
+      description.append(...p.childNodes);
+    });
+    if (!description.childNodes.length) description.textContent = copy.textContent.trim();
+    content.append(description);
+  }
   if (link || legacyLink) {
     const cta = cleanLink(link || legacyLink, 'nav-promo-cta');
     if (legacyLink) cta.textContent = 'Learn how';
@@ -116,7 +145,11 @@ function itemParts(item) {
   if (lineBreak) range.setEndBefore(lineBreak);
   const label = range.toString().trim();
   const link = sourceLink ? cleanLink(sourceLink) : null;
-  if (link) link.textContent = label;
+  if (link) {
+    link.textContent = label;
+    withNotation(link);
+    delete link.dataset.navIcon;
+  }
   range.deleteContents();
   copy.querySelectorAll('br').forEach((br) => br.replaceWith(' '));
   copy.querySelectorAll('p').forEach((p) => p.append(' '));
@@ -127,9 +160,16 @@ function itemParts(item) {
 function makeMenuLink(item) {
   const { link, label, description } = itemParts(item);
   const li = element('li');
-  if (link && label) li.append(link);
-  else if (label) li.append(element('span', 'nav-link-label', label));
-  if (description) li.append(element('p', 'nav-link-description', description));
+  if (link && label) {
+    const linkIcon = link.querySelector('.nav-link-icon');
+    link.replaceChildren(element('span', 'nav-link-text', label));
+    if (linkIcon) link.append(linkIcon);
+    if (description) link.append(element('span', 'nav-link-description', description));
+    li.append(link);
+  } else if (label) {
+    li.append(element('span', 'nav-link-label', label));
+    if (description) li.append(element('p', 'nav-link-description', description));
+  } else if (description) li.append(element('p', 'nav-link-description', description));
   const nested = item.querySelector(':scope > ul');
   if (nested) {
     const list = element('ul');
@@ -151,7 +191,7 @@ function makePanel(list) {
     || item.querySelector(':scope > ul'));
   let column;
   [...list.children].forEach((item) => {
-    if (isPromoItem(item) || item.querySelector('img')) {
+    if (isPromoItem(item) || item.querySelector('picture, img:not(.icon > img)')) {
       const promo = makePromo(item);
       if (promo) promos.append(promo);
       return;
@@ -193,6 +233,7 @@ export default async function decorate(block) {
   let fragment = await loadFragment(navPath);
   if (!fragment && navPath === '/nav') fragment = await loadFragment('/content/nav');
   if (!fragment) return;
+  applyNotations(fragment);
 
   // Authors can use production destinations while only this homepage exists.
   const navLinkBase = getMetadata('nav-link-base');
