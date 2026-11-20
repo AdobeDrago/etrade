@@ -225,6 +225,13 @@ body.homepage main > .section:not([data-section-layout="authored"]).banking-feat
   .columns-feature:not(.award, .band) .columns-feature-actions > :only-child {
     grid-column: 1 / -1;
   }
+
+  .columns-feature.light .columns-feature-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-20) var(--space-32);
+  }
 }
 
 @media (width < 768px) {
@@ -338,6 +345,17 @@ body.planning .columns-feature .columns-feature-copy h2 {
   }
 }
 
+.columns-feature.overlap .columns-feature-copy h2 + p {
+  margin-bottom: var(--space-24);
+}
+
+.columns-feature.overlap .columns-feature-copy > p:first-child:has(+ h2) {
+  margin-bottom: var(--space-24);
+  font-size: var(--font-size-14);
+  line-height: calc(18 / 14);
+  letter-spacing: 0.01em;
+}
+
 /* Homepage banking band: spacing and type measured on the live homepage. Other bands are unchanged. */
 body.homepage main > .section.banking-feature.columns-feature-container:not([data-section-layout="authored"]):has(> .columns-feature-wrapper > .columns-feature.band) {
   padding-bottom: var(--space-80);
@@ -404,5 +422,116 @@ main .section.banking-feature .columns-feature.band .columns-feature-actions .et
 
   main .section.banking-feature .columns-feature.band .columns-feature-actions .etrade-action-secondary:any-link {
     line-height: calc(21 / 15);
+  }
+}
+
+.columns-feature.overlap {
+  padding-block: var(--space-40);
+}
+
+.columns-feature.overlap.band {
+  padding-inline: 0;
+}
+
+.columns-feature.overlap > div:has(> :is(.columns-feature-media, .columns-feature-copy)) {
+  grid-template-columns: minmax(0, 1fr);
+  max-inline-size: 46.3125rem;
+  margin-inline: auto;
+  gap: var(--space-20);
+}
+
+.columns-feature.overlap .columns-feature-media img {
+  max-inline-size: 43.5938rem;
+  block-size: 34.875rem;
+  margin-inline: auto;
+  object-fit: cover;
+}
+
+.columns-feature.overlap > div > .columns-feature-copy {
+  box-sizing: border-box;
+  z-index: 1;
+  order: 0;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+  padding: var(--space-24) min(var(--space-24), 8%);
+  background: var(--color-surface-overlay);
+  backdrop-filter: blur(var(--space-20));
+}
+
+.columns-feature.overlap.dark .columns-feature-copy {
+  border-color: var(--color-border-inverse);
+  background: var(--color-surface-overlay-inverse);
+}
+
+.columns-feature.overlap > div:has(> .columns-feature-media:first-child + .columns-feature-copy:last-child) {
+  row-gap: 0;
+}
+
+.columns-feature.overlap .columns-feature-media:first-child + .columns-feature-copy:last-child {
+  margin-block-start: calc(0rem - var(--space-32) - var(--space-24));
+  margin-inline: min(var(--space-16), 5%);
+}
+
+.columns-feature.overlap > div > .columns-feature-copy h2 {
+  margin-bottom: calc(var(--space-16) + var(--space-10));
+  font-size: var(--font-size-24);
+  line-height: calc(28 / 24);
+  letter-spacing: var(--tracking-tight);
+}
+
+.columns-feature.overlap .columns-feature-copy:has(> p:first-child + h2) h2 {
+  max-width: none;
+}
+
+.columns-feature.overlap .columns-feature-actions {
+  display: flex;
+  gap: var(--space-12) var(--space-24);
+}
+
+.columns-feature.overlap.dark .columns-feature-actions .etrade-action-outline:any-link:not(:hover) {
+  border-color: var(--color-border-control);
+  color: var(--color-text-inverse);
+}
+
+@media (width < 768px) {
+  .columns-feature.overlap .columns-feature-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (width >= 992px) {
+  @container block-layout (width >= 58rem) {
+    .columns-feature.overlap {
+      padding-block: calc(var(--space-32) + var(--space-24));
+    }
+
+    /* The middle track is shared by the image and the copy panel. */
+    .columns-feature.overlap > div:has(> .columns-feature-media:first-child + .columns-feature-copy:last-child) {
+      grid-template-columns: minmax(0, 5fr) 6.5625rem minmax(0, 4fr);
+      max-inline-size: 73.2813rem;
+      column-gap: 0;
+    }
+
+    .columns-feature.overlap .columns-feature-media:first-child:has(+ .columns-feature-copy:last-child) {
+      grid-area: 1 / 1 / 2 / 3;
+    }
+
+    .columns-feature.overlap .columns-feature-media:first-child + .columns-feature-copy:last-child {
+      grid-area: 1 / 2 / 2 / 4;
+      margin: 0;
+    }
+
+    .columns-feature.overlap > div > .columns-feature-copy h2 {
+      font-size: var(--font-size-32);
+      line-height: calc(36 / 32);
+    }
+
+    .columns-feature.overlap .columns-feature-copy:has(> p:first-child + h2) h2 {
+      max-width: 28rem;
+    }
   }
 }

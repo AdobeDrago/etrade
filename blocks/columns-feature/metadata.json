@@ -16,6 +16,11 @@
       "name": "image-right",
       "class": "image-right",
       "description": "Places the image column on the right (trailing) side instead of the left."
+    },
+    {
+      "name": "overlap",
+      "class": "overlap",
+      "description": "Places the copy in a bordered panel overlapping the image. Author the image first and copy second in a single row."
     }
   ],
   "memberVariantIds": [
