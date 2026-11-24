@@ -159,10 +159,6 @@ body.brokerage .section:not([data-section-layout="authored"]):has(.cards-article
   margin-bottom: var(--space-30);
 }
 
-body.brokerage .section:not([data-section-layout="authored"]):has(.cards-article) .default-content-wrapper > p:first-child {
-  margin-bottom: var(--space-16);
-}
-
 @media (width >= 768px) {
   .cards-article.four-up > ul {
     --card-columns: 4;

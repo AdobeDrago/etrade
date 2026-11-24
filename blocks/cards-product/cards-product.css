@@ -78,7 +78,7 @@
 
 .cards-product .cards-product-actions {
   margin-top: auto;
-  padding-top: var(--space-16);
+  padding-top: 1.5684rem;
 }
 
 @media (width >= 768px) {
@@ -116,4 +116,17 @@
   .cards-product.three-columns > ul {
     --card-columns: 3;
   }
+
+  main .section:not([data-section-layout="authored"]).cards-product-container {
+    padding-top: 0;
+  }
+
+  main .section:not([data-section-layout="authored"]).cards-product-container > .default-content-wrapper {
+    box-sizing: border-box;
+    max-width: var(--layout-copy-max, 800px);
+    margin-top: var(--space-36);
+    margin-inline: auto;
+    text-align: center;
+  }
 }
+

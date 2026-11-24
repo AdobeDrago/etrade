@@ -10,6 +10,7 @@ main .section > .widget-calculator-wrapper {
 
 .widget-calculator {
   min-width: 0;
+  letter-spacing: calc(-0.21rem / 16);
   overflow-wrap: anywhere;
   color: var(--color-text-primary);
   font-family: var(--font-family-body);
@@ -33,7 +34,7 @@ main .widget-calculator .widget-calculator-heading h2 {
   color: var(--text-color);
   font-size: var(--font-size-28);
   line-height: calc(32 / 28);
-  letter-spacing: var(--tracking-tight);
+  letter-spacing: -0.025rem;
 }
 
 main .widget-calculator .widget-calculator-heading p {
@@ -52,6 +53,11 @@ body.homepage .widget-calculator-container:not([data-section-layout="authored"])
   margin: 0 0 var(--space-10);
   font-size: var(--font-size-28);
   line-height: calc(32 / 28);
+  letter-spacing: -0.025rem;
+}
+
+body.homepage .widget-calculator-container:not([data-section-layout="authored"]):where(:has(.widget-calculator)) > .default-content-wrapper :where(p) {
+  letter-spacing: calc(-0.21rem / 16);
 }
 
 @media (width >= 768px) {
@@ -107,11 +113,11 @@ main .section:not([data-section-layout="authored"], :has(> .hero-dark-wrapper)):
 
 main .widget-calculator :is(h3, h4).widget-calculator-promo-heading {
   margin: 0 0 var(--space-24);
-  color: var(--color-text-primary);
+  color: var(--color-surface-control);
   font-size: var(--font-size-20);
   font-weight: var(--font-weight-semibold);
   line-height: calc(24 / 20);
-  letter-spacing: var(--tracking-tight);
+  letter-spacing: calc(-0.21rem / 16);
 }
 
 main .widget-calculator .widget-calculator-description p,
@@ -124,16 +130,14 @@ main .widget-calculator p.widget-calculator-description {
 
 .widget-calculator .widget-calculator-description {
   margin: 0 0 0.5687rem;
-  letter-spacing: var(--tracking-tight);
 }
 
 main .widget-calculator p.widget-calculator-code {
   margin: 0 0 var(--space-24);
-  color: var(--color-link);
+  color: var(--color-calculator-code);
   font-size: var(--font-size-24);
   font-weight: var(--font-weight-semibold);
   line-height: calc(28 / 24);
-  letter-spacing: var(--tracking-tight);
 }
 
 .widget-calculator .widget-calculator-actions {
@@ -146,6 +150,18 @@ main .widget-calculator p.widget-calculator-code {
 
 .widget-calculator .widget-calculator-action {
   max-width: 100%;
+}
+
+.widget-calculator .widget-calculator-actions .etrade-action.etrade-action-secondary:any-link {
+  gap: var(--space-4);
+  padding: 0.8125rem 0;
+  letter-spacing: calc(-0.21rem / 16);
+}
+
+.widget-calculator .widget-calculator-actions .etrade-action-icon {
+  flex-basis: 0.9375rem;
+  width: 0.9375rem;
+  height: 0.9375rem;
 }
 
 main .widget-calculator .widget-calculator-promo a:any-link {
@@ -178,7 +194,6 @@ main .widget-calculator a.widget-calculator-secondary:any-link {
   font-size: var(--font-size-17);
   font-weight: var(--font-weight-medium);
   line-height: calc(24 / 17);
-  letter-spacing: var(--tracking-tight);
   text-decoration: none;
 }
 
@@ -250,7 +265,7 @@ main .widget-calculator a.widget-calculator-secondary:hover {
   font-size: var(--font-size-40);
   font-weight: var(--font-weight-regular);
   line-height: calc(48 / 40);
-  letter-spacing: var(--tracking-tight);
+  letter-spacing: -0.05rem;
   overflow-wrap: anywhere;
 }
 
@@ -268,7 +283,7 @@ main .widget-calculator a.widget-calculator-secondary:hover {
   position: absolute;
   inset: 0;
   border-radius: 0.1875rem;
-  background: linear-gradient(to right, var(--color-action-primary) var(--funding-progress), var(--color-surface-default) var(--funding-progress));
+  background: linear-gradient(to right, var(--color-calculator-slider) var(--funding-progress), var(--color-surface-page) var(--funding-progress));
 }
 
 .widget-calculator .widget-calculator-slider {
@@ -290,12 +305,13 @@ main .widget-calculator a.widget-calculator-secondary:hover {
 
 .widget-calculator .widget-calculator-slider::-webkit-slider-thumb {
   appearance: none;
+  box-sizing: border-box;
   width: var(--space-24);
   height: var(--space-24);
   margin-top: -0.5625rem;
-  border: var(--border-width-thin) solid var(--color-focus-inverse);
-  border-radius: var(--radius-round);
-  background: var(--color-action-primary);
+  border: var(--border-width-thin) solid var(--color-calculator-slider);
+  border-radius: 2.5rem;
+  background: var(--color-calculator-slider);
 }
 
 .widget-calculator .widget-calculator-slider::-moz-range-track {
@@ -304,11 +320,12 @@ main .widget-calculator a.widget-calculator-secondary:hover {
 }
 
 .widget-calculator .widget-calculator-slider::-moz-range-thumb {
-  width: 1.375rem;
-  height: 1.375rem;
-  border: var(--border-width-thin) solid var(--color-focus-inverse);
-  border-radius: var(--radius-round);
-  background: var(--color-action-primary);
+  box-sizing: border-box;
+  width: var(--space-24);
+  height: var(--space-24);
+  border: var(--border-width-thin) solid var(--color-calculator-slider);
+  border-radius: 2.5rem;
+  background: var(--color-calculator-slider);
 }
 
 .widget-calculator .widget-calculator-tick {
@@ -335,16 +352,6 @@ main .widget-calculator a.widget-calculator-secondary:hover {
   transform: translateX(-50%);
 }
 
-.widget-calculator .widget-calculator-tick:first-child .widget-calculator-tick-label {
-  left: 0;
-  transform: none;
-}
-
-.widget-calculator .widget-calculator-tick:last-child .widget-calculator-tick-label {
-  left: 0;
-  transform: translateX(-100%);
-}
-
 .widget-calculator .widget-calculator-selector {
   padding: var(--space-16) 0 var(--space-48);
 }
@@ -353,7 +360,7 @@ main .widget-calculator a.widget-calculator-secondary:hover {
   display: block;
   margin-bottom: 0.375rem;
   font-size: var(--font-size-15);
-  line-height: calc(21 / 15);
+  line-height: calc(22 / 15);
 }
 
 .widget-calculator .widget-calculator-select {
@@ -458,7 +465,6 @@ main .widget-calculator a.widget-calculator-secondary:hover {
 
 .widget-calculator .widget-calculator-disclaimer {
   padding-right: var(--space-8);
-  letter-spacing: var(--tracking-tight);
 }
 
 main .widget-calculator .widget-calculator-disclaimer,
@@ -574,6 +580,11 @@ main .widget-calculator .widget-calculator-disclaimer a:any-link {
     line-height: calc(21 / 15);
   }
 
+  .widget-calculator .widget-calculator-actions .etrade-action.etrade-action-secondary:any-link {
+    padding: var(--space-8) 0;
+    line-height: calc(21 / 15);
+  }
+
 }
 
 @media (width < 370px) {
@@ -585,6 +596,7 @@ main .widget-calculator .widget-calculator-disclaimer a:any-link {
   .widget-calculator .widget-calculator-credit {
     font-size: var(--font-size-32);
     line-height: calc(40 / 32);
+    letter-spacing: -0.04rem;
   }
 }
 
@@ -618,7 +630,7 @@ main .widget-calculator .widget-calculator-disclaimer a:any-link {
   }
 }
 
-@container block-layout (width < 22rem) {
+@container block-layout (width < 20rem) {
   main .section .widget-calculator :is(.widget-calculator-control, .widget-calculator-promo) {
     padding-inline: min(var(--space-24), 8%);
   }

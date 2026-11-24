@@ -3,7 +3,8 @@
 Merge authored cells containing an optional image, heading, terms, promo code and
 standalone CTA paragraphs. A dark offer with one CTA and no image is centered,
 matching Platforms. An image creates the desktop brokerage split; mobile omits
-the decorative banner image. `Light` preserves the compact homepage layout.
+the decorative banner image. In the split, the image fills half the banner and the
+copy is centred vertically beside it, with the secondary link five twelfths across. `Light` preserves the compact homepage layout.
 Inline terms links remain in their paragraphs. Two standalone links become a
 primary CTA and secondary arrow link.
 
