@@ -207,6 +207,24 @@ test('article cards preserve eyebrows and rich copy in promo and four-card layou
   assert.equal(block.querySelectorAll('.cards-article-actions').length, 4);
 });
 
+test('article carousel keeps full-size cards and pages through articles with shared controls', async () => {
+  const four = await render('cards-article', Array(4).fill(row(image, copy)).join(''), 'carousel', '', 4);
+  assert.equal(four.block.classList.contains('four-up'), false);
+  const { block } = await render('cards-article', Array(5).fill(row(image, copy)).join(''), 'carousel', '', 4);
+  const slides = block.querySelector('.cards-article-slides');
+  assert.deepEqual([...block.children].map((node) => node.className), ['cards-article-nav', 'cards-article-slides', 'cards-article-dots', 'cards-article-status']);
+  assert.equal(slides.getAttribute('aria-label'), 'Articles');
+  assert.equal(slides.querySelectorAll(':scope > .cards-article-card').length, 5);
+  assert.equal(block.querySelectorAll('.cards-article-dots button').length, 5);
+  assert.equal(block.querySelector('.cards-article-dots button').getAttribute('aria-label'), 'Show article 1');
+  assert.equal(block.querySelector('.cards-article-prev').disabled, true);
+  assert.equal(block.querySelector('.cards-article-status').textContent, 'Articles 1–4 of 5');
+  block.querySelector('.cards-article-next').click();
+  assert.equal(block.querySelector('.cards-article-status').textContent, 'Articles 2–5 of 5');
+  assert.equal(block.querySelector('.cards-article-next').disabled, true);
+  assert.equal(block.querySelectorAll('.cards-article-actions').length, 5);
+});
+
 test('product hero accepts reordered named slots, inline links and an independent offer', async () => {
   const { block } = await render('hero-product', row('Offer', '<h3>Offer <sup>a</sup></h3><p>Terms <a href="/terms">apply</a>.</p><p><a href="/offer">Learn how</a></p>') + row('Image', image) + row('Content', '<p>Read <a href="/copy">details</a>.</p><p><a href="/open">Open account</a></p>', '<p>Extra.</p>') + row('Heading', '<h2 id="headline">Headline</h2>') + row('Eyebrow', '<h1>Brokerage</h1>'));
   assert.equal(block.querySelector('.hero-product-eyebrow').tagName, 'H1');
