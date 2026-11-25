@@ -169,3 +169,274 @@ body.brokerage .section:not([data-section-layout="authored"]):has(.cards-article
     text-align: center;
   }
 }
+
+/* Carousel: a native scroll-snap row with Previous/Next and one dot per article. */
+main .section > .cards-article-wrapper:has(> .cards-article:is(.carousel, .stages)) {
+  min-width: 0;
+  container: block-layout / inline-size;
+}
+
+.cards-article.carousel {
+  display: flex;
+  flex-direction: column;
+}
+
+.cards-article.carousel > .cards-article-slides {
+  display: flex;
+  gap: var(--space-16);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.cards-article.carousel > .cards-article-slides::-webkit-scrollbar {
+  display: none;
+}
+
+.cards-article.carousel .cards-article-card {
+  box-sizing: border-box;
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+}
+
+/* Mobile keeps the controls below the articles, as on the reference. */
+.cards-article.carousel .cards-article-nav {
+  display: flex;
+  order: 1;
+  margin-top: var(--space-24);
+}
+
+.cards-article.carousel .cards-article-nav button {
+  display: grid;
+  place-items: center;
+  width: var(--space-64);
+  height: var(--space-64);
+  margin: 0;
+  padding: 0;
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-right: 0;
+  border-radius: var(--radius-card) 0 0 var(--radius-card);
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+.cards-article.carousel .cards-article-nav .cards-article-next {
+  border-right: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: 0 var(--radius-card) var(--radius-card) 0;
+}
+
+.cards-article.carousel .cards-article-arrow {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: currentcolor;
+}
+
+.cards-article.carousel .cards-article-dots {
+  display: none;
+  order: 2;
+}
+
+.cards-article.carousel .cards-article-dots button {
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 1.1875rem;
+  height: 1.1875rem;
+  margin: 0;
+  padding: 0;
+  border: var(--border-width-strong) solid transparent;
+  border-radius: var(--radius-round);
+  background: transparent;
+  cursor: pointer;
+}
+
+.cards-article.carousel .cards-article-dots button::before {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--radius-round);
+  background: var(--color-text-primary);
+  content: '';
+}
+
+.cards-article.carousel .cards-article-dots button[aria-current='true'] {
+  border: var(--border-width-thin) solid var(--color-link-hover);
+}
+
+.cards-article.carousel .cards-article-dots button[aria-current='true']::before {
+  width: 0.75rem;
+  height: 0.75rem;
+  background: var(--color-link-hover);
+}
+
+.cards-article.carousel .cards-article-nav button:disabled {
+  background: var(--palette-neutral-400);
+  cursor: default;
+}
+
+.cards-article.carousel .cards-article-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.cards-article.carousel :is(.cards-article-nav, .cards-article-dots)[hidden] {
+  display: none;
+}
+
+.cards-article.carousel :is(button, .cards-article-slides):focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Wider blocks show two, then four articles, with the controls above and dots below. */
+@container block-layout (width >= 38rem) {
+  .cards-article.carousel .cards-article-card {
+    flex-basis: calc((100% - var(--space-16)) / 2);
+  }
+
+  .cards-article.carousel .cards-article-nav {
+    order: -1;
+    justify-content: flex-end;
+    margin: 0 0 var(--space-20);
+  }
+
+  .cards-article.carousel .cards-article-dots:not([hidden]) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: var(--space-36);
+  }
+}
+
+@container block-layout (width >= 56rem) {
+  .cards-article.carousel .cards-article-card {
+    flex-basis: calc((100% - 3 * var(--space-16)) / 4);
+  }
+}
+
+body.planning .section:not([data-section-layout="authored"]):has(.cards-article.carousel) .default-content-wrapper > h2 {
+  margin-bottom: var(--space-24);
+}
+
+/* Stages: life-stage buttons, each followed by its article. One stage is open at a time. */
+.cards-article.stages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin-top: var(--space-30);
+  padding: var(--space-16);
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-default);
+}
+
+.cards-article.stages .cards-article-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--space-16);
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: var(--space-16);
+  border: 0;
+  border-radius: calc(var(--radius-card) - var(--space-4));
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cards-article.stages .cards-article-stage[aria-expanded='true'] {
+  background: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+}
+
+.cards-article.stages .cards-article-stage-title {
+  font-size: var(--font-size-22);
+  font-weight: var(--font-weight-semibold);
+  line-height: calc(26 / 22);
+  letter-spacing: var(--tracking-tight);
+}
+
+.cards-article.stages .cards-article-stage-text {
+  display: none;
+  grid-column: 1;
+  margin: var(--space-16) 0 var(--space-8);
+  font-size: var(--font-size-16);
+  line-height: calc(20 / 16);
+}
+
+.cards-article.stages .cards-article-stage[aria-expanded='true'] .cards-article-stage-text {
+  display: block;
+}
+
+.cards-article.stages .cards-article-stage-icon {
+  grid-area: 1 / 2;
+  width: 1.375rem;
+  height: 1.375rem;
+  fill: currentcolor;
+}
+
+.cards-article.stages .cards-article-stage[aria-expanded='true'] .cards-article-stage-icon {
+  transform: rotate(180deg);
+}
+
+.cards-article.stages .cards-article-stage:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.cards-article.stages .cards-article-panel[hidden] {
+  display: none;
+}
+
+/* Wide blocks: the buttons sit in a bordered list beside the open article. */
+@container block-layout (width >= 56rem) {
+  .cards-article.stages {
+    display: grid;
+    grid-template-columns: minmax(0, 632fr) minmax(0, 480fr);
+    grid-template-rows: repeat(var(--stage-count), auto) 1fr;
+    gap: var(--space-8) var(--space-64);
+    align-items: start;
+    padding: var(--space-16) 0;
+    border: 0;
+    background: none;
+  }
+
+  .cards-article.stages::before {
+    grid-area: 1 / 1 / span var(--stage-count) / 2;
+    align-self: stretch;
+    margin: calc(-1 * var(--space-16)) 0;
+    border: var(--border-width-thin) solid var(--color-border-default);
+    border-radius: var(--radius-card);
+    background: var(--color-surface-default);
+    content: '';
+  }
+
+  .cards-article.stages .cards-article-stage {
+    position: relative;
+    grid-area: var(--stage-row) / 1;
+    width: calc(100% - 2 * var(--space-16) - 2 * var(--border-width-thin));
+    margin-inline: calc(var(--space-16) + var(--border-width-thin));
+    padding: var(--space-24);
+  }
+
+  .cards-article.stages .cards-article-stage-text {
+    margin-top: var(--space-24);
+  }
+
+  .cards-article.stages .cards-article-panel {
+    grid-area: 1 / 2 / -1;
+    margin-top: calc(-1 * var(--space-16));
+  }
+}

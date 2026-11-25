@@ -1,117 +1,20 @@
 import loadStructuredCards from '../../scripts/structured-cards.js';
 import buildCards from '../../scripts/media-cards.js';
-
-let instance = 0;
-
-/** Material "keyboard_arrow" chevrons, matching the icons on the original site. */
-const ARROWS = [
-  'M15.41 16.59 10.83 12l4.58-4.59L14 6l-6 6 6 6z',
-  'M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z',
-];
-
-function arrow(path) {
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('class', 'carousel-story-arrow');
-  svg.setAttribute('viewBox', '0 0 24 24');
-  svg.setAttribute('aria-hidden', 'true');
-  svg.setAttribute('focusable', 'false');
-  const shape = document.createElementNS(svg.namespaceURI, 'path');
-  shape.setAttribute('d', path);
-  svg.append(shape);
-  return svg;
-}
+import decorateCarousel from '../../scripts/carousel.js';
 
 export default async function decorate(block) {
   const structured = loadStructuredCards(block);
   if (structured) await structured;
-  const slides = buildCards(block);
-  const cards = [...slides.children];
-  if (!cards.length) return;
-  instance += 1;
-  slides.className = 'carousel-story-slides';
-  slides.id = `stories-${instance}`;
-  slides.tabIndex = 0;
-  slides.setAttribute('aria-label', 'E*TRADE history stories');
-  const nav = document.createElement('div');
-  nav.className = 'carousel-story-nav';
-  const previous = document.createElement('button');
-  const next = document.createElement('button');
-  [previous, next].forEach((button, i) => {
-    button.type = 'button';
-    button.className = `carousel-story-${i ? 'next' : 'prev'}`;
-    button.setAttribute('aria-label', `${i ? 'Next' : 'Previous'} story`);
-    button.setAttribute('aria-controls', slides.id);
-    button.append(arrow(ARROWS[i]));
-    nav.append(button);
+  decorateCarousel(block, buildCards(block), {
+    name: 'carousel-story',
+    id: 'stories',
+    labels: {
+      list: 'E*TRADE history stories',
+      previous: 'Previous story',
+      next: 'Next story',
+      dots: 'Choose a story',
+      dot: 'Show story',
+      status: 'Stories',
+    },
   });
-  const dots = document.createElement('div');
-  dots.className = 'carousel-story-dots';
-  dots.setAttribute('aria-label', 'Choose a story');
-  const status = document.createElement('p');
-  status.className = 'carousel-story-status';
-  status.setAttribute('role', 'status');
-  let current = 0;
-  let requested;
-  let navigating = false;
-  const offset = (index) => cards[index].offsetLeft - cards[0].offsetLeft;
-  const maxScroll = () => Math.max(0, slides.scrollWidth - slides.clientWidth);
-  const update = () => {
-    const left = slides.scrollLeft;
-    current = cards.reduce((nearest, card, i) => (Math.abs(offset(i) - left)
-      < Math.abs(offset(nearest) - left) ? i : nearest), 0);
-    const requestedOffset = requested === undefined
-      ? null : Math.min(maxScroll(), offset(requested));
-    const selected = requestedOffset !== null && Math.abs(requestedOffset - left) <= 1
-      ? requested : current;
-    if (selected === requested) navigating = false;
-    previous.disabled = left <= 1;
-    next.disabled = left >= maxScroll() - 1;
-    [...dots.children].forEach((dot, index) => dot.setAttribute('aria-current', index === selected ? 'true' : 'false'));
-    const lastVisible = cards.reduce((last, card, i) => (
-      offset(i) < left + slides.clientWidth - 1 ? i : last), current);
-    status.textContent = `Stories ${current + 1}${lastVisible > current ? `–${lastVisible + 1}` : ''} of ${cards.length}`;
-    nav.hidden = maxScroll() <= 1;
-    dots.hidden = maxScroll() <= 1;
-  };
-  const go = (index) => {
-    const target = Math.max(0, Math.min(cards.length - 1, index));
-    requested = target;
-    navigating = true;
-    slides.scrollTo({
-      left: Math.min(maxScroll(), offset(target)),
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
-    });
-    update();
-  };
-  cards.forEach((card, index) => {
-    const dot = document.createElement('button');
-    dot.type = 'button';
-    dot.setAttribute('aria-label', `Show story ${index + 1}`);
-    dot.setAttribute('aria-controls', slides.id);
-    dot.addEventListener('click', () => go(index));
-    dots.append(dot);
-  });
-  const navigationIndex = () => (navigating ? requested : current);
-  previous.addEventListener('click', () => go(navigationIndex() - 1));
-  next.addEventListener('click', () => go(navigationIndex() + 1));
-  slides.addEventListener('keydown', (event) => {
-    if (event.target !== slides) return;
-    let target;
-    if (event.key === 'ArrowLeft') target = navigationIndex() - 1;
-    if (event.key === 'ArrowRight') target = navigationIndex() + 1;
-    if (event.key === 'Home') target = 0;
-    if (event.key === 'End') target = cards.length - 1;
-    if (target === undefined) return;
-    event.preventDefault();
-    go(target);
-  });
-  slides.addEventListener('scroll', update, { passive: true });
-  // Native dragging or wheel scrolling takes over from a pending button request.
-  ['pointerdown', 'wheel', 'scrollend'].forEach((type) => {
-    slides.addEventListener(type, () => { navigating = false; }, { passive: true });
-  });
-  block.replaceChildren(nav, slides, dots, status);
-  const observer = new ResizeObserver(update);
-  observer.observe(slides);
-  update();
 }

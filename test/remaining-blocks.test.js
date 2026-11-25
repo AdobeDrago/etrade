@@ -221,6 +221,47 @@ test('article cards preserve eyebrows and rich copy in promo and four-card layou
   assert.equal(block.querySelectorAll('.cards-article-actions').length, 4);
 });
 
+test('article carousel keeps full-size cards and pages through articles with shared controls', async () => {
+  const four = await render('cards-article', Array(4).fill(row(image, copy)).join(''), 'carousel', '', 4);
+  assert.equal(four.block.classList.contains('four-up'), false);
+  const { block } = await render('cards-article', Array(5).fill(row(image, copy)).join(''), 'carousel', '', 4);
+  const slides = block.querySelector('.cards-article-slides');
+  assert.deepEqual([...block.children].map((node) => node.className), ['cards-article-nav', 'cards-article-slides', 'cards-article-dots', 'cards-article-status']);
+  assert.equal(slides.getAttribute('aria-label'), 'Articles');
+  assert.equal(slides.querySelectorAll(':scope > .cards-article-card').length, 5);
+  assert.equal(block.querySelectorAll('.cards-article-dots button').length, 5);
+  assert.equal(block.querySelector('.cards-article-dots button').getAttribute('aria-label'), 'Show article 1');
+  assert.equal(block.querySelector('.cards-article-prev').disabled, true);
+  assert.equal(block.querySelector('.cards-article-status').textContent, 'Articles 1–4 of 5');
+  block.querySelector('.cards-article-next').click();
+  assert.equal(block.querySelector('.cards-article-status').textContent, 'Articles 2–5 of 5');
+  assert.equal(block.querySelector('.cards-article-next').disabled, true);
+  assert.equal(block.querySelectorAll('.cards-article-actions').length, 5);
+});
+
+test('article stages turn each eyebrow and description into a button that shows one article', async () => {
+  const stage = (name, text) => row(image, `<p>${name}</p><p>${text} <sup>a</sup></p>${copy}`);
+  const { block } = await render('cards-article', stage('Buy a home', 'Budget.') + stage('Start a family', 'Plan.') + row(image, copy), 'stages');
+  const buttons = [...block.querySelectorAll(':scope > .cards-article-stage')];
+  const panels = [...block.querySelectorAll(':scope > .cards-article-panel')];
+  assert.deepEqual([...block.children].map((node) => node.className), ['cards-article-stage', 'cards-article-panel', 'cards-article-stage', 'cards-article-panel', 'cards-article-stage', 'cards-article-panel']);
+  assert.equal(block.classList.contains('four-up'), false);
+  assert.equal(block.style.getPropertyValue('--stage-count'), '3');
+  assert.equal(buttons[0].querySelector('.cards-article-stage-title').textContent, 'Buy a home');
+  assert.equal(buttons[0].querySelector('.cards-article-stage-text sup').textContent, 'a');
+  assert.equal(buttons[2].querySelector('.cards-article-stage-title').textContent, 'Heading emphasis');
+  assert.equal(buttons[2].querySelector('.cards-article-stage-text'), null);
+  assert.equal(panels[0].querySelector('.cards-article-eyebrow'), null);
+  assert.equal(panels[0].querySelector('.cards-article-card h3').id, 'title');
+  assert.equal(buttons[0].getAttribute('aria-controls'), panels[0].id);
+  assert.equal(panels[0].getAttribute('aria-labelledby'), buttons[0].id);
+  assert.deepEqual(buttons.map((button) => button.getAttribute('aria-expanded')), ['true', 'false', 'false']);
+  assert.deepEqual(panels.map((panel) => panel.hidden), [false, true, true]);
+  buttons[1].click();
+  assert.deepEqual(buttons.map((button) => button.getAttribute('aria-expanded')), ['false', 'true', 'false']);
+  assert.deepEqual(panels.map((panel) => panel.hidden), [true, false, true]);
+});
+
 test('product hero accepts reordered named slots, inline links and an independent offer', async () => {
   const { block } = await render('hero-product', row('Offer', '<h3>Offer <sup>a</sup></h3><p>Terms <a href="/terms">apply</a>.</p><p><a href="/offer">Learn how</a></p>') + row('Image', image) + row('Content', '<p>Read <a href="/copy">details</a>.</p><p><a href="/open">Open account</a></p>', '<p>Extra.</p>') + row('Heading', '<h2 id="headline">Headline</h2>') + row('Eyebrow', '<h1>Brokerage</h1>'));
   assert.equal(block.querySelector('.hero-product-eyebrow').tagName, 'H1');

@@ -7,6 +7,21 @@ Default cards have inset images and 1.75rem desktop headings. Four cards use up 
 columns from 768px when space permits. `Cards Article (Promo)` uses full-width images and smaller
 headings, matching Why E*TRADE. The importer preserves the promo variant and eyebrows.
 
+`Cards Article (Carousel)` keeps the same rows and shows them as a scrolling row of full-size
+cards, as in Planning's "Insights to stay informed and inspired". Wide blocks show four cards
+(two from 38rem of block width, one below), with Previous/Next above the cards and one dot per
+card below. Narrow blocks place Previous/Next below the cards and omit the dots. The list
+scrolls and snaps natively and also responds to Left/Right, Home and End; a visually hidden
+status announces the visible range. The list is labelled with the section's H2. Navigation
+is shared with Carousel Story through `/scripts/carousel.js`.
+
+`Cards Article (Stages)` is Planning's "Ideas to help you prepare for what's ahead". Start each
+row's content cell with the stage name as a paragraph, then a one-sentence stage description,
+then the article heading, copy and standalone link. The stage name and description become a
+button; one article is shown at a time and the first is open initially. Wide blocks place the
+buttons in a bordered list beside the open article; narrow blocks show the article directly
+below its button. A row without a stage name uses its article heading as the button label.
+
 Blank rows are skipped; extra content cells are combined. Rich text, tracking URLs,
 inline links and superscripts remain authored. Standalone link paragraphs become
 styled actions. Use stable disclosure IDs in `<sup>` when the page uses a disclosure
