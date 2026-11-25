@@ -91,6 +91,20 @@ test('icons support named glyphs, icons inside paragraphs, and omitted media', a
   assert.equal(block.querySelectorAll('.cards-icon-actions').length, 3);
 });
 
+test('feature grid columns turn each heading and its copy into a feature, leaving media and captions', async () => {
+  const features = '<h3 id="first">First</h3><p>One <sup>a</sup>.</p><h3>Second</h3><p>Two.</p><h3>Third</h3><p>Three.</p>';
+  const { block } = await render('columns', row(`${image}<p>Not yet a client? <a href="/open">Open an account today</a></p>`, features), 'feature-grid');
+  const items = [...block.querySelectorAll('ul.columns-features > li.columns-feature')];
+  assert.equal(items.length, 3);
+  assert.equal(items[0].querySelector('h3').id, 'first');
+  assert.equal(items[0].querySelector('sup').textContent, 'a');
+  assert.equal(items[2].textContent, 'ThirdThree.');
+  assert.equal(block.querySelector('picture').closest('ul'), null);
+  assert.equal(block.querySelector('p a').getAttribute('href'), '/open');
+  const plain = await render('columns', row(image, features));
+  assert.equal(plain.block.querySelector('.columns-features'), null);
+});
+
 test('columns decorate imported bare formatted links without changing inline links', async () => {
   const { block } = await render('columns', row('<h2>Pricing</h2><p>Read <a href="/terms">terms</a>.</p>', '<strong><a href="/open?track=1">Open an account</a></strong><br><a href="/pricing?track=2">View pricing</a>'));
   assert.equal(block.querySelector('.etrade-action-primary').getAttribute('href'), '/open?track=1');
