@@ -509,7 +509,7 @@ main .section.hero-dark-container:not([data-section-layout="authored"]) > .hero-
 
 @media (width >= 992px) {
   .hero-dark.split .hero-dark-offer {
-    grid-template-columns: calc(100% / 3 - var(--space-20)) calc(100% / 2 - var(--space-20)) auto;
+    grid-template-columns: calc(100% / 3 - var(--space-12)) calc(100% / 2 - var(--space-12)) auto;
     gap: var(--space-20);
     margin-top: 1.3140rem;
     margin-bottom: 1.4375rem;
