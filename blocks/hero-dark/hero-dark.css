@@ -483,13 +483,15 @@ main .hero-dark.split .hero-dark-offer-actions a.hero-dark-secondary:any-link {
   }
 
   main .hero-dark.split .hero-dark-offer-actions a.hero-dark-secondary:any-link {
-    font-size: var(--font-size-13);
-    line-height: calc(18 / 13);
+    font-size: var(--font-size-15);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
   }
 
-  .hero-dark.split .hero-dark-offer-actions .etrade-action-icon {
-    transform: none;
+  .hero-dark.split .hero-dark-offer-actions {
+    margin-bottom: var(--space-20);
   }
+
 }
 
 body.homepage main > .section:not([data-section-layout="authored"]).hero-dark-container {
@@ -507,7 +509,7 @@ main .section.hero-dark-container:not([data-section-layout="authored"]) > .hero-
 
 @media (width >= 992px) {
   .hero-dark.split .hero-dark-offer {
-    grid-template-columns: minmax(0, 4fr) minmax(0, 6fr) auto;
+    grid-template-columns: calc(100% / 3 - var(--space-20)) calc(100% / 2 - var(--space-20)) auto;
     gap: var(--space-20);
     margin-top: 1.3140rem;
     margin-bottom: 1.4375rem;
