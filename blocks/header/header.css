@@ -10,6 +10,8 @@
   --header-link-hover-color: var(--palette-purple-250);
   --header-focus-color: var(--color-link-inverse-hover);
   --header-utility-focus-color: var(--palette-purple-250);
+  --header-skip-background: var(--palette-purple-650);
+  --header-skip-height: 30px;
 
   position: relative;
   z-index: var(--layer-header);
@@ -96,22 +98,34 @@
 
 .header .nav-skip {
   position: absolute;
-  z-index: 1;
-  top: var(--space-12);
-  left: var(--space-16);
-  border-radius: var(--radius-small);
-  padding: var(--space-12) var(--space-16);
-  background: var(--color-surface-default);
-  color: var(--color-link);
-  transform: translateY(-200%);
+  z-index: var(--layer-popover);
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--header-skip-height);
+  background: var(--header-skip-background);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-15);
+  line-height: var(--header-skip-height);
+  text-align: center;
+  text-decoration: none;
+  transform: translateY(-100%);
+}
+
+@media (width >= 768px) {
+  .header .nav-skip {
+    font-size: var(--font-size-13);
+  }
 }
 
 .header .nav-skip:hover {
-  color: var(--color-link-hover);
+  color: var(--color-text-inverse);
+  text-decoration: underline;
 }
 
-.header .nav-skip:focus {
-  outline-color: var(--color-focus);
+.header .nav-skip:focus,
+.header .nav-skip:focus-visible {
+  outline: none;
   transform: translateY(0);
 }
 
