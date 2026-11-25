@@ -15,6 +15,13 @@ scrolls and snaps natively and also responds to Left/Right, Home and End; a visu
 status announces the visible range. The list is labelled with the section's H2. Navigation
 is shared with Carousel Story through `/scripts/carousel.js`.
 
+`Cards Article (Stages)` is Planning's "Ideas to help you prepare for what's ahead". Start each
+row's content cell with the stage name as a paragraph, then a one-sentence stage description,
+then the article heading, copy and standalone link. The stage name and description become a
+button; one article is shown at a time and the first is open initially. Wide blocks place the
+buttons in a bordered list beside the open article; narrow blocks show the article directly
+below its button. A row without a stage name uses its article heading as the button label.
+
 Blank rows are skipped; extra content cells are combined. Rich text, tracking URLs,
 inline links and superscripts remain authored. Standalone link paragraphs become
 styled actions. Use stable disclosure IDs in `<sup>` when the page uses a disclosure
