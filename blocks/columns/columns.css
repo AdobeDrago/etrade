@@ -89,3 +89,85 @@ body.homepage .pricing-intro .columns h2 {
     min-width: 0;
   }
 }
+
+/* Feature Grid: media with an optional caption beside headed features shown as cards. */
+.columns.feature-grid > div > div {
+  order: 1;
+  min-width: 0;
+}
+
+/* Narrow layouts show the features before the media, as on Planning. */
+.columns.feature-grid > div > div:has(> .columns-features) {
+  order: 0;
+}
+
+.columns.feature-grid > div > div :is(picture, img) {
+  display: block;
+}
+
+.columns.feature-grid > div > div img {
+  height: auto;
+  border-radius: var(--radius-card);
+}
+
+.columns.feature-grid > div > div > p {
+  margin: var(--space-24) 0 0;
+}
+
+.columns.feature-grid .columns-features {
+  display: grid;
+  gap: var(--space-20);
+  margin: 0 0 var(--space-24);
+  padding: 0;
+  list-style: none;
+}
+
+.columns.feature-grid .columns-feature {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: var(--space-16);
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-default);
+  color: var(--color-text-primary);
+}
+
+.columns.feature-grid .columns-feature :is(h2, h3, h4, h5, h6) {
+  margin: 0 0 var(--space-10);
+  color: inherit;
+  font-size: var(--font-size-24);
+  line-height: calc(28 / 24);
+  letter-spacing: var(--tracking-tight);
+}
+
+.columns.feature-grid .columns-feature p {
+  margin: var(--space-16) 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-16);
+  line-height: calc(20 / 16);
+}
+
+@media (width >= 900px) {
+  .columns.feature-grid > div {
+    align-items: start;
+    gap: var(--space-20);
+  }
+
+  .columns.feature-grid > div > div:has(> .columns-features) {
+    order: 2;
+  }
+
+  .columns.feature-grid .columns-features {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 0;
+  }
+
+  .columns.feature-grid .columns-feature {
+    padding: var(--space-24);
+  }
+
+  .columns.feature-grid .columns-feature :is(h2, h3, h4, h5, h6) {
+    font-size: var(--font-size-28);
+    line-height: calc(32 / 28);
+  }
+}
