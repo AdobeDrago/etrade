@@ -83,6 +83,9 @@ function decorateSplit(block) {
       const link = standaloneAction(paragraph);
       if (!link) return;
       decorateAction(link, 'secondary', 'hero-dark');
+      link.querySelectorAll('.etrade-action-icon path').forEach((path) => {
+        path.setAttribute('d', 'm9 6-1.4 1.4L12.2 12l-4.6 4.6L9 18l6-6z');
+      });
       offerActions.append(link);
       paragraph.remove();
     });
